@@ -1,0 +1,3 @@
+.calendar-grid, .calendar-grid-header {
+    grid-template-columns: repeat(7, min-content);
+}
