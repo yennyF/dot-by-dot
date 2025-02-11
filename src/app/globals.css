@@ -17,11 +17,19 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-mono;
 }
 
 @layer components {
   .button-default {
-    @apply flex justify-center items-center border-2 rounded-full px-6 py-2;
+    @apply flex justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit;
+  }
+  .scroll-shadow {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgb(0, 0, 0));
   }
 }

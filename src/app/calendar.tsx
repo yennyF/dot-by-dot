@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek, isFuture } from "date-fns";
 import './calendar.css';
-
-
+import { generateRandomDaysForMonth } from "./api";
 
 export default function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -26,10 +25,11 @@ export default function Calendar() {
 
     const monthName = format(currentDate, "MMMM yyyy");
     const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+    const track = generateRandomDaysForMonth(totalDays);
 
     return (
-        <div className="calendar flex flex-col items-center justify-center w-screen h-screen font-mono">
-            <div className="w-fit h-fit">
+        <div className="calendar flex flex-col items-center justify-center w-screen h-screen">
+            <div className="w-fit h-[550px]">
                 <div className="calendar-header w-full h-20 flex items-center justify-between gap-5">
                     <h2>{monthName}</h2>
                     <div className="flex gap-10">
@@ -41,23 +41,24 @@ export default function Calendar() {
                     </div>
                 </div>
 
-                <div className="calendar-grid-header grid grid-cols-7 gap-2 text-neutral-400">
+                <div className="calendar-grid-header grid grid-cols-7 gap-3 text-neutral-400">
                     {dayLabels.map((day, index) => (
-                        <div key={index} className="calendar-day calendar-day-header text-center w-16 h-10">
+                        <div key={index} className="calendar-day calendar-day-header text-center w-14 h-10">
                             {day}
                         </div>
                     ))}
                 </div>
 
-                <div className="calendar-grid grid grid-cols-7 gap-2">
+                <div className="calendar-grid grid grid-cols-7 gap-3">
                     {totalDays.map((day, index) => (
                         <div
                             key={index}
                             className={`
-                                calendar-day rounded-full w-16 h-16 grid place-items-center
+                                calendar-day rounded-full w-14 h-14 grid place-items-center
                                 ${isToday(day) ? "today" : ""} 
                                 ${isSameMonth(day, currentDate) ? "" : "other-month"} 
-                                ${isFuture(day) ? "bg-neutral-950 text-neutral-700" : "bg-neutral-800"} 
+                                ${isFuture(day) ? "text-neutral-700" : ""} 
+                                ${track[index]?.value ? "bg-neutral-800" : ""}
                             `}
                         >
                             <div>{format(day, "d")}</div>
