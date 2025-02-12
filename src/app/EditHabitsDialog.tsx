@@ -1,0 +1,89 @@
+"use client"
+
+import { Dialog } from "radix-ui";
+import { ChangeEvent, useEffect, useState } from "react";
+import './EditHabitsDialog.css';
+import { getHabits } from "./api";
+import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
+
+interface EditHabitsDialogProps {
+    children: React.ReactNode;
+}
+
+export default function EditHabitsDialog({ children }: EditHabitsDialogProps) {
+    const [open, setOpen] = useState(false)
+
+    return (
+        <Dialog.Root open={open} onOpenChange={setOpen}>
+            <Dialog.Trigger asChild>
+                {children}
+            </Dialog.Trigger>
+            {open &&
+                <Dialog.Portal>
+                    <Dialog.Overlay className="overlay">
+                        <DialogContent />
+                    </Dialog.Overlay>
+                </Dialog.Portal>
+            }
+        </Dialog.Root>
+    );
+}
+
+function DialogContent() {
+    const [habits, setHabits] = useState<string[]>([]);
+    const [habitInput, setHabitInput] = useState('');
+
+    useEffect(() => {
+        const habits = getHabits();
+        setHabits(habits);
+    }, []);
+
+    const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setHabitInput(event.target.value);
+    };
+
+    const handleAddHabitClick = () => {
+        if (habitInput.length) {
+            setHabits((habits) => [...habits, habitInput]);
+            setHabitInput('');
+        }
+    };
+
+    const handleDeleteHabitClick = (habit: string) => {
+        const index = habits.indexOf(habit);
+        if (index > -1) {
+            habits.splice(index, 1);
+            setHabits([...habits]);
+        }
+    };
+
+    return (
+        <Dialog.Content className="content relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-neutral-800">
+            <Dialog.Close>
+                <Cross1Icon />
+            </Dialog.Close>
+            <Dialog.Title>Edit habits</Dialog.Title>
+            <div className="flex flex-col items-start gap-3">
+                {habits.map((habit, index) => (
+                    <div key={index} className="flex items-center justify-between gap-3 w-full">
+                        {habit}
+                        <div className="flex items-center justify-between gap-2 ">
+                            <Pencil1Icon />
+                            <TrashIcon onClick={() => handleDeleteHabitClick(habit)} />
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="shadow-medium fixed right-0 bottom-0 w-[480px] p-[30px]">
+                <fieldset className="flex gap-3">
+                    <input type="text" value={habitInput} onChange={handleHabitInputChange} placeholder="New habit" className="basis-full"></input>
+                    <button onClick={handleAddHabitClick} className="button-default flex-none" disabled={habitInput.length === 0}>
+                        <PlusIcon />
+                        Add
+                    </button>
+                </fieldset>
+            </div>
+        </Dialog.Content>
+    );
+}
+

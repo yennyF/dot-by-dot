@@ -14,28 +14,53 @@
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   @apply font-mono;
 }
 
+.overlay {
+  background: rgba(0 0 0 / 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: end;
+}
+
+.shadow-dark {
+  background: linear-gradient(to bottom, transparent, rgb(0, 0, 0));
+}
+
+.shadow-medium {
+	background: linear-gradient(to bottom, transparent, rgb(27, 27, 27));
+}
+
 @layer components {
   .button-default {
-    @apply flex justify-center items-center bg-sky-900 hover:bg-sky-800 transition rounded-full px-6 py-2 w-fit h-fit;
+    @apply flex gap-2 justify-center items-center bg-sky-900 hover:bg-sky-800 disabled:bg-sky-950 transition rounded-full px-6 py-2 w-fit h-fit;
   }
+
   .button-more {
-    @apply flex gap-1 justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit h-fit;
+    @apply flex gap-2 justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit h-fit;
   }
-  .scroll-shadow {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: linear-gradient(to bottom, transparent, rgb(0, 0, 0));
+
+  .button-cancel {
+    @apply flex gap-2 justify-center items-center bg-red-800 hover:bg-red-700 transition rounded-full px-6 py-2 w-fit h-fit;
   }
+
   input {
-    @apply text-neutral-950 focus:outline-none;
+    @apply text-neutral-950 focus:outline-none px-2 py-1;
+  }
+
+  label {
+    @apply flex items-center;
   }
 }
