@@ -22,7 +22,10 @@ body {
 
 @layer components {
   .button-default {
-    @apply flex justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit;
+    @apply flex justify-center items-center bg-sky-900 hover:bg-sky-800 transition rounded-full px-6 py-2 w-fit h-fit;
+  }
+  .button-more {
+    @apply flex gap-1 justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit h-fit;
   }
   .scroll-shadow {
     position: fixed;
@@ -31,5 +34,8 @@ body {
     right: 0;
     height: 100px;
     background: linear-gradient(to bottom, transparent, rgb(0, 0, 0));
+  }
+  input {
+    @apply text-neutral-950 focus:outline-none;
   }
 }

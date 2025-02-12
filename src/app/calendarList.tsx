@@ -6,6 +6,8 @@ import './calendar.css';
 import { getHabits, getHabitHistory, HabitHistoryEntry } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
+import AddHabitDialog from "./AddHabitDialog";
+import { ArrowDownIcon } from "@radix-ui/react-icons";
 
 export default function CalendarList() {
     const currentDate = new Date();
@@ -33,10 +35,16 @@ export default function CalendarList() {
 
     return (
         <div className="flex flex-col items-center">
+            <div className="menu flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
+                <AddHabitDialog>
+                    <button className="button-default">Edit Habits</button>
+                </AddHabitDialog>
+            </div>
+
             <div className={`list grid gap-1 w-fit`} style={{ gridTemplateColumns: `repeat(${habits.length + 1}, 1fr)` }}>
                 {/* Header */}
                 {["Day", ...habits].map((habit, index) => (
-                    <div key={index} className="flex items-center justify-center sticky top-0 bg-neutral-950 h-20">
+                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16">
                         {habit}
                     </div>
                 ))}
@@ -68,7 +76,10 @@ export default function CalendarList() {
             <div ref={scrollTarget} />
 
             <div className="scroll-shadow">
-                <button className={`button-default fixed bottom-5 left-[50%] translate-x-[-50%] ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>Today</button>
+                <button className={`button-more fixed bottom-5 left-[50%] translate-x-[-50%] ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>
+                    Today
+                    <ArrowDownIcon/>
+                </button>
             </div>
         </div>
     );
