@@ -47,7 +47,7 @@ export default function CalendarList() {
     });
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center p-16">
             <div className="menu flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
                 <EditHabitsDialog>
                     <button className="button-default">
