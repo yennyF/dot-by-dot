@@ -1,3 +1,16 @@
+.habitItem {
+	transition: 200ms padding ease-in;
+}
+.habitOptions {
+	visibility: hidden;
+}
+.habitItem:hover {
+	padding-left: 10px;
+}
+.habitItem:hover .habitOptions {
+	visibility: visible;
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;

@@ -57,10 +57,14 @@ body {
   }
 
   input {
-    @apply text-neutral-950 focus:outline-none px-2 py-1;
+    @apply text-neutral-950 focus:outline-none px-2 py-1 rounded;
   }
 
   label {
     @apply flex items-center;
+  }
+  
+  .button-icon {
+    @apply p-2 rounded-full hover:bg-neutral-600 cursor-pointer w-fit;
   }
 }
