@@ -1,4 +1,4 @@
-import { EachDayOfIntervalResult } from "date-fns";
+import { eachDayOfInterval, EachDayOfIntervalResult, subDays, subMonths } from "date-fns";
 
 export function generateRandomDaysForMonth(
     totalDays: EachDayOfIntervalResult<{
@@ -22,64 +22,56 @@ export function generateRandomDaysForMonth(
     return result;
 }
 
-export function getHabits() {
-    const str = localStorage.getItem('habits');
-    
-    if (str?.length) {    
-        return JSON.parse(str);
-    } else {
-        const habits = ["React", "JS", "LeetCode", "English", "Behavioral"];
-        updateHabits(habits);
-        return habits;
-    }
+// Habit
+
+const habitsKey = 'habits';
+
+export function initHabits() {
+    const habits = ["React", "JS", "LeetCode", "English", "Behavioral"];
+    localStorage.setItem(habitsKey, JSON.stringify(habits));
+    return habits;
+}
+
+export function getHabits(): string[] {
+    const str = localStorage.getItem(habitsKey);
+    return str ? JSON.parse(str) : [];
 }
 
 export function updateHabits(habits: string[]) {
-    localStorage.setItem('habits', JSON.stringify(habits));
+    localStorage.setItem(habitsKey, JSON.stringify(habits));
 }
 
-export type HabitHistoryEntry = {
-    date: Date;
-    track: Record<string, boolean>;
-};
+// HabitHistory
 
-export function getHabitHistory(
-    totalDays: EachDayOfIntervalResult<{
-        start: Date;
-        end: Date;
-    }, undefined>
-): HabitHistoryEntry[] {
-    function buildHabitHistory() {
-        const currentDate = new Date();
-        const result: HabitHistoryEntry[] = [];
-        const habits = getHabits();
-    
-        totalDays.forEach((date) => {
-            const items: HabitHistoryEntry = {
-                date,
-                track: {}
-            };
-            if (date < currentDate) {
-                for (let habit of habits) {
-                    items.track[habit] = Math.random() > 0.5;
-                }
-            }
-            result.push(items);
-        });
-    
-        return result;
-    }
+const habitHistoryKey = 'habitHistory';
+export type TrackHabitType = Record<string, boolean>;
+export type HabitHistoryType = Record<string, TrackHabitType>;
 
-    const str = localStorage.getItem('habitHistory');
-    if (str?.length) {
-        return JSON.parse(str);
-    } else {
-        const habitHistory = buildHabitHistory();
-        updateHabitHitory(habitHistory);
-        return habitHistory;
-    }
+export function initHabitHistory(habits: string[]) {
+    const currentDate = new Date();
+    const totalDays = eachDayOfInterval({
+        start: subMonths(currentDate, 1),
+        end: subDays(currentDate, 1)
+    });
+    const habitHistory: HabitHistoryType = {};
+    
+    totalDays.forEach((date) => {
+        const dateString = date.toDateString();
+        habitHistory[dateString] = {};
+        for (let habit of habits) {
+            habitHistory[dateString][habit] = Math.random() > 0.5;
+        }
+    });
+
+    localStorage.setItem(habitHistoryKey, JSON.stringify(habitHistory));
+    return habitHistory;
 }
 
-export function updateHabitHitory(habitHistory: HabitHistoryEntry[]) {
-    localStorage.setItem('habitHistory', JSON.stringify(habitHistory));
+export function getHabitHistory(): HabitHistoryType {
+    const str = localStorage.getItem(habitHistoryKey);
+    return str ? JSON.parse(str) : [];
+}
+
+export function updateHabitHitory(habitHistory: HabitHistoryType) {
+    localStorage.setItem(habitHistoryKey, JSON.stringify(habitHistory));
 }

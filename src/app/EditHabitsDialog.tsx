@@ -1,10 +1,11 @@
 "use client"
 
 import { Dialog } from "radix-ui";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, use, useState } from "react";
 import './EditHabitsDialog.css';
-import { getHabits, updateHabits } from "./api";
+import { updateHabits } from "./api";
 import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { AppContext } from "./AppContext";
 
 interface EditHabitsDialogProps {
     children: React.ReactNode;
@@ -30,35 +31,26 @@ export default function EditHabitsDialog({ children }: EditHabitsDialogProps) {
 }
 
 function DialogContent() {
-    const [habits, setHabits] = useState<string[]>([]);
-    const [habitInput, setHabitInput] = useState('');
+    const appContext = use(AppContext);
+    if (!appContext) {
+        throw new Error('DialogContent must be used within a AppProvider');
+    }
+    const { habits, addHabit, deleteHabit } = appContext;
 
-    useEffect(() => {
-        const habits = getHabits();
-        setHabits(habits);
-    }, []);
+    const [habitInput, setHabitInput] = useState('');
 
     const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         setHabitInput(event.target.value);
     };
 
     const handleAddHabitClick = () => {
-        if (habitInput.length) {
-            const newHabits = [...habits, habitInput];
-            setHabits(newHabits);
+        if (addHabit(habitInput)) {
             setHabitInput('');
-            updateHabits(newHabits);
         }
     };
 
     const handleDeleteHabitClick = (habit: string) => {
-        const index = habits.indexOf(habit);
-        if (index > -1) {
-            const newHabits = [...habits];
-            newHabits.splice(index, 1);
-            setHabits(newHabits);
-            updateHabits(newHabits);
-        }
+        deleteHabit(habit);
     };
 
     return (

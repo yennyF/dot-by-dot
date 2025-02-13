@@ -1,38 +1,50 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, isToday, addDays } from "date-fns";
+import { use, useEffect, useRef, useState } from "react";
+import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture } from "date-fns";
 import './calendar.css';
-import { getHabits, getHabitHistory, HabitHistoryEntry, updateHabitHitory } from "./api";
+import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
 import EditHabitsDialog from "./EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
+import { AppContext } from "./AppContext";
 
 export default function CalendarList() {
-    const [habits, setHabits] = useState<string[]>([]);
-    const [habitHistory, setHabitHistory] = useState<HabitHistoryEntry[]>([]);
+    const appContext = use(AppContext);
+    if (!appContext) {
+        throw new Error('CalendarList must be used within a AppProvider');
+    }
+    const { habits } = appContext;
+
+    const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
 
     const scrollTarget = useRef<HTMLDivElement>(null);
     const scrollToTarget = useScrollTo(scrollTarget, true, true);
     const isVisible = useOnScreen(scrollTarget);
 
     useEffect(() => {
-        const habits = getHabits();
-        setHabits(habits);
-
-        const currentDate = new Date();
-        const startDate = subMonths(currentDate, 12);
-        const endDate = addDays(currentDate, 5);
-        const totalDays = eachDayOfInterval({ start: startDate, end: endDate });
-        setHabitHistory(getHabitHistory(totalDays));
+        setHabitHistory(getHabitHistory());
     }, []);
 
-    const toogleHabit = (index: number, habit: string) => {
-        habitHistory[index].track[habit] = !habitHistory[index].track[habit];
-        setHabitHistory([...habitHistory]);
+    const toogleHabit = (date: Date, habit: string) => {
+        const dateString = date.toDateString();
+        
+        if (!habitHistory[dateString]) {
+            habitHistory[dateString] = {};
+        }
+
+        const value: boolean = habitHistory[dateString][habit] ?? false;
+        habitHistory[dateString][habit] = !value;
+        setHabitHistory({ ...habitHistory });
         updateHabitHitory(habitHistory);
     }
+
+    const currentDate = new Date();
+    const totalDays = eachDayOfInterval({
+        start: subMonths(currentDate, 1),
+        end: addDays(currentDate, 5)
+    });
 
     return (
         <div className="flex flex-col items-center">
@@ -54,7 +66,8 @@ export default function CalendarList() {
                 ))}
 
                 {/* Body */}
-                {habitHistory.map(({ date, track }, index) => {
+                {totalDays.map((date, index) => {
+                    const track = habitHistory[date.toDateString()];
                     return (
                         <>
                             <div key={index} className={`flex items-center text-left ${isToday(date) ? "today" : ""}`}>
@@ -62,12 +75,12 @@ export default function CalendarList() {
                             </div>
                             {habits.map((habit) => (
                                 <div key={habit} className="grid place-items-center">
-                                    {track[habit] !== undefined ?
-                                        <div
-                                            className={`text-center rounded-full w-4 h-4 ${track[habit] === true ? "bg-amber-100" : "bg-neutral-800"}`}
-                                            onClick={() => toogleHabit(index, habit)}
+                                    {isFuture(date)
+                                        ? undefined
+                                        : <div
+                                            className={`text-center rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"}`}
+                                            onClick={() => toogleHabit(date, habit)}
                                         ></div>
-                                        : undefined
                                     }
                                 </div>
                             ))}
