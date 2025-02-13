@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture } from "date-fns";
+import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture, isFirstDayOfMonth, isSameDay, isAfter, startOfMonth, subYears } from "date-fns";
 import './calendar.css';
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
@@ -29,7 +29,7 @@ export default function CalendarList() {
 
     const toogleHabit = (date: Date, habit: string) => {
         const dateString = date.toDateString();
-        
+
         if (!habitHistory[dateString]) {
             habitHistory[dateString] = {};
         }
@@ -42,7 +42,7 @@ export default function CalendarList() {
 
     const currentDate = new Date();
     const totalDays = eachDayOfInterval({
-        start: subMonths(currentDate, 1),
+        start: subMonths(currentDate, 3),
         end: addDays(currentDate, 5)
     });
 
@@ -57,22 +57,36 @@ export default function CalendarList() {
                 </EditHabitsDialog>
             </div>
 
-            <div className={`list grid gap-1 w-fit`} style={{ gridTemplateColumns: `repeat(${habits.length + 1}, 1fr)` }}>
+            <div className={`grid gap-x-0.5 gap-y-0 w-fit`} style={{ gridTemplateColumns: `repeat(${habits.length + 2}, 1fr)` }}>
                 {/* Header */}
-                {["Day", ...habits].map((habit, index) => (
+                {["", "", ...habits].map((habit, index) => (
                     <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16">
                         {habit}
                     </div>
                 ))}
 
                 {/* Body */}
-                {totalDays.map((date, index) => {
+                {totalDays.map((date) => {
                     const track = habitHistory[date.toDateString()];
                     return (
                         <>
-                            <div key={index} className={`flex items-center text-left ${isToday(date) ? "today" : ""}`}>
-                                {format(date, "MMMM") + ' ' + format(date, "d")}
+                            {isFirstDayOfMonth(date) ?
+                                <div className="flex items-center justify-end bg-neutral-950 sticky top-[120px]">
+                                    {format(date, "MMMM")}
+                                </div>
+                                :
+                                isSameDay(date, addDays((startOfMonth(date)), 1)) ?
+                                    <div className="flex items-center justify-end bg-neutral-950 sticky top-[145px] text-xs">
+                                        {format(date, "yyyy")}
+                                    </div>
+                                    :
+                                    <div></div>
+                            }
+
+                            <div className="flex items-center justify-center">
+                                {format(date, "d")}
                             </div>
+                            
                             {habits.map((habit) => (
                                 <div key={habit} className="grid place-items-center">
                                     {isFuture(date)
