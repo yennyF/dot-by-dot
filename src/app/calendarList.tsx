@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture, isFirstDayOfMonth, isSameDay, isAfter, startOfMonth, subYears } from "date-fns";
+import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture, isFirstDayOfMonth, isSameDay, isAfter, startOfMonth, subYears, EachDayOfIntervalResult } from "date-fns";
 import './calendar.css';
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
@@ -42,10 +42,30 @@ export default function CalendarList() {
 
     const currentDate = new Date();
     const totalDays = eachDayOfInterval({
-        start: subMonths(currentDate, 3),
+        start: subMonths(currentDate, 12),
         end: addDays(currentDate, 5)
     });
-
+    
+    // const groupDaysByMonth = (days: EachDayOfIntervalResult<{
+    //     start: Date;
+    //     end: Date;
+    // }, undefined>) => {
+    //     const grouped = days.reduce((acc: Record<string, EachDayOfIntervalResult<{
+    //         start: Date;
+    //         end: Date;
+    //     }, undefined>>, day) => {
+    //         const monthKey = `${day.getFullYear()}-${day.getMonth()}`; // Group by year and month
+    //         if (!acc[monthKey]) {
+    //             acc[monthKey] = [];
+    //         }
+    //         acc[monthKey].push(day);
+    //         return acc;
+    //     }, {});
+    
+    //     return grouped;
+    // };
+    // const groupedByMonth = groupDaysByMonth(totalDays);
+    
     return (
         <div className="flex flex-col items-center p-16">
             <div className="menu flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
@@ -57,11 +77,11 @@ export default function CalendarList() {
                 </EditHabitsDialog>
             </div>
 
-            <div className={`grid gap-x-0.5 gap-y-0 w-fit`} style={{ gridTemplateColumns: `repeat(${habits.length + 2}, 1fr)` }}>
+            <div className={`grid gap-x-1 gap-y-0 w-fit`} style={{ gridTemplateColumns: `min-content min-content repeat(${habits.length}, 1fr` }}>
                 {/* Header */}
                 {["", "", ...habits].map((habit, index) => (
-                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16">
-                        {habit}
+                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16 max-w-[150px]">
+                        <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
                     </div>
                 ))}
 
@@ -83,7 +103,7 @@ export default function CalendarList() {
                                     <div></div>
                             }
 
-                            <div className="flex items-center justify-center">
+                            <div className="flex items-center justify-center pl-8 pr-10">
                                 {format(date, "d")}
                             </div>
                             
