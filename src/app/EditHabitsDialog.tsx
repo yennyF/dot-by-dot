@@ -3,7 +3,7 @@
 import { Dialog } from "radix-ui";
 import { ChangeEvent, useEffect, useState } from "react";
 import './EditHabitsDialog.css';
-import { getHabits } from "./api";
+import { getHabits, updateHabits } from "./api";
 import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 interface EditHabitsDialogProps {
@@ -44,16 +44,20 @@ function DialogContent() {
 
     const handleAddHabitClick = () => {
         if (habitInput.length) {
-            setHabits((habits) => [...habits, habitInput]);
+            const newHabits = [...habits, habitInput];
+            setHabits(newHabits);
             setHabitInput('');
+            updateHabits(newHabits);
         }
     };
 
     const handleDeleteHabitClick = (habit: string) => {
         const index = habits.indexOf(habit);
         if (index > -1) {
-            habits.splice(index, 1);
-            setHabits([...habits]);
+            const newHabits = [...habits];
+            newHabits.splice(index, 1);
+            setHabits(newHabits);
+            updateHabits(newHabits);
         }
     };
 

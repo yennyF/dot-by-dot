@@ -23,32 +23,63 @@ export function generateRandomDaysForMonth(
 }
 
 export function getHabits() {
-    return ["React", "JS", "LeetCode", "English", "Behavioral"];
+    const str = localStorage.getItem('habits');
+    
+    if (str?.length) {    
+        return JSON.parse(str);
+    } else {
+        const habits = ["React", "JS", "LeetCode", "English", "Behavioral"];
+        updateHabits(habits);
+        return habits;
+    }
+}
+
+export function updateHabits(habits: string[]) {
+    localStorage.setItem('habits', JSON.stringify(habits));
 }
 
 export type HabitHistoryEntry = {
-    [key: string]: boolean;
+    date: Date;
+    track: Record<string, boolean>;
 };
 
 export function getHabitHistory(
     totalDays: EachDayOfIntervalResult<{
         start: Date;
         end: Date;
-    }, undefined>,
-    habits: string[]
-) {
-    const currentDate = new Date();
-    const result: HabitHistoryEntry[] = [];
-
-    totalDays.forEach((date) => {
-        const items: HabitHistoryEntry = {};
-        if (date < currentDate) {
-            for (let habit of habits) {
-                items[habit] = Math.random() > 0.5;
+    }, undefined>
+): HabitHistoryEntry[] {
+    function buildHabitHistory() {
+        const currentDate = new Date();
+        const result: HabitHistoryEntry[] = [];
+        const habits = getHabits();
+    
+        totalDays.forEach((date) => {
+            const items: HabitHistoryEntry = {
+                date,
+                track: {}
+            };
+            if (date < currentDate) {
+                for (let habit of habits) {
+                    items.track[habit] = Math.random() > 0.5;
+                }
             }
-        }
-        result.push(items);
-    });
+            result.push(items);
+        });
+    
+        return result;
+    }
 
-    return result;
+    const str = localStorage.getItem('habitHistory');
+    if (str?.length) {
+        return JSON.parse(str);
+    } else {
+        const habitHistory = buildHabitHistory();
+        updateHabitHitory(habitHistory);
+        return habitHistory;
+    }
+}
+
+export function updateHabitHitory(habitHistory: HabitHistoryEntry[]) {
+    localStorage.setItem('habitHistory', JSON.stringify(habitHistory));
 }

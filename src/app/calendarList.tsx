@@ -3,35 +3,36 @@
 import { useEffect, useRef, useState } from "react";
 import { format, subMonths, eachDayOfInterval, isToday, addDays } from "date-fns";
 import './calendar.css';
-import { getHabits, getHabitHistory, HabitHistoryEntry } from "./api";
+import { getHabits, getHabitHistory, HabitHistoryEntry, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
 import EditHabitsDialog from "./EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
 
 export default function CalendarList() {
-    const currentDate = new Date();
-    const startDate = subMonths(currentDate, 12);
-    const endDate = addDays(currentDate, 5);
-    const totalDays = eachDayOfInterval({ start: startDate, end: endDate });
-
     const [habits, setHabits] = useState<string[]>([]);
-    const [habitHistory, sethabitHistory] = useState<HabitHistoryEntry[]>([]);
+    const [habitHistory, setHabitHistory] = useState<HabitHistoryEntry[]>([]);
 
     const scrollTarget = useRef<HTMLDivElement>(null);
     const scrollToTarget = useScrollTo(scrollTarget, true, true);
     const isVisible = useOnScreen(scrollTarget);
 
-    const toogleHabit = (index: number, habit: string) => {
-        habitHistory[index][habit] = !habitHistory[index][habit];
-        sethabitHistory([...habitHistory]);
-    }
-
     useEffect(() => {
         const habits = getHabits();
         setHabits(habits);
-        sethabitHistory(getHabitHistory(totalDays, habits));
+
+        const currentDate = new Date();
+        const startDate = subMonths(currentDate, 12);
+        const endDate = addDays(currentDate, 5);
+        const totalDays = eachDayOfInterval({ start: startDate, end: endDate });
+        setHabitHistory(getHabitHistory(totalDays));
     }, []);
+
+    const toogleHabit = (index: number, habit: string) => {
+        habitHistory[index].track[habit] = !habitHistory[index].track[habit];
+        setHabitHistory([...habitHistory]);
+        updateHabitHitory(habitHistory);
+    }
 
     return (
         <div className="flex flex-col items-center">
@@ -53,8 +54,7 @@ export default function CalendarList() {
                 ))}
 
                 {/* Body */}
-                {habitHistory.map((item, index) => {
-                    const date = totalDays[index];
+                {habitHistory.map(({ date, track }, index) => {
                     return (
                         <>
                             <div key={index} className={`flex items-center text-left ${isToday(date) ? "today" : ""}`}>
@@ -62,9 +62,9 @@ export default function CalendarList() {
                             </div>
                             {habits.map((habit) => (
                                 <div key={habit} className="grid place-items-center">
-                                    {item[habit] !== undefined ?
+                                    {track[habit] !== undefined ?
                                         <div
-                                            className={`text-center rounded-full w-4 h-4 ${item[habit] === true ? "bg-amber-100" : "bg-neutral-800"}`}
+                                            className={`text-center rounded-full w-4 h-4 ${track[habit] === true ? "bg-amber-100" : "bg-neutral-800"}`}
                                             onClick={() => toogleHabit(index, habit)}
                                         ></div>
                                         : undefined
