@@ -1,12 +1,12 @@
 "use client"
 
-import Calendar from "./Calendar";
-import { useState } from "react";
+// import Calendar from "./Calendar";
+// import { useState } from "react";
 import CalendarList from "./CalendarList";
 import { AppProvider } from "./AppContext";
 
 export default function Home() {
-  const [option, setOption] = useState(1);
+  // const [option, setOption] = useState(1);
 
   return (
     <div>
