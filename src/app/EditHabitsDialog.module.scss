@@ -1,0 +1,71 @@
+.overlay{
+	&[data-state="open"] {
+		animation: fadeIn 300ms ease-out;
+	}
+
+	&[data-state="closed"] {
+		animation: fadeOut 300ms ease-in;
+	}
+}
+
+.content{
+	&[data-state="open"] {
+		animation: slideIn 300ms ease-out;
+	}
+
+	&[data-state="closed"] {
+		animation: slideOut 300ms ease-in;
+	}
+}
+
+.habitItem {
+	transition: 200ms padding ease-in;
+
+	&:hover {
+		padding-left: 10px;
+		
+		.habitOptions {
+			visibility: visible;
+		}
+	}
+
+	.habitOptions {
+		visibility: hidden;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+
+@keyframes slideOut {
+	from {
+		transform: translateX(0%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}

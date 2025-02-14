@@ -2,8 +2,7 @@
 
 import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useState } from "react";
-import './EditHabitsDialog.css';
-import { updateHabits } from "./api";
+import styles from './EditHabitsDialog.module.scss';
 import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "./AppContext";
 
@@ -21,7 +20,7 @@ export default function EditHabitsDialog({ children }: EditHabitsDialogProps) {
             </Dialog.Trigger>
             {open &&
                 <Dialog.Portal>
-                    <Dialog.Overlay className="overlay">
+                    <Dialog.Overlay className={`${styles.overlay} overlay`}>
                         <DialogContent />
                     </Dialog.Overlay>
                 </Dialog.Portal>
@@ -54,7 +53,7 @@ function DialogContent() {
     };
 
     return (
-        <Dialog.Content className="content relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-neutral-800">
+        <Dialog.Content className={`${styles.content} relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-neutral-800`}>
             <Dialog.Close>
                 <div className="button-icon">
                     <Cross1Icon />
@@ -63,9 +62,9 @@ function DialogContent() {
             <Dialog.Title>Edit habits</Dialog.Title>
             <div className="flex flex-col items-start gap-3">
                 {habits.map((habit, index) => (
-                    <div key={index} className="habitItem flex items-center justify-between gap-0 w-full py-1">
+                    <div key={index} className={`${styles.habitItem} flex items-center justify-between gap-0 w-full py-1`}>
                         {habit}
-                        <div className="habitOptions flex items-center justify-between gap-1">
+                        <div className={`${styles.habitOptions} flex items-center justify-between gap-1`}>
                             <div className="button-icon">
                                 <Pencil1Icon className="icon"/>
                             </div>

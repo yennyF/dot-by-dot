@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, eachDayOfInterval, isSameMonth, isToday, startOfWeek, endOfWeek, isFuture } from "date-fns";
-import './calendar.css';
 import { generateRandomDaysForMonth } from "./api";
+import styles from './Calendar.module.css';
 
 export default function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -41,7 +41,7 @@ export default function Calendar() {
                     </div>
                 </div>
 
-                <div className="calendar-grid-header grid grid-cols-7 gap-3 text-neutral-400">
+                <div className={`${styles.calendarGridHeader} grid grid-cols-7 gap-3 text-neutral-400`}>
                     {dayLabels.map((day, index) => (
                         <div key={index} className="calendar-day calendar-day-header text-center w-14 h-10">
                             {day}
@@ -49,7 +49,7 @@ export default function Calendar() {
                     ))}
                 </div>
 
-                <div className="calendar-grid grid grid-cols-7 gap-3">
+                <div className={`${styles.calendarGrid} grid grid-cols-7 gap-3`}>
                     {totalDays.map((day, index) => (
                         <div
                             key={index}

@@ -1,8 +1,7 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, isToday, addDays, isFuture, isFirstDayOfMonth, isSameDay, isAfter, startOfMonth, subYears, EachDayOfIntervalResult } from "date-fns";
-import './calendar.css';
+import { format, subMonths, eachDayOfInterval, addDays, isFuture, isFirstDayOfMonth, isSameDay, startOfMonth } from "date-fns";
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";

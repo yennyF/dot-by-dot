@@ -1,8 +1,8 @@
 "use client"
 
-import Calendar from "./calendar";
+import Calendar from "./Calendar";
 import { useState } from "react";
-import CalendarList from "./calendarList";
+import CalendarList from "./CalendarList";
 import { AppProvider } from "./AppContext";
 
 export default function Home() {
