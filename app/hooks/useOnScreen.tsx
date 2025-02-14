@@ -10,17 +10,18 @@ const useOnScreen = (ref: RefObject<HTMLDivElement | null>) => {
             },
             { threshold: 0.1 } // Adjust the threshold to trigger when 10% of the element is visible
         );
+        const refCurrent = ref.current;
 
-        if (ref.current) {
-            observer.observe(ref.current);
+        if (refCurrent) {
+            observer.observe(refCurrent);
         }
 
         return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
+            if (refCurrent) {
+                observer.unobserve(refCurrent);
             }
         };
-    }, []);
+    }, [ref]);
 
     return isVisible;
 };

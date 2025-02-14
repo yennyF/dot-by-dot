@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect } from "react";
 
 // Reusable hook for scrolling to the bottom
 const useScrollTo = (ref: RefObject<HTMLDivElement | null>, autoScroll = true, smooth = true) => {
@@ -23,7 +23,7 @@ const useScrollTo = (ref: RefObject<HTMLDivElement | null>, autoScroll = true, s
         // Set a slight timeout to ensure the DOM is fully updated
         const timeoutId = setTimeout(scrollToTargetAfterRender, 100);
         return () => clearTimeout(timeoutId); // Cleanup the timeout if needed
-    }, [autoScroll, smooth]);
+    }, [autoScroll, smooth, ref]);
 
     return scrollToTarget;
 };

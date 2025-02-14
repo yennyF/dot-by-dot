@@ -58,7 +58,7 @@ export function initHabitHistory(habits: string[]) {
     totalDays.forEach((date) => {
         const dateString = date.toDateString();
         habitHistory[dateString] = {};
-        for (let habit of habits) {
+        for (const habit of habits) {
             habitHistory[dateString][habit] = Math.random() > 0.5;
         }
     });
