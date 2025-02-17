@@ -38,14 +38,18 @@ function DialogContent() {
     const { habits, addHabit, deleteHabit } = appContext;
 
     const [habitInput, setHabitInput] = useState('');
+    const [isDuplicated, setIsDuplicated] = useState(false);
 
     const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         setHabitInput(event.target.value);
+        setIsDuplicated(false)
     };
 
     const handleAddHabitClick = () => {
         if (addHabit(habitInput)) {
             setHabitInput('');
+        } else {
+            setIsDuplicated(true);
         }
     };
 
@@ -78,7 +82,7 @@ function DialogContent() {
                     </div>
                 ))}
             </div>
-            <div className="shadow-medium fixed right-0 bottom-0 w-[480px] p-[30px]">
+            <div className="shadow-medium fixed right-0 bottom-0 w-[480px] p-[30px] flex flex-col gap-3">
                 <fieldset className="flex gap-3">
                     <input type="text" value={habitInput} onChange={handleHabitInputChange} placeholder="New habit" className="basis-full"></input>
                     <button onClick={handleAddHabitClick} className="button-default flex-none" disabled={habitInput.length === 0}>
@@ -86,6 +90,7 @@ function DialogContent() {
                         Add
                     </button>
                 </fieldset>
+                <div className="text-sm">{isDuplicated ? "This habit already exists" : "\u00A0"}</div>
             </div>
         </Dialog.Content>
     );
