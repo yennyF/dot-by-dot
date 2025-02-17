@@ -70,9 +70,9 @@ function DialogContent() {
                     <div key={index} className={`${styles.habitItem} flex items-center justify-between gap-0 w-full py-1`}>
                         {habit}
                         <div className={`${styles.habitOptions} flex items-center justify-between gap-1`}>
-                            <div className="button-icon">
+                            {/* <div className="button-icon">
                                 <Pencil1Icon className="icon"/>
-                            </div>
+                            </div> */}
                             <DeleteConfirm habit={habit} onConfirm={() => {handleDeleteHabitClick(habit)}}>
                                 <div className="button-icon">
                                     <TrashIcon className="icon"/>

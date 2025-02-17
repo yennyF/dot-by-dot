@@ -1,5 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
-import { initHabitHistory, initHabits, updateHabits } from './api';
+import { getHabitHistory, initHabitHistory, initHabits, updateHabitHitory, updateHabits } from './api';
+import { unset } from 'lodash';
 
 type ThemeType = 'light' | 'dark';
 
@@ -18,7 +19,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     const [habits, setHabits] = useState<string[]>([]);
 
     useEffect(() => {
-        const habits = initHabits();;
+        const habits = initHabits();
         setHabits(habits);
 
         initHabitHistory(habits);
@@ -46,7 +47,16 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         newHabits.splice(index, 1);
         setHabits(newHabits);
         updateHabits(newHabits);
+        deleteHabitHistory(habit);
         return true;
+    };
+
+    const deleteHabitHistory = (habit: string) => {
+        const habitHistory = getHabitHistory();
+        for (const date in habitHistory) {
+            unset(habitHistory[date], habit);
+        }
+        updateHabitHitory({...habitHistory});
     };
 
     return <AppContext value={{ theme, toggleTheme, habits, addHabit, deleteHabit }}>{children}</AppContext>;
