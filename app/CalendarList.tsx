@@ -5,7 +5,7 @@ import { format, subMonths, eachDayOfInterval, addDays, isFuture, isFirstDayOfMo
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
-import EditHabitsDialog from "./EditHabitsDialog";
+import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "./AppContext";
 

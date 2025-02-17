@@ -4,7 +4,8 @@ import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useState } from "react";
 import styles from './EditHabitsDialog.module.scss';
 import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { AppContext } from "./AppContext";
+import { AppContext } from "../AppContext";
+import DeleteConfirm from "./DeleteConfirm";
 
 interface EditHabitsDialogProps {
     children: React.ReactNode;
@@ -68,9 +69,11 @@ function DialogContent() {
                             <div className="button-icon">
                                 <Pencil1Icon className="icon"/>
                             </div>
-                            <div className="button-icon">
-                                <TrashIcon className="icon" onClick={() => handleDeleteHabitClick(habit)} />
-                            </div>
+                            <DeleteConfirm habit={habit} onConfirm={() => {handleDeleteHabitClick(habit)}}>
+                                <div className="button-icon">
+                                    <TrashIcon className="icon"/>
+                                </div>
+                            </DeleteConfirm>
                         </div>
                     </div>
                 ))}
