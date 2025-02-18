@@ -1,13 +1,14 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, addDays, isFuture, isFirstDayOfMonth, isSameDay, startOfMonth, EachDayOfIntervalResult } from "date-fns";
+import { format, subMonths, eachDayOfInterval, addDays, isFuture, endOfMonth, isFirstDayOfMonth } from "date-fns";
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
 import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "./AppContext";
+import { eachMonthOfInterval } from "date-fns/fp";
 
 export default function CalendarList() {
     const appContext = use(AppContext);
@@ -40,25 +41,14 @@ export default function CalendarList() {
     }
 
     const currentDate = new Date();
-    const totalDays = eachDayOfInterval({
+    const totalMonths = eachMonthOfInterval({
         start: subMonths(currentDate, 12),
         end: addDays(currentDate, 5)
     });
-    // const groupedByMonth = totalDays.reduce((acc: Record<string, EachDayOfIntervalResult<{
-    //     start: Date;
-    //     end: Date;
-    // }, undefined>>, day) => {
-    //     const monthKey = `${day.getFullYear()}-${day.getMonth()}`; // Group by year and month
-    //     if (!acc[monthKey]) {
-    //         acc[monthKey] = [];
-    //     }
-    //     acc[monthKey].push(day);
-    //     return acc;
-    // }, {});
 
     return (
-        <div className="flex flex-col items-center p-16">
-            <div className="menu flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
+        <>
+            <div className="flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
                 <EditHabitsDialog>
                     <button className="button-default">
                         <Pencil1Icon />
@@ -66,61 +56,69 @@ export default function CalendarList() {
                     </button>
                 </EditHabitsDialog>
             </div>
-                
-            <div className={`grid gap-x-0 gap-y-0.5 w-fit`} style={{ gridTemplateColumns: `min-content min-content repeat(${habits.length}, 1fr` }}>
+
+            <div className="flex flex-col items-center">
                 {/* Header */}
-                {["", "", ...habits].map((habit, index) => (
-                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16 max-w-[150px] px-1">
-                        <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
-                    </div>
-                ))}
+                <div className={`sticky top-16 h-16 grid bg-neutral-950`} style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px` }}>
+                    {["", "", ...habits].map((habit, index) => (
+                        <div key={index} className="flex items-center justify-center px-1">
+                            <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
+                        </div>
+                    ))}
+                </div>
 
                 {/* Body */}
-                {totalDays.map((date, index) => {
-                    const track = habitHistory[date.toDateString()];
-                    const currentMonth = format(date, "MMMM yyyy");
-                    const isNewMonth = index === 0 || format(totalDays[index - 1], "MMMM yyyy") !== currentMonth;
-
+                <div className="mt-16">
+                {totalMonths.map((date, index) => {
+                      const totalDays = eachDayOfInterval ({
+                        start: date,
+                        end: endOfMonth(date)
+                    });
                     return (
-                        <>
-                            {/* Month Header */}
-                            {isNewMonth ?
-                                <div className="flex sticky top-[120px]">
+                        <div key={index} className="flex">
+                            {/* First Column: Sticky */}
+                            <div className="sticky top-[130px] w-[100px] h-fit flex flex-col items-end -z-10">
+                                <div className="text-right font-bold">
                                     {format(date, "MMMM")}
-                                    <div className="absolute top-0 flex flex-col gap-1 bg-neutral-950 w-full">
-                                        <div className="text-right font-bold">
-                                            {format(date, "MMMM")}
-                                        </div>
-                                        <div className="text-right text-xs">
-                                            {format(date, "yyyy")}
-                                        </div>
-                                    </div>
                                 </div>
-                                :
-                                <div></div>
-                            }
-
-                            <div className="flex items-center justify-center pl-8 pr-10">
-                                {format(date, "d")}
+                                <div className="text-right text-xs">
+                                    {format(date, "yyyy")}
+                                </div>
                             </div>
 
-                            {habits.map((habit) => (
-                                <div key={habit} className="grid place-items-center">
-                                    {isFuture(date)
-                                        ? undefined
-                                        : <button
-                                            className={`text-center rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"} hover:bg-neutral-600 transition-all`}
-                                            onClick={() => toogleHabit(date, habit)}
-                                        ></button>
-                                    }
-                                </div>
-                            ))}
-                        </>
+                            {/* Other Columns */}
+                            <div>
+                                {totalDays.map((day, index) => {
+                                    const track = habitHistory[day.toDateString()];
+                                    return (
+                                        <div key={index} className="grid" style={{ gridTemplateColumns: `100px repeat(${habits.length}, 110px` }}>
+                                            <div className={`grid place-items-center ${isFirstDayOfMonth(day) && "font-bold"}`}>
+                                                {format(day, "d")}
+                                            </div>
+                                            {habits.map((habit) => (
+                                                <div key={habit} className="grid place-items-center">
+                                                    {isFuture(day)
+                                                        ? undefined
+                                                        : <button
+                                                            className={`rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"} hover:bg-neutral-600 transition-all`}
+                                                            onClick={() => toogleHabit(day, habit)}
+                                                        ></button>
+                                                    }
+                                                </div>
+                                            ))}
+                                            {/* Add more columns as needed */}
+                                        </div>
+                                    )
+                                })}
+                                {/* Add more rows as needed */}
+                            </div>
+                        </div>
                     )
                 })}
-            </div>
+                </div>
 
-            <div ref={scrollTarget} />
+                <div ref={scrollTarget} />
+            </div>
 
             <div className="shadow-dark fixed bottom-0 flex items-center justify-center w-full h-[100px]">
                 <button className={`button-more ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>
@@ -128,6 +126,6 @@ export default function CalendarList() {
                     <ArrowDownIcon />
                 </button>
             </div>
-        </div>
+        </>
     );
 }
