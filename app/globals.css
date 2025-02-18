@@ -33,6 +33,7 @@ body {
   bottom: 0;
   display: grid;
   justify-items: end;
+  z-index: 100;
 }
 
 .dialogContent {
