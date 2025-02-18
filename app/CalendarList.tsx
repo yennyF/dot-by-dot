@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, addDays, isFuture, isFirstDayOfMonth, isSameDay, startOfMonth } from "date-fns";
+import { format, subMonths, eachDayOfInterval, addDays, isFuture, isFirstDayOfMonth, isSameDay, startOfMonth, EachDayOfIntervalResult } from "date-fns";
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
@@ -44,27 +44,18 @@ export default function CalendarList() {
         start: subMonths(currentDate, 12),
         end: addDays(currentDate, 5)
     });
-    
-    // const groupDaysByMonth = (days: EachDayOfIntervalResult<{
+    // const groupedByMonth = totalDays.reduce((acc: Record<string, EachDayOfIntervalResult<{
     //     start: Date;
     //     end: Date;
-    // }, undefined>) => {
-    //     const grouped = days.reduce((acc: Record<string, EachDayOfIntervalResult<{
-    //         start: Date;
-    //         end: Date;
-    //     }, undefined>>, day) => {
-    //         const monthKey = `${day.getFullYear()}-${day.getMonth()}`; // Group by year and month
-    //         if (!acc[monthKey]) {
-    //             acc[monthKey] = [];
-    //         }
-    //         acc[monthKey].push(day);
-    //         return acc;
-    //     }, {});
-    
-    //     return grouped;
-    // };
-    // const groupedByMonth = groupDaysByMonth(totalDays);
-    
+    // }, undefined>>, day) => {
+    //     const monthKey = `${day.getFullYear()}-${day.getMonth()}`; // Group by year and month
+    //     if (!acc[monthKey]) {
+    //         acc[monthKey] = [];
+    //     }
+    //     acc[monthKey].push(day);
+    //     return acc;
+    // }, {});
+
     return (
         <div className="flex flex-col items-center p-16">
             <div className="menu flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950">
@@ -75,45 +66,52 @@ export default function CalendarList() {
                     </button>
                 </EditHabitsDialog>
             </div>
-
-            <div className={`grid gap-x-1 gap-y-0 w-fit`} style={{ gridTemplateColumns: `min-content min-content repeat(${habits.length}, 1fr` }}>
+                
+            <div className={`grid gap-x-0 gap-y-0.5 w-fit`} style={{ gridTemplateColumns: `min-content min-content repeat(${habits.length}, 1fr` }}>
                 {/* Header */}
                 {["", "", ...habits].map((habit, index) => (
-                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16 max-w-[150px]">
+                    <div key={index} className="flex items-center justify-center sticky top-16 bg-neutral-950 h-16 max-w-[150px] px-1">
                         <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
                     </div>
                 ))}
 
                 {/* Body */}
-                {totalDays.map((date) => {
+                {totalDays.map((date, index) => {
                     const track = habitHistory[date.toDateString()];
+                    const currentMonth = format(date, "MMMM yyyy");
+                    const isNewMonth = index === 0 || format(totalDays[index - 1], "MMMM yyyy") !== currentMonth;
+
                     return (
                         <>
-                            {isFirstDayOfMonth(date) ?
-                                <div className="flex items-center justify-end bg-neutral-950 sticky top-[120px]">
+                            {/* Month Header */}
+                            {isNewMonth ?
+                                <div className="flex sticky top-[120px]">
                                     {format(date, "MMMM")}
+                                    <div className="absolute top-0 flex flex-col gap-1 bg-neutral-950 w-full">
+                                        <div className="text-right font-bold">
+                                            {format(date, "MMMM")}
+                                        </div>
+                                        <div className="text-right text-xs">
+                                            {format(date, "yyyy")}
+                                        </div>
+                                    </div>
                                 </div>
                                 :
-                                isSameDay(date, addDays((startOfMonth(date)), 1)) ?
-                                    <div className="flex items-center justify-end bg-neutral-950 sticky top-[145px] text-xs">
-                                        {format(date, "yyyy")}
-                                    </div>
-                                    :
-                                    <div></div>
+                                <div></div>
                             }
 
                             <div className="flex items-center justify-center pl-8 pr-10">
                                 {format(date, "d")}
                             </div>
-                            
+
                             {habits.map((habit) => (
                                 <div key={habit} className="grid place-items-center">
                                     {isFuture(date)
                                         ? undefined
-                                        : <div
-                                            className={`text-center rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"}`}
+                                        : <button
+                                            className={`text-center rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"} hover:bg-neutral-600 transition-all`}
                                             onClick={() => toogleHabit(date, habit)}
-                                        ></div>
+                                        ></button>
                                     }
                                 </div>
                             ))}

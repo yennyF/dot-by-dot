@@ -3,7 +3,7 @@
 import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useState } from "react";
 import styles from './EditHabitsDialog.module.scss';
-import { TrashIcon, Pencil1Icon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { TrashIcon, PlusIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import DeleteConfirm from "./DeleteConfirm";
 

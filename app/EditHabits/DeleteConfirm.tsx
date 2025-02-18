@@ -23,8 +23,7 @@ export default function DeleteConfirm({ children, habit, onConfirm }: DeleteConf
                     <Dialog.Content className="dialogContent flex flex-col justify-center gap-8 bg-neutral-800">
                         <Dialog.Title>Delete Confirmation</Dialog.Title>
                         <Dialog.Description>
-                            Are you sure you want to delete "{habit}"? <br/>
-                            All related records will be lost.
+                            Are you sure you want to delete "{habit}"? All related records will be lost.
                         </Dialog.Description>
                         <div className="flex justify-center gap-3">
                             <Dialog.Close>
