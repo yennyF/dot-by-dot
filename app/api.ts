@@ -1,5 +1,7 @@
 import { eachDayOfInterval, EachDayOfIntervalResult, subDays, subMonths } from "date-fns";
 
+// Fake API (temporal)
+ 
 export function generateRandomDaysForMonth(
     totalDays: EachDayOfIntervalResult<{
         start: Date;
@@ -27,7 +29,7 @@ export function generateRandomDaysForMonth(
 const habitsKey = 'habits';
 
 export function initHabits() {
-    const habits = ["React", "JS", "LeetCode", "English", "Behavioral"];
+    const habits = ["React", "LeetCode", "Behavioral", "English", "My Project", "Workout"];
     localStorage.setItem(habitsKey, JSON.stringify(habits));
     return habits;
 }

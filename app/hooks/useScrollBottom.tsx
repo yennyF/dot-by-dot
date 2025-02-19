@@ -1,12 +1,17 @@
 import { RefObject, useEffect } from "react";
 
-// Reusable hook for scrolling to the bottom
-const useScrollTo = (ref: RefObject<HTMLDivElement | null>, autoScroll = true, smooth = true) => {
+const useScrollTo = (
+    ref: RefObject<HTMLDivElement | null>, 
+    autoScroll = true, 
+    smooth = true, 
+    block: ScrollLogicalPosition = "end"
+) => {
 
     // Function to trigger scroll to the bottom manually
     const scrollToTarget = () => {
         ref.current?.scrollIntoView({
             behavior: smooth ? "smooth" : "auto",
+            block,
         });
     }
 
@@ -16,6 +21,7 @@ const useScrollTo = (ref: RefObject<HTMLDivElement | null>, autoScroll = true, s
             if (autoScroll && ref.current) {
                 ref.current.scrollIntoView({
                     behavior: smooth ? "smooth" : "auto",
+                    block,
                 });
             }
         };

@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, addDays, isFuture, endOfMonth, isFirstDayOfMonth, isToday } from "date-fns";
+import { format, subMonths, eachDayOfInterval, addDays, isFuture, endOfMonth, isFirstDayOfMonth, isToday, startOfMinute, startOfMonth, isBefore } from "date-fns";
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
 import useScrollTo from "./hooks/useScrollBottom";
 import useOnScreen from "./hooks/useOnScreen";
@@ -9,6 +9,8 @@ import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "./AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
+
+const dayAfter = 6;
 
 export default function CalendarList() {
     const appContext = use(AppContext);
@@ -43,7 +45,7 @@ export default function CalendarList() {
     const currentDate = new Date();
     const totalMonths = eachMonthOfInterval({
         start: subMonths(currentDate, 12),
-        end: addDays(currentDate, 5)
+        end: addDays(currentDate, dayAfter)
     });
 
     return (
@@ -70,10 +72,15 @@ export default function CalendarList() {
                 {/* Body */}
                 <div className="mt-16">
                     {totalMonths.map((date, index) => {
-                        const totalDays = eachDayOfInterval({
-                            start: date,
+                        let totalDays = eachDayOfInterval({
+                            start: startOfMonth(date),
                             end: endOfMonth(date)
                         });
+                        const daysAfterToday = addDays(currentDate, dayAfter);
+                        totalDays = totalDays.filter(day => 
+                            isBefore(day, daysAfterToday)
+                        );
+
                         return (
                             <div key={index} className="flex">
                                 {/* First Column: Sticky */}
@@ -94,7 +101,8 @@ export default function CalendarList() {
                                         return (
                                             <div key={index} className="relative">
                                                 {istoday &&
-                                                    <div className="absolute top-0 -left-[40px] font-bold text-rose-500">
+                                                    // added the height as an offset for useScrollTo
+                                                    <div ref={scrollTarget} className="absolute top-0 -left-[40px] font-bold text-rose-500 h-[200px]">
                                                         Today
                                                     </div>
                                                 }
@@ -124,8 +132,6 @@ export default function CalendarList() {
                         )
                     })}
                 </div>
-
-                <div ref={scrollTarget} />
             </div>
 
             <div className="shadow-dark fixed bottom-0 flex items-center justify-center w-full h-[100px]">
