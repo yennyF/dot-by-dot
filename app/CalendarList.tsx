@@ -22,7 +22,7 @@ export default function CalendarList() {
     const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
 
     const scrollTarget = useRef<HTMLDivElement>(null);
-    const scrollToTarget = useScrollTo(scrollTarget, true, true);
+    const scrollToTarget = useScrollTo(scrollTarget);
     const isVisible = useOnScreen(scrollTarget);
 
     useEffect(() => {
