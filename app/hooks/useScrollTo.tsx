@@ -29,7 +29,7 @@ const useScrollTo = (
         // Set a slight timeout to ensure the DOM is fully updated
         const timeoutId = setTimeout(scrollToTargetAfterRender, 100);
         return () => clearTimeout(timeoutId); // Cleanup the timeout if needed
-    }, [autoScroll, smooth, ref]);
+    }, [autoScroll, smooth, block, ref]);
 
     return scrollToTarget;
 };

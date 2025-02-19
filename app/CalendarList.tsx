@@ -1,9 +1,9 @@
 "use client"
 
 import { use, useEffect, useRef, useState } from "react";
-import { format, subMonths, eachDayOfInterval, addDays, isFuture, endOfMonth, isFirstDayOfMonth, isToday, startOfMinute, startOfMonth, isBefore } from "date-fns";
+import { format, subMonths, eachDayOfInterval, addDays, isFuture, endOfMonth, isFirstDayOfMonth, isToday, startOfMonth, isBefore } from "date-fns";
 import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
-import useScrollTo from "./hooks/useScrollBottom";
+import useScrollTo from "./hooks/useScrollTo";
 import useOnScreen from "./hooks/useOnScreen";
 import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
