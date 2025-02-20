@@ -51,7 +51,7 @@ export default function CalendarList() {
 
     return (
         <>
-            <div className="fixed top-0 w-full h-16 px-6 flex items-center justify-end bg-[var(--background)] z-10">
+            <div className="fixed top-0 w-full h-16 px-6 flex items-center justify-end bg-[var(--background)] z-20">
                 <EditHabitsDialog>
                     <button className="button-main">
                         <Pencil1Icon />
@@ -62,8 +62,10 @@ export default function CalendarList() {
 
             <div className="flex flex-col items-center">
                 {/* Header */}
-                <div className="sticky top-16 h-16 grid font-bold bg-[var(--background)] z-10" style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px` }}>
-                    {["", "", ...habits].map((habit, index) => (
+                <div className="sticky top-16 h-16 grid bg-[var(--background)] z-20" style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px)` }}>
+                    <div className="sticky left-0 bg-[var(--background)] z-20"></div>
+                    <div className="sticky left-[100px] bg-[var(--background)] z-20"></div>
+                    {habits.map((habit, index) => (
                         <div key={index} className="px-1 flex items-center justify-center">
                             <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
                         </div>
@@ -84,15 +86,12 @@ export default function CalendarList() {
                         return (
                             <div key={index} className="flex">
                                 {/* First Column: Sticky */}
-                                <div className="sticky top-[130px] w-[100px] h-fit flex flex-col items-end">
-                                    <div className="text-right font-bold">
+                                <div className="sticky left-0 w-[100px] flex flex-col items-end bg-[var(--background)] z-10">
+                                    <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
                                         {format(date, "MMMM")}
-                                    </div>
-                                    <div className="text-right text-xs">
-                                        {format(date, "yyyy")}
+                                        <span className="text-xs">{format(date, "yyyy")}</span>
                                     </div>
                                 </div>
-
                                 {/* Other Columns */}
                                 <div>
                                     {totalDays.map((day, index) => {
@@ -107,9 +106,11 @@ export default function CalendarList() {
                                                     </div>
                                                 }
                                                 <div key={index} className="grid" style={{ gridTemplateColumns: `100px repeat(${habits.length}, 110px` }}>
-                                                    <div className={`grid place-items-center ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-rose-500"}`}>
-                                                        {format(day, "d")}
+                                                    {/* Second Column: Sticky */}
+                                                    <div className={`sticky left-[100px] grid place-items-center bg-[var(--background)] z-10 ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-rose-500"}`}>
+                                                        {format(day, "dd")}
                                                     </div>
+                                                    {/* Other Columns */}
                                                     {habits.map((habit) => (
                                                         <div key={habit} className="grid place-items-center">
                                                             {isFuture(day)
