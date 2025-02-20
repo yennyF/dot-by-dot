@@ -27,7 +27,7 @@ export default function DeleteConfirm({ children, habit, onConfirm }: DeleteConf
                         </Dialog.Description>
                         <div className="flex justify-center gap-3">
                             <Dialog.Close>
-                                <div className="button-default" onClick={onConfirm}>
+                                <div className="button-main" onClick={onConfirm}>
                                     Yes
                                 </div>
                             </Dialog.Close>

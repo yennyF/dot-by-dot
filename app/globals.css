@@ -3,14 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fef9ef;
+  --foreground: #0a0a0a;
+  --color-main: #c07858;
+  --color-white: #fef9ef;
+  --color-black: #3c3d42;
+  --color-red: #c07858;
+  --color-grey: rgba(131, 140, 139, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* --background: #0a0a0a;
+    --foreground: #ededed; */
   }
 }
 
@@ -49,7 +54,7 @@ body {
 }
 
 .shadow-dark {
-  background: linear-gradient(to bottom, transparent, rgb(0, 0, 0));
+  background: linear-gradient(to bottom, transparent, var(--background));
 }
 
 .shadow-medium {
@@ -57,12 +62,12 @@ body {
 }
 
 @layer components {
-  .button-default {
-    @apply flex gap-2 justify-center items-center bg-sky-900 hover:bg-sky-800 disabled:bg-sky-950 transition rounded-full px-6 py-2 w-fit h-fit;
+  .button-main {
+    @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-main)] hover:bg-[var(--color-black)] disabled:bg-[var(--color-grey)] transition rounded-full px-6 py-2 w-fit h-fit;
   }
 
-  .button-more {
-    @apply flex gap-2 justify-center items-center bg-gray-800 hover:bg-gray-700 transition rounded-full px-6 py-2 w-fit h-fit;
+  .button-main-outline {
+    @apply flex gap-2 justify-center items-center text-[var(--color-main)] bg-[var(--color-white)] border-2 border-[var(--color-main)] hover:bg-[var(--color-black)] hover:border-[var(--color-black)] hover:text-[var(--color-white)] transition rounded-full px-6 py-2 w-fit h-fit;
   }
 
   .button-cancel {

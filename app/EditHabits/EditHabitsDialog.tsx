@@ -85,7 +85,7 @@ function DialogContent() {
             <div className="shadow-medium fixed right-0 bottom-0 w-[480px] p-[30px] flex flex-col gap-3">
                 <fieldset className="flex gap-3">
                     <input type="text" value={habitInput} onChange={handleHabitInputChange} placeholder="New habit" className="basis-full"></input>
-                    <button onClick={handleAddHabitClick} className="button-default flex-none" disabled={habitInput.length === 0}>
+                    <button onClick={handleAddHabitClick} className="button-main flex-none" disabled={habitInput.length === 0}>
                         <PlusIcon />
                         Add
                     </button>

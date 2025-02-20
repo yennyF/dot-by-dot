@@ -11,8 +11,8 @@ export default function Home() {
   return (
     <div>
       {/* <div className="flex"> */}
-        {/* <button className="button-default" onClick={() => setOption(1)}>Calendar</button>
-        <button className="button-default"onClick={() => setOption(2)} >Calendar List</button>
+        {/* <button className="button-main" onClick={() => setOption(1)}>Calendar</button>
+        <button className="button-main"onClick={() => setOption(2)} >Calendar List</button>
         </div>
         {option === 1 ? <Calendar/> : <CalendarList/>} */}
         <AppProvider>

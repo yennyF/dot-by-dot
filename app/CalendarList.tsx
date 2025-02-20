@@ -50,9 +50,9 @@ export default function CalendarList() {
 
     return (
         <>
-            <div className="flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-neutral-950 z-10">
+            <div className="flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-[var(--background)] z-10">
                 <EditHabitsDialog>
-                    <button className="button-default">
+                    <button className="button-main">
                         <Pencil1Icon />
                         Edit Habits
                     </button>
@@ -61,7 +61,7 @@ export default function CalendarList() {
 
             <div className="flex flex-col items-center">
                 {/* Header */}
-                <div className="sticky top-16 h-16 grid bg-neutral-950 z-10" style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px` }}>
+                <div className="sticky top-16 h-16 grid font-bold bg-[var(--background)] z-10" style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px` }}>
                     {["", "", ...habits].map((habit, index) => (
                         <div key={index} className="flex items-center justify-center px-1">
                             <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
@@ -115,7 +115,7 @@ export default function CalendarList() {
                                                             {isFuture(day)
                                                                 ? undefined
                                                                 : <button
-                                                                    className={`rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-amber-100" : "bg-neutral-800"} hover:bg-neutral-600 transition-all`}
+                                                                    className={`rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-[var(--color-red)]" : "bg-[var(--color-grey)]"} hover:bg-[var(--color-red)] transition-all`}
                                                                     onClick={() => toogleHabit(day, habit)}
                                                                 ></button>
                                                             }
@@ -135,7 +135,7 @@ export default function CalendarList() {
             </div>
 
             <div className="shadow-dark fixed bottom-0 flex items-center justify-center w-full h-[100px]">
-                <button className={`button-more ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>
+                <button className={`button-main-outline ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>
                     Today
                     <ArrowDownIcon />
                 </button>
