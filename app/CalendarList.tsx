@@ -101,7 +101,7 @@ export default function CalendarList() {
                                             <div key={index} className="relative">
                                                 {istoday &&
                                                     // added the height as an offset for useScrollTo
-                                                    <div ref={scrollTarget} className="absolute top-0 -left-[40px] font-bold text-rose-500 h-[200px]">
+                                                    <div ref={scrollTarget} className="absolute top-0 -left-[40px] font-bold text-rose-500 h-[200px] z-10">
                                                         Today
                                                     </div>
                                                 }

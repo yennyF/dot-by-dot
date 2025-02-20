@@ -52,6 +52,7 @@ body {
 	max-width: 500px;
 	max-height: 85vh;
 	padding: 25px;
+  background: var(--background);
 }
 
 .shadow-dark {
@@ -60,15 +61,32 @@ body {
 
 @layer components {
   .button-main {
-    @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-main)] hover:bg-[var(--color-black)] disabled:bg-[var(--color-grey)] transition rounded-full px-6 py-2 w-fit h-fit;
+    @apply 
+    flex gap-2 justify-center items-center 
+    text-[var(--color-white)] bg-[var(--color-main)] 
+    transition rounded-full px-6 py-2 w-fit h-fit
+    hover:bg-[var(--color-black)] 
+    disabled:bg-[var(--color-grey)];
   }
 
   .button-main-outline {
-    @apply flex gap-2 justify-center items-center text-[var(--color-main)] bg-[var(--color-white)] border-2 border-[var(--color-main)] hover:bg-[var(--color-black)] hover:border-[var(--color-black)] hover:text-[var(--color-white)] transition rounded-full px-6 py-2 w-fit h-fit;
+    @apply 
+    flex w-fit h-fit
+    items-center justify-center
+    gap-2
+    px-6 py-2
+    rounded-full
+    bg-[var(--color-white)]
+    text-[var(--color-main)]
+    border-2 border-[var(--color-main)]
+    transition
+    hover:bg-[var(--color-black)]
+    hover:border-[var(--color-black)]
+    hover:text-[var(--color-white)];
   }
 
   .button-cancel {
-    @apply flex gap-2 justify-center items-center bg-red-800 hover:bg-red-700 transition rounded-full px-6 py-2 w-fit h-fit;
+    @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-black)] hover:bg-[var(--color-white)] hover:text-[var(--color-black)] transition rounded-full px-6 py-2 w-fit h-fit;
   }
 
   input {

@@ -20,24 +20,24 @@ export default function DeleteConfirm({ children, habit, onConfirm }: DeleteConf
             {open &&
                 <Dialog.Portal>
                     <Dialog.Overlay className="overlay">
-                    <Dialog.Content className="dialogContent flex flex-col justify-center gap-8 bg-neutral-800">
-                        <Dialog.Title>Delete Confirmation</Dialog.Title>
-                        <Dialog.Description>
-                            Are you sure you want to delete &quot;{habit}&quot;? All related records will be lost.
-                        </Dialog.Description>
-                        <div className="flex justify-center gap-3">
-                            <Dialog.Close>
-                                <div className="button-main" onClick={onConfirm}>
-                                    Yes
-                                </div>
-                            </Dialog.Close>
-                            <Dialog.Close>
-                                <div className="button-cancel">
-                                    No
-                                </div>
-                            </Dialog.Close>
-                        </div>
-                    </Dialog.Content>
+                        <Dialog.Content className=" flex flex-col justify-center gap-8 dialogContent">
+                            <Dialog.Title>Delete Confirmation</Dialog.Title>
+                            <Dialog.Description>
+                                Are you sure you want to delete &quot;{habit}&quot;? All related records will be lost.
+                            </Dialog.Description>
+                            <div className="flex justify-center gap-3">
+                                <Dialog.Close>
+                                    <div className="button-main" onClick={onConfirm}>
+                                        Yes
+                                    </div>
+                                </Dialog.Close>
+                                <Dialog.Close>
+                                    <div className="button-cancel">
+                                        No
+                                    </div>
+                                </Dialog.Close>
+                            </div>
+                        </Dialog.Content>
                     </Dialog.Overlay>
                 </Dialog.Portal>
             }
