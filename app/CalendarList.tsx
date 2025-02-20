@@ -9,6 +9,7 @@ import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
 import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { AppContext } from "./AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
+import TickedButton from "./TickedButton/TickedButton";
 
 const dayAfter = 6;
 
@@ -50,7 +51,7 @@ export default function CalendarList() {
 
     return (
         <>
-            <div className="flex px-6 items-center justify-end fixed top-0 w-full h-16 bg-[var(--background)] z-10">
+            <div className="fixed top-0 w-full h-16 px-6 flex items-center justify-end bg-[var(--background)] z-10">
                 <EditHabitsDialog>
                     <button className="button-main">
                         <Pencil1Icon />
@@ -63,7 +64,7 @@ export default function CalendarList() {
                 {/* Header */}
                 <div className="sticky top-16 h-16 grid font-bold bg-[var(--background)] z-10" style={{ gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px` }}>
                     {["", "", ...habits].map((habit, index) => (
-                        <div key={index} className="flex items-center justify-center px-1">
+                        <div key={index} className="px-1 flex items-center justify-center">
                             <p className="text-center text-nowrap text-ellipsis overflow-hidden">{habit}</p>
                         </div>
                     ))}
@@ -77,10 +78,9 @@ export default function CalendarList() {
                             end: endOfMonth(date)
                         });
                         const daysAfterToday = addDays(currentDate, dayAfter);
-                        totalDays = totalDays.filter(day => 
+                        totalDays = totalDays.filter(day =>
                             isBefore(day, daysAfterToday)
                         );
-
                         return (
                             <div key={index} className="flex">
                                 {/* First Column: Sticky */}
@@ -114,10 +114,7 @@ export default function CalendarList() {
                                                         <div key={habit} className="grid place-items-center">
                                                             {isFuture(day)
                                                                 ? undefined
-                                                                : <button
-                                                                    className={`rounded-full w-4 h-4 ${track?.[habit] === true ? "bg-[var(--color-red)]" : "bg-[var(--color-grey)]"} hover:bg-[var(--color-red)] transition-all`}
-                                                                    onClick={() => toogleHabit(day, habit)}
-                                                                ></button>
+                                                                : <TickedButton active={track?.[habit] === true} onClick={() => toogleHabit(day, habit)}/>
                                                             }
                                                         </div>
                                                     ))}
@@ -134,7 +131,7 @@ export default function CalendarList() {
                 </div>
             </div>
 
-            <div className="shadow-dark fixed bottom-0 flex items-center justify-center w-full h-[100px]">
+            <div className="fixed bottom-0 w-full h-[100px] flex items-center justify-center shadow-dark">
                 <button className={`button-main-outline ${isVisible ? "opacity-0 pointer-events-none" : "opacity-100"}`} onClick={scrollToTarget}>
                     Today
                     <ArrowDownIcon />

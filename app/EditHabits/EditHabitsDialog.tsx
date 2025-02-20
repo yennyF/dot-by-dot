@@ -58,7 +58,7 @@ function DialogContent() {
     };
 
     return (
-        <Dialog.Content className={`${styles.content} relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-neutral-800`}>
+        <Dialog.Content className={`${styles.content} relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-[var(--background)]`}>
             <Dialog.Close>
                 <div className="button-icon">
                     <Cross1Icon />
@@ -82,7 +82,7 @@ function DialogContent() {
                     </div>
                 ))}
             </div>
-            <div className="shadow-medium fixed right-0 bottom-0 w-[480px] p-[30px] flex flex-col gap-3">
+            <div className="shadow-dark fixed right-0 bottom-0 w-[480px] p-[30px] flex flex-col gap-3">
                 <fieldset className="flex gap-3">
                     <input type="text" value={habitInput} onChange={handleHabitInputChange} placeholder="New habit" className="basis-full"></input>
                     <button onClick={handleAddHabitClick} className="button-main flex-none" disabled={habitInput.length === 0}>

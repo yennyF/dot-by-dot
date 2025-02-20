@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #fef9ef;
+  --background: #f1efe7;
   --foreground: #0a0a0a;
   --color-main: #c07858;
-  --color-white: #fef9ef;
+  --color-white: #f1efe7;
   --color-black: #3c3d42;
   --color-red: #c07858;
   --color-grey: rgba(131, 140, 139, 0.1);
+  /* fab047 */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,10 +56,6 @@ body {
 
 .shadow-dark {
   background: linear-gradient(to bottom, transparent, var(--background));
-}
-
-.shadow-medium {
-	background: linear-gradient(to bottom, transparent, rgb(27, 27, 27));
 }
 
 @layer components {
