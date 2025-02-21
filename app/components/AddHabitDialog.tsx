@@ -4,11 +4,11 @@ import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface AddHabitProps {
+interface AddHabitDialogProps {
   children: React.ReactNode;
 }
 
-export default function AddHabit({ children }: AddHabitProps) {
+export default function AddHabitDialog({ children }: AddHabitDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -58,7 +58,7 @@ function Content({ setOpen }: ContentProps) {
   };
 
   return (
-    <Dialog.Content className="dialog-content flex flex-col justify-center gap-8">
+    <Dialog.Content className="dialog-content">
       <Dialog.Title className="hidden">Add Habit</Dialog.Title>
       <Dialog.Description className="">Enter a new habit</Dialog.Description>
       <fieldset className="flex flex-col gap-2">
@@ -69,20 +69,20 @@ function Content({ setOpen }: ContentProps) {
           placeholder="New habit"
           className="basis-full"
         ></input>
-        <div className="text-xs text-red-500">
+        <div className="text-xs text-[var(--accent)]">
           {isDuplicated ? "This habit already exists" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
         <Dialog.Close>
-          <div className="button-main">Cancel</div>
+          <div className="button-cancel">Cancel</div>
         </Dialog.Close>
         <button
-          className="button-main flex-none"
+          className="button-accept flex-none"
           onClick={handleSaveClick}
           disabled={habitInput.length === 0 || isDuplicated}
         >
-          Save
+          Add
         </button>
       </div>
     </Dialog.Content>

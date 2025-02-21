@@ -3,17 +3,17 @@
 import { Dialog } from "radix-ui";
 import { useState } from "react";
 
-interface DeleteHabitProps {
+interface DeleteHabitDialogProps {
   children: React.ReactNode;
   habit: string;
   onConfirm: () => void;
 }
 
-export default function DeleteHabit({
+export default function DeleteHabitDialog({
   children,
   habit,
   onConfirm,
-}: DeleteHabitProps) {
+}: DeleteHabitDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -22,7 +22,7 @@ export default function DeleteHabit({
       {open && (
         <Dialog.Portal>
           <Dialog.Overlay className="overlay">
-            <Dialog.Content className="dialog-content flex flex-col justify-center gap-8">
+            <Dialog.Content className="dialog-content">
               <Dialog.Title>Delete Confirmation</Dialog.Title>
               <Dialog.Description>
                 Are you sure you want to delete &quot;{habit}&quot;? All related
@@ -30,8 +30,8 @@ export default function DeleteHabit({
               </Dialog.Description>
               <div className="flex justify-center gap-3">
                 <Dialog.Close>
-                  <div className="button-main" onClick={onConfirm}>
-                    Yes
+                  <div className="button-accept" onClick={onConfirm}>
+                    Yes, I am sure
                   </div>
                 </Dialog.Close>
                 <Dialog.Close>

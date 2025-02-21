@@ -4,12 +4,15 @@ import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface RenameHabitProps {
+interface RenameHabitDialogProps {
   children: React.ReactNode;
   habit: string;
 }
 
-export default function RenameHabit({ children, habit }: RenameHabitProps) {
+export default function RenameHabitDialog({
+  children,
+  habit,
+}: RenameHabitDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -60,7 +63,7 @@ function Content({ setOpen, habit }: ContentProps) {
   };
 
   return (
-    <Dialog.Content className="dialog-content flex flex-col justify-center gap-8">
+    <Dialog.Content className="dialog-content">
       <Dialog.Title className="hidden">Rename Habit</Dialog.Title>
       <Dialog.Description className="">Rename the habit</Dialog.Description>
       <fieldset className="flex flex-col gap-2">
@@ -77,16 +80,16 @@ function Content({ setOpen, habit }: ContentProps) {
       </fieldset>
       <div className="flex justify-center gap-3">
         <Dialog.Close>
-          <div className="button-main">Cancel</div>
+          <div className="button-cancel">Cancel</div>
         </Dialog.Close>
         <button
-          className="button-main flex-none"
+          className="button-accept"
           onClick={handleSaveClick}
           disabled={
             habitInput.length === 0 || isDuplicated || habitInput === habit
           }
         >
-          Save
+          Rename
         </button>
       </div>
     </Dialog.Content>

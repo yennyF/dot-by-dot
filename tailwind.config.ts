@@ -12,6 +12,10 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      scale: {
+        "130": "1.3",
+        "70": "0.7",
+      },
     },
   },
   plugins: [],

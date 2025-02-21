@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f1efe7;
+  --foreground: #0a0a0a;
+  --accent: #c07858;
+  --accent-4: #E4CBC1;
+  --accent-5: #E0BEB0;
+  --white: #ffffff;
+  --black: #3c3d42;
+  --grey: #d7d7d7;
+  --grey-9: #696B75;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* --background: #0a0a0a;
+    --foreground: #ededed; */
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  @apply font-mono;
+}
+
+input {
+  @apply rounded px-2 py-1 text-[var(--grey-9)] focus:outline-none;
+}
+
+.overlay {
+  background: rgba(0 0 0 / 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: end;
+  z-index: 100;
+
+  &[data-state="open"] {
+    animation: fadeIn 100ms ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation: fadeOut 100ms ease-in;
+  }
+}
+
+.dialog-content {
+  border-radius: 6px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  max-height: 85vh;
+  padding: 25px;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 25px;
+}
+
+.shadow-background {
+  background: linear-gradient(to bottom, transparent, var(--background));
+}
+
+@layer components {
+  .button {
+    @apply focus:outline-none;
+  }
+
+  .button-accent {
+    @apply button flex gap-2 justify-center items-center text-[var(--white)] bg-[var(--accent)] transition rounded-full px-6 py-2 w-fit h-fit hover:bg-[var(--black)] disabled:bg-[var(--accent-4)];
+  }
+
+  .button-accent-outline {
+    @apply button flex h-fit w-fit items-center justify-center gap-2 rounded-full border-2 border-[var(--accent)] bg-[var(--background)] px-6 py-2 text-[var(--accent)] transition hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
+  }
+
+  .button-accept {
+    @apply button flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-6 py-2 text-[var(--white)] transition hover:bg-[var(--black)] disabled:bg-[var(--accent-4)];
+  }
+
+  .button-cancel {
+    @apply button flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[var(--grey-9)] px-6 py-2 text-[var(--white)] transition hover:bg-[var(--black)];
+  }
+
+  .button-icon {
+    @apply button w-fit cursor-pointer rounded-full p-2 transition-all hover:bg-[var(--black)];
+
+    &:hover svg {
+      @apply button text-[var(--white)];
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}

@@ -2,8 +2,8 @@ import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { ReactNode, use } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
-import DeleteHabit from "./DeleteHabit";
-import RenameHabit from "./RenameHabit";
+import DeleteHabitDialog from "./DeleteHabitDialog";
+import RenameHabitDialog from "./RenameHabitDialog";
 
 const Trigger = styled.div`
   position: relative;
@@ -23,19 +23,19 @@ const ButtonWrapper = styled.div`
   opacity: 0;
 `;
 
-interface HeaderOptionProps {
+interface HeaderToolbarProps {
   children: ReactNode;
   habit: string;
 }
 
-export default function HeaderOption({ children, habit }: HeaderOptionProps) {
+export default function HeaderToolbar({ children, habit }: HeaderToolbarProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("DialogContent must be used within a AppProvider");
   }
   const { deleteHabit } = appContext;
 
-  const handleDeleteHabitClick = (habit: string) => {
+  const handleDeleteHabitDialogClick = (habit: string) => {
     deleteHabit(habit);
   };
 
@@ -43,21 +43,21 @@ export default function HeaderOption({ children, habit }: HeaderOptionProps) {
     <Trigger>
       {children}
       <ButtonWrapper className="buttonWrapper">
-        <RenameHabit habit={habit}>
+        <RenameHabitDialog habit={habit}>
           <button className="button-icon">
             <Pencil1Icon />
           </button>
-        </RenameHabit>
-        <DeleteHabit
+        </RenameHabitDialog>
+        <DeleteHabitDialog
           habit={habit}
           onConfirm={() => {
-            handleDeleteHabitClick(habit);
+            handleDeleteHabitDialogClick(habit);
           }}
         >
           <button className="button-icon">
             <TrashIcon />
           </button>
-        </DeleteHabit>
+        </DeleteHabitDialog>
       </ButtonWrapper>
     </Trigger>
   );

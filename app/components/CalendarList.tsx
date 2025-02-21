@@ -20,8 +20,8 @@ import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import HeaderOption from "./HeaderOption";
-import AddHabit from "./AddHabit";
+import HeaderToolbar from "./HeaderToolbar";
+import AddHabitDialog from "./AddHabitDialog";
 
 const dayAfter = 6;
 
@@ -64,12 +64,12 @@ export default function CalendarList() {
   return (
     <>
       <div className="fixed top-0 z-10 flex h-16 w-full items-center justify-end bg-[var(--background)] px-6">
-        <AddHabit>
-          <button className="button-main">
+        <AddHabitDialog>
+          <button className="button-accent">
             <PlusIcon />
             Add Habit
           </button>
-        </AddHabit>
+        </AddHabitDialog>
       </div>
 
       <div className="flex flex-col items-center">
@@ -83,13 +83,13 @@ export default function CalendarList() {
           <div className="sticky left-0 bg-[var(--background)]"></div>
           <div className="sticky left-[100px] bg-[var(--background)]"></div>
           {habits.map((habit, index) => (
-            <HeaderOption key={index} habit={habit}>
+            <HeaderToolbar key={index} habit={habit}>
               <div className="flex items-center justify-center px-1">
                 <p className="overflow-hidden text-ellipsis text-nowrap text-center">
                   {habit}
                 </p>
               </div>
-            </HeaderOption>
+            </HeaderToolbar>
           ))}
         </div>
 
@@ -129,13 +129,13 @@ export default function CalendarList() {
                         >
                           {/* Second Column: Sticky */}
                           <div
-                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-rose-500"}`}
+                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-[var(--accent)]"}`}
                           >
                             {istoday && (
                               <div
                                 ref={scrollTarget}
                                 // important: added the height as an offset for useScrollTo, do not delete it
-                                className="absolute -left-[51px] top-0 h-[200px] font-bold text-rose-500"
+                                className="absolute -left-[51px] top-0 h-[200px] font-bold text-[var(--accent)]"
                               >
                                 Today
                               </div>
@@ -169,9 +169,9 @@ export default function CalendarList() {
         </div>
       </div>
 
-      <div className="shadow-dark fixed bottom-0 flex h-[100px] w-full items-center justify-center">
+      <div className="fixed bottom-0 flex h-[100px] w-full items-center justify-center shadow-background">
         <button
-          className={`button-main-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
+          className={`button-accent-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
         >
           Today
