@@ -13,14 +13,15 @@ import {
   startOfMonth,
   isBefore,
 } from "date-fns";
-import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "./api";
-import useScrollTo from "./hooks/useScrollTo";
-import useOnScreen from "./hooks/useOnScreen";
-import EditHabitsDialog from "./EditHabits/EditHabitsDialog";
-import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { AppContext } from "./AppContext";
+import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "../api";
+import useScrollTo from "../hooks/useScrollTo";
+import useOnScreen from "../hooks/useOnScreen";
+import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
+import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
-import TickedButton from "./TickedButton/TickedButton";
+import TickedButton from "./TickedButton";
+import HeaderOption from "./HeaderOption";
+import AddHabit from "./AddHabit";
 
 const dayAfter = 6;
 
@@ -63,12 +64,12 @@ export default function CalendarList() {
   return (
     <>
       <div className="fixed top-0 z-10 flex h-16 w-full items-center justify-end bg-[var(--background)] px-6">
-        <EditHabitsDialog>
+        <AddHabit>
           <button className="button-main">
-            <Pencil1Icon />
-            Edit Habits
+            <PlusIcon />
+            Add Habit
           </button>
-        </EditHabitsDialog>
+        </AddHabit>
       </div>
 
       <div className="flex flex-col items-center">
@@ -82,11 +83,13 @@ export default function CalendarList() {
           <div className="sticky left-0 bg-[var(--background)]"></div>
           <div className="sticky left-[100px] bg-[var(--background)]"></div>
           {habits.map((habit, index) => (
-            <div key={index} className="flex items-center justify-center px-1">
-              <p className="overflow-hidden text-ellipsis text-nowrap text-center">
-                {habit}
-              </p>
-            </div>
+            <HeaderOption key={index} habit={habit}>
+              <div className="flex items-center justify-center px-1">
+                <p className="overflow-hidden text-ellipsis text-nowrap text-center">
+                  {habit}
+                </p>
+              </div>
+            </HeaderOption>
           ))}
         </div>
 
@@ -126,9 +129,7 @@ export default function CalendarList() {
                         >
                           {/* Second Column: Sticky */}
                           <div
-                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${
-                              (isFirstDayOfMonth(day) || istoday) && "font-bold"
-                            } ${istoday && "text-rose-500"}`}
+                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-rose-500"}`}
                           >
                             {istoday && (
                               <div
@@ -170,9 +171,7 @@ export default function CalendarList() {
 
       <div className="shadow-dark fixed bottom-0 flex h-[100px] w-full items-center justify-center">
         <button
-          className={`button-main-outline ${
-            isVisible ? "pointer-events-none opacity-0" : "opacity-100"
-          }`}
+          className={`button-main-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
         >
           Today

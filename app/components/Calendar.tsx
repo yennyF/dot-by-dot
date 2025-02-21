@@ -14,8 +14,7 @@ import {
   endOfWeek,
   isFuture,
 } from "date-fns";
-import { generateRandomDaysForMonth } from "./api";
-import styles from "./Calendar.module.css";
+import { generateRandomDaysForMonth } from "../api";
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -61,7 +60,8 @@ export default function Calendar() {
         </div>
 
         <div
-          className={`${styles.calendarGridHeader} grid grid-cols-7 gap-3 text-neutral-400`}
+          className="grid grid-cols-7 gap-3 text-neutral-400"
+          style={{ gridTemplateColumns: "repeat(7, min-content)" }}
         >
           {dayLabels.map((day, index) => (
             <div
@@ -73,13 +73,14 @@ export default function Calendar() {
           ))}
         </div>
 
-        <div className={`${styles.calendarGrid} grid grid-cols-7 gap-3`}>
+        <div
+          className="grid grid-cols-7 gap-3 text-neutral-400"
+          style={{ gridTemplateColumns: "repeat(7, min-content)" }}
+        >
           {totalDays.map((day, index) => (
             <div
               key={index}
-              className={`calendar-day grid h-14 w-14 place-items-center rounded-full ${isToday(day) ? "today" : ""} ${
-                isSameMonth(day, currentDate) ? "" : "other-month"
-              } ${isFuture(day) ? "text-neutral-700" : ""} ${track[index]?.value ? "bg-neutral-800" : ""} `}
+              className={`calendar-day grid h-14 w-14 place-items-center rounded-full ${isToday(day) ? "today" : ""} ${isSameMonth(day, currentDate) ? "" : "other-month"} ${isFuture(day) ? "text-neutral-700" : ""} ${track[index]?.value ? "bg-neutral-800" : ""} `}
             >
               <div>{format(day, "d")}</div>
             </div>

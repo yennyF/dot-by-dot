@@ -2,7 +2,7 @@
 
 // import Calendar from "./Calendar";
 // import { useState } from "react";
-import CalendarList from "./CalendarList";
+import CalendarList from "./components/CalendarList";
 import { AppProvider } from "./AppContext";
 
 export default function Home() {
