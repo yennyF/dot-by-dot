@@ -62,7 +62,7 @@ export default function CalendarList() {
 
   return (
     <>
-      <div className="fixed top-0 z-20 flex h-16 w-full items-center justify-end bg-[var(--background)] px-6">
+      <div className="fixed top-0 z-10 flex h-16 w-full items-center justify-end bg-[var(--background)] px-6">
         <EditHabitsDialog>
           <button className="button-main">
             <Pencil1Icon />
@@ -74,13 +74,13 @@ export default function CalendarList() {
       <div className="flex flex-col items-center">
         {/* Header */}
         <div
-          className="sticky top-16 z-20 grid h-16 bg-[var(--background)]"
+          className="sticky top-16 z-10 grid h-16 bg-[var(--background)]"
           style={{
             gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px)`,
           }}
         >
-          <div className="sticky left-0 z-20 bg-[var(--background)]"></div>
-          <div className="sticky left-[100px] z-20 bg-[var(--background)]"></div>
+          <div className="sticky left-0 bg-[var(--background)]"></div>
+          <div className="sticky left-[100px] bg-[var(--background)]"></div>
           {habits.map((habit, index) => (
             <div key={index} className="flex items-center justify-center px-1">
               <p className="overflow-hidden text-ellipsis text-nowrap text-center">
@@ -104,7 +104,7 @@ export default function CalendarList() {
             return (
               <div key={index} className="flex">
                 {/* First Column: Sticky */}
-                <div className="sticky left-0 z-10 flex w-[100px] flex-col items-end bg-[var(--background)]">
+                <div className="sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
                   <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
                     {format(date, "MMMM")}
                     <span className="text-xs">{format(date, "yyyy")}</span>
@@ -116,16 +116,7 @@ export default function CalendarList() {
                     const track = habitHistory[day.toDateString()];
                     const istoday = isToday(day);
                     return (
-                      <div key={index} className="relative">
-                        {istoday && (
-                          // added the height as an offset for useScrollTo
-                          <div
-                            ref={scrollTarget}
-                            className="absolute -left-[40px] top-0 z-10 h-[200px] font-bold text-rose-500"
-                          >
-                            Today
-                          </div>
-                        )}
+                      <div key={index}>
                         <div
                           key={index}
                           className="grid"
@@ -135,10 +126,19 @@ export default function CalendarList() {
                         >
                           {/* Second Column: Sticky */}
                           <div
-                            className={`sticky left-[100px] z-10 grid place-items-center bg-[var(--background)] ${
+                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${
                               (isFirstDayOfMonth(day) || istoday) && "font-bold"
                             } ${istoday && "text-rose-500"}`}
                           >
+                            {istoday && (
+                              <div
+                                ref={scrollTarget}
+                                // important: added the height as an offset for useScrollTo, do not delete it
+                                className="absolute -left-[51px] top-0 h-[200px] font-bold text-rose-500"
+                              >
+                                Today
+                              </div>
+                            )}
                             {format(day, "dd")}
                           </div>
                           {/* Other Columns */}
