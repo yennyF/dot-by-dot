@@ -6,6 +6,7 @@
   --background: #f1efe7;
   --foreground: #0a0a0a;
   --color-main: #c07858;
+  --color-main-disable: rgba(192, 120, 88, 0.5);
   --color-white: #f1efe7;
   --color-black: #3c3d42;
   --color-red: #c07858;
@@ -61,7 +62,7 @@ body {
 
 @layer components {
   .button-main {
-    @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-main)] transition rounded-full px-6 py-2 w-fit h-fit hover:bg-[var(--color-black)] disabled:bg-[var(--color-grey)];
+    @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-main)] transition rounded-full px-6 py-2 w-fit h-fit hover:bg-[var(--color-black)] disabled:bg-[var(--color-main-disable)];
   }
 
   .button-main-outline {
@@ -72,15 +73,19 @@ body {
     @apply flex gap-2 justify-center items-center text-[var(--color-white)] bg-[var(--color-black)] hover:bg-[var(--color-white)] hover:text-[var(--color-black)] transition rounded-full px-6 py-2 w-fit h-fit;
   }
 
+  .button-icon {
+    @apply p-2 rounded-full hover:bg-[var(--color-main)] cursor-pointer w-fit transition-all;
+  }
+
+  .button-icon:hover svg {
+    @apply text-[var(--color-white)];
+  }
+
   input {
     @apply text-neutral-950 focus:outline-none px-2 py-1 rounded;
   }
 
   label {
     @apply flex items-center;
-  }
-
-  .button-icon {
-    @apply p-2 rounded-full hover:bg-neutral-600 cursor-pointer w-fit;
   }
 }

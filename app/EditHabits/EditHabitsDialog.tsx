@@ -64,7 +64,8 @@ function DialogContent() {
           <Cross1Icon />
         </div>
       </Dialog.Close>
-      <Dialog.Title>Edit habits</Dialog.Title>
+      <Dialog.Title className="hidden">Edit habits</Dialog.Title>
+      <Dialog.Description className="hidden">Edit habits</Dialog.Description>
       <div className="flex flex-col items-start gap-3">
         {habits.map((habit, index) => (
           <div
@@ -85,7 +86,7 @@ function DialogContent() {
                 }}
               >
                 <div className="button-icon">
-                  <TrashIcon className="icon" />
+                  <TrashIcon />
                 </div>
               </DeleteConfirm>
             </div>
