@@ -28,7 +28,7 @@ export default function TickedButton({
 	return (
 		<button
 			{...props}
-			className={`rounded-full w-4 h-4 ${
+			className={`h-4 w-4 rounded-full ${
 				active ? "bg-[var(--color-red)]" : "bg-[var(--color-grey)]"
 			} transition-all ${styles.button} ${
 				isAnimatingIn ? styles.animateIn : ""

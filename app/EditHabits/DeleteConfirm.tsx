@@ -22,7 +22,7 @@ export default function DeleteConfirm({
 			{open && (
 				<Dialog.Portal>
 					<Dialog.Overlay className="overlay">
-						<Dialog.Content className="flex flex-col justify-center gap-8 dialogContent">
+						<Dialog.Content className="dialogContent flex flex-col justify-center gap-8">
 							<Dialog.Title>Delete Confirmation</Dialog.Title>
 							<Dialog.Description>
 								Are you sure you want to delete &quot;{habit}&quot;? All related

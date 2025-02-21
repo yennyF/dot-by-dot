@@ -57,7 +57,7 @@ function DialogContent() {
 
 	return (
 		<Dialog.Content
-			className={`${styles.content} relative flex flex-col gap-10 w-[480px] max-h-full p-[30px] overflow-y-scroll bg-[var(--background)]`}
+			className={`${styles.content} relative flex max-h-full w-[480px] flex-col gap-10 overflow-y-scroll bg-[var(--background)] p-[30px]`}
 		>
 			<Dialog.Close>
 				<div className="button-icon">
@@ -69,7 +69,7 @@ function DialogContent() {
 				{habits.map((habit, index) => (
 					<div
 						key={index}
-						className={`${styles.habitItem} flex items-center justify-between gap-0 w-full py-1`}
+						className={`${styles.habitItem} flex w-full items-center justify-between gap-0 py-1`}
 					>
 						{habit}
 						<div
@@ -92,7 +92,7 @@ function DialogContent() {
 					</div>
 				))}
 			</div>
-			<div className="shadow-dark fixed right-0 bottom-0 w-[480px] p-[30px] flex flex-col gap-3">
+			<div className="shadow-dark fixed bottom-0 right-0 flex w-[480px] flex-col gap-3 p-[30px]">
 				<fieldset className="flex gap-3">
 					<input
 						type="text"
