@@ -6,7 +6,6 @@ import {
   updateHabitHitory,
   updateHabits,
 } from "./api";
-import { unset } from "lodash";
 
 type ThemeType = "light" | "dark";
 
@@ -15,6 +14,7 @@ interface AppContextProps {
   toggleTheme: () => void;
   habits: string[];
   addHabit: (habit: string) => boolean;
+  renameHabit: (habit: string, newHabit: string) => boolean;
   deleteHabit: (habit: string) => boolean;
 }
 
@@ -45,28 +45,54 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
+  const renameHabit = (habit: string, newHabit: string) => {
+    if (!newHabit.length) return false;
+    if (habits.includes(newHabit)) return false;
+
+    const index = habits.indexOf(habit);
+    if (index < 0) return false;
+
+    const newHabits = [...habits];
+    newHabits.splice(index, 1, newHabit);
+    renameHabitHistory(habit, newHabit);
+    updateHabits(newHabits);
+    setHabits(newHabits);
+    return true;
+  };
+
   const deleteHabit = (habit: string) => {
     const index = habits.indexOf(habit);
     if (index < 0) return false;
 
     const newHabits = [...habits];
     newHabits.splice(index, 1);
-    setHabits(newHabits);
-    updateHabits(newHabits);
     deleteHabitHistory(habit);
+    updateHabits(newHabits);
+    setHabits(newHabits);
     return true;
+  };
+
+  const renameHabitHistory = (habit: string, newHabit: string) => {
+    const habitHistory = getHabitHistory();
+    for (const date in habitHistory) {
+      habitHistory[date][newHabit] = habitHistory[date][habit];
+      delete habitHistory[date][habit];
+    }
+    updateHabitHitory(habitHistory);
   };
 
   const deleteHabitHistory = (habit: string) => {
     const habitHistory = getHabitHistory();
     for (const date in habitHistory) {
-      unset(habitHistory[date], habit);
+      delete habitHistory[date][habit];
     }
-    updateHabitHitory({ ...habitHistory });
+    updateHabitHitory(habitHistory);
   };
 
   return (
-    <AppContext value={{ theme, toggleTheme, habits, addHabit, deleteHabit }}>
+    <AppContext
+      value={{ theme, toggleTheme, habits, addHabit, renameHabit, deleteHabit }}
+    >
       {children}
     </AppContext>
   );

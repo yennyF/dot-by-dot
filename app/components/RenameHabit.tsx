@@ -4,11 +4,12 @@ import { Dialog } from "radix-ui";
 import { ChangeEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface AddHabitProps {
+interface RenameHabitProps {
   children: React.ReactNode;
+  habit: string;
 }
 
-export default function AddHabit({ children }: AddHabitProps) {
+export default function RenameHabit({ children, habit }: RenameHabitProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -17,7 +18,7 @@ export default function AddHabit({ children }: AddHabitProps) {
       {open && (
         <Dialog.Portal>
           <Dialog.Overlay className="overlay">
-            <Content setOpen={setOpen} />
+            <Content setOpen={setOpen} habit={habit} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}
@@ -27,46 +28,47 @@ export default function AddHabit({ children }: AddHabitProps) {
 
 interface ContentProps {
   setOpen: (open: boolean) => void;
+  habit: string;
 }
 
-function Content({ setOpen }: ContentProps) {
+function Content({ setOpen, habit }: ContentProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("DialogContent must be used within a AppProvider");
   }
-  const { habits, addHabit } = appContext;
+  const { habits, renameHabit } = appContext;
 
-  const [habitInput, setHabitInput] = useState("");
+  const [habitInput, setHabitInput] = useState(habit);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (habits.includes(habitInput)) {
+    if (habits.includes(habitInput) && habitInput !== habit) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [habitInput, habits]);
+  }, [habit, habitInput, habits]);
 
   const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setHabitInput(event.target.value);
   };
 
   const handleSaveClick = () => {
-    if (addHabit(habitInput)) {
+    if (renameHabit(habit, habitInput)) {
       setOpen(false);
     }
   };
 
   return (
     <Dialog.Content className="dialog-content flex flex-col justify-center gap-8">
-      <Dialog.Title className="hidden">Add Habit</Dialog.Title>
-      <Dialog.Description className="">Enter a new habit</Dialog.Description>
+      <Dialog.Title className="hidden">Rename Habit</Dialog.Title>
+      <Dialog.Description className="">Rename the habit</Dialog.Description>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={habitInput}
           onChange={handleHabitInputChange}
-          placeholder="New habit"
+          placeholder={habit}
           className="basis-full"
         ></input>
         <div className="text-xs text-red-500">
@@ -80,7 +82,9 @@ function Content({ setOpen }: ContentProps) {
         <button
           className="button-main flex-none"
           onClick={handleSaveClick}
-          disabled={habitInput.length === 0 || isDuplicated}
+          disabled={
+            habitInput.length === 0 || isDuplicated || habitInput === habit
+          }
         >
           Save
         </button>

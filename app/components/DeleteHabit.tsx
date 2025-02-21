@@ -3,17 +3,17 @@
 import { Dialog } from "radix-ui";
 import { useState } from "react";
 
-interface DeleteConfirmationProps {
+interface DeleteHabitProps {
   children: React.ReactNode;
   habit: string;
   onConfirm: () => void;
 }
 
-export default function DeleteConfirm({
+export default function DeleteHabit({
   children,
   habit,
   onConfirm,
-}: DeleteConfirmationProps) {
+}: DeleteHabitProps) {
   const [open, setOpen] = useState(false);
 
   return (

@@ -40,7 +40,7 @@ export default function CalendarList() {
 
   useEffect(() => {
     setHabitHistory(getHabitHistory());
-  }, []);
+  }, [habits]);
 
   const toogleHabit = (date: Date, habit: string) => {
     const dateString = date.toDateString();
