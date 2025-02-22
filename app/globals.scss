@@ -35,6 +35,20 @@ input {
   @apply rounded px-2 py-1 text-[var(--grey-9)] focus:outline-none;
 }
 
+[draggable="true"] {
+  /* To prevent user selecting inside the drag source */
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Basic drag states */
+.draggable {
+  @apply cursor-grab active:cursor-grabbing hover:cursor-grab focus:cursor-grab;
+}
+
+
 .overlay {
   background: rgba(0 0 0 / 0.5);
   position: fixed;

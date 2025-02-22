@@ -15,6 +15,7 @@ interface AppContextProps {
   habits: string[];
   addHabit: (habit: string) => boolean;
   renameHabit: (habit: string, newHabit: string) => boolean;
+  moveHabit: (selectedIndex: number, targetIndex: number) => void;
   deleteHabit: (habit: string) => boolean;
 }
 
@@ -60,6 +61,13 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
+  const moveHabit = (selectedIndex: number, targetIndex: number) => {
+    const newHabits = [...habits];
+    const [draggedItem] = newHabits.splice(selectedIndex, 1);
+    newHabits.splice(targetIndex, 0, draggedItem);
+    setHabits(newHabits);
+  };
+
   const deleteHabit = (habit: string) => {
     const index = habits.indexOf(habit);
     if (index < 0) return false;
@@ -91,7 +99,15 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AppContext
-      value={{ theme, toggleTheme, habits, addHabit, renameHabit, deleteHabit }}
+      value={{
+        theme,
+        toggleTheme,
+        habits,
+        addHabit,
+        renameHabit,
+        moveHabit,
+        deleteHabit,
+      }}
     >
       {children}
     </AppContext>

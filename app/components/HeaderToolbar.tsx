@@ -10,7 +10,7 @@ const Trigger = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  &:hover .buttonWrapper {
+  &:hover:not(.dragging) .buttonWrapper {
     opacity: 1; /* Show the button on hover */
   }
 `;
@@ -26,21 +26,26 @@ const ButtonWrapper = styled.div`
 interface HeaderToolbarProps {
   children: ReactNode;
   habit: string;
+  dragging: boolean;
 }
 
-export default function HeaderToolbar({ children, habit }: HeaderToolbarProps) {
+export default function HeaderToolbar({
+  children,
+  habit,
+  dragging,
+}: HeaderToolbarProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("DialogContent must be used within a AppProvider");
   }
   const { deleteHabit } = appContext;
 
-  const handleDeleteHabitDialogClick = (habit: string) => {
+  const handleDeleteConfirm = () => {
     deleteHabit(habit);
   };
 
   return (
-    <Trigger>
+    <Trigger className={dragging ? "dragging" : ""}>
       {children}
       <ButtonWrapper className="buttonWrapper">
         <RenameHabitDialog habit={habit}>
@@ -48,12 +53,7 @@ export default function HeaderToolbar({ children, habit }: HeaderToolbarProps) {
             <Pencil1Icon />
           </button>
         </RenameHabitDialog>
-        <DeleteHabitDialog
-          habit={habit}
-          onConfirm={() => {
-            handleDeleteHabitDialogClick(habit);
-          }}
-        >
+        <DeleteHabitDialog habit={habit} onConfirm={handleDeleteConfirm}>
           <button className="button-icon">
             <TrashIcon />
           </button>

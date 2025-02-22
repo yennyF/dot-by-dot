@@ -20,8 +20,8 @@ import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import HeaderToolbar from "./HeaderToolbar";
 import AddHabitDialog from "./AddHabitDialog";
+import Header from "./Header";
 
 const dayAfter = 6;
 
@@ -73,25 +73,7 @@ export default function CalendarList() {
       </div>
 
       <div className="flex flex-col items-center">
-        {/* Header */}
-        <div
-          className="sticky top-16 z-10 grid h-16 bg-[var(--background)]"
-          style={{
-            gridTemplateColumns: `100px 100px repeat(${habits.length}, 110px)`,
-          }}
-        >
-          <div className="sticky left-0 bg-[var(--background)]"></div>
-          <div className="sticky left-[100px] bg-[var(--background)]"></div>
-          {habits.map((habit, index) => (
-            <HeaderToolbar key={index} habit={habit}>
-              <div className="flex items-center justify-center px-1">
-                <p className="overflow-hidden text-ellipsis text-nowrap text-center">
-                  {habit}
-                </p>
-              </div>
-            </HeaderToolbar>
-          ))}
-        </div>
+        <Header />
 
         {/* Body */}
         <div className="mt-16">
