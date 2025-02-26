@@ -20,7 +20,7 @@ import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import AddHabitDialog from "./AddHabitDialog";
+import AddHabitPopover from "./AddHabitPopover";
 import Header from "./Header";
 
 const dayAfter = 6;
@@ -64,12 +64,12 @@ export default function CalendarList() {
   return (
     <>
       <div className="fixed top-0 z-10 flex h-16 w-full items-center justify-end bg-[var(--background)] px-6">
-        <AddHabitDialog>
+        <AddHabitPopover>
           <button className="button-accent">
             <PlusIcon />
             Add Habit
           </button>
-        </AddHabitDialog>
+        </AddHabitPopover>
       </div>
 
       <div className="flex flex-col items-center">

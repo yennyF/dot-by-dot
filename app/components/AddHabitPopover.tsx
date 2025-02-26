@@ -1,38 +1,34 @@
 "use client";
 
-import { Dialog } from "radix-ui";
-import { ChangeEvent, use, useEffect, useState } from "react";
+import { Popover } from "radix-ui";
+import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface AddHabitDialogProps {
+interface AddHabitPopoverProps {
   children: React.ReactNode;
 }
 
-export default function AddHabitDialog({ children }: AddHabitDialogProps) {
+export default function AddHabitPopover({ children }: AddHabitPopoverProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger data-state={open ? "open" : "close"} asChild>
+        {children}
+      </Popover.Trigger>
       {open && (
-        <Dialog.Portal>
-          <Dialog.Overlay className="overlay">
-            <Content setOpen={setOpen} />
-          </Dialog.Overlay>
-        </Dialog.Portal>
+        <Popover.Portal>
+          <Content />
+        </Popover.Portal>
       )}
-    </Dialog.Root>
+    </Popover.Root>
   );
 }
 
-interface ContentProps {
-  setOpen: (open: boolean) => void;
-}
-
-function Content({ setOpen }: ContentProps) {
+function Content() {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("DialogContent must be used within a AppProvider");
+    throw new Error("PopoverContent must be used within a AppProvider");
   }
   const { habits, addHabit } = appContext;
 
@@ -53,14 +49,26 @@ function Content({ setOpen }: ContentProps) {
 
   const handleSaveClick = () => {
     if (addHabit(habitInput)) {
-      setOpen(false);
+      setHabitInput("");
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSaveClick();
     }
   };
 
   return (
-    <Dialog.Content className="dialog-content">
-      <Dialog.Title className="hidden">Add Habit</Dialog.Title>
-      <Dialog.Description className="">Enter a new habit</Dialog.Description>
+    <Popover.Content
+      className="popover-content z-20 flex w-[350px] flex-col gap-3"
+      side="bottom"
+      sideOffset={10}
+      align="end"
+      alignOffset={0}
+      onKeyDown={handleKeyDown}
+    >
+      <p className="">Enter a new habit</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
@@ -74,9 +82,9 @@ function Content({ setOpen }: ContentProps) {
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
-        <Dialog.Close>
+        <Popover.Close>
           <div className="button-cancel">Cancel</div>
-        </Dialog.Close>
+        </Popover.Close>
         <button
           className="button-accept flex-none"
           onClick={handleSaveClick}
@@ -85,6 +93,7 @@ function Content({ setOpen }: ContentProps) {
           Add
         </button>
       </div>
-    </Dialog.Content>
+      <Popover.Arrow className="arrow" />
+    </Popover.Content>
   );
 }

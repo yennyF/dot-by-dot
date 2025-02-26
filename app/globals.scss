@@ -86,6 +86,19 @@ input {
   gap: 25px;
 }
 
+.popover-content {
+  border-radius: 6px;
+  padding: 25px;
+  background: var(--background);
+  box-shadow:
+    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+
+  .arrow {
+    fill: var(--background);
+  }
+}
+
 .shadow-background {
   background: linear-gradient(to bottom, transparent, var(--background));
 }
@@ -97,6 +110,10 @@ input {
 
   .button-accent {
     @apply button flex gap-2 justify-center items-center text-[var(--white)] bg-[var(--accent)] transition rounded-full px-6 py-2 w-fit h-fit hover:bg-[var(--black)] disabled:bg-[var(--accent-4)];
+
+    &[data-state="open"] {
+      @apply bg-[var(--black)];
+    }
   }
 
   .button-accent-outline {
@@ -116,6 +133,14 @@ input {
 
     &:hover svg {
       @apply button text-[var(--white)];
+    }
+
+    &[data-state="open"] {
+      @apply bg-[var(--black)];
+
+      svg {
+        @apply button text-[var(--white)];
+      }
     }
   }
 }

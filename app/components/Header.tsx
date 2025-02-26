@@ -20,6 +20,7 @@ export default function Header() {
   };
 
   const handleDragEnd = (e: DragEvent) => {
+    e.preventDefault();
     setDraggedIndex(null);
     setDraggedOverIndex(null);
   };
@@ -53,7 +54,7 @@ export default function Header() {
             className={`draggable ${draggedIndex === index && "opacity-30"} ${draggedOverIndex === index && "text-[var(--accent)]"} flex w-full items-center justify-center px-1`}
             draggable="true"
             onDragStart={(e) => handleDragStart(e, index)}
-            onDragEnd={(e) => handleDragEnd()}
+            onDragEnd={(e) => handleDragEnd(e)}
             onDragOver={(e) => handleDragOver(e, index)}
             onDrop={(e) => handleDrop(e, index)}
           >

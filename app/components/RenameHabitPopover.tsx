@@ -1,31 +1,31 @@
 "use client";
 
-import { Dialog } from "radix-ui";
-import { ChangeEvent, use, useEffect, useState } from "react";
+import { Popover } from "radix-ui";
+import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface RenameHabitDialogProps {
+interface RenameHabitPopoverProps {
   children: React.ReactNode;
   habit: string;
 }
 
-export default function RenameHabitDialog({
+export default function RenameHabitPopover({
   children,
   habit,
-}: RenameHabitDialogProps) {
+}: RenameHabitPopoverProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger data-state={open ? "open" : "close"} asChild>
+        {children}
+      </Popover.Trigger>
       {open && (
-        <Dialog.Portal>
-          <Dialog.Overlay className="overlay">
-            <Content setOpen={setOpen} habit={habit} />
-          </Dialog.Overlay>
-        </Dialog.Portal>
+        <Popover.Portal>
+          <Content setOpen={setOpen} habit={habit} />
+        </Popover.Portal>
       )}
-    </Dialog.Root>
+    </Popover.Root>
   );
 }
 
@@ -62,10 +62,22 @@ function Content({ setOpen, habit }: ContentProps) {
     }
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSaveClick();
+    }
+  };
+
   return (
-    <Dialog.Content className="dialog-content">
-      <Dialog.Title className="hidden">Rename Habit</Dialog.Title>
-      <Dialog.Description className="">Rename the habit</Dialog.Description>
+    <Popover.Content
+      className="popover-content z-20 flex w-[350px] flex-col gap-3"
+      side="bottom"
+      sideOffset={10}
+      align="center"
+      alignOffset={0}
+      onKeyDown={handleKeyDown}
+    >
+      <p>Rename the habit</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
@@ -79,9 +91,9 @@ function Content({ setOpen, habit }: ContentProps) {
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
-        <Dialog.Close>
+        <Popover.Close>
           <div className="button-cancel">Cancel</div>
-        </Dialog.Close>
+        </Popover.Close>
         <button
           className="button-accept"
           onClick={handleSaveClick}
@@ -92,6 +104,7 @@ function Content({ setOpen, habit }: ContentProps) {
           Rename
         </button>
       </div>
-    </Dialog.Content>
+      <Popover.Arrow className="arrow" />
+    </Popover.Content>
   );
 }

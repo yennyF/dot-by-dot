@@ -3,15 +3,26 @@ import { ReactNode, use } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
-import RenameHabitDialog from "./RenameHabitDialog";
+import RenameHabitPopover from "./RenameHabitPopover";
 
 const Trigger = styled.div`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  &:hover:not(.dragging) .buttonWrapper {
-    opacity: 1; /* Show the button on hover */
+
+  .button-icon {
+    opacity: 0;
+
+    &[data-state="open"] {
+      opacity: 1;
+    }
+  }
+
+  &:hover:not(.dragging) {
+    .button-icon {
+      opacity: 1;
+    }
   }
 `;
 
@@ -20,7 +31,6 @@ const ButtonWrapper = styled.div`
   gap: 2px;
   position: absolute;
   top: -15px;
-  opacity: 0;
 `;
 
 interface HeaderToolbarProps {
@@ -48,11 +58,11 @@ export default function HeaderToolbar({
     <Trigger className={dragging ? "dragging" : ""}>
       {children}
       <ButtonWrapper className="buttonWrapper">
-        <RenameHabitDialog habit={habit}>
+        <RenameHabitPopover habit={habit}>
           <button className="button-icon">
             <Pencil1Icon />
           </button>
-        </RenameHabitDialog>
+        </RenameHabitPopover>
         <DeleteHabitDialog habit={habit} onConfirm={handleDeleteConfirm}>
           <button className="button-icon">
             <TrashIcon />
