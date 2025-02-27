@@ -1,23 +1,26 @@
 "use client";
 
-// import Calendar from "./Calendar";
-// import { useState } from "react";
 import CalendarList from "./components/CalendarList";
-import { AppProvider } from "./AppContext";
+import { AppContext, AppProvider } from "./AppContext";
+import CalendarGrid from "./components/CalendarGrid";
+import { use } from "react";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
-  // const [option, setOption] = useState(1);
-
   return (
-    <div>
-      {/* <div className="flex"> */}
-      {/* <button className="button-accent" onClick={() => setOption(1)}>Calendar</button>
-        <button className="button-accent"onClick={() => setOption(2)} >Calendar List</button>
-        </div>
-        {option === 1 ? <Calendar/> : <CalendarList/>} */}
-      <AppProvider>
-        <CalendarList />
-      </AppProvider>
-    </div>
+    <AppProvider>
+      <Navbar />
+      <Content />
+    </AppProvider>
   );
+}
+
+function Content() {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("Home must be used within a AppProvider");
+  }
+  const { page } = appContext;
+
+  return page === "grid" ? <CalendarGrid /> : <CalendarList />;
 }

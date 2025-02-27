@@ -28,7 +28,7 @@ export default function AddHabitPopover({ children }: AddHabitPopoverProps) {
 function Content() {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("PopoverContent must be used within a AppProvider");
+    throw new Error("Content must be used within a AppProvider");
   }
   const { habits, addHabit } = appContext;
 
@@ -62,7 +62,7 @@ function Content() {
   return (
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
-      side="bottom"
+      side="top"
       sideOffset={10}
       align="end"
       alignOffset={0}

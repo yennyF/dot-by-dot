@@ -7,7 +7,7 @@ import HeaderToolbar from "./HeaderToolbar";
 export default function Header() {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
+    throw new Error("Header must be used within a AppProvider");
   }
   const { habits, moveHabit } = appContext;
 

@@ -1,36 +1,6 @@
-import {
-  eachDayOfInterval,
-  EachDayOfIntervalResult,
-  subDays,
-  subMonths,
-} from "date-fns";
+import { eachDayOfInterval, subDays, subMonths } from "date-fns";
 
 // Fake API (temporal)
-
-export function generateRandomDaysForMonth(
-  totalDays: EachDayOfIntervalResult<
-    {
-      start: Date;
-      end: Date;
-    },
-    undefined
-  >
-) {
-  const currentDate = new Date();
-  const result: { day: number; value: boolean }[] = [];
-
-  totalDays.forEach((day) => {
-    const dayOfMonth = day.getDate();
-
-    if (day < currentDate) {
-      result.push({ day: dayOfMonth, value: Math.random() > 0.5 });
-    } else {
-      result.push({ day: dayOfMonth, value: false });
-    }
-  });
-
-  return result;
-}
 
 // Habit
 

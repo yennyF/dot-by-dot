@@ -37,7 +37,7 @@ interface ContentProps {
 function Content({ setOpen, habit }: ContentProps) {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("DialogContent must be used within a AppProvider");
+    throw new Error("Content must be used within a AppProvider");
   }
   const { habits, renameHabit } = appContext;
 

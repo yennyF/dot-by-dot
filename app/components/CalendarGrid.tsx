@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   format,
   startOfMonth,
@@ -8,16 +8,27 @@ import {
   addMonths,
   subMonths,
   eachDayOfInterval,
-  isSameMonth,
-  isToday,
   startOfWeek,
   endOfWeek,
-  isFuture,
+  isToday,
 } from "date-fns";
-import { generateRandomDaysForMonth } from "../api";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { getHabitHistory, HabitHistoryType } from "../api";
+import { AppContext } from "../AppContext";
 
-export default function Calendar() {
+export default function CalendarGrid() {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarGrid must be used within a AppProvider");
+  }
+  const { habits } = appContext;
+
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
+
+  useEffect(() => {
+    setHabitHistory(getHabitHistory());
+  }, []);
 
   const startOfCurrentMonth = startOfMonth(currentDate);
   const endOfCurrentMonth = endOfMonth(currentDate);
@@ -39,14 +50,13 @@ export default function Calendar() {
 
   const monthName = format(currentDate, "MMMM yyyy");
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
-  const track = generateRandomDaysForMonth(totalDays);
 
   return (
     <div className="calendar flex h-screen w-screen flex-col items-center justify-center">
       <div className="h-[550px] w-fit">
         <div className="calendar-header flex h-20 w-full items-center justify-between gap-5">
           <h2>{monthName}</h2>
-          <div className="flex gap-10">
+          <div className="flex gap-3">
             <button
               onClick={() => {
                 setCurrentDate(new Date());
@@ -54,8 +64,12 @@ export default function Calendar() {
             >
               Today
             </button>
-            <button onClick={previousMonth}>{"<"}</button>
-            <button onClick={nextMonth}>{">"}</button>
+            <button className="button-icon" onClick={previousMonth}>
+              <ChevronLeftIcon />
+            </button>
+            <button className="button-icon" onClick={nextMonth}>
+              <ChevronRightIcon />
+            </button>
           </div>
         </div>
 
@@ -77,14 +91,28 @@ export default function Calendar() {
           className="grid grid-cols-7 gap-3 text-neutral-400"
           style={{ gridTemplateColumns: "repeat(7, min-content)" }}
         >
-          {totalDays.map((day, index) => (
-            <div
-              key={index}
-              className={`calendar-day grid h-14 w-14 place-items-center rounded-full ${isToday(day) ? "today" : ""} ${isSameMonth(day, currentDate) ? "" : "other-month"} ${isFuture(day) ? "text-neutral-700" : ""} ${track[index]?.value ? "bg-neutral-800" : ""} `}
-            >
-              <div>{format(day, "d")}</div>
-            </div>
-          ))}
+          {totalDays.map((day, index) => {
+            const record = habitHistory[day.toDateString()] || {};
+            const tickedHabits = habits.filter(
+              (habit) => record[habit] === true
+            );
+            const percentage = tickedHabits.length / habits.length;
+
+            return (
+              <div
+                key={index}
+                className={`calendar-day relative grid h-14 w-14 place-items-center rounded-full text-black ${isToday(day) ? "outline" : ""}`}
+              >
+                <div
+                  className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)]`}
+                  style={{
+                    opacity: percentage,
+                  }}
+                ></div>
+                {format(day, "d")}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -46,7 +46,7 @@ export default function HeaderToolbar({
 }: HeaderToolbarProps) {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("DialogContent must be used within a AppProvider");
+    throw new Error("HeaderToolbar must be used within a AppProvider");
   }
   const { deleteHabit } = appContext;
 

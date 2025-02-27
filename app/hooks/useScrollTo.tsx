@@ -28,9 +28,9 @@ const useScrollTo = (
     const animate = () => {
       try {
         ref.current?.scrollIntoView({
-          behavior: behavior,
-          block: block,
-          inline: inline,
+          behavior,
+          block,
+          inline,
         });
       } catch (error) {
         // Fallback to simpler scroll if scrollIntoView fails

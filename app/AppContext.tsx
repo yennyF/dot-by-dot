@@ -12,6 +12,8 @@ type ThemeType = "light" | "dark";
 interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
+  page: "grid" | "list";
+  setPage: (page: "grid" | "list") => void;
   habits: string[];
   addHabit: (habit: string) => boolean;
   renameHabit: (habit: string, newHabit: string) => boolean;
@@ -23,6 +25,7 @@ const AppContext = createContext({} as AppContextProps);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
+  const [page, setPage] = useState<"grid" | "list">("grid");
   const [habits, setHabits] = useState<string[]>([]);
 
   useEffect(() => {
@@ -102,6 +105,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
       value={{
         theme,
         toggleTheme,
+        page,
+        setPage,
         habits,
         addHabit,
         renameHabit,
