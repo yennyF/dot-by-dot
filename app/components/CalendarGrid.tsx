@@ -40,6 +40,10 @@ export default function CalendarGrid() {
     end: endOfWeekDate,
   });
 
+  const today = () => {
+    setCurrentDate(new Date());
+  };
+
   const previousMonth = () => {
     setCurrentDate(subMonths(currentDate, 1));
   };
@@ -52,18 +56,12 @@ export default function CalendarGrid() {
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
   return (
-    <div className="calendar flex h-screen w-screen flex-col items-center justify-center">
+    <div className="flex h-screen w-screen flex-col items-center justify-center">
       <div className="h-[550px] w-fit">
-        <div className="calendar-header flex h-20 w-full items-center justify-between gap-5">
-          <h2>{monthName}</h2>
+        <div className="flex h-20 w-full items-center justify-between gap-5">
+          <h2 className="font-bold">{monthName}</h2>
           <div className="flex gap-3">
-            <button
-              onClick={() => {
-                setCurrentDate(new Date());
-              }}
-            >
-              Today
-            </button>
+            <button onClick={today}>Today</button>
             <button className="button-icon" onClick={previousMonth}>
               <ChevronLeftIcon />
             </button>
