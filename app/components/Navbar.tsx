@@ -18,7 +18,6 @@ export default function Navbar() {
       <Switch.Root
         className="relative h-[25px] w-[42px] cursor-default rounded-full bg-black outline-none data-[state=checked]:bg-black"
         id="airplane-mode"
-        style={{ "-webkit-tap-highlight-color": "rgba(0, 0, 0, 0)" }}
         checked={page === "list"}
         onCheckedChange={(checked: boolean) =>
           setPage(checked ? "list" : "grid")

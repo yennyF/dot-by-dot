@@ -32,24 +32,24 @@ function Content() {
   }
   const { habits, addHabit } = appContext;
 
-  const [habitInput, setHabitInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (habits.includes(habitInput)) {
+    if (habits.some((h) => h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [habitInput, habits]);
+  }, [nameInput, habits]);
 
   const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setHabitInput(event.target.value);
+    setNameInput(event.target.value);
   };
 
-  const handleSaveClick = () => {
-    if (addHabit(habitInput)) {
-      setHabitInput("");
+  const handleSaveClick = async () => {
+    if (await addHabit(nameInput)) {
+      setNameInput("");
     }
   };
 
@@ -72,7 +72,7 @@ function Content() {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={habitInput}
+          value={nameInput}
           onChange={handleHabitInputChange}
           placeholder="New habit"
           className="basis-full"
@@ -88,7 +88,7 @@ function Content() {
         <button
           className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={habitInput.length === 0 || isDuplicated}
+          disabled={nameInput.length === 0 || isDuplicated}
         >
           Add
         </button>

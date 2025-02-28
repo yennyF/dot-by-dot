@@ -27,7 +27,9 @@ export default function CalendarGrid() {
   const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
 
   useEffect(() => {
-    setHabitHistory(getHabitHistory());
+    (async () => {
+      setHabitHistory(await getHabitHistory());
+    })();
   }, []);
 
   const startOfCurrentMonth = startOfMonth(currentDate);
@@ -92,7 +94,7 @@ export default function CalendarGrid() {
           {totalDays.map((day, index) => {
             const record = habitHistory[day.toDateString()] || {};
             const tickedHabits = habits.filter(
-              (habit) => record[habit] === true
+              (habit) => record.habits?.[habit.id] === true
             );
             const percentage = tickedHabits.length / habits.length;
 

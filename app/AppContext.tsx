@@ -1,11 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
-import {
-  getHabitHistory,
-  initHabitHistory,
-  initHabits,
-  updateHabitHitory,
-  updateHabits,
-} from "./api";
+import * as API from "./api";
+import { Habit } from "./db";
 
 type ThemeType = "light" | "dark";
 
@@ -14,11 +9,11 @@ interface AppContextProps {
   toggleTheme: () => void;
   page: "grid" | "list";
   setPage: (page: "grid" | "list") => void;
-  habits: string[];
-  addHabit: (habit: string) => boolean;
-  renameHabit: (habit: string, newHabit: string) => boolean;
+  habits: Habit[];
+  addHabit: (habit: string) => Promise<boolean>;
+  renameHabit: (id: number, newName: string) => Promise<boolean>;
   moveHabit: (selectedIndex: number, targetIndex: number) => void;
-  deleteHabit: (habit: string) => boolean;
+  deleteHabit: (id: number) => Promise<boolean>;
 }
 
 const AppContext = createContext({} as AppContextProps);
@@ -26,78 +21,79 @@ const AppContext = createContext({} as AppContextProps);
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [page, setPage] = useState<"grid" | "list">("grid");
-  const [habits, setHabits] = useState<string[]>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
-    const habits = initHabits();
-    setHabits(habits);
-
-    initHabitHistory(habits);
+    (async () => {
+      // await API.initHabits();
+      // await API.initTrack();
+      const habits = await API.getHabit();
+      setHabits(habits);
+    })();
   }, []);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const addHabit = (habit: string) => {
-    if (!habit.length) return false;
-    if (habits.includes(habit)) return false;
+  const addHabit = async (name: string) => {
+    if (!name.length) return false;
+    if (habits.some((h) => h.name === name)) return false;
 
-    const newHabits = [...habits, habit];
-    setHabits(newHabits);
-    updateHabits(newHabits);
+    try {
+      const habit = await API.addHabit(name);
+      const newHabits = [...habits, habit];
+      setHabits(newHabits);
+    } catch (error) {
+      console.error("Error adding habit:", error);
+      return false;
+    }
+
     return true;
   };
 
-  const renameHabit = (habit: string, newHabit: string) => {
-    if (!newHabit.length) return false;
-    if (habits.includes(newHabit)) return false;
+  const renameHabit = async (id: number, newName: string) => {
+    if (!newName.length) return false;
+    if (habits.some((h) => id !== h.id && h.name === newName)) return false;
 
-    const index = habits.indexOf(habit);
+    const index = habits.findIndex((h) => h.id === id);
     if (index < 0) return false;
 
-    const newHabits = [...habits];
-    newHabits.splice(index, 1, newHabit);
-    renameHabitHistory(habit, newHabit);
-    updateHabits(newHabits);
-    setHabits(newHabits);
+    try {
+      const habit = await API.updateHabit(id, newName);
+      const newHabits = [...habits];
+      newHabits.splice(index, 1, habit);
+      setHabits(newHabits);
+    } catch (error) {
+      console.error("Error renaming habit:", error);
+      return false;
+    }
+
     return true;
   };
 
   const moveHabit = (selectedIndex: number, targetIndex: number) => {
-    const newHabits = [...habits];
-    const [draggedItem] = newHabits.splice(selectedIndex, 1);
-    newHabits.splice(targetIndex, 0, draggedItem);
-    setHabits(newHabits);
+    // const newHabits = [...habits];
+    // const [draggedItem] = newHabits.splice(selectedIndex, 1);
+    // newHabits.splice(targetIndex, 0, draggedItem);
+    // setHabits(newHabits);
   };
 
-  const deleteHabit = (habit: string) => {
-    const index = habits.indexOf(habit);
+  const deleteHabit = async (id: number) => {
+    const index = habits.findIndex((h) => h.id === id);
     if (index < 0) return false;
 
-    const newHabits = [...habits];
-    newHabits.splice(index, 1);
-    deleteHabitHistory(habit);
-    updateHabits(newHabits);
-    setHabits(newHabits);
+    try {
+      await API.deleteHabit(id);
+      const newHabits = [...habits];
+      newHabits.splice(index, 1);
+      setHabits(newHabits);
+    } catch (error) {
+      console.error("Error deleting habit:", error);
+      return false;
+    }
+
     return true;
-  };
-
-  const renameHabitHistory = (habit: string, newHabit: string) => {
-    const habitHistory = getHabitHistory();
-    for (const date in habitHistory) {
-      habitHistory[date][newHabit] = habitHistory[date][habit];
-      delete habitHistory[date][habit];
-    }
-    updateHabitHitory(habitHistory);
-  };
-
-  const deleteHabitHistory = (habit: string) => {
-    const habitHistory = getHabitHistory();
-    for (const date in habitHistory) {
-      delete habitHistory[date][habit];
-    }
-    updateHabitHitory(habitHistory);
   };
 
   return (

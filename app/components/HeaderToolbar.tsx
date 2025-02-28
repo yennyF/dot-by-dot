@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
 import RenameHabitPopover from "./RenameHabitPopover";
+import { Habit } from "../db";
 
 const Trigger = styled.div`
   position: relative;
@@ -35,7 +36,7 @@ const ButtonWrapper = styled.div`
 
 interface HeaderToolbarProps {
   children: ReactNode;
-  habit: string;
+  habit: Habit;
   dragging: boolean;
 }
 
@@ -50,8 +51,8 @@ export default function HeaderToolbar({
   }
   const { deleteHabit } = appContext;
 
-  const handleDeleteConfirm = () => {
-    deleteHabit(habit);
+  const handleDeleteConfirm = async () => {
+    await deleteHabit(habit.id);
   };
 
   return (

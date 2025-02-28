@@ -22,5 +22,6 @@ function Content() {
   }
   const { page } = appContext;
 
-  return page === "grid" ? <CalendarGrid /> : <CalendarList />;
+  // return page === "grid" ? <CalendarGrid /> : <CalendarList />;
+  return <CalendarList />;
 }

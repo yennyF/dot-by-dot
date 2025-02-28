@@ -13,7 +13,7 @@ import {
   startOfMonth,
   isBefore,
 } from "date-fns";
-import { getHabitHistory, HabitHistoryType, updateHabitHitory } from "../api";
+import { getHabitHistory, HabitHistoryType } from "../api";
 import useScrollTo from "../hooks/useScrollTo";
 import useOnScreen from "../hooks/useOnScreen";
 import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
@@ -39,20 +39,19 @@ export default function CalendarList() {
   const isVisible = useOnScreen(scrollTarget);
 
   useEffect(() => {
-    setHabitHistory(getHabitHistory());
+    // (async () => {
+    //   setHabitHistory(await getHabitHistory());
+    // })();
   }, [habits]);
 
   const toogleHabit = (date: Date, habit: string) => {
-    const dateString = date.toDateString();
-
-    if (!habitHistory[dateString]) {
-      habitHistory[dateString] = {};
-    }
-
-    const value: boolean = habitHistory[dateString][habit] ?? false;
-    habitHistory[dateString][habit] = !value;
-    setHabitHistory({ ...habitHistory });
-    updateHabitHitory(habitHistory);
+    // const dateString = date.toDateString();
+    // if (!habitHistory[dateString]) {
+    //   habitHistory[dateString] = {};
+    // }
+    // const value: boolean = habitHistory[dateString][habit] ?? false;
+    // habitHistory[dateString][habit] = !value;
+    // setHabitHistory({ ...habitHistory });
   };
 
   const currentDate = new Date();
@@ -96,7 +95,7 @@ export default function CalendarList() {
                 {/* Other Columns */}
                 <div>
                   {totalDays.map((day, index) => {
-                    const track = habitHistory[day.toDateString()];
+                    const track = habitHistory[day.toDateString()] || {};
                     const istoday = isToday(day);
                     return (
                       <div key={index}>
@@ -125,13 +124,13 @@ export default function CalendarList() {
                           {/* Other Columns */}
                           {habits.map((habit) => (
                             <div
-                              key={habit}
+                              key={habit.id}
                               className="grid place-items-center"
                             >
                               {isFuture(day) ? undefined : (
                                 <TickedButton
-                                  active={track?.[habit] === true}
-                                  onClick={() => toogleHabit(day, habit)}
+                                  active={track.habits?.[habit.id] === true}
+                                  onClick={() => toogleHabit(day, habit.name)}
                                 />
                               )}
                             </div>

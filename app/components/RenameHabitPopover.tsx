@@ -3,10 +3,11 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
+import { Habit } from "../db";
 
 interface RenameHabitPopoverProps {
   children: React.ReactNode;
-  habit: string;
+  habit: Habit;
 }
 
 export default function RenameHabitPopover({
@@ -31,7 +32,7 @@ export default function RenameHabitPopover({
 
 interface ContentProps {
   setOpen: (open: boolean) => void;
-  habit: string;
+  habit: Habit;
 }
 
 function Content({ setOpen, habit }: ContentProps) {
@@ -41,23 +42,23 @@ function Content({ setOpen, habit }: ContentProps) {
   }
   const { habits, renameHabit } = appContext;
 
-  const [habitInput, setHabitInput] = useState(habit);
+  const [nameInput, setNameInput] = useState(habit.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (habits.includes(habitInput) && habitInput !== habit) {
+    if (habits.some((h) => h.id !== habit.id && h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [habit, habitInput, habits]);
+  }, [habit, nameInput, habits]);
 
   const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setHabitInput(event.target.value);
+    setNameInput(event.target.value);
   };
 
-  const handleSaveClick = () => {
-    if (renameHabit(habit, habitInput)) {
+  const handleSaveClick = async () => {
+    if (await renameHabit(habit.id, nameInput)) {
       setOpen(false);
     }
   };
@@ -81,9 +82,9 @@ function Content({ setOpen, habit }: ContentProps) {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={habitInput}
+          value={nameInput}
           onChange={handleHabitInputChange}
-          placeholder={habit}
+          placeholder={habit.name}
           className="basis-full"
         ></input>
         <div className="text-xs text-red-500">
@@ -98,7 +99,7 @@ function Content({ setOpen, habit }: ContentProps) {
           className="button-accept"
           onClick={handleSaveClick}
           disabled={
-            habitInput.length === 0 || isDuplicated || habitInput === habit
+            nameInput.length === 0 || isDuplicated || nameInput === habit.name
           }
         >
           Rename

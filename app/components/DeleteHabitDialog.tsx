@@ -2,10 +2,10 @@
 
 import { Dialog } from "radix-ui";
 import { useState } from "react";
-
+import { Habit } from "../db";
 interface DeleteHabitDialogProps {
   children: React.ReactNode;
-  habit: string;
+  habit: Habit;
   onConfirm: () => void;
 }
 
@@ -25,8 +25,8 @@ export default function DeleteHabitDialog({
             <Dialog.Content className="dialog-content">
               <Dialog.Title>Delete Confirmation</Dialog.Title>
               <Dialog.Description>
-                Are you sure you want to delete &quot;{habit}&quot;? All related
-                records will be lost.
+                Are you sure you want to delete &quot;{habit.name}&quot;? All
+                related records will be lost.
               </Dialog.Description>
               <div className="flex justify-center gap-3">
                 <Dialog.Close>
