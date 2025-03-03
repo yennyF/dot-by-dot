@@ -80,7 +80,7 @@ export default function TickedButton({
   return (
     <Button
       {...props}
-      className={`${active && "active"} h-4 w-4 rounded-full ${pulseClass ?? ""}`}
+      className={`${active === true ? "active" : ""} h-4 w-4 rounded-full ${pulseClass ?? ""}`}
       onClick={(e) => {
         setIsAnimating((isAnimating) => !isAnimating);
         onClick?.(e);

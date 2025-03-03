@@ -20,7 +20,7 @@ const AppContext = createContext({} as AppContextProps);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
-  const [page, setPage] = useState<"grid" | "list">("grid");
+  const [page, setPage] = useState<"grid" | "list">("list");
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
@@ -75,6 +75,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     // const [draggedItem] = newHabits.splice(selectedIndex, 1);
     // newHabits.splice(targetIndex, 0, draggedItem);
     // setHabits(newHabits);
+    console.log(selectedIndex, targetIndex);
   };
 
   const deleteHabit = async (id: number) => {

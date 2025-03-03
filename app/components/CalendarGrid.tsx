@@ -16,6 +16,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { getHabitTrack, GroupedHabitTrack } from "../api";
 import { AppContext } from "../AppContext";
 
+const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+
 export default function CalendarGrid() {
   const appContext = use(AppContext);
   if (!appContext) {
@@ -55,7 +57,6 @@ export default function CalendarGrid() {
   };
 
   const monthName = format(currentDate, "MMMM yyyy");
-  const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
@@ -92,7 +93,7 @@ export default function CalendarGrid() {
           style={{ gridTemplateColumns: "repeat(7, min-content)" }}
         >
           {totalDays.map((day, index) => {
-            const record = groupedHabitTrack[day.toDateString()] || {};
+            const record = groupedHabitTrack[day.toLocaleDateString()] || {};
             const tickedHabits = habits.filter(
               (habit) => record.habits?.[habit.id] === true
             );

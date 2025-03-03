@@ -44,7 +44,7 @@ export default function Header() {
     >
       <div className="sticky left-0 bg-[var(--background)]"></div>
       <div className="sticky left-[100px] bg-[var(--background)]"></div>
-      {habits.map((habit) => (
+      {habits.map((habit, index) => (
         <HeaderToolbar
           key={habit.id}
           habit={habit}
@@ -53,10 +53,10 @@ export default function Header() {
           <div
             className={`draggable ${draggedIndex === habit.id && "opacity-30"} ${draggedOverIndex === habit.id && "text-[var(--accent)]"} flex w-full items-center justify-center px-1`}
             draggable="true"
-            onDragStart={(e) => handleDragStart(e, habit.id)}
+            onDragStart={(e) => handleDragStart(e, index)}
             onDragEnd={(e) => handleDragEnd(e)}
-            onDragOver={(e) => handleDragOver(e, habit.id)}
-            onDrop={(e) => handleDrop(e, habit.id)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={(e) => handleDrop(e, index)}
           >
             <p className="overflow-hidden text-ellipsis text-nowrap text-center">
               {habit.name}

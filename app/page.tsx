@@ -3,7 +3,7 @@
 import CalendarList from "./components/CalendarList";
 import { AppContext, AppProvider } from "./AppContext";
 import CalendarGrid from "./components/CalendarGrid";
-import { use } from "react";
+import { Suspense, use } from "react";
 import Navbar from "./components/Navbar";
 
 export default function Home() {
@@ -22,6 +22,11 @@ function Content() {
   }
   const { page } = appContext;
 
-  // return page === "grid" ? <CalendarGrid /> : <CalendarList />;
-  return <CalendarList />;
+  return page === "grid" ? (
+    <CalendarGrid />
+  ) : (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CalendarList />
+    </Suspense>
+  );
 }

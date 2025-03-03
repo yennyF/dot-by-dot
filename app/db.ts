@@ -26,8 +26,8 @@ export const db = new Dexie("TickedDB") as Dexie & {
 
 db.version(dbVersion).stores({
   habits: "++id, &name",
-  tracks: "++id, date",
-  habit_track: "++id, habitId, trackId",
+  tracks: "++id, &date",
+  habit_track: "[habitId+trackId], habitId, trackId",
 });
 
 // await db.delete();

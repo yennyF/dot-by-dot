@@ -2,7 +2,7 @@ import { db, Habit, Track } from "./db";
 
 // Habit
 
-export async function getHabit() {
+export async function getHabit(): Promise<Habit[]> {
   return await db.habits.toArray();
 }
 
@@ -40,30 +40,41 @@ export type GroupedHabitTrack = Record<
 
 export async function getHabitTrack(): Promise<GroupedHabitTrack> {
   const groupedHabitTrack: GroupedHabitTrack = {};
+  const tracks = await db.tracks.toArray();
 
-  await db.tracks.each(async (track) => {
-    if (!track.id) return;
+  await Promise.all(
+    tracks.map(async (track) => {
+      const habitTracks = await db.habit_track
+        .where("trackId")
+        .equals(track.id)
+        .toArray();
 
-    const habits: Record<string, boolean> = {};
-    const habitTracks = await db.habit_track.where({ trackId: track.id });
-    await habitTracks.each((habitTrack) => {
-      habits[habitTrack.habitId] = true;
-    });
+      const habits: Record<string, boolean> = {};
+      habitTracks.forEach((habitTrack) => {
+        habits[habitTrack.habitId] = true;
+      });
 
-    groupedHabitTrack[track.date] = {
-      trackId: track.id,
-      habits,
-    };
-  });
+      groupedHabitTrack[track.date] = {
+        trackId: track.id,
+        habits,
+      };
+    })
+  );
 
   return groupedHabitTrack;
 }
 
 export async function addHabitTrack(habitId: number, trackId: number) {
-  await db.habit_track.add({ habitId, trackId });
+  const habitTrack = await db.habit_track.get([habitId, trackId]);
+  if (!habitTrack) {
+    await db.habit_track.add({ habitId, trackId });
+  }
   return { habitId, trackId };
 }
 
 export async function deleteHabitTrack(trackId: number, habitId: number) {
-  await db.habit_track.where({ habitId, trackId }).delete();
+  await db.habit_track
+    .where(["habitId", "trackId"])
+    .equals([habitId, trackId])
+    .delete();
 }
