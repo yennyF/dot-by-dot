@@ -1,30 +1,28 @@
-import Dexie, { type EntityTable } from "dexie";
+import Dexie, { EntityTable } from "dexie";
+// import { seed } from "./seed";
 
-const dbVersion = 1;
-
-interface Habit {
+export interface Habit {
   id: number;
   name: string;
 }
 
-interface Track {
+export interface Track {
   id: number;
-  date: Date;
+  date: string;
 }
 
-interface HabitTrack {
-  id: number;
+export interface HabitTrack {
   habitId: number;
   trackId: number;
 }
 
-const db = new Dexie("TickedDB") as Dexie & {
+const dbVersion = 1;
+
+export const db = new Dexie("TickedDB") as Dexie & {
   habits: EntityTable<Habit, "id">;
   tracks: EntityTable<Track, "id">;
-  habit_track: EntityTable<HabitTrack, "id">;
+  habit_track: EntityTable<HabitTrack>;
 };
-
-// await db.delete();
 
 db.version(dbVersion).stores({
   habits: "++id, &name",
@@ -32,5 +30,6 @@ db.version(dbVersion).stores({
   habit_track: "++id, habitId, trackId",
 });
 
-export type { Habit, Track, HabitTrack };
-export { db };
+// await db.delete();
+
+// await seed();

@@ -29,9 +29,16 @@ const pulseOut = keyframes`
   }
 `;
 
-const Button = styled.button<{ $active?: boolean }>`
-  animation: ${(props) => (props.$active ? pulseIn : pulseOut)} 0.25s;
+const Button = styled.button`
   background-color: var(--grey);
+
+  &.pulse-in {
+    animation: ${pulseIn} 0.25s;
+  }
+
+  &.pulse-out {
+    animation: ${pulseOut} 0.25s;
+  }
 
   &.active {
     background-color: var(--accent);
@@ -52,21 +59,28 @@ export default function TickedButton({
   onClick,
   ...props
 }: TickedButtonProps) {
-  const [isAnimating, setIsAnimating] = useState<boolean>(true);
+  const [isAnimating, setIsAnimating] = useState<boolean>();
 
   useEffect(() => {
-    if (isAnimating) {
-      setTimeout(function () {
-        setIsAnimating(false);
-      }, 500);
-    }
+    if (isAnimating === undefined) return;
+
+    const timeout = setTimeout(function () {
+      setIsAnimating(false);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+      setIsAnimating(undefined);
+    };
   }, [isAnimating]);
+
+  const pulseClass =
+    isAnimating === true ? (active ? "pulse-in" : "pulse-out") : null;
 
   return (
     <Button
-      $active={active}
       {...props}
-      className={`${active && "active"} h-4 w-4 rounded-full transition-all`}
+      className={`${active && "active"} h-4 w-4 rounded-full ${pulseClass ?? ""}`}
       onClick={(e) => {
         setIsAnimating((isAnimating) => !isAnimating);
         onClick?.(e);

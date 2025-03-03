@@ -13,7 +13,13 @@ import {
   startOfMonth,
   isBefore,
 } from "date-fns";
-import { getHabitHistory, HabitHistoryType } from "../api";
+import {
+  addHabitTrack,
+  addTrack,
+  deleteHabitTrack,
+  getHabitTrack,
+  GroupedHabitTrack,
+} from "../api";
 import useScrollTo from "../hooks/useScrollTo";
 import useOnScreen from "../hooks/useOnScreen";
 import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
@@ -32,32 +38,45 @@ export default function CalendarList() {
   }
   const { habits } = appContext;
 
-  const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
+  const [groupedHabitTrack, setHabitHistory] = useState<GroupedHabitTrack>({});
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
   const isVisible = useOnScreen(scrollTarget);
 
   useEffect(() => {
-    // (async () => {
-    //   setHabitHistory(await getHabitHistory());
-    // })();
+    (async () => {
+      setHabitHistory(await getHabitTrack());
+    })();
   }, [habits]);
 
-  const toogleHabit = (date: Date, habit: string) => {
-    // const dateString = date.toDateString();
-    // if (!habitHistory[dateString]) {
-    //   habitHistory[dateString] = {};
-    // }
-    // const value: boolean = habitHistory[dateString][habit] ?? false;
-    // habitHistory[dateString][habit] = !value;
-    // setHabitHistory({ ...habitHistory });
+  const handleTicked = async (date: Date, habitId: number) => {
+    const dateString = date.toLocaleDateString();
+
+    if (!groupedHabitTrack[dateString]) {
+      const track = await addTrack(date);
+      groupedHabitTrack[dateString] = {
+        trackId: track.id,
+        habits: {},
+      };
+    }
+
+    if (groupedHabitTrack[dateString].habits[habitId]) {
+      await deleteHabitTrack(groupedHabitTrack[dateString].trackId, habitId);
+      delete groupedHabitTrack[dateString].habits[habitId];
+    } else {
+      await addHabitTrack(groupedHabitTrack[dateString].trackId, habitId);
+      groupedHabitTrack[dateString].habits[habitId] = true;
+    }
+
+    setHabitHistory({ ...groupedHabitTrack });
   };
 
   const currentDate = new Date();
+  const endDate = addDays(currentDate, dayAfter);
   const totalMonths = eachMonthOfInterval({
-    start: subMonths(currentDate, 12),
-    end: addDays(currentDate, dayAfter),
+    start: subMonths(currentDate, 3),
+    end: endDate,
   });
 
   return (
@@ -75,14 +94,13 @@ export default function CalendarList() {
         {/* Body */}
         <div className="mt-16">
           {totalMonths.map((date, index) => {
-            let totalDays = eachDayOfInterval({
+            const totalDays = eachDayOfInterval({
               start: startOfMonth(date),
-              end: endOfMonth(date),
+              end: isBefore(endOfMonth(date), endDate)
+                ? endOfMonth(date)
+                : endDate,
             });
-            const daysAfterToday = addDays(currentDate, dayAfter);
-            totalDays = totalDays.filter((day) =>
-              isBefore(day, daysAfterToday)
-            );
+
             return (
               <div key={index} className="flex">
                 {/* First Column: Sticky */}
@@ -95,52 +113,45 @@ export default function CalendarList() {
                 {/* Other Columns */}
                 <div>
                   {totalDays.map((day, index) => {
-                    const track = habitHistory[day.toDateString()] || {};
+                    const track =
+                      groupedHabitTrack[day.toLocaleDateString()] || {};
                     const istoday = isToday(day);
+
                     return (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        className="grid"
+                        style={{
+                          gridTemplateColumns: `100px repeat(${habits.length}, 110px`,
+                        }}
+                      >
+                        {/* Second Column: Sticky */}
                         <div
-                          key={index}
-                          className="grid"
-                          style={{
-                            gridTemplateColumns: `100px repeat(${habits.length}, 110px`,
-                          }}
+                          className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-[var(--accent)]"}`}
                         >
-                          {/* Second Column: Sticky */}
-                          <div
-                            className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || istoday) && "font-bold"} ${istoday && "text-[var(--accent)]"}`}
-                          >
-                            {istoday && (
-                              <div
-                                ref={scrollTarget}
-                                // important: added the height as an offset for useScrollTo, do not delete it
-                                className="absolute -left-[51px] top-0 h-[200px] font-bold text-[var(--accent)]"
-                              >
-                                Today
-                              </div>
-                            )}
-                            {format(day, "dd")}
-                          </div>
-                          {/* Other Columns */}
-                          {habits.map((habit) => (
+                          {istoday && (
                             <div
-                              key={habit.id}
-                              className="grid place-items-center"
-                            >
-                              {isFuture(day) ? undefined : (
-                                <TickedButton
-                                  active={track.habits?.[habit.id] === true}
-                                  onClick={() => toogleHabit(day, habit.name)}
-                                />
-                              )}
-                            </div>
-                          ))}
-                          {/* Add more columns as needed */}
+                              ref={scrollTarget}
+                              // important: added the height as an offset for useScrollTo, do not delete it
+                              className="absolute top-0 h-[200px]"
+                            ></div>
+                          )}
+                          {format(day, "dd")}
                         </div>
+                        {/* Other Columns */}
+                        {habits.map((habit, index) => (
+                          <div key={index} className="grid place-items-center">
+                            {isFuture(day) ? undefined : (
+                              <TickedButton
+                                active={track.habits?.[habit.id] === true}
+                                onClick={() => handleTicked(day, habit.id)}
+                              />
+                            )}
+                          </div>
+                        ))}
                       </div>
                     );
                   })}
-                  {/* Add more rows as needed */}
                 </div>
               </div>
             );

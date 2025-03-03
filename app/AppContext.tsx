@@ -25,8 +25,6 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     (async () => {
-      // await API.initHabits();
-      // await API.initTrack();
       const habits = await API.getHabit();
       setHabits(habits);
     })();

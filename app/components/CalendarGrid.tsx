@@ -13,7 +13,7 @@ import {
   isToday,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { getHabitHistory, HabitHistoryType } from "../api";
+import { getHabitTrack, GroupedHabitTrack } from "../api";
 import { AppContext } from "../AppContext";
 
 export default function CalendarGrid() {
@@ -24,11 +24,11 @@ export default function CalendarGrid() {
   const { habits } = appContext;
 
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [habitHistory, setHabitHistory] = useState<HabitHistoryType>({});
+  const [groupedHabitTrack, setHabitHistory] = useState<GroupedHabitTrack>({});
 
   useEffect(() => {
     (async () => {
-      setHabitHistory(await getHabitHistory());
+      setHabitHistory(await getHabitTrack());
     })();
   }, []);
 
@@ -92,7 +92,7 @@ export default function CalendarGrid() {
           style={{ gridTemplateColumns: "repeat(7, min-content)" }}
         >
           {totalDays.map((day, index) => {
-            const record = habitHistory[day.toDateString()] || {};
+            const record = groupedHabitTrack[day.toDateString()] || {};
             const tickedHabits = habits.filter(
               (habit) => record.habits?.[habit.id] === true
             );
