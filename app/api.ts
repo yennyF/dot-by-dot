@@ -30,7 +30,7 @@ export async function addTrack(date: Date): Promise<Track> {
 
 // HabitTrack
 
-export type GroupedHabitTrack = Record<
+export type HabitTrack = Record<
   string,
   {
     trackId: number;
@@ -38,8 +38,8 @@ export type GroupedHabitTrack = Record<
   }
 >;
 
-export async function getHabitTrack(): Promise<GroupedHabitTrack> {
-  const groupedHabitTrack: GroupedHabitTrack = {};
+export async function getHabitTrack(): Promise<HabitTrack> {
+  const result: HabitTrack = {};
   const tracks = await db.tracks.toArray();
 
   await Promise.all(
@@ -54,25 +54,33 @@ export async function getHabitTrack(): Promise<GroupedHabitTrack> {
         habits[habitTrack.habitId] = true;
       });
 
-      groupedHabitTrack[track.date] = {
+      result[track.date] = {
         trackId: track.id,
         habits,
       };
     })
   );
 
-  return groupedHabitTrack;
+  return result;
 }
 
 export async function addHabitTrack(habitId: number, trackId: number) {
-  const habitTrack = await db.habit_track.get([habitId, trackId]);
-  if (!habitTrack) {
+  const habit = await db.habits.get(habitId);
+  if (!habit) {
+    throw new Error("Habit not found");
+  }
+  const track = await db.tracks.get(trackId);
+  if (!track) {
+    throw new Error("Track not found");
+  }
+  const habitTracks = await db.habit_track.get([habitId, trackId]);
+  if (!habitTracks) {
     await db.habit_track.add({ habitId, trackId });
   }
   return { habitId, trackId };
 }
 
-export async function deleteHabitTrack(trackId: number, habitId: number) {
+export async function deleteHabitTrack(habitId: number, trackId: number) {
   await db.habit_track
     .where(["habitId", "trackId"])
     .equals([habitId, trackId])

@@ -13,36 +13,27 @@ import {
   isToday,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { getHabitTrack, GroupedHabitTrack } from "../api";
 import { AppContext } from "../AppContext";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
 export default function CalendarGrid() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarGrid must be used within a AppProvider");
-  }
-  const { habits } = appContext;
-
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [groupedHabitTrack, setHabitHistory] = useState<GroupedHabitTrack>({});
+  const [totalDays, setTotalDays] = useState<Date[]>([]);
 
   useEffect(() => {
-    (async () => {
-      setHabitHistory(await getHabitTrack());
-    })();
-  }, []);
+    const startOfCurrentMonth = startOfMonth(currentDate);
+    const endOfCurrentMonth = endOfMonth(currentDate);
 
-  const startOfCurrentMonth = startOfMonth(currentDate);
-  const endOfCurrentMonth = endOfMonth(currentDate);
+    const startOfWeekDate = startOfWeek(startOfCurrentMonth);
+    const endOfWeekDate = endOfWeek(endOfCurrentMonth);
 
-  const startOfWeekDate = startOfWeek(startOfCurrentMonth);
-  const endOfWeekDate = endOfWeek(endOfCurrentMonth);
-  const totalDays = eachDayOfInterval({
-    start: startOfWeekDate,
-    end: endOfWeekDate,
-  });
+    const totalDays = eachDayOfInterval({
+      start: startOfWeekDate,
+      end: endOfWeekDate,
+    });
+    setTotalDays(totalDays);
+  }, [currentDate]);
 
   const today = () => {
     setCurrentDate(new Date());
@@ -56,13 +47,11 @@ export default function CalendarGrid() {
     setCurrentDate(addMonths(currentDate, 1));
   };
 
-  const monthName = format(currentDate, "MMMM yyyy");
-
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
       <div className="h-[550px] w-fit">
         <div className="flex h-20 w-full items-center justify-between gap-5">
-          <h2 className="font-bold">{monthName}</h2>
+          <h2 className="font-bold">{format(currentDate, "MMMM yyyy")}</h2>
           <div className="flex gap-3">
             <button onClick={today}>Today</button>
             <button className="button-icon" onClick={previousMonth}>
@@ -92,30 +81,43 @@ export default function CalendarGrid() {
           className="grid grid-cols-7 gap-3 text-neutral-400"
           style={{ gridTemplateColumns: "repeat(7, min-content)" }}
         >
-          {totalDays.map((day, index) => {
-            const record = groupedHabitTrack[day.toLocaleDateString()] || {};
-            const tickedHabits = habits.filter(
-              (habit) => record.habits?.[habit.id] === true
-            );
-            const percentage = tickedHabits.length / habits.length;
-
-            return (
-              <div
-                key={index}
-                className={`calendar-day relative grid h-14 w-14 place-items-center rounded-full text-black ${isToday(day) ? "outline" : ""}`}
-              >
-                <div
-                  className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)]`}
-                  style={{
-                    opacity: percentage,
-                  }}
-                ></div>
-                {format(day, "d")}
-              </div>
-            );
-          })}
+          {totalDays.map((day, index) => (
+            <DayCell key={index} date={day} />
+          ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+interface DayCellProps {
+  date: Date;
+}
+
+function DayCell({ date }: DayCellProps) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarGrid must be used within a AppProvider");
+  }
+  const { habits, habitTracks } = appContext;
+
+  const habitTrack = habitTracks[date.toLocaleDateString()] || {};
+  const habitsFiltered = habits.filter(
+    (habit) => habitTrack.habits?.[habit.id] === true
+  );
+  const percentage = habitsFiltered.length / habits.length;
+
+  return (
+    <div
+      className={`calendar-day relative grid h-14 w-14 place-items-center rounded-full text-black ${isToday(date) ? "outline" : ""}`}
+    >
+      <div
+        className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)]`}
+        style={{
+          opacity: percentage,
+        }}
+      ></div>
+      {format(date, "d")}
     </div>
   );
 }

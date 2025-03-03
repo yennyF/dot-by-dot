@@ -1,6 +1,7 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import * as API from "./api";
 import { Habit } from "./db";
+import { HabitTrack } from "./api";
 
 type ThemeType = "light" | "dark";
 
@@ -10,6 +11,8 @@ interface AppContextProps {
   page: "grid" | "list";
   setPage: (page: "grid" | "list") => void;
   habits: Habit[];
+  habitTracks: HabitTrack;
+  toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
   addHabit: (habit: string) => Promise<boolean>;
   renameHabit: (id: number, newName: string) => Promise<boolean>;
   moveHabit: (selectedIndex: number, targetIndex: number) => void;
@@ -22,12 +25,24 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [page, setPage] = useState<"grid" | "list">("list");
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [habitTracks, setHabitTracks] = useState<HabitTrack>({});
 
   useEffect(() => {
+    let mounted = true;
+
     (async () => {
       const habits = await API.getHabit();
-      setHabits(habits);
+      const habitTracks = await API.getHabitTrack();
+
+      if (mounted) {
+        setHabits(habits);
+        setHabitTracks(habitTracks);
+      }
     })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -95,6 +110,49 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
+  const toggleHabitTrack = async (date: Date, habitId: number) => {
+    const dateString = date.toLocaleDateString();
+
+    try {
+      if (!habitTracks[dateString]) {
+        const track = await API.addTrack(date);
+        setHabitTracks((prev) => ({
+          ...prev,
+          [dateString]: {
+            trackId: track.id,
+            habits: {},
+          },
+        }));
+        return toggleHabitTrack(date, habitId);
+      }
+
+      const trackId = habitTracks[dateString].trackId;
+      const isTracked = habitTracks[dateString].habits[habitId];
+
+      if (isTracked) {
+        await API.deleteHabitTrack(habitId, trackId);
+      } else {
+        await API.addHabitTrack(habitId, trackId);
+      }
+
+      setHabitTracks((prev) => ({
+        ...prev,
+        [dateString]: {
+          ...prev[dateString],
+          habits: {
+            ...prev[dateString].habits,
+            [habitId]: !isTracked,
+          },
+        },
+      }));
+
+      return true;
+    } catch (error) {
+      console.error("Error toggling habit track:", error);
+      return false;
+    }
+  };
+
   return (
     <AppContext
       value={{
@@ -103,6 +161,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         page,
         setPage,
         habits,
+        habitTracks,
+        toggleHabitTrack,
         addHabit,
         renameHabit,
         moveHabit,

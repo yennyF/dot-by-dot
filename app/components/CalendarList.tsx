@@ -13,74 +13,25 @@ import {
   startOfMonth,
   isBefore,
 } from "date-fns";
-import {
-  addHabitTrack,
-  addTrack,
-  deleteHabitTrack,
-  getHabitTrack,
-  GroupedHabitTrack,
-} from "../api";
 import useScrollTo from "../hooks/useScrollTo";
 import useOnScreen from "../hooks/useOnScreen";
-import { ArrowDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
+import { PlusIcon, ArrowDownIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
 import Header from "./Header";
-import { Habit } from "../db";
-
-const dayAfter = 6;
 
 export default function CalendarList() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { habits } = appContext;
-
-  const [groupedHabitTrack, setGroupedHabitHistory] =
-    useState<GroupedHabitTrack>();
-
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
   const isVisible = useOnScreen(scrollTarget);
 
-  useEffect(() => {
-    (async () => {
-      const habitTrack = await getHabitTrack();
-      setGroupedHabitHistory(habitTrack);
-    })();
-  }, [habits]);
-
-  const handleTicked = async (date: Date, habitId: number) => {
-    if (!groupedHabitTrack) return;
-    const dateString = date.toLocaleDateString();
-
-    if (!groupedHabitTrack[dateString]) {
-      const track = await addTrack(date);
-      groupedHabitTrack[dateString] = {
-        trackId: track.id,
-        habits: {},
-      };
-    }
-
-    if (groupedHabitTrack[dateString].habits[habitId]) {
-      await deleteHabitTrack(groupedHabitTrack[dateString].trackId, habitId);
-      delete groupedHabitTrack[dateString].habits[habitId];
-    } else {
-      await addHabitTrack(groupedHabitTrack[dateString].trackId, habitId);
-      groupedHabitTrack[dateString].habits[habitId] = true;
-    }
-
-    setGroupedHabitHistory({ ...groupedHabitTrack });
-  };
-
   const currentDate = new Date();
-  const endDate = addDays(currentDate, dayAfter);
+  const maxDate = addDays(currentDate, 6);
   const totalMonths = eachMonthOfInterval({
-    start: subMonths(currentDate, 1),
-    end: endDate,
+    start: subMonths(currentDate, 3),
+    end: maxDate,
   });
 
   return (
@@ -97,44 +48,14 @@ export default function CalendarList() {
 
         {/* Body */}
         <div className="mt-16">
-          {totalMonths.map((date, index) => {
-            const totalDays = eachDayOfInterval({
-              start: startOfMonth(date),
-              end: isBefore(endOfMonth(date), endDate)
-                ? endOfMonth(date)
-                : endDate,
-            });
-
-            return (
-              <div key={index} className="flex">
-                {/* First Column: Sticky */}
-                <div className="sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
-                  <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
-                    {format(date, "MMMM")}
-                    <span className="text-xs">{format(date, "yyyy")}</span>
-                  </div>
-                </div>
-                {/* Other Columns */}
-                <div>
-                  {totalDays.map((day, index) => {
-                    const habits2 =
-                      groupedHabitTrack?.[day.toLocaleDateString()]?.habits;
-                    // console.log(day.toLocaleDateString(), habits2);
-                    return (
-                      <Test
-                        key={index}
-                        habits={habits}
-                        habits2={habits2}
-                        day={day}
-                        scrollTarget={scrollTarget}
-                        handleTicked={handleTicked}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          {totalMonths.map((date, index) => (
+            <MonthRow
+              key={index}
+              date={date}
+              maxDate={maxDate}
+              scrollTarget={scrollTarget}
+            />
+          ))}
         </div>
       </div>
 
@@ -151,19 +72,68 @@ export default function CalendarList() {
   );
 }
 
-export function Test({
-  handleTicked,
-  habits,
-  habits2,
-  day,
-  scrollTarget,
-}: {
-  handleTicked: (date: Date, habitId: number) => Promise<void>;
-  habits: Habit[];
-  habits2: Record<number, boolean> | undefined;
+interface MonthRowProps {
+  date: Date;
+  maxDate?: Date;
+  scrollTarget: RefObject<HTMLDivElement | null>;
+}
+
+function MonthRow({ date, maxDate, scrollTarget }: MonthRowProps) {
+  const totalDays = eachDayOfInterval({
+    start: startOfMonth(date),
+    end:
+      !maxDate || isBefore(endOfMonth(date), maxDate)
+        ? endOfMonth(date)
+        : maxDate,
+  });
+
+  return (
+    <div className="flex">
+      {/* First Column: Sticky */}
+      <div className="sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
+        <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
+          {format(date, "MMMM")}
+          <span className="text-xs">{format(date, "yyyy")}</span>
+        </div>
+      </div>
+      {/* Other Columns */}
+      <div>
+        {totalDays.map((day, index) => (
+          <DayRow key={index} day={day} scrollTarget={scrollTarget} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface DayRowProps {
   day: Date;
   scrollTarget: RefObject<HTMLDivElement | null>;
-}) {
+}
+
+export function DayRow({ day, scrollTarget }: DayRowProps) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarList must be used within a AppProvider");
+  }
+  const { habits, habitTracks, toggleHabitTrack } = appContext;
+
+  const [dayTracks, setDayTracks] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const dayTracks = habitTracks[day.toLocaleDateString()]?.habits || {};
+    setDayTracks(dayTracks);
+  }, [day, habitTracks]);
+
+  const handleTicked = async (date: Date, habitId: number) => {
+    setDayTracks((prev) => ({ ...prev, [habitId]: !prev[habitId] }));
+
+    const success = await toggleHabitTrack(date, habitId);
+    if (!success) {
+      setDayTracks((prev) => ({ ...prev, [habitId]: !prev[habitId] }));
+    }
+  };
+
   return (
     <div
       className="grid"
@@ -189,7 +159,7 @@ export function Test({
         habits.map((habit, index) => (
           <div key={index} className="grid place-items-center">
             <TickedButton
-              active={habits2?.[habit.id] === true}
+              active={dayTracks[habit.id] === true}
               onClick={() => handleTicked(day, habit.id)}
             />
           </div>
