@@ -1,20 +1,6 @@
 import Dexie, { EntityTable } from "dexie";
+import { Habit, Track, HabitTrack } from "./types";
 // import { seed } from "./seed";
-
-export interface Habit {
-  id: number;
-  name: string;
-}
-
-export interface Track {
-  id: number;
-  date: string;
-}
-
-export interface HabitTrack {
-  habitId: number;
-  trackId: number;
-}
 
 const dbVersion = 1;
 
@@ -31,5 +17,4 @@ db.version(dbVersion).stores({
 });
 
 // await db.delete();
-
 // await seed();

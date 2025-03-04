@@ -1,8 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
-import * as API from "./api";
-import { Habit } from "./db";
-import { HabitTrack } from "./api";
-
+import * as Repositories from "./repositories";
+import { Habit, HabitsByDate } from "./repositories/types";
 type ThemeType = "light" | "dark";
 
 interface AppContextProps {
@@ -11,7 +9,7 @@ interface AppContextProps {
   page: "grid" | "list";
   setPage: (page: "grid" | "list") => void;
   habits: Habit[];
-  habitTracks: HabitTrack;
+  habitsByDate: HabitsByDate;
   toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
   addHabit: (habit: string) => Promise<boolean>;
   renameHabit: (id: number, newName: string) => Promise<boolean>;
@@ -25,18 +23,18 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [page, setPage] = useState<"grid" | "list">("list");
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitTracks, setHabitTracks] = useState<HabitTrack>({});
+  const [habitsByDate, setHabitsByDate] = useState<HabitsByDate>({});
 
   useEffect(() => {
     let mounted = true;
 
     (async () => {
-      const habits = await API.getHabit();
-      const habitTracks = await API.getHabitTrack();
+      const habits = await Repositories.getHabit();
+      const habitsByDate = await Repositories.getHabitsByDate();
 
       if (mounted) {
         setHabits(habits);
-        setHabitTracks(habitTracks);
+        setHabitsByDate(habitsByDate);
       }
     })();
 
@@ -54,7 +52,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     if (habits.some((h) => h.name === name)) return false;
 
     try {
-      const habit = await API.addHabit(name);
+      const habit = await Repositories.addHabit(name);
       const newHabits = [...habits, habit];
       setHabits(newHabits);
     } catch (error) {
@@ -73,7 +71,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     if (index < 0) return false;
 
     try {
-      const habit = await API.updateHabit(id, newName);
+      const habit = await Repositories.updateHabit(id, newName);
       const newHabits = [...habits];
       newHabits.splice(index, 1, habit);
       setHabits(newHabits);
@@ -98,7 +96,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     if (index < 0) return false;
 
     try {
-      await API.deleteHabit(id);
+      await Repositories.deleteHabit(id);
       const newHabits = [...habits];
       newHabits.splice(index, 1);
       setHabits(newHabits);
@@ -112,37 +110,16 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleHabitTrack = async (date: Date, habitId: number) => {
     const dateString = date.toLocaleDateString();
+    const isChecked = habitsByDate[dateString]?.[habitId] ?? false;
+
+    await Repositories.setHabitByDate(habitId, !isChecked, date);
 
     try {
-      if (!habitTracks[dateString]) {
-        const track = await API.addTrack(date);
-        setHabitTracks((prev) => ({
-          ...prev,
-          [dateString]: {
-            trackId: track.id,
-            habits: {},
-          },
-        }));
-        return toggleHabitTrack(date, habitId);
-      }
-
-      const trackId = habitTracks[dateString].trackId;
-      const isTracked = habitTracks[dateString].habits[habitId];
-
-      if (isTracked) {
-        await API.deleteHabitTrack(habitId, trackId);
-      } else {
-        await API.addHabitTrack(habitId, trackId);
-      }
-
-      setHabitTracks((prev) => ({
+      setHabitsByDate((prev) => ({
         ...prev,
         [dateString]: {
           ...prev[dateString],
-          habits: {
-            ...prev[dateString].habits,
-            [habitId]: !isTracked,
-          },
+          [habitId]: !isChecked,
         },
       }));
 
@@ -161,7 +138,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         page,
         setPage,
         habits,
-        habitTracks,
+        habitsByDate,
         toggleHabitTrack,
         addHabit,
         renameHabit,

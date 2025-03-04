@@ -116,14 +116,14 @@ export function DayRow({ day, scrollTarget }: DayRowProps) {
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { habits, habitTracks, toggleHabitTrack } = appContext;
+  const { habits, habitsByDate, toggleHabitTrack } = appContext;
 
   const [dayTracks, setDayTracks] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    const dayTracks = habitTracks[day.toLocaleDateString()]?.habits || {};
+    const dayTracks = habitsByDate[day.toLocaleDateString()] || {};
     setDayTracks(dayTracks);
-  }, [day, habitTracks]);
+  }, [day, habitsByDate]);
 
   const handleTicked = async (date: Date, habitId: number) => {
     setDayTracks((prev) => ({ ...prev, [habitId]: !prev[habitId] }));

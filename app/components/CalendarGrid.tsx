@@ -99,11 +99,11 @@ function DayCell({ date }: DayCellProps) {
   if (!appContext) {
     throw new Error("CalendarGrid must be used within a AppProvider");
   }
-  const { habits, habitTracks } = appContext;
+  const { habits, habitsByDate } = appContext;
 
-  const habitTrack = habitTracks[date.toLocaleDateString()] || {};
+  const habitTrack = habitsByDate[date.toLocaleDateString()] || {};
   const habitsFiltered = habits.filter(
-    (habit) => habitTrack.habits?.[habit.id] === true
+    (habit) => habitTrack[habit.id] === true
   );
   const percentage = habitsFiltered.length / habits.length;
 
