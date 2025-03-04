@@ -3,8 +3,7 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
-import { Habit } from "../repositories/db";
-
+import { Habit } from "../repositories";
 interface RenameHabitPopoverProps {
   children: React.ReactNode;
   habit: Habit;

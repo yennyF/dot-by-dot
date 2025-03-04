@@ -2,7 +2,7 @@
 
 import { Dialog } from "radix-ui";
 import { useState } from "react";
-import { Habit } from "../repositories/db";
+import { Habit } from "../repositories";
 
 interface DeleteHabitDialogProps {
   children: React.ReactNode;

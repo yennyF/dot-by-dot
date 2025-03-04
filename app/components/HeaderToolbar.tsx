@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
 import RenameHabitPopover from "./RenameHabitPopover";
-import { Habit } from "../repositories/db";
+import { Habit } from "../repositories";
 
 const Trigger = styled.div`
   position: relative;
