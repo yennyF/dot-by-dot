@@ -30,7 +30,7 @@ export default function CalendarList() {
   const currentDate = new Date();
   const maxDate = addDays(currentDate, 6);
   const totalMonths = eachMonthOfInterval({
-    start: subMonths(currentDate, 3),
+    start: subMonths(currentDate, 12),
     end: maxDate,
   });
 
