@@ -43,11 +43,11 @@ export default function CalendarList() {
         </button>
       </AddHabitPopover>
 
-      <div className="flex flex-col items-center">
+      <div className="calendar flex flex-col items-center">
         <Header />
 
         {/* Body */}
-        <div className="mt-16">
+        <div className="calendar-body mt-16">
           {totalMonths.map((date, index) => (
             <MonthRow
               key={index}
@@ -88,16 +88,16 @@ function MonthRow({ date, maxDate, scrollTarget }: MonthRowProps) {
   });
 
   return (
-    <div className="flex">
+    <div className="month-row flex">
       {/* First Column: Sticky */}
-      <div className="sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
+      <div className="month-header sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
         <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
           {format(date, "MMMM")}
           <span className="text-xs">{format(date, "yyyy")}</span>
         </div>
       </div>
       {/* Other Columns */}
-      <div>
+      <div className="month-body">
         {totalDays.map((day, index) => (
           <DayRow key={index} day={day} scrollTarget={scrollTarget} />
         ))}
@@ -136,14 +136,14 @@ export function DayRow({ day, scrollTarget }: DayRowProps) {
 
   return (
     <div
-      className="grid"
+      className="day-row grid"
       style={{
-        gridTemplateColumns: `100px repeat(${habits.length}, 110px`,
+        gridTemplateColumns: `100px repeat(${habits?.length || 0}, 110px)`,
       }}
     >
       {/* Second Column: Sticky */}
       <div
-        className={`sticky left-[100px] grid place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || isToday(day)) && "font-bold"} ${isToday(day) && "text-[var(--accent)]"}`}
+        className={`day-header sticky left-[100px] grid w-[100px] place-items-center bg-[var(--background)] ${(isFirstDayOfMonth(day) || isToday(day)) && "font-bold"} ${isToday(day) && "text-[var(--accent)]"}`}
       >
         {isToday(day) && (
           <div
@@ -156,8 +156,8 @@ export function DayRow({ day, scrollTarget }: DayRowProps) {
       </div>
       {/* Other Columns */}
       {!isFuture(day) &&
-        habits.map((habit, index) => (
-          <div key={index} className="grid place-items-center">
+        habits?.map((habit, index) => (
+          <div key={index} className="day-body grid place-items-center">
             <TickedButton
               active={dayTracks[habit.id] === true}
               onClick={() => handleTicked(day, habit.id)}

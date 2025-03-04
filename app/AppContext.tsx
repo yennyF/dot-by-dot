@@ -8,7 +8,7 @@ interface AppContextProps {
   toggleTheme: () => void;
   page: "grid" | "list";
   setPage: (page: "grid" | "list") => void;
-  habits: Habit[];
+  habits: Habit[] | undefined;
   habitsByDate: HabitsByDate;
   toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
   addHabit: (habit: string) => Promise<boolean>;
@@ -22,7 +22,7 @@ const AppContext = createContext({} as AppContextProps);
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [page, setPage] = useState<"grid" | "list">("list");
-  const [habits, setHabits] = useState<Habit[]>([]);
+  const [habits, setHabits] = useState<Habit[]>(); // undefined when loading
   const [habitsByDate, setHabitsByDate] = useState<HabitsByDate>({});
 
   useEffect(() => {
@@ -48,6 +48,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addHabit = async (name: string) => {
+    if (!habits) return false;
     if (!name.length) return false;
     if (habits.some((h) => h.name === name)) return false;
 
@@ -64,6 +65,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const renameHabit = async (id: number, newName: string) => {
+    if (!habits) return false;
     if (!newName.length) return false;
     if (habits.some((h) => id !== h.id && h.name === newName)) return false;
 
@@ -92,6 +94,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteHabit = async (id: number) => {
+    if (!habits) return false;
+
     const index = habits.findIndex((h) => h.id === id);
     if (index < 0) return false;
 
@@ -130,25 +134,21 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  return (
-    <AppContext
-      value={{
-        theme,
-        toggleTheme,
-        page,
-        setPage,
-        habits,
-        habitsByDate,
-        toggleHabitTrack,
-        addHabit,
-        renameHabit,
-        moveHabit,
-        deleteHabit,
-      }}
-    >
-      {children}
-    </AppContext>
-  );
+  const value = {
+    theme,
+    toggleTheme,
+    page,
+    setPage,
+    habits,
+    habitsByDate,
+    toggleHabitTrack,
+    addHabit,
+    renameHabit,
+    moveHabit,
+    deleteHabit,
+  };
+
+  return <AppContext value={value}>{children}</AppContext>;
 };
 
 export { AppContext, AppProvider };

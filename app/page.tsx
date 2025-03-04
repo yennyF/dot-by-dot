@@ -3,7 +3,7 @@
 import CalendarList from "./components/CalendarList";
 import { AppContext, AppProvider } from "./AppContext";
 import CalendarGrid from "./components/CalendarGrid";
-import { Suspense, use } from "react";
+import { use } from "react";
 import Navbar from "./components/Navbar";
 
 export default function Home() {
@@ -20,13 +20,19 @@ function Content() {
   if (!appContext) {
     throw new Error("Home must be used within a AppProvider");
   }
-  const { page } = appContext;
+  const { habits, page } = appContext;
 
-  return page === "grid" ? (
-    <CalendarGrid />
-  ) : (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CalendarList />
-    </Suspense>
+  if (!habits) {
+    return <Loading />;
+  }
+
+  return page === "grid" ? <CalendarGrid /> : <CalendarList />;
+}
+
+function Loading() {
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="animate-pulse">Loading...</div>
+    </div>
   );
 }

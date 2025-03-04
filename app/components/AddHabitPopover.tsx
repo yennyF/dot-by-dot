@@ -36,6 +36,8 @@ function Content() {
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
+    if (habits === undefined) return;
+
     if (habits.some((h) => h.name === nameInput)) {
       setIsDuplicated(true);
     } else {

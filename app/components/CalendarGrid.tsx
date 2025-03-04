@@ -102,10 +102,11 @@ function DayCell({ date }: DayCellProps) {
   const { habits, habitsByDate } = appContext;
 
   const habitTrack = habitsByDate[date.toLocaleDateString()] || {};
-  const habitsFiltered = habits.filter(
+  const habitsFiltered = habits?.filter(
     (habit) => habitTrack[habit.id] === true
   );
-  const percentage = habitsFiltered.length / habits.length;
+  const percentage =
+    habits && habitsFiltered ? habitsFiltered.length / habits.length : 0;
 
   return (
     <div
