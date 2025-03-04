@@ -4,6 +4,7 @@ import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 import { Habit } from "../repositories";
+
 interface RenameHabitPopoverProps {
   children: React.ReactNode;
   habit: Habit;
@@ -45,6 +46,7 @@ function Content({ setOpen, habit }: ContentProps) {
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
+    if (!habits) return;
     if (habits.some((h) => h.id !== habit.id && h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
