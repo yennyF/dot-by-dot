@@ -39,11 +39,12 @@ export default function Header() {
     <div
       className="calendar-header sticky top-16 z-10 grid h-16 bg-[var(--background)]"
       style={{
-        gridTemplateColumns: `100px 100px repeat(${habits?.length || 0}, 110px)`,
+        gridTemplateColumns: `100px 100px 100px repeat(${habits?.length || 0}, 110px)`,
       }}
     >
       <div className="sticky left-0 bg-[var(--background)]"></div>
       <div className="sticky left-[100px] bg-[var(--background)]"></div>
+      <div className="sticky left-[200px] bg-[var(--background)]"></div>
       {habits?.map((habit, index) => (
         <HeaderToolbar
           key={habit.id}

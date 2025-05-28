@@ -12,6 +12,8 @@ import {
   isToday,
   startOfMonth,
   isBefore,
+  eachYearOfInterval,
+  endOfYear,
 } from "date-fns";
 import useScrollTo from "../hooks/useScrollTo";
 import useOnScreen from "../hooks/useOnScreen";
@@ -28,9 +30,10 @@ export default function CalendarList() {
   const isVisible = useOnScreen(scrollTarget);
 
   const currentDate = new Date();
+  const minDate = subMonths(currentDate, 12);
   const maxDate = addDays(currentDate, 6);
-  const totalMonths = eachMonthOfInterval({
-    start: subMonths(currentDate, 12),
+  const totalYears = eachYearOfInterval({
+    start: minDate,
     end: maxDate,
   });
 
@@ -43,15 +46,16 @@ export default function CalendarList() {
         </button>
       </AddHabitPopover>
 
-      <div className="calendar flex flex-col items-center">
+      <div className="calendar flex flex-col">
         <Header />
 
         {/* Body */}
         <div className="calendar-body mt-16">
-          {totalMonths.map((date, index) => (
-            <MonthRow
+          {totalYears.map((date, index) => (
+            <YearRow
               key={index}
               date={date}
+              minDate={minDate}
               maxDate={maxDate}
               scrollTarget={scrollTarget}
             />
@@ -72,28 +76,60 @@ export default function CalendarList() {
   );
 }
 
+interface YearRowProps {
+  date: Date;
+  minDate: Date;
+  maxDate: Date;
+  scrollTarget: RefObject<HTMLDivElement | null>;
+}
+
+function YearRow({ date, minDate, maxDate, scrollTarget }: YearRowProps) {
+  const totalMonths = eachMonthOfInterval({
+    start: minDate,
+    end: isBefore(endOfYear(date), maxDate) ? endOfYear(date) : maxDate,
+  });
+
+  return (
+    <div className="year-row flex">
+      {/* First Column: Sticky */}
+      <div className="year-header sticky left-0 flex w-[100px] flex-col items-center bg-[var(--background)]">
+        <div className="sticky top-[130px] text-left font-bold">
+          {format(date, "yyyy")}
+        </div>
+      </div>
+      {/* Other Columns */}
+      <div className="year-body">
+        {totalMonths.map((date, index) => (
+          <MonthRow
+            key={index}
+            date={date}
+            maxDate={maxDate}
+            scrollTarget={scrollTarget}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface MonthRowProps {
   date: Date;
-  maxDate?: Date;
+  maxDate: Date;
   scrollTarget: RefObject<HTMLDivElement | null>;
 }
 
 function MonthRow({ date, maxDate, scrollTarget }: MonthRowProps) {
   const totalDays = eachDayOfInterval({
     start: startOfMonth(date),
-    end:
-      !maxDate || isBefore(endOfMonth(date), maxDate)
-        ? endOfMonth(date)
-        : maxDate,
+    end: isBefore(endOfMonth(date), maxDate) ? endOfMonth(date) : maxDate,
   });
 
   return (
     <div className="month-row flex">
       {/* First Column: Sticky */}
-      <div className="month-header sticky left-0 flex w-[100px] flex-col items-end bg-[var(--background)]">
-        <div className="sticky top-[130px] flex flex-col gap-y-1 text-right font-bold">
+      <div className="month-header sticky left-0 flex w-[100px] flex-col items-center bg-[var(--background)]">
+        <div className="sticky top-[130px] text-right font-bold">
           {format(date, "MMMM")}
-          <span className="text-xs">{format(date, "yyyy")}</span>
         </div>
       </div>
       {/* Other Columns */}
