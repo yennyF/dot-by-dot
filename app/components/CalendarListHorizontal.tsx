@@ -21,7 +21,7 @@ import useOnScreen from "../hooks/useOnScreen";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import { PlusIcon, ArrowDownIcon } from "@radix-ui/react-icons";
+import { PlusIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
 import { Habit } from "../repositories";
 
@@ -47,36 +47,39 @@ export default function CalendarListHorizontal() {
         </button>
       </AddHabitPopover>
 
-      <div className="calendar grid gap-4">
-        {/* Header */}
-        <div className="calendar-header sticky top-16 z-10 mt-16 flex w-fit bg-[var(--background)]">
-          <div className="shadow-background-right sticky left-0 z-10 w-[150px] shrink-0"></div>
-          <div className="years flex shrink-0">
-            {totalYears.map((date, index) => (
-              <YearItem
-                key={index}
-                date={date}
-                minDate={minDate}
-                maxDate={maxDate}
-                scrollTarget={scrollTarget}
-              />
-            ))}
-          </div>
-        </div>
+      {/* shadow */}
+      <div className="shadow-background-bottom fixed bottom-0 right-0 h-[100px] w-full"></div>
+      <div className="shadow-background-left fixed right-0 top-0 h-full w-[100px]"></div>
 
-        {/* Body */}
-        <Body minDate={minDate} maxDate={maxDate} />
-      </div>
-
-      <div className="shadow-background-bottom fixed bottom-0 flex h-[100px] w-full items-center justify-center">
+      {/* Controls */}
+      <div className="fixed top-[64px] flex h-[64px] w-full items-center justify-end pr-10">
         <button
           className={`button-accent-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
         >
           Today
-          <ArrowDownIcon />
+          <ArrowRightIcon />
         </button>
       </div>
+
+      {/* Header */}
+      <div className="sticky top-[128px] z-10 mt-16 flex bg-[var(--background)]">
+        <div className="shadow-background-right sticky left-0 z-10 w-[150px] shrink-0"></div>
+        <div className="years flex shrink-0">
+          {totalYears.map((date, index) => (
+            <YearItem
+              key={index}
+              date={date}
+              minDate={minDate}
+              maxDate={maxDate}
+              scrollTarget={scrollTarget}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Body */}
+      <Body minDate={minDate} maxDate={maxDate} />
     </>
   );
 }
@@ -99,7 +102,7 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
       <div className="sticky left-[150px] w-fit bg-[var(--background)] text-2xl font-bold">
         {format(date, "yyyy")}
       </div>
-      <div className="months flex">
+      <div className="months mt-3 flex">
         {totalMonths.map((date, index) => (
           <MonthItem
             key={index}
@@ -128,31 +131,29 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
   });
 
   return (
-    <div className="month-item grid gap-2">
+    <div className="month-item">
       <div className="sticky left-[150px] w-fit bg-[var(--background)] text-xl font-bold">
         {format(date, "MMMM")}
       </div>
-      <div className="days flex">
+      <div className="days mt-4 flex justify-center">
         {totalDays.map((date, index) => (
           <div
             key={index}
-            className={`grid gap-1 ${(isFirstDayOfMonth(date) || isToday(date)) && "font-bold"} ${isToday(date) && "text-[var(--accent)]"}`}
+            className={`day-item flex w-[50px] flex-col items-center ${(isFirstDayOfMonth(date) || isToday(date)) && "font-bold"} ${isToday(date) && "text-[var(--accent)]"}`}
           >
-            <div className="flex justify-center text-xs">
-              {format(date, "EEE")}
-            </div>
+            <div className="text-center text-xs">{format(date, "EEE")}</div>
             <div
-              className={`day-section flex w-[50px] justify-center bg-[var(--background)]`}
+              className={`mt-1 flex h-[35px] w-[35px] items-center justify-center ${isToday(date) && "rounded-full bg-[var(--accent)] text-white"}`}
             >
-              {isToday(date) && (
-                <div
-                  ref={scrollTarget}
-                  // important: added the height as an offset for useScrollTo, do not delete it
-                  className="absolute right-0 w-[200px]"
-                ></div>
-              )}
               {format(date, "dd")}
             </div>
+            {isToday(date) && (
+              <div
+                ref={scrollTarget}
+                // important: added the height as an offset for useScrollTo, do not delete it
+                className="absolute right-0 w-[200px]"
+              ></div>
+            )}
           </div>
         ))}
       </div>
@@ -182,7 +183,7 @@ export function Body({ minDate, maxDate }: BodyProps) {
   }
 
   return (
-    <div className="">
+    <div className="mt-2">
       {habits.map((habit, index) => (
         <div className="flex" key={index}>
           <div
@@ -195,7 +196,7 @@ export function Body({ minDate, maxDate }: BodyProps) {
           {totalDays.map((date) => (
             <div
               key={`${date.toLocaleDateString()}-${habit.id}`}
-              className="day-body flex h-10 w-[50px] items-center justify-center"
+              className="day-body flex h-10 w-[50px] shrink-0 items-center justify-center"
             >
               <TickedCell date={date} habit={habit} />
             </div>
