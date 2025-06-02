@@ -99,8 +99,16 @@ input {
   }
 }
 
-.shadow-background {
+.shadow-background-bottom {
   background: linear-gradient(to bottom, transparent, var(--background));
+}
+
+.shadow-background-right {
+  background: linear-gradient(to right, var(--background) 80%, transparent);
+}
+
+.shadow-background-left {
+  background: linear-gradient(to left, var(--background), transparent);
 }
 
 @layer components {

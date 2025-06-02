@@ -63,7 +63,7 @@ export default function CalendarList() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 flex h-[100px] w-full items-center justify-center shadow-background">
+      <div className="shadow-background-bottom fixed bottom-0 flex h-[100px] w-full items-center justify-center">
         <button
           className={`button-accent-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
