@@ -21,7 +21,12 @@ import useOnScreen from "../hooks/useOnScreen";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import { PlusIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import {
+  PlusIcon,
+  ArrowRightIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+} from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
 import { Habit } from "../repositories";
 
@@ -47,39 +52,46 @@ export default function CalendarListHorizontal() {
         </button>
       </AddHabitPopover>
 
-      {/* shadow */}
-      <div className="shadow-background-bottom fixed bottom-0 right-0 h-[100px] w-full"></div>
-      <div className="shadow-background-left fixed right-0 top-0 h-full w-[100px]"></div>
-
       {/* Controls */}
-      <div className="fixed top-[64px] flex h-[64px] w-full items-center justify-end pr-10">
+      <div className="fixed top-[64px] grid h-[64px] w-full grid-flow-col items-center justify-end gap-2 pr-10">
         <button
-          className={`button-accent-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
+          className={`button-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
         >
           Today
-          <ArrowRightIcon />
+        </button>
+        <button className="button-icon">
+          <CaretLeftIcon />
+        </button>
+        <button className="button-icon">
+          <CaretRightIcon />
         </button>
       </div>
 
-      {/* Header */}
-      <div className="sticky top-[128px] z-10 mt-16 flex bg-[var(--background)]">
-        <div className="shadow-background-right sticky left-0 z-10 w-[150px] shrink-0"></div>
-        <div className="years flex shrink-0">
-          {totalYears.map((date, index) => (
-            <YearItem
-              key={index}
-              date={date}
-              minDate={minDate}
-              maxDate={maxDate}
-              scrollTarget={scrollTarget}
-            />
-          ))}
+      <div className="calendar grid">
+        {/* Header */}
+        <div className="sticky top-[128px] z-10 flex bg-[var(--background)]">
+          <div className="shadow-background-right sticky left-0 z-10 w-[150px] shrink-0"></div>
+          <div className="years flex">
+            {totalYears.map((date, index) => (
+              <YearItem
+                key={index}
+                date={date}
+                minDate={minDate}
+                maxDate={maxDate}
+                scrollTarget={scrollTarget}
+              />
+            ))}
+          </div>
         </div>
+
+        {/* Body */}
+        <Body minDate={minDate} maxDate={maxDate} />
+
+        {/* <div className="shadow-background-left absolute bottom-0 right-0 top-0 z-10 w-[100px]"></div> */}
       </div>
 
-      {/* Body */}
-      <Body minDate={minDate} maxDate={maxDate} />
+      <div className="shadow-background-bottom fixed bottom-0 right-0 h-[100px] w-full"></div>
     </>
   );
 }
@@ -196,7 +208,7 @@ export function Body({ minDate, maxDate }: BodyProps) {
           {totalDays.map((date) => (
             <div
               key={`${date.toLocaleDateString()}-${habit.id}`}
-              className="day-body flex h-10 w-[50px] shrink-0 items-center justify-center"
+              className="day-body flex h-10 w-[50px] items-center justify-center"
             >
               <TickedCell date={date} habit={habit} />
             </div>
