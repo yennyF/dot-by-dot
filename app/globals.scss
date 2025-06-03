@@ -4,6 +4,7 @@
 
 html, body {
   overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 :root {
   --background: #f1efe7;
@@ -116,6 +117,17 @@ input {
 
 .shadow-background-left {
   background: linear-gradient(to left, transparent, var(--background));
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 @layer components {
