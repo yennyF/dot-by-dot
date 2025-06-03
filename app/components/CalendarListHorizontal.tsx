@@ -16,7 +16,7 @@ import {
   isAfter,
   startOfYear,
 } from "date-fns";
-import useScrollTo from "../hooks/useScrollTo";
+// import useScrollTo from "../hooks/useScrollTo";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
@@ -25,16 +25,30 @@ import AddHabitPopover from "./AddHabitPopover";
 import { Habit } from "../repositories";
 
 export default function CalendarListHorizontal() {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarList must be used within a AppProvider");
+  }
+  const { habits } = appContext;
+
   const scrollTarget = useRef<HTMLDivElement>(null);
-  const scrollToTarget = useScrollTo(scrollTarget);
+  // const scrollToTarget = useScrollTo(scrollTarget);
 
   const currentDate = new Date();
-  const minDate = startOfMonth(subMonths(currentDate, 1));
+  const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 7);
   const totalYears = eachYearOfInterval({
     start: minDate,
     end: maxDate,
   });
+  const totalDays = eachDayOfInterval({
+    start: minDate,
+    end: maxDate,
+  });
+
+  if (!habits || habits.length === 0 || !totalDays || totalDays.length === 0) {
+    return;
+  }
 
   return (
     <>
@@ -62,7 +76,7 @@ export default function CalendarListHorizontal() {
 
       <div className="calendar relative ml-[100px] mr-[100px] overflow-hidden">
         <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
-          {/* Header */}
+          {/* Calendar Header */}
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
             <div className="sticky left-0 z-10 w-[160px] bg-[var(--background)]"></div>
             <div className="sticky left-[160px] flex w-fit bg-[var(--background)]">
@@ -78,12 +92,32 @@ export default function CalendarListHorizontal() {
             </div>
           </div>
 
-          {/* Body */}
+          {/* Calendar Body */}
           <div className="calendar-body">
-            <Body minDate={minDate} maxDate={maxDate} />
+            {habits.map((habit, index) => (
+              <div className="flex w-fit" key={index}>
+                <div
+                  key={index}
+                  className="sticky left-0 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)] pl-5"
+                >
+                  <div className="overflow-hidden text-ellipsis text-nowrap">
+                    {habit.name}
+                  </div>
+                </div>
+                {totalDays.map((date) => (
+                  <div
+                    key={`${date.toLocaleDateString()}-${habit.id}`}
+                    className="day-body flex h-10 w-[50px] items-center justify-center"
+                  >
+                    <TickedCell date={date} habit={habit} />
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
 
+        {/* Shadows */}
         <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
         <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
         <div className="shadow-background-left absolute left-[160px] top-0 z-10 h-full w-[10px]"></div>
@@ -169,53 +203,6 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
         ))}
       </div>
     </div>
-  );
-}
-
-interface BodyProps {
-  minDate: Date;
-  maxDate: Date;
-}
-
-export function Body({ minDate, maxDate }: BodyProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { habits } = appContext;
-
-  const totalDays = eachDayOfInterval({
-    start: minDate,
-    end: maxDate,
-  });
-
-  if (!habits || habits.length === 0 || !totalDays || totalDays.length === 0) {
-    return;
-  }
-
-  return (
-    <>
-      {habits.map((habit, index) => (
-        <div className="flex w-fit" key={index}>
-          <div
-            key={index}
-            className="sticky left-0 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)] pl-5"
-          >
-            <div className="overflow-hidden text-ellipsis text-nowrap">
-              {habit.name}
-            </div>
-          </div>
-          {totalDays.map((date) => (
-            <div
-              key={`${date.toLocaleDateString()}-${habit.id}`}
-              className="day-body flex h-10 w-[50px] items-center justify-center"
-            >
-              <TickedCell date={date} habit={habit} />
-            </div>
-          ))}
-        </div>
-      ))}
-    </>
   );
 }
 
