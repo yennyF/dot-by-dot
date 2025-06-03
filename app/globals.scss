@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  overscroll-behavior-x: none;
+}
 :root {
   --background: #f1efe7;
   --foreground: #0a0a0a;
@@ -108,11 +111,11 @@ input {
 }
 
 .shadow-background-right {
-  background: linear-gradient(to right, var(--background) 80%, transparent);
+  background: linear-gradient(to right, transparent, var(--background));
 }
 
 .shadow-background-left {
-  background: linear-gradient(to left, var(--background), transparent);
+  background: linear-gradient(to left, transparent, var(--background));
 }
 
 @layer components {

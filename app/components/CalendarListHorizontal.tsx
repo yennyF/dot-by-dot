@@ -80,7 +80,7 @@ export default function CalendarListHorizontal() {
               ))}
             </div>
           </div>
-          <div className="shadow-background-top sticky left-0 top-[271px] z-10 h-6 w-full"></div>
+          <div className="shadow-background-top sticky top-[271px] z-10 h-[20px] w-full"></div>
         </div>
 
         {/* Body */}
@@ -89,8 +89,9 @@ export default function CalendarListHorizontal() {
         </div>
       </div>
 
-      <div className="shadow-background-bottom fixed bottom-0 right-0 h-[100px] w-full"></div>
-      <div className="shadow-background-left fixed bottom-0 right-0 top-0 z-10 w-[100px]"></div>
+      <div className="shadow-background-bottom fixed bottom-0 h-[20px] w-full"></div>
+      <div className="shadow-background-right fixed bottom-0 right-0 top-0 z-10 w-[20px]"></div>
+      <div className="shadow-background-left fixed bottom-0 left-[160px] top-0 z-10 w-[20px]"></div>
     </>
   );
 }
@@ -203,7 +204,6 @@ export function Body({ minDate, maxDate }: BodyProps) {
           >
             {habit.name}
           </div>
-
           {totalDays.map((date) => (
             <div
               key={`${date.toLocaleDateString()}-${habit.id}`}
