@@ -21,12 +21,7 @@ import useOnScreen from "../hooks/useOnScreen";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TickedButton from "./TickedButton";
-import {
-  PlusIcon,
-  ArrowRightIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from "@radix-ui/react-icons";
+import { PlusIcon, CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
 import { Habit } from "../repositories";
 
@@ -53,7 +48,7 @@ export default function CalendarListHorizontal() {
       </AddHabitPopover>
 
       {/* Controls */}
-      <div className="fixed top-[64px] grid h-[64px] w-full grid-flow-col items-center justify-end gap-2 pr-10">
+      <div className="fixed top-[64px] z-10 grid h-[64px] w-full grid-flow-col items-center justify-center gap-2 bg-[var(--background)]">
         <button
           className={`button-outline ${isVisible ? "pointer-events-none opacity-0" : "opacity-100"}`}
           onClick={scrollToTarget}
@@ -70,28 +65,32 @@ export default function CalendarListHorizontal() {
 
       <div className="calendar grid">
         {/* Header */}
-        <div className="sticky top-[128px] z-10 flex bg-[var(--background)]">
-          <div className="shadow-background-right sticky left-0 z-10 w-[150px] shrink-0"></div>
-          <div className="years flex">
-            {totalYears.map((date, index) => (
-              <YearItem
-                key={index}
-                date={date}
-                minDate={minDate}
-                maxDate={maxDate}
-                scrollTarget={scrollTarget}
-              />
-            ))}
+        <div className="sticky top-[128px] z-10">
+          <div className="flex bg-[var(--background)]">
+            <div className="sticky left-0 z-10 w-[160px] shrink-0 bg-[var(--background)]"></div>
+            <div className="years flex">
+              {totalYears.map((date, index) => (
+                <YearItem
+                  key={index}
+                  date={date}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  scrollTarget={scrollTarget}
+                />
+              ))}
+            </div>
           </div>
+          <div className="shadow-background-top sticky left-0 top-[271px] z-10 h-6 w-full"></div>
         </div>
 
         {/* Body */}
-        <Body minDate={minDate} maxDate={maxDate} />
-
-        {/* <div className="shadow-background-left absolute bottom-0 right-0 top-0 z-10 w-[100px]"></div> */}
+        <div className="mt-[120px]">
+          <Body minDate={minDate} maxDate={maxDate} />
+        </div>
       </div>
 
       <div className="shadow-background-bottom fixed bottom-0 right-0 h-[100px] w-full"></div>
+      <div className="shadow-background-left fixed bottom-0 right-0 top-0 z-10 w-[100px]"></div>
     </>
   );
 }
@@ -111,7 +110,7 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
 
   return (
     <div className="year-item">
-      <div className="sticky left-[150px] w-fit bg-[var(--background)] text-2xl font-bold">
+      <div className="sticky left-[160px] w-fit bg-[var(--background)] text-2xl font-bold">
         {format(date, "yyyy")}
       </div>
       <div className="months mt-3 flex">
@@ -144,7 +143,7 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
 
   return (
     <div className="month-item">
-      <div className="sticky left-[150px] w-fit bg-[var(--background)] text-xl font-bold">
+      <div className="sticky left-[160px] w-fit bg-[var(--background)] text-xl font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="days mt-4 flex justify-center">
@@ -163,7 +162,7 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
               <div
                 ref={scrollTarget}
                 // important: added the height as an offset for useScrollTo, do not delete it
-                className="absolute right-0 w-[200px]"
+                className="absolute right-0 w-[160px]"
               ></div>
             )}
           </div>
@@ -195,12 +194,12 @@ export function Body({ minDate, maxDate }: BodyProps) {
   }
 
   return (
-    <div className="mt-2">
+    <>
       {habits.map((habit, index) => (
         <div className="flex" key={index}>
           <div
             key={index}
-            className="shadow-background-right sticky left-0 flex h-10 w-[150px] shrink-0 items-center"
+            className="sticky left-0 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)] pl-5"
           >
             {habit.name}
           </div>
@@ -215,7 +214,7 @@ export function Body({ minDate, maxDate }: BodyProps) {
           ))}
         </div>
       ))}
-    </div>
+    </>
   );
 }
 

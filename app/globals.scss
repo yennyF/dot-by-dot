@@ -103,6 +103,10 @@ input {
   background: linear-gradient(to bottom, transparent, var(--background));
 }
 
+.shadow-background-top {
+  background: linear-gradient(to top, transparent, var(--background));
+}
+
 .shadow-background-right {
   background: linear-gradient(to right, var(--background) 80%, transparent);
 }
