@@ -7,7 +7,6 @@ import {
   eachDayOfInterval,
   addDays,
   endOfMonth,
-  isFirstDayOfMonth,
   isToday,
   startOfMonth,
   isBefore,
@@ -15,6 +14,7 @@ import {
   endOfYear,
   isAfter,
   startOfYear,
+  isWeekend,
 } from "date-fns";
 // import useScrollTo from "../hooks/useScrollTo";
 import { AppContext } from "../AppContext";
@@ -36,7 +36,7 @@ export default function CalendarListHorizontal() {
 
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
-  const maxDate = addDays(currentDate, 7);
+  const maxDate = addDays(currentDate, 0);
   const totalYears = eachYearOfInterval({
     start: minDate,
     end: maxDate,
@@ -93,7 +93,7 @@ export default function CalendarListHorizontal() {
           </div>
 
           {/* Calendar Body */}
-          <div className="calendar-body">
+          <div className="calendar-body mt-1">
             {habits.map((habit, index) => (
               <div className="flex w-fit" key={index}>
                 <div
@@ -177,30 +177,33 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
 
   return (
     <div className="month-item w-fit">
-      <div className="sticky left-[160px] w-fit bg-[var(--background)] pl-3 pr-3 text-xl font-bold">
+      <div className="sticky left-[160px] w-fit bg-[var(--background)] pl-[14px] pr-[14px] text-xl font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="days mt-4 flex justify-center">
-        {totalDays.map((date, index) => (
-          <div
-            key={index}
-            className={`day-item flex w-[50px] flex-col items-center ${(isFirstDayOfMonth(date) || isToday(date)) && "font-bold"} ${isToday(date) && "text-[var(--accent)]"}`}
-          >
-            <div className="text-center text-xs">{format(date, "EEE")}</div>
+        {totalDays.map((date, index) => {
+          const isTodayDate = isToday(date);
+          return (
             <div
-              className={`mt-1 flex h-[35px] w-[35px] items-center justify-center ${isToday(date) && "rounded-full bg-[var(--accent)] text-white"}`}
+              key={index}
+              className={`day-item flex w-[50px] flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
             >
-              {format(date, "dd")}
-            </div>
-            {isToday(date) && (
+              <div className="text-center text-xs">{format(date, "EEE")}</div>
               <div
-                ref={scrollTarget}
-                // important: added the height as an offset for useScrollTo, do not delete it
-                className="absolute right-0 w-[160px]"
-              ></div>
-            )}
-          </div>
-        ))}
+                className={`mt-1 flex h-[35px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
+              >
+                {format(date, "dd")}
+              </div>
+              {isTodayDate && (
+                <div
+                  ref={scrollTarget}
+                  // important: added the height as an offset for useScrollTo, do not delete it
+                  className="absolute right-0 w-[160px]"
+                ></div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ const pulseOut = keyframes`
 `;
 
 const Button = styled.button`
-  background-color: var(--grey);
+  background-color: var(--gray);
 
   &.pulse-in {
     animation: ${pulseIn} 0.25s;

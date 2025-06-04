@@ -12,10 +12,11 @@ html, body {
   --accent: #c07858;
   --accent-4: #E4CBC1;
   --accent-5: #E0BEB0;
+  --inverted: #3f87a7;
   --white: #ffffff;
   --black: #3c3d42;
-  --grey: #d7d7d7;
-  --grey-9: #696B75;
+  --gray: #d7d7d7;
+  --gray-9: #696B75;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,7 +37,7 @@ body {
 }
 
 input {
-  @apply rounded px-2 py-1 text-[var(--grey-9)] focus:outline-none;
+  @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
 }
 
 [draggable="true"] {
@@ -156,7 +157,7 @@ input {
   }
 
   .button-cancel {
-    @apply button flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[var(--grey-9)] px-6 py-2 text-[var(--white)] transition hover:bg-[var(--black)];
+    @apply button flex h-fit w-fit items-center justify-center gap-2 rounded-full bg-[var(--gray-9)] px-6 py-2 text-[var(--white)] transition hover:bg-[var(--black)];
   }
 
   .button-icon {
