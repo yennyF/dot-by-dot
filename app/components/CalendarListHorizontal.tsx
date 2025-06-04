@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, use, useEffect, useRef, useState } from "react";
+import React, { RefObject, use, useRef } from "react";
 import {
   format,
   subMonths,
@@ -77,8 +77,8 @@ export default function CalendarListHorizontal() {
       <div className="calendar relative ml-[100px] mr-[100px] overflow-hidden">
         <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
           {/* Calendar Header */}
-          <div className="calendar-header sticky top-0 z-10 flex w-fit">
-            <div className="sticky left-0 z-10 w-[160px] bg-[var(--background)]"></div>
+          <div className="calendar-header sticky top-0 z-20 flex w-fit">
+            <div className="sticky left-0 z-20 w-[160px] bg-[var(--background)]"></div>
             <div className="sticky left-[160px] flex w-fit bg-[var(--background)]">
               {totalYears.map((date, index) => (
                 <YearItem
@@ -98,19 +98,19 @@ export default function CalendarListHorizontal() {
               <div className="flex w-fit" key={index}>
                 <div
                   key={index}
-                  className="sticky left-0 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)] pl-5"
+                  className="sticky left-0 z-10 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)]"
                 >
                   <div className="overflow-hidden text-ellipsis text-nowrap">
                     {habit.name}
                   </div>
                 </div>
                 {totalDays.map((date) => (
-                  <div
+                  <TickedDiv
                     key={`${date.toLocaleDateString()}-${habit.id}`}
-                    className="day-body flex h-10 w-[50px] items-center justify-center"
-                  >
-                    <TickedCell date={date} habit={habit} />
-                  </div>
+                    className="flex h-10 w-[50px] items-center justify-center"
+                    date={date}
+                    habit={habit}
+                  />
                 ))}
               </div>
             ))}
@@ -206,38 +206,50 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
   );
 }
 
-interface TickedCellProps {
+interface TickedDivProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
   habit: Habit;
 }
 
-export function TickedCell({ date, habit }: TickedCellProps) {
+export function TickedDiv({
+  date,
+  habit,
+  className,
+  ...props
+}: TickedDivProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
   const { habitsByDate, toggleHabitTrack } = appContext;
 
-  const [dayTracks, setDayTracks] = useState<Record<number, boolean>>({});
-
-  useEffect(() => {
-    const dayTracks = habitsByDate[date.toLocaleDateString()] || {};
-    setDayTracks(dayTracks);
-  }, [date, habitsByDate]);
+  const isCurrentActive =
+    habitsByDate[date.toLocaleDateString()]?.[habit.id] || false;
+  const isPrevActive =
+    habitsByDate[addDays(date, -1).toLocaleDateString()]?.[habit.id] || false;
+  const isNextActive =
+    habitsByDate[addDays(date, 1).toLocaleDateString()]?.[habit.id] || false;
 
   const handleTicked = async (date: Date, habitId: number) => {
-    setDayTracks((prev) => ({ ...prev, [habitId]: !prev[habitId] }));
-
-    const success = await toggleHabitTrack(date, habitId);
-    if (!success) {
-      setDayTracks((prev) => ({ ...prev, [habitId]: !prev[habitId] }));
-    }
+    await toggleHabitTrack(date, habitId);
   };
 
   return (
-    <TickedButton
-      active={dayTracks[habit.id] === true}
-      onClick={() => handleTicked(date, habit.id)}
-    />
+    <div
+      {...props}
+      className={`relative flex items-center justify-center ${className}`}
+    >
+      {isPrevActive && isCurrentActive && (
+        <div className="absolute left-0 right-[50%] h-4 bg-[var(--accent-4)]"></div>
+      )}
+      <TickedButton
+        className="z-[1]"
+        active={isCurrentActive}
+        onClick={() => handleTicked(date, habit.id)}
+      />
+      {isNextActive && isCurrentActive && (
+        <div className="absolute left-[50%] right-0 h-4 bg-[var(--accent-4)]"></div>
+      )}
+    </div>
   );
 }

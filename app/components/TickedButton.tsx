@@ -57,6 +57,7 @@ interface TickedButtonProps
 export default function TickedButton({
   active,
   onClick,
+  className,
   ...props
 }: TickedButtonProps) {
   const [isAnimating, setIsAnimating] = useState<boolean>();
@@ -80,7 +81,7 @@ export default function TickedButton({
   return (
     <Button
       {...props}
-      className={`${active === true ? "active" : ""} h-4 w-4 rounded-full ${pulseClass ?? ""}`}
+      className={`${className} ${active === true ? "active" : ""} h-4 w-4 rounded-full ${pulseClass ?? ""}`}
       onClick={(e) => {
         setIsAnimating((isAnimating) => !isAnimating);
         onClick?.(e);
