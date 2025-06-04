@@ -23,6 +23,7 @@ import TickedButton from "./TickedButton";
 import { PlusIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
 import { Habit } from "../repositories";
+import HeaderToolbar from "./HeaderToolbar";
 
 export default function CalendarListHorizontal() {
   const appContext = use(AppContext);
@@ -78,8 +79,8 @@ export default function CalendarListHorizontal() {
         <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
           {/* Calendar Header */}
           <div className="calendar-header sticky top-0 z-20 flex w-fit">
-            <div className="sticky left-0 z-20 w-[160px] bg-[var(--background)]"></div>
-            <div className="sticky left-[160px] flex w-fit bg-[var(--background)]">
+            <div className="sticky left-0 z-20 w-[200px] bg-[var(--background)]"></div>
+            <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
               {totalYears.map((date, index) => (
                 <YearItem
                   key={index}
@@ -98,11 +99,13 @@ export default function CalendarListHorizontal() {
               <div className="flex w-fit" key={index}>
                 <div
                   key={index}
-                  className="sticky left-0 z-10 flex h-10 w-[160px] shrink-0 items-center bg-[var(--background)]"
+                  className="sticky left-0 z-10 flex h-10 w-[200px] shrink-0 items-center bg-[var(--background)]"
                 >
-                  <div className="overflow-hidden text-ellipsis text-nowrap">
-                    {habit.name}
-                  </div>
+                  <HeaderToolbar habit={habit} dragging={false}>
+                    <div className="overflow-hidden text-ellipsis text-nowrap">
+                      {habit.name}
+                    </div>
+                  </HeaderToolbar>
                 </div>
                 {totalDays.map((date) => (
                   <TickedDiv
@@ -120,7 +123,7 @@ export default function CalendarListHorizontal() {
         {/* Shadows */}
         <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
         <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
-        <div className="shadow-background-left absolute left-[160px] top-0 z-10 h-full w-[10px]"></div>
+        <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
         <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>
       </div>
 
@@ -144,7 +147,7 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
 
   return (
     <div className="year-item w-fit">
-      <div className="sticky left-[160px] w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold">
+      <div className="sticky left-[200px] w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold">
         {format(date, "yyyy")}
       </div>
       <div className="months mt-3 flex">
@@ -177,7 +180,7 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
 
   return (
     <div className="month-item w-fit">
-      <div className="sticky left-[160px] w-fit bg-[var(--background)] pl-[14px] pr-[14px] text-xl font-bold">
+      <div className="sticky left-[200px] w-fit bg-[var(--background)] pl-[14px] pr-[14px] text-xl font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="days mt-4 flex justify-center">

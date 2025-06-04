@@ -1,5 +1,5 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { ReactNode, use } from "react";
+import { ReactNode, use, useState } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
@@ -7,31 +7,29 @@ import RenameHabitPopover from "./RenameHabitPopover";
 import { Habit } from "../repositories";
 
 const Trigger = styled.div`
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
 
-  .button-icon {
-    opacity: 0;
+  .buttonWrapper {
+    display: none;
+  }
 
-    &[data-state="open"] {
-      opacity: 1;
+  &[data-state="open"] {
+    .buttonWrapper {
+      display: flex;
     }
+  }
+
+  &:hover .buttonWrapper {
+    display: flex;
   }
 
   &:hover:not(.dragging) {
     .button-icon {
-      opacity: 1;
     }
   }
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  gap: 2px;
-  position: absolute;
-  top: -15px;
 `;
 
 interface HeaderToolbarProps {
@@ -51,25 +49,34 @@ export default function HeaderToolbar({
   }
   const { deleteHabit } = appContext;
 
+  const [open, setOpen] = useState(false);
+
   const handleDeleteConfirm = async () => {
     await deleteHabit(habit.id);
   };
 
   return (
-    <Trigger className={dragging ? "dragging" : ""}>
+    <Trigger
+      className={dragging ? "dragging" : ""}
+      data-state={open ? "open" : "closed"}
+    >
       {children}
-      <ButtonWrapper className="buttonWrapper">
-        <RenameHabitPopover habit={habit}>
+      <div className="buttonWrapper flex gap-1 pr-2">
+        <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
           <button className="button-icon">
             <Pencil1Icon />
           </button>
         </RenameHabitPopover>
-        <DeleteHabitDialog habit={habit} onConfirm={handleDeleteConfirm}>
+        <DeleteHabitDialog
+          habit={habit}
+          onOpenChange={setOpen}
+          onConfirm={handleDeleteConfirm}
+        >
           <button className="button-icon">
             <TrashIcon />
           </button>
         </DeleteHabitDialog>
-      </ButtonWrapper>
+      </div>
     </Trigger>
   );
 }

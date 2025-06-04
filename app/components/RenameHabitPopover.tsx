@@ -8,19 +8,23 @@ import { Habit } from "../repositories";
 interface RenameHabitPopoverProps {
   children: React.ReactNode;
   habit: Habit;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function RenameHabitPopover({
   children,
   habit,
+  onOpenChange,
 }: RenameHabitPopoverProps) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
+
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger data-state={open ? "open" : "close"} asChild>
-        {children}
-      </Popover.Trigger>
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
           <Content setOpen={setOpen} habit={habit} />

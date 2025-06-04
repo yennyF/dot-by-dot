@@ -12,7 +12,8 @@ html, body {
   --accent: #c07858;
   --accent-4: #E4CBC1;
   --accent-5: #E0BEB0;
-  --inverted: #3f87a7;
+  // --inverted: #3f87a7;
+  --inverted: #58a0c0;
   --white: #ffffff;
   --black: #3c3d42;
   --gray: #d7d7d7;
@@ -83,12 +84,23 @@ input {
   width: 90vw;
   max-width: 500px;
   max-height: 85vh;
-  padding: 25px;
+  padding: 30px;
   background: var(--background);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 25px;
+}
+
+.dialog-title {
+  @apply text-lg font-bold text-center;
+}
+
+.dialog-description {
+    margin-top: 20px;
+}
+
+.dialog-bottom {
+  margin-top: 40px;
 }
 
 .popover-content {
@@ -162,10 +174,6 @@ input {
 
   .button-icon {
     @apply button w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)];
-
-    svg {
-      @apply w-6 h-6;
-    }
 
     &:hover svg {
       @apply button text-[var(--white)];
