@@ -1,6 +1,6 @@
 "use client";
 
-import React, { DragEvent, RefObject, use, useRef } from "react";
+import React, { RefObject, use, useRef } from "react";
 import {
   format,
   subMonths,
@@ -19,13 +19,12 @@ import {
 // import useScrollTo from "../hooks/useScrollTo";
 import { AppContext } from "../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
-import TickedButton from "./TickedButton";
 import { PlusIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "./AddHabitPopover";
-import { Habit } from "../repositories";
-import HeaderToolbar from "./HeaderToolbar";
+import { TaskColumn } from "./TaskColumn";
+import { TaskValue } from "./TaskValue";
 
-export default function CalendarListHorizontal() {
+export default function TaskCalendar() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
@@ -95,12 +94,12 @@ export default function CalendarListHorizontal() {
 
           {/* Calendar Body */}
           <div className="calendar-body mt-1 flex w-fit">
-            <Column />
+            <TaskColumn />
             <div className="sticky left-[200px]">
               {habits.map((habit) => (
                 <div className="flex h-10" key={habit.id}>
                   {totalDays.map((date) => (
-                    <TickedDiv
+                    <TaskValue
                       key={`${date.toLocaleDateString()}-${habit.id}`}
                       className="flex w-[50px] items-center justify-center"
                       date={date}
@@ -204,169 +203,3 @@ function MonthItem({ date, minDate, maxDate, scrollTarget }: MonthItemProps) {
     </div>
   );
 }
-
-interface TickedDivProps extends React.HTMLAttributes<HTMLDivElement> {
-  date: Date;
-  habit: Habit;
-}
-
-export function TickedDiv({
-  date,
-  habit,
-  className,
-  ...props
-}: TickedDivProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { habitsByDate, toggleHabitTrack } = appContext;
-
-  const isCurrentActive =
-    habitsByDate[date.toLocaleDateString()]?.[habit.id] || false;
-  const isPrevActive =
-    habitsByDate[addDays(date, -1).toLocaleDateString()]?.[habit.id] || false;
-  const isNextActive =
-    habitsByDate[addDays(date, 1).toLocaleDateString()]?.[habit.id] || false;
-
-  const handleTicked = async (date: Date, habitId: number) => {
-    await toggleHabitTrack(date, habitId);
-  };
-
-  return (
-    <div
-      {...props}
-      className={`relative flex items-center justify-center ${className}`}
-    >
-      {isPrevActive && isCurrentActive && (
-        <div className="absolute left-0 right-[50%] h-4 bg-[var(--accent-4)]"></div>
-      )}
-      <TickedButton
-        className="z-[1]"
-        active={isCurrentActive}
-        onClick={() => handleTicked(date, habit.id)}
-      />
-      {isNextActive && isCurrentActive && (
-        <div className="absolute left-[50%] right-0 h-4 bg-[var(--accent-4)]"></div>
-      )}
-    </div>
-  );
-}
-
-export function Column() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { habits, moveHabit } = appContext;
-
-  const handleDragOver = (e: DragEvent) => {
-    e.preventDefault();
-    highlightIndicator(e);
-  };
-
-  const handleDragEnd = (e: DragEvent) => {
-    const habitId = e.dataTransfer.getData("habitId");
-
-    clearHighlights();
-
-    const indicators = getIndicators();
-    const { element } = getNearestIndicator(e, indicators);
-
-    const beforeId = element.dataset.before;
-
-    if (beforeId === "-1") {
-      moveHabit(Number(habitId), null);
-    } else if (beforeId !== habitId) {
-      moveHabit(Number(habitId), Number(beforeId));
-    }
-  };
-
-  const clearHighlights = (els?: HTMLElement[]) => {
-    const indicators = els || getIndicators();
-
-    indicators.forEach((i) => {
-      i.style.opacity = "0";
-    });
-  };
-
-  const highlightIndicator = (e: DragEvent) => {
-    const indicators = getIndicators();
-
-    clearHighlights(indicators);
-
-    const el = getNearestIndicator(e, indicators);
-    el.element.style.opacity = "1";
-  };
-
-  const getNearestIndicator = (e: DragEvent, indicators: HTMLElement[]) => {
-    const DISTANCE_OFFSET = 25;
-
-    const el = indicators.reduce(
-      (closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      },
-      {
-        offset: Number.NEGATIVE_INFINITY,
-        element: indicators[indicators.length - 1],
-      }
-    );
-
-    return el;
-  };
-
-  const getIndicators = () => {
-    return Array.from(
-      document.querySelectorAll(`.drop-indicator`)
-    ) as HTMLElement[];
-  };
-
-  const handleDragLeave = () => {
-    clearHighlights();
-  };
-
-  if (!habits || habits.length === 0) {
-    return;
-  }
-
-  return (
-    <>
-      <div
-        className="sticky left-0 z-[9] w-[200px]"
-        onDrop={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        {habits.map((habit) => (
-          <div key={habit.id} className="relative flex h-10 hover:font-bold">
-            <div
-              data-before={habit.id}
-              className="drop-indicator absolute top-0 h-0.5 w-full bg-violet-400 opacity-0"
-            />
-            <HeaderToolbar habit={habit} />
-          </div>
-        ))}
-        <div
-          data-before={-1}
-          className="drop-indicator absolute bottom-0 h-0.5 w-full bg-violet-400 opacity-0"
-        />
-      </div>
-    </>
-  );
-}
-
-const DropIndicator = ({ beforeId }: { beforeId: number | null }) => {
-  return (
-    <div
-      data-before={beforeId || -1}
-      className="drop-indicator absolute top-0 h-0.5 w-full bg-violet-400 opacity-0"
-    />
-  );
-};

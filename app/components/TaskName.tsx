@@ -6,41 +6,34 @@ import DeleteHabitDialog from "./DeleteHabitDialog";
 import RenameHabitPopover from "./RenameHabitPopover";
 import { Habit } from "../repositories";
 
-const Trigger = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  gap: 10px;
-
-  .buttonWrapper {
+const TaskNameDiv = styled.div`
+  .action-buttons {
     display: none;
   }
 
   &[data-state="open"] {
-    .buttonWrapper {
+    .action-buttons {
       display: flex;
     }
   }
 
-  &:hover .buttonWrapper {
+  &:hover .action-buttons {
     display: flex;
   }
 `;
 
-interface HeaderToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
+interface TaskNameProps extends React.HTMLAttributes<HTMLDivElement> {
   habit: Habit;
 }
 
-export default function HeaderToolbar({
+export default function TaskName({
   habit,
   className,
   ...props
-}: HeaderToolbarProps) {
+}: TaskNameProps) {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("HeaderToolbar must be used within a AppProvider");
+    throw new Error("TaskName must be used within a AppProvider");
   }
   const { deleteHabit } = appContext;
 
@@ -63,9 +56,9 @@ export default function HeaderToolbar({
   };
 
   return (
-    <Trigger
+    <TaskNameDiv
       {...props}
-      className={`${className} draggable cursor-grab rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
+      className={`${className} draggable flex h-full w-full cursor-grab items-center justify-between gap-2 rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
       draggable="true"
       data-state={open ? "open" : "closed"}
       onDragStart={(e) => handleDragStart(e)}
@@ -75,7 +68,7 @@ export default function HeaderToolbar({
         {habit.name}
       </div>
       {!dragging && (
-        <div className="buttonWrapper flex gap-1">
+        <div className="action-buttons flex gap-1">
           <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
@@ -92,6 +85,6 @@ export default function HeaderToolbar({
           </DeleteHabitDialog>
         </div>
       )}
-    </Trigger>
+    </TaskNameDiv>
   );
 }
