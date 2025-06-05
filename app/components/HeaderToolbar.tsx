@@ -1,5 +1,5 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { DragEvent, ReactNode, use, useState } from "react";
+import { DragEvent, use, useState } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
@@ -65,7 +65,7 @@ export default function HeaderToolbar({
   return (
     <Trigger
       {...props}
-      className={`${className} draggable cursor-grab rounded-md bg-[var(--background)] px-3 active:cursor-grabbing`}
+      className={`${className} draggable cursor-grab rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
       draggable="true"
       data-state={open ? "open" : "closed"}
       onDragStart={(e) => handleDragStart(e)}
