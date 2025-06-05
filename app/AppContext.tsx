@@ -85,12 +85,22 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  const moveHabit = (selectedIndex: number, targetIndex: number) => {
-    // const newHabits = [...habits];
-    // const [draggedItem] = newHabits.splice(selectedIndex, 1);
-    // newHabits.splice(targetIndex, 0, draggedItem);
-    // setHabits(newHabits);
-    console.log(selectedIndex, targetIndex);
+  const moveHabit = (habitId: number, beforeId: number | null) => {
+    if (!habits) return false;
+
+    const newHabits = [...habits];
+
+    const habitIndex = habits.findIndex((habit) => habit.id === habitId);
+    const habit = habits[habitIndex];
+    newHabits.splice(habitIndex, 1);
+
+    if (beforeId === null) {
+      newHabits.push(habit);
+    } else {
+      const beforeIndex = habits.findIndex((habit) => habit.id === beforeId);
+      newHabits.splice(beforeIndex, 0, habit);
+    }
+    setHabits(newHabits);
   };
 
   const deleteHabit = async (id: number) => {

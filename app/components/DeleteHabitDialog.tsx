@@ -35,10 +35,12 @@ export default function DeleteHabitDialog({
               </Dialog.Title>
               <Dialog.Description className="dialog-description text-center">
                 Are you sure you want to delete &quot;{habit.name}&quot;?
-                <div className="mt-5 text-red-600">
+                <br />
+                <br />
+                <span className="text-red-600">
                   This action cannot be undone and all associated data will be
                   permanently removed.
-                </div>
+                </span>
               </Dialog.Description>
               <div className="dialog-bottom flex justify-center gap-3">
                 <Dialog.Close>

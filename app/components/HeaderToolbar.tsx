@@ -1,5 +1,5 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { ReactNode, use, useState } from "react";
+import { DragEvent, ReactNode, use, useState } from "react";
 import styled from "styled-components";
 import { AppContext } from "../AppContext";
 import DeleteHabitDialog from "./DeleteHabitDialog";
@@ -9,7 +9,9 @@ import { Habit } from "../repositories";
 const Trigger = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  height: 100%;
   gap: 10px;
 
   .buttonWrapper {
@@ -25,23 +27,16 @@ const Trigger = styled.div`
   &:hover .buttonWrapper {
     display: flex;
   }
-
-  &:hover:not(.dragging) {
-    .button-icon {
-    }
-  }
 `;
 
-interface HeaderToolbarProps {
-  children: ReactNode;
+interface HeaderToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   habit: Habit;
-  dragging: boolean;
 }
 
 export default function HeaderToolbar({
-  children,
   habit,
-  dragging,
+  className,
+  ...props
 }: HeaderToolbarProps) {
   const appContext = use(AppContext);
   if (!appContext) {
@@ -50,6 +45,18 @@ export default function HeaderToolbar({
   const { deleteHabit } = appContext;
 
   const [open, setOpen] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const handleDragStart = (e: DragEvent) => {
+    // e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("habitId", habit.id.toString());
+    setDragging(true);
+  };
+
+  const handleDragEnd = (e: DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+  };
 
   const handleDeleteConfirm = async () => {
     await deleteHabit(habit.id);
@@ -57,26 +64,34 @@ export default function HeaderToolbar({
 
   return (
     <Trigger
-      className={dragging ? "dragging" : ""}
+      {...props}
+      className={`${className} draggable cursor-grab rounded-md bg-[var(--background)] px-3 active:cursor-grabbing`}
+      draggable="true"
       data-state={open ? "open" : "closed"}
+      onDragStart={(e) => handleDragStart(e)}
+      onDragEnd={(e) => handleDragEnd(e)}
     >
-      {children}
-      <div className="buttonWrapper flex gap-1 pr-2">
-        <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
-          <button className="button-icon">
-            <Pencil1Icon />
-          </button>
-        </RenameHabitPopover>
-        <DeleteHabitDialog
-          habit={habit}
-          onOpenChange={setOpen}
-          onConfirm={handleDeleteConfirm}
-        >
-          <button className="button-icon">
-            <TrashIcon />
-          </button>
-        </DeleteHabitDialog>
+      <div className="overflow-hidden text-ellipsis text-nowrap">
+        {habit.name}
       </div>
+      {!dragging && (
+        <div className="buttonWrapper flex gap-1">
+          <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
+            <button className="button-icon">
+              <Pencil1Icon />
+            </button>
+          </RenameHabitPopover>
+          <DeleteHabitDialog
+            habit={habit}
+            onOpenChange={setOpen}
+            onConfirm={handleDeleteConfirm}
+          >
+            <button className="button-icon">
+              <TrashIcon />
+            </button>
+          </DeleteHabitDialog>
+        </div>
+      )}
     </Trigger>
   );
 }

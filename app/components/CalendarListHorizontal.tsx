@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, use, useRef } from "react";
+import React, { DragEvent, RefObject, use, useRef } from "react";
 import {
   format,
   subMonths,
@@ -78,8 +78,8 @@ export default function CalendarListHorizontal() {
       <div className="calendar relative ml-[100px] mr-[100px] overflow-hidden">
         <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
           {/* Calendar Header */}
-          <div className="calendar-header sticky top-0 z-20 flex w-fit">
-            <div className="sticky left-0 z-20 w-[200px] bg-[var(--background)]"></div>
+          <div className="calendar-header sticky top-0 z-10 flex w-fit">
+            <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
             <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
               {totalYears.map((date, index) => (
                 <YearItem
@@ -94,29 +94,22 @@ export default function CalendarListHorizontal() {
           </div>
 
           {/* Calendar Body */}
-          <div className="calendar-body mt-1">
-            {habits.map((habit, index) => (
-              <div className="flex w-fit" key={index}>
-                <div
-                  key={index}
-                  className="sticky left-0 z-10 flex h-10 w-[200px] shrink-0 items-center bg-[var(--background)]"
-                >
-                  <HeaderToolbar habit={habit} dragging={false}>
-                    <div className="overflow-hidden text-ellipsis text-nowrap">
-                      {habit.name}
-                    </div>
-                  </HeaderToolbar>
+          <div className="calendar-body mt-1 flex w-fit">
+            <Column />
+            <div className="sticky left-[200px]">
+              {habits.map((habit) => (
+                <div className="flex h-10" key={habit.id}>
+                  {totalDays.map((date) => (
+                    <TickedDiv
+                      key={`${date.toLocaleDateString()}-${habit.id}`}
+                      className="flex w-[50px] items-center justify-center"
+                      date={date}
+                      habit={habit}
+                    />
+                  ))}
                 </div>
-                {totalDays.map((date) => (
-                  <TickedDiv
-                    key={`${date.toLocaleDateString()}-${habit.id}`}
-                    className="flex h-10 w-[50px] items-center justify-center"
-                    date={date}
-                    habit={habit}
-                  />
-                ))}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
@@ -259,3 +252,121 @@ export function TickedDiv({
     </div>
   );
 }
+
+export function Column() {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarList must be used within a AppProvider");
+  }
+  const { habits, moveHabit } = appContext;
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    highlightIndicator(e);
+  };
+
+  const handleDragEnd = (e: DragEvent) => {
+    const habitId = e.dataTransfer.getData("habitId");
+
+    clearHighlights();
+
+    const indicators = getIndicators();
+    const { element } = getNearestIndicator(e, indicators);
+
+    const beforeId = element.dataset.before;
+
+    if (beforeId === "-1") {
+      moveHabit(Number(habitId), null);
+    } else if (beforeId !== habitId) {
+      moveHabit(Number(habitId), Number(beforeId));
+    }
+  };
+
+  const clearHighlights = (els?: HTMLElement[]) => {
+    const indicators = els || getIndicators();
+
+    indicators.forEach((i) => {
+      i.style.opacity = "0";
+    });
+  };
+
+  const highlightIndicator = (e: DragEvent) => {
+    const indicators = getIndicators();
+
+    clearHighlights(indicators);
+
+    const el = getNearestIndicator(e, indicators);
+    el.element.style.opacity = "1";
+  };
+
+  const getNearestIndicator = (e: DragEvent, indicators: HTMLElement[]) => {
+    const DISTANCE_OFFSET = 25;
+
+    const el = indicators.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = e.clientY - (box.top + DISTANCE_OFFSET);
+
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      },
+      {
+        offset: Number.NEGATIVE_INFINITY,
+        element: indicators[indicators.length - 1],
+      }
+    );
+
+    return el;
+  };
+
+  const getIndicators = () => {
+    return Array.from(
+      document.querySelectorAll(`.drop-indicator`)
+    ) as HTMLElement[];
+  };
+
+  const handleDragLeave = () => {
+    clearHighlights();
+  };
+
+  if (!habits || habits.length === 0) {
+    return;
+  }
+
+  return (
+    <>
+      <div
+        className="sticky left-0 z-[9] w-[200px]"
+        onDrop={handleDragEnd}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+      >
+        {habits.map((habit) => (
+          <div key={habit.id} className="relative flex h-10 hover:font-bold">
+            <div
+              data-before={habit.id}
+              className="drop-indicator absolute top-0 h-0.5 w-full bg-violet-400 opacity-0"
+            />
+            <HeaderToolbar habit={habit} />
+          </div>
+        ))}
+        <div
+          data-before={-1}
+          className="drop-indicator absolute bottom-0 h-0.5 w-full bg-violet-400 opacity-0"
+        />
+      </div>
+    </>
+  );
+}
+
+const DropIndicator = ({ beforeId }: { beforeId: number | null }) => {
+  return (
+    <div
+      data-before={beforeId || -1}
+      className="drop-indicator absolute top-0 h-0.5 w-full bg-violet-400 opacity-0"
+    />
+  );
+};
