@@ -58,7 +58,7 @@ export default function TaskName({
   return (
     <TaskNameDiv
       {...props}
-      className={`${className} draggable flex h-full w-full cursor-grab items-center justify-between gap-2 rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
+      className={`${className} draggable flex cursor-grab items-center justify-between gap-2 rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
       draggable="true"
       data-state={open ? "open" : "closed"}
       onDragStart={(e) => handleDragStart(e)}

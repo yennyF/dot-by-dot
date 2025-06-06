@@ -22,9 +22,10 @@ export function TaskColumn() {
     clearHighlights();
 
     const indicators = getIndicators();
-    const { element } = getNearestIndicator(e, indicators);
+    const el = getNearestIndicator(e, indicators);
+    if (!el) return;
 
-    const beforeId = element.dataset.before;
+    const beforeId = el.element.dataset.before;
 
     if (beforeId === "-1") {
       moveHabit(Number(habitId), null);
@@ -47,6 +48,8 @@ export function TaskColumn() {
     clearHighlights(indicators);
 
     const el = getNearestIndicator(e, indicators);
+    if (!el) return;
+
     el.element.style.opacity = "1";
   };
 
@@ -96,12 +99,12 @@ export function TaskColumn() {
         onDragLeave={handleDragLeave}
       >
         {habits.map((habit) => (
-          <div key={habit.id} className="relative flex h-10 hover:font-bold">
+          <div key={habit.id} className="relative flex">
             <DropIndicator
               beforeId={habit.id}
               className="drop-indicator absolute top-0"
             />
-            <TaskName habit={habit} />
+            <TaskName className="h-10 w-full" habit={habit} />
           </div>
         ))}
         <DropIndicator beforeId={-1} className="drop-indicator" />
