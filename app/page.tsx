@@ -1,7 +1,6 @@
 "use client";
 
 import { AppContext, AppProvider } from "./AppContext";
-import CalendarMonth from "./components/CalendarMonth";
 import { use } from "react";
 import Navbar from "./components/Navbar";
 import CalendarDay from "./components/CalendarDay/CalendarDay";
@@ -20,13 +19,13 @@ function Content() {
   if (!appContext) {
     throw new Error("Home must be used within a AppProvider");
   }
-  const { habits, page } = appContext;
+  const { habits } = appContext;
 
   if (!habits) {
     return <Loading />;
   }
 
-  return page === "grid" ? <CalendarMonth /> : <CalendarDay />;
+  return <CalendarDay />;
 }
 
 function Loading() {

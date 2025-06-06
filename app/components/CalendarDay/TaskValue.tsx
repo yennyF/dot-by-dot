@@ -11,7 +11,7 @@ interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   habit: Habit;
 }
 
-export function TaskValue({
+export default function TaskValue({
   date,
   habit,
   className,

@@ -4,7 +4,7 @@ import React, { DragEvent, use } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
 
-export function TaskColumn() {
+export default function TaskColumn() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");

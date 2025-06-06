@@ -48,43 +48,45 @@ export default function CalendarMonth() {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <div className="h-[550px] w-fit">
-        <div className="flex h-20 w-full items-center justify-between gap-5">
-          <h2 className="font-bold">{format(currentDate, "MMMM yyyy")}</h2>
-          <div className="flex gap-3">
-            <button onClick={today}>Today</button>
-            <button className="button-icon" onClick={previousMonth}>
-              <ChevronLeftIcon />
-            </button>
-            <button className="button-icon" onClick={nextMonth}>
-              <ChevronRightIcon />
-            </button>
+    <div>
+      <div className="flex h-20 w-full items-center justify-between gap-5">
+        <h2 className="text-sm font-bold">
+          {format(currentDate, "MMMM yyyy")}
+        </h2>
+        <div className="flex gap-2">
+          <button className="text-sm" onClick={today}>
+            Today
+          </button>
+          <button className="button-icon" onClick={previousMonth}>
+            <ChevronLeftIcon />
+          </button>
+          <button className="button-icon" onClick={nextMonth}>
+            <ChevronRightIcon />
+          </button>
+        </div>
+      </div>
+
+      <div
+        className="grid grid-cols-7 gap-2 text-neutral-400"
+        style={{ gridTemplateColumns: "repeat(7, min-content)" }}
+      >
+        {dayLabels.map((day, index) => (
+          <div
+            key={index}
+            className="calendar-day calendar-day-header h-8 w-8 text-center text-xs"
+          >
+            {day}
           </div>
-        </div>
+        ))}
+      </div>
 
-        <div
-          className="grid grid-cols-7 gap-3 text-neutral-400"
-          style={{ gridTemplateColumns: "repeat(7, min-content)" }}
-        >
-          {dayLabels.map((day, index) => (
-            <div
-              key={index}
-              className="calendar-day calendar-day-header h-10 w-14 text-center"
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-
-        <div
-          className="grid grid-cols-7 gap-3 text-neutral-400"
-          style={{ gridTemplateColumns: "repeat(7, min-content)" }}
-        >
-          {totalDays.map((day, index) => (
-            <DayCell key={index} date={day} />
-          ))}
-        </div>
+      <div
+        className="grid grid-cols-7 gap-2 text-neutral-400"
+        style={{ gridTemplateColumns: "repeat(7, min-content)" }}
+      >
+        {totalDays.map((day, index) => (
+          <DayCell key={index} date={day} />
+        ))}
       </div>
     </div>
   );
@@ -110,7 +112,7 @@ function DayCell({ date }: DayCellProps) {
 
   return (
     <div
-      className={`calendar-day relative grid h-14 w-14 place-items-center rounded-full text-black ${isToday(date) ? "outline" : ""}`}
+      className={`calendar-day relative grid h-8 w-8 place-items-center rounded-full text-xs text-black ${isToday(date) ? "outline" : ""}`}
     >
       <div
         className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)]`}

@@ -21,8 +21,9 @@ import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import { PlusIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "../AddHabitPopover";
-import { TaskColumn } from "./TaskColumn";
-import { TaskValue } from "./TaskValue";
+import TaskValue from "./TaskValue";
+import CalendarMonth from "../CalendarMonth";
+import TaskColumn from "./TaskColumn";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -74,49 +75,57 @@ export default function CalendarDay() {
         </button>
       </div> */}
 
-      <div className="calendar relative ml-[100px] mr-[100px] overflow-hidden">
-        <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
-          {/* Calendar Header */}
-          <div className="calendar-header sticky top-0 z-10 flex w-fit">
-            <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
-            <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
-              {totalYears.map((date, index) => (
-                <YearItem
-                  key={index}
-                  date={date}
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  scrollTarget={scrollTarget}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Calendar Body */}
-          <div className="calendar-body mt-1 flex w-fit">
-            <TaskColumn />
-            <div className="sticky left-[200px]">
-              {habits.map((habit) => (
-                <div className="flex h-10" key={habit.id}>
-                  {totalDays.map((date) => (
-                    <TaskValue
-                      key={`${date.toLocaleDateString()}-${habit.id}`}
-                      className="flex w-[50px] items-center justify-center"
-                      date={date}
-                      habit={habit}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
+      <div className="flex">
+        <div className="h-screen w-[320px] shrink-0">
+          <div className="fixed flex w-[320px] justify-center">
+            <CalendarMonth />
           </div>
         </div>
 
-        {/* Shadows */}
-        <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
-        <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
-        <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
-        <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>
+        <div className="calendar relative mx-[50px] overflow-hidden">
+          <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
+            {/* Calendar Header */}
+            <div className="calendar-header sticky top-0 z-10 flex w-fit">
+              <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
+              <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
+                {totalYears.map((date, index) => (
+                  <YearItem
+                    key={index}
+                    date={date}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    scrollTarget={scrollTarget}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Calendar Body */}
+            <div className="calendar-body mt-1 flex w-fit">
+              <TaskColumn />
+              <div className="sticky left-[200px]">
+                {habits.map((habit) => (
+                  <div className="flex h-10" key={habit.id}>
+                    {totalDays.map((date) => (
+                      <TaskValue
+                        key={`${date.toLocaleDateString()}-${habit.id}`}
+                        className="flex w-[50px] items-center justify-center"
+                        date={date}
+                        habit={habit}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Shadows */}
+          <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
+          <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
+          <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
+          <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>
+        </div>
       </div>
 
       <div className="h-[500px]"></div>
