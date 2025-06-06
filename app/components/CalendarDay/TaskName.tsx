@@ -1,10 +1,10 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, use, useState } from "react";
 import styled from "styled-components";
-import { AppContext } from "../AppContext";
-import DeleteHabitDialog from "./DeleteHabitDialog";
-import RenameHabitPopover from "./RenameHabitPopover";
-import { Habit } from "../repositories";
+import { AppContext } from "../../AppContext";
+import DeleteHabitDialog from "../DeleteHabitDialog";
+import RenameHabitPopover from "../RenameHabitPopover";
+import { Habit } from "../../repositories";
 
 const TaskNameDiv = styled.div`
   .action-buttons {

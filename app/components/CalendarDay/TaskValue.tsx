@@ -2,9 +2,9 @@
 
 import React, { use } from "react";
 import { addDays } from "date-fns";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../../AppContext";
 import TickedButton from "./TickedButton";
-import { Habit } from "../repositories";
+import { Habit } from "../../repositories";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;

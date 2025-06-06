@@ -1,10 +1,10 @@
 "use client";
 
 import { AppContext, AppProvider } from "./AppContext";
-import CalendarGrid from "./components/CalendarGrid";
+import CalendarMonth from "./components/CalendarMonth";
 import { use } from "react";
 import Navbar from "./components/Navbar";
-import TaskCalendar from "./components/TaskCalendar";
+import CalendarDay from "./components/CalendarDay/CalendarDay";
 
 export default function Home() {
   return (
@@ -26,7 +26,7 @@ function Content() {
     return <Loading />;
   }
 
-  return page === "grid" ? <CalendarGrid /> : <TaskCalendar />;
+  return page === "grid" ? <CalendarMonth /> : <CalendarDay />;
 }
 
 function Loading() {

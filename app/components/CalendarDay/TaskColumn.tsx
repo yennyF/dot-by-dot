@@ -1,7 +1,7 @@
 "use client";
 
 import React, { DragEvent, use } from "react";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
 
 export function TaskColumn() {

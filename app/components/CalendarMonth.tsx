@@ -17,7 +17,7 @@ import { AppContext } from "../AppContext";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
-export default function CalendarGrid() {
+export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalDays, setTotalDays] = useState<Date[]>([]);
 
