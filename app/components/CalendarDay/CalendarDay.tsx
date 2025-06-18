@@ -21,7 +21,7 @@ import { eachMonthOfInterval } from "date-fns/fp";
 import TaskValue from "./TaskValue";
 import TaskColumn from "./TaskColumn";
 import useScrollTo from "@/app/hooks/useScrollTo";
-import { CaretLeftIcon, CaretRightIcon, PlusIcon } from "@radix-ui/react-icons";
+import { PlusIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "../AddHabitPopover";
 
 export default function CalendarDay() {
@@ -51,8 +51,7 @@ export default function CalendarDay() {
   }
 
   return (
-    <>
-      {/* Header */}
+    <div className="mx-[50px] overflow-hidden">
       {/* Controls */}
       <div className="flex h-[80px] w-full items-center justify-end gap-2">
         {/* <div className="flex items-center gap-2"> */}
@@ -74,6 +73,7 @@ export default function CalendarDay() {
         {/* </div> */}
       </div>
 
+      {/* Calendar */}
       <div className="calendar relative">
         <div className="no-scrollbar top-0 h-[calc(100vh-100px)] overflow-x-auto overflow-y-scroll">
           {/* Calendar Header */}
@@ -118,7 +118,7 @@ export default function CalendarDay() {
         <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
         <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>
       </div>
-    </>
+    </div>
   );
 }
 
