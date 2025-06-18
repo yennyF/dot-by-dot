@@ -173,7 +173,7 @@ input {
   }
 
   .button-icon {
-    @apply button w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)];
+    @apply button w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)] flex justify-center items-center;
 
     &:hover svg {
       @apply button text-[var(--white)];

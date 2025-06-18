@@ -16,11 +16,13 @@ import {
   startOfYear,
   isWeekend,
 } from "date-fns";
-// import useScrollTo from "../hooks/useScrollTo";
 import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import TaskValue from "./TaskValue";
 import TaskColumn from "./TaskColumn";
+import useScrollTo from "@/app/hooks/useScrollTo";
+import { CaretLeftIcon, CaretRightIcon, PlusIcon } from "@radix-ui/react-icons";
+import AddHabitPopover from "../AddHabitPopover";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -30,7 +32,7 @@ export default function CalendarDay() {
   const { habits } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
-  // const scrollToTarget = useScrollTo(scrollTarget);
+  const scrollToTarget = useScrollTo(scrollTarget);
 
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
@@ -50,21 +52,30 @@ export default function CalendarDay() {
 
   return (
     <>
+      {/* Header */}
       {/* Controls */}
-      {/* <div className="flex h-[64px] w-full items-center justify-end gap-2">
+      <div className="flex h-[80px] w-full items-center justify-end gap-2">
+        {/* <div className="flex items-center gap-2"> */}
+        {/* <button className="button-icon">
+            <CaretLeftIcon />
+          </button>
+          <button className="button-icon">
+            <CaretRightIcon />
+          </button> */}
         <button className="button-outline" onClick={scrollToTarget}>
           Today
         </button>
-        <button className="button-icon">
-          <CaretLeftIcon />
-        </button>
-        <button className="button-icon">
-          <CaretRightIcon />
-        </button>
-      </div> */}
+        <AddHabitPopover>
+          <button className="button-accent">
+            <PlusIcon />
+            New Habit
+          </button>
+        </AddHabitPopover>
+        {/* </div> */}
+      </div>
 
-      <div className="calendar relative mx-[50px] mt-[30px] overflow-hidden">
-        <div className="no-scrollbar top-0 max-h-[700px] overflow-x-auto overflow-y-scroll">
+      <div className="calendar relative">
+        <div className="no-scrollbar top-0 h-[calc(100vh-100px)] overflow-x-auto overflow-y-scroll">
           {/* Calendar Header */}
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
             <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
