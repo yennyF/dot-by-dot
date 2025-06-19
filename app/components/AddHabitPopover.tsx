@@ -66,7 +66,7 @@ function Content() {
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
       sideOffset={10}
-      align="start"
+      align="end"
       alignOffset={0}
       onKeyDown={handleKeyDown}
     >

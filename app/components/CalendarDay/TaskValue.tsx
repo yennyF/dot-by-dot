@@ -21,6 +21,7 @@ export default function TaskValue({
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
+
   const { habitsByDate, toggleHabitTrack } = appContext;
 
   const isCurrentActive =
@@ -46,6 +47,18 @@ export default function TaskValue({
         className="z-[1]"
         active={isCurrentActive}
         onClick={() => handleTicked(date, habit.id)}
+        onMouseEnter={() => {
+          const el = document.querySelector(
+            `.task-name[data-id="${habit.id}"]`
+          );
+          el?.classList.add("highlight");
+        }}
+        onMouseLeave={() => {
+          const el = document.querySelector(
+            `.task-name[data-id="${habit.id}"]`
+          );
+          el?.classList.remove("highlight");
+        }}
       />
       {isNextActive && isCurrentActive && (
         <div className="absolute left-[50%] right-0 h-4 bg-[var(--accent-4)]"></div>

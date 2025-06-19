@@ -15,7 +15,7 @@ export default function Sidebar() {
       transition={{ duration: 0.2 }}
     >
       <div
-        className="button-icon absolute right-[-40px] top-8 z-10 h-[40px] w-[40px] rounded-none bg-[var(--accent)]"
+        className="button-icon-accent absolute right-[-40px] top-8 z-10 h-[40px] w-[40px] rounded-none"
         onClick={() => setOpenSidebar((prev) => !prev)}
       >
         {openSidebar ? <Cross1Icon /> : <CalendarIcon />}
@@ -30,8 +30,8 @@ export default function Sidebar() {
             exit={{ left: -320 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="fixed mt-[80px] h-screen w-[320px] border-r-[1px] border-[var(--gray)]">
-              <div className="flex w-full items-center justify-center">
+            <div className="fixed h-screen w-[320px] border-r-[1px] border-[var(--gray)]">
+              <div className="mt-[80px] flex w-full items-center justify-center">
                 <CalendarMonth />
               </div>
             </div>

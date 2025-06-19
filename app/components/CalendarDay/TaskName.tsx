@@ -20,17 +20,17 @@ const TaskNameDiv = styled.div`
   &:hover .action-buttons {
     display: flex;
   }
+
+  &.highlight {
+    font-weight: bold;
+  }
 `;
 
-interface TaskNameProps extends React.HTMLAttributes<HTMLDivElement> {
+interface TaskNameProps {
   habit: Habit;
 }
 
-export default function TaskName({
-  habit,
-  className,
-  ...props
-}: TaskNameProps) {
+export default function TaskName({ habit }: TaskNameProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("TaskName must be used within a AppProvider");
@@ -57,9 +57,9 @@ export default function TaskName({
 
   return (
     <TaskNameDiv
-      {...props}
-      className={`${className} draggable flex cursor-grab items-center justify-between gap-2 rounded bg-[var(--background)] px-3 active:cursor-grabbing`}
+      className="task-name draggable flex w-full cursor-grab items-center justify-between gap-2 px-3 active:cursor-grabbing"
       draggable="true"
+      data-id={habit.id}
       data-state={open ? "open" : "closed"}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}

@@ -13,7 +13,7 @@ interface AppContextProps {
   toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
   addHabit: (habit: string) => Promise<boolean>;
   renameHabit: (id: number, newName: string) => Promise<boolean>;
-  moveHabit: (selectedIndex: number, targetIndex: number) => void;
+  moveHabit: (selectedIndex: number, targetIndex: number | null) => void;
   deleteHabit: (id: number) => Promise<boolean>;
 }
 

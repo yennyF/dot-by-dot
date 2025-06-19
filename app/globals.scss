@@ -54,6 +54,11 @@ input {
   @apply cursor-grab active:cursor-grabbing hover:cursor-grab focus:cursor-grab;
 }
 
+.tooltip {
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+}
+
 
 .overlay {
   background: rgba(0 0 0 / 0.5);
@@ -174,6 +179,26 @@ input {
 
   .button-icon {
     @apply button w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)] flex justify-center items-center;
+
+    &:hover svg {
+      @apply button text-[var(--white)];
+    }
+
+    &[data-state="open"] {
+      @apply bg-[var(--black)];
+
+      svg {
+        @apply button text-[var(--white)];
+      }
+    }
+  }
+
+  .button-icon-accent {
+    @apply button w-fit cursor-pointer rounded-full p-1 transition-all bg-[var(--accent)] hover:bg-[var(--black)] flex justify-center items-center;
+
+    svg {
+      @apply text-[var(--white)]
+    }
 
     &:hover svg {
       @apply button text-[var(--white)];

@@ -95,13 +95,13 @@ export default function CalendarDay() {
           {/* Calendar Body */}
           <div className="calendar-body mt-1 flex w-fit">
             <TaskColumn />
-            <div className="sticky left-[200px]">
+            <div className="sticky left-[200px] flex flex-col">
               {habits.map((habit) => (
-                <div className="flex h-10" key={habit.id}>
+                <div className="calendar-row flex" key={habit.id}>
                   {totalDays.map((date) => (
                     <TaskValue
                       key={`${date.toLocaleDateString()}-${habit.id}`}
-                      className="flex w-[50px] items-center justify-center"
+                      className="flex h-10 w-[50px] items-center justify-center"
                       date={date}
                       habit={habit}
                     />

@@ -9,6 +9,7 @@ export default function TaskColumn() {
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
+
   const { habits, moveHabit } = appContext;
 
   const handleDragOver = (e: DragEvent) => {
@@ -91,25 +92,23 @@ export default function TaskColumn() {
   }
 
   return (
-    <>
-      <div
-        className="sticky left-0 z-[9] w-[200px]"
-        onDrop={handleDragEnd}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        {habits.map((habit) => (
-          <div key={habit.id} className="relative flex">
-            <DropIndicator
-              beforeId={habit.id}
-              className="drop-indicator absolute top-0"
-            />
-            <TaskName className="h-10 w-full" habit={habit} />
-          </div>
-        ))}
-        <DropIndicator beforeId={-1} className="drop-indicator" />
-      </div>
-    </>
+    <div
+      className="sticky left-0 z-[9] flex w-[200px] flex-col bg-[var(--background)]"
+      onDrop={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
+      {habits.map((habit) => (
+        <div key={habit.id} className="relative flex h-10">
+          <DropIndicator
+            beforeId={habit.id}
+            className="drop-indicator absolute top-0"
+          />
+          <TaskName habit={habit} />
+        </div>
+      ))}
+      <DropIndicator beforeId={-1} className="drop-indicator" />
+    </div>
   );
 }
 
