@@ -1,13 +1,12 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import * as Repositories from "./repositories";
 import { Habit, HabitsByDate } from "./repositories/types";
+
 type ThemeType = "light" | "dark";
 
 interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
-  page: "grid" | "list";
-  setPage: (page: "grid" | "list") => void;
   habits: Habit[] | undefined;
   habitsByDate: HabitsByDate;
   toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
@@ -21,7 +20,6 @@ const AppContext = createContext({} as AppContextProps);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
-  const [page, setPage] = useState<"grid" | "list">("list");
   const [habits, setHabits] = useState<Habit[]>(); // undefined when loading
   const [habitsByDate, setHabitsByDate] = useState<HabitsByDate>({});
 
@@ -147,8 +145,6 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     theme,
     toggleTheme,
-    page,
-    setPage,
     habits,
     habitsByDate,
     toggleHabitTrack,
