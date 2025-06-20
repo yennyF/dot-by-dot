@@ -3,8 +3,9 @@
 import React, { use } from "react";
 import { addDays } from "date-fns";
 import { AppContext } from "../../AppContext";
-import TickedButton from "./TickedButton";
 import { Habit } from "../../repositories";
+import { motion } from "motion/react";
+import clsx from "clsx";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
@@ -43,10 +44,21 @@ export default function TaskValue({
       {isPrevActive && isCurrentActive && (
         <div className="absolute left-0 right-[50%] h-4 bg-[var(--accent-4)]"></div>
       )}
-      <TickedButton
-        className="z-[1]"
-        active={isCurrentActive}
-        onClick={() => handleTicked(date, habit.id)}
+      {isNextActive && isCurrentActive && (
+        <div className="absolute left-[50%] right-0 h-4 bg-[var(--accent-4)]"></div>
+      )}
+      <motion.button
+        className={clsx(
+          "z-[1] h-4 w-4 rounded-full",
+          isCurrentActive
+            ? "bg-[var(--accent)]"
+            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+        )}
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.8 }}
+        onClick={() => {
+          handleTicked(date, habit.id);
+        }}
         onMouseEnter={() => {
           const el = document.querySelector(
             `.task-name[data-id="${habit.id}"]`
@@ -59,10 +71,7 @@ export default function TaskValue({
           );
           el?.classList.remove("highlight");
         }}
-      />
-      {isNextActive && isCurrentActive && (
-        <div className="absolute left-[50%] right-0 h-4 bg-[var(--accent-4)]"></div>
-      )}
+      ></motion.button>
     </div>
   );
 }

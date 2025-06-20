@@ -1,30 +1,10 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, use, useState } from "react";
-import styled from "styled-components";
 import { AppContext } from "../../AppContext";
 import DeleteHabitDialog from "../DeleteHabitDialog";
 import RenameHabitPopover from "../RenameHabitPopover";
 import { Habit } from "../../repositories";
-
-const TaskNameDiv = styled.div`
-  .action-buttons {
-    display: none;
-  }
-
-  &[data-state="open"] {
-    .action-buttons {
-      display: flex;
-    }
-  }
-
-  &:hover .action-buttons {
-    display: flex;
-  }
-
-  &.highlight {
-    font-weight: bold;
-  }
-`;
+import clsx from "clsx";
 
 interface TaskNameProps {
   habit: Habit;
@@ -56,11 +36,13 @@ export default function TaskName({ habit }: TaskNameProps) {
   };
 
   return (
-    <TaskNameDiv
-      className="task-name draggable flex w-full cursor-grab items-center justify-between gap-2 px-3 active:cursor-grabbing"
+    <div
+      className={clsx(
+        "task-name draggable group flex w-full cursor-grab items-center justify-between gap-2 px-3 active:cursor-grabbing",
+        "[&.highlight]:font-bold"
+      )}
       draggable="true"
       data-id={habit.id}
-      data-state={open ? "open" : "closed"}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
@@ -68,7 +50,10 @@ export default function TaskName({ habit }: TaskNameProps) {
         {habit.name}
       </div>
       {!dragging && (
-        <div className="action-buttons flex gap-1">
+        <div
+          className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
+          data-state={open ? "open" : "closed"}
+        >
           <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
@@ -85,6 +70,6 @@ export default function TaskName({ habit }: TaskNameProps) {
           </DeleteHabitDialog>
         </div>
       )}
-    </TaskNameDiv>
+    </div>
   );
 }
