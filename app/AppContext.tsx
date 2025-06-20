@@ -124,9 +124,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     const dateString = date.toLocaleDateString();
     const isChecked = habitsByDate[dateString]?.[habitId] ?? false;
 
-    await Repositories.setHabitByDate(habitId, !isChecked, date);
-
     try {
+      await Repositories.setHabitByDate(habitId, !isChecked, date);
       setHabitsByDate((prev) => ({
         ...prev,
         [dateString]: {
@@ -134,7 +133,6 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
           [habitId]: !isChecked,
         },
       }));
-
       return true;
     } catch (error) {
       console.error("Error toggling habit track:", error);

@@ -3,18 +3,22 @@
 import React, { use } from "react";
 import { addDays } from "date-fns";
 import { AppContext } from "../../AppContext";
-import { Habit } from "../../repositories";
+import { Habit, HabitsByDate2, setHabitByDate } from "../../repositories";
 import { motion } from "motion/react";
 import clsx from "clsx";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
   habit: Habit;
+  result: HabitsByDate2 | undefined;
+  toggleHabitTrack2: (date: Date) => void;
 }
 
 export default function TaskValue({
   date,
   habit,
+  result,
+  toggleHabitTrack2,
   className,
   ...props
 }: TaskValueProps) {
@@ -23,18 +27,16 @@ export default function TaskValue({
     throw new Error("CalendarList must be used within a AppProvider");
   }
 
-  const { habitsByDate, toggleHabitTrack } = appContext;
+  const { toggleHabitTrack } = appContext;
 
-  const isCurrentActive =
-    habitsByDate[date.toLocaleDateString()]?.[habit.id] || false;
+  const isCurrentActive = result?.[date.toLocaleDateString()] || false;
   const isPrevActive =
-    habitsByDate[addDays(date, -1).toLocaleDateString()]?.[habit.id] || false;
-  const isNextActive =
-    habitsByDate[addDays(date, 1).toLocaleDateString()]?.[habit.id] || false;
+    result?.[addDays(date, -1).toLocaleDateString()] || false;
+  const isNextActive = result?.[addDays(date, 1).toLocaleDateString()] || false;
 
-  const handleTicked = async (date: Date, habitId: number) => {
-    await toggleHabitTrack(date, habitId);
-  };
+  // const handleTicked = async (date: Date, habitId: number) => {
+  //   await toggleHabitTrack(date, habitId);
+  // };
 
   return (
     <div
@@ -56,8 +58,13 @@ export default function TaskValue({
         )}
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.8 }}
-        onClick={() => {
-          handleTicked(date, habit.id);
+        onClick={async () => {
+          // toggleHabitTrack(date, habit.id);
+          toggleHabitTrack2(date);
+
+          const dateString = date.toLocaleDateString();
+          const isChecked = result?.[dateString] ?? false;
+          await setHabitByDate(habit.id, !isChecked, date);
         }}
         onMouseEnter={() => {
           const el = document.querySelector(

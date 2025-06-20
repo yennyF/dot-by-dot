@@ -20,3 +20,5 @@ export type HabitsByDate = Record<
   LocaleDateString,
   Record<HabitString, boolean>
 >;
+
+export type HabitsByDate2 = Record<LocaleDateString, boolean>;

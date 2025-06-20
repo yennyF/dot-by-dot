@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { HabitsByDate, Track } from "./types";
+import { Habit, HabitsByDate, HabitsByDate2, Track } from "./types";
 
 export async function addTrack(date: Date): Promise<Track> {
   const dateString = date.toLocaleDateString();
@@ -26,6 +26,25 @@ export async function getHabitsByDate(): Promise<HabitsByDate> {
   );
 
   return habitsByDate;
+}
+
+export async function getHabitsByDate2(
+  habitId: number
+): Promise<HabitsByDate2> {
+  const habitsByDate2: HabitsByDate2 = {};
+
+  const habitTracks = await db.habit_track
+    .where("habitId")
+    .equals(habitId)
+    .toArray();
+
+  const trackIds = habitTracks.map((habitTrack) => habitTrack.trackId);
+  const tracks = await db.tracks.where("id").anyOf(trackIds).toArray();
+
+  tracks.forEach((track) => {
+    habitsByDate2[track.date] = true;
+  });
+  return habitsByDate2;
 }
 
 export async function setHabitByDate(
