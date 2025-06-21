@@ -1,9 +1,8 @@
 export type LocaleDateString = string; // Format: "M/D/YYYY"
-export type HabitString = string;
 
 export type Habit = {
   id: number;
-  name: HabitString;
+  name: string;
 };
 
 export type Track = {
@@ -15,10 +14,3 @@ export type HabitTrack = {
   habitId: number;
   trackId: number;
 };
-
-export type HabitsByDate = Record<
-  LocaleDateString,
-  Record<HabitString, boolean>
->;
-
-export type HabitsByDate2 = Record<LocaleDateString, boolean>;

@@ -14,12 +14,19 @@ import {
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
+import { useStore } from "../Store";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
 export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalDays, setTotalDays] = useState<Date[]>([]);
+
+  const loadDateGroup = useStore((s) => s.loadDateGroup);
+
+  useEffect(() => {
+    loadDateGroup();
+  }, [loadDateGroup]);
 
   useEffect(() => {
     const startOfCurrentMonth = startOfMonth(currentDate);
@@ -101,14 +108,11 @@ function DayCell({ date }: DayCellProps) {
   if (!appContext) {
     throw new Error("CalendarGrid must be used within a AppProvider");
   }
-  const { habits, habitsByDate } = appContext;
+  const { habits } = appContext;
 
-  const habitTrack = habitsByDate[date.toLocaleDateString()] || {};
-  const habitsFiltered = habits?.filter(
-    (habit) => habitTrack[habit.id] === true
-  );
-  const percentage =
-    habits && habitsFiltered ? habitsFiltered.length / habits.length : 0;
+  const dateGroup = useStore((s) => s.dateGroup[date.toLocaleDateString()]);
+
+  const percentage = habits && dateGroup ? dateGroup.size / habits.length : 0;
 
   return (
     <div

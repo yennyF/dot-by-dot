@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { Habit, HabitsByDate, HabitsByDate2, Track } from "./types";
+import { LocaleDateString, Track } from "./types";
 
 export async function addTrack(date: Date): Promise<Track> {
   const dateString = date.toLocaleDateString();
@@ -7,44 +7,33 @@ export async function addTrack(date: Date): Promise<Track> {
   return { id, date: dateString };
 }
 
-export async function getHabitsByDate(): Promise<HabitsByDate> {
-  const habitsByDate: HabitsByDate = {};
-  const tracks = await db.tracks.toArray();
-
-  await Promise.all(
-    tracks.map(async (track) => {
-      habitsByDate[track.date] = {};
-
-      const habitTracks = await db.habit_track
-        .where("trackId")
-        .equals(track.id)
-        .toArray();
-      habitTracks.forEach((habitTrack) => {
-        habitsByDate[track.date][habitTrack.habitId] = true;
-      });
-    })
-  );
-
-  return habitsByDate;
+export async function getTracks(): Promise<Track[]> {
+  return await db.tracks.toArray();
 }
 
-export async function getHabitsByDate2(
-  habitId: number
-): Promise<HabitsByDate2> {
-  const habitsByDate2: HabitsByDate2 = {};
+export async function getHabitsByDate(trackId: number): Promise<Set<number>> {
+  const habitTracks = await db.habit_track
+    .where("trackId")
+    .equals(trackId)
+    .toArray();
+  const habitIds = habitTracks.map((habitTrack) => habitTrack.habitId);
+  // const habits = await db.habits.where("id").anyOf(habitIds).toArray();
 
+  // return new Set(habits.map((habit) => habit.name));
+  return new Set(habitIds);
+}
+
+export async function getDatesByHabit(
+  habitId: number
+): Promise<Set<LocaleDateString>> {
   const habitTracks = await db.habit_track
     .where("habitId")
     .equals(habitId)
     .toArray();
-
   const trackIds = habitTracks.map((habitTrack) => habitTrack.trackId);
   const tracks = await db.tracks.where("id").anyOf(trackIds).toArray();
 
-  tracks.forEach((track) => {
-    habitsByDate2[track.date] = true;
-  });
-  return habitsByDate2;
+  return new Set(tracks.map((track) => track.date));
 }
 
 export async function setHabitByDate(

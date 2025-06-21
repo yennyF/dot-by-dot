@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, use, useEffect, useRef, useState } from "react";
+import React, { RefObject, use, useEffect, useRef } from "react";
 import {
   format,
   subMonths,
@@ -15,7 +15,6 @@ import {
   isAfter,
   startOfYear,
   isWeekend,
-  EachDayOfIntervalResult,
 } from "date-fns";
 import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
@@ -24,8 +23,7 @@ import TaskColumn from "./TaskColumn";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
 import AddHabitPopover from "../AddHabitPopover";
-import { Habit } from "@/app/repositories";
-import * as Repositories from "../../repositories";
+import { useStore } from "@/app/Store";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -48,6 +46,12 @@ export default function CalendarDay() {
     start: minDate,
     end: maxDate,
   });
+
+  const loadHabitGroup = useStore((s) => s.loadHabitGroup);
+
+  useEffect(() => {
+    loadHabitGroup();
+  }, [loadHabitGroup]);
 
   useEffect(() => {
     console.log("CalendarDay");
@@ -104,21 +108,16 @@ export default function CalendarDay() {
             <TaskColumn />
             <div className="sticky left-[200px] flex flex-col">
               {habits.map((habit) => (
-                // <div className="calendar-row flex" key={habit.id}>
-                //   {totalDays.map((date) => (
-                //     <TaskValue
-                //       key={`${date.toLocaleDateString()}-${habit.id}`}
-                //       className="flex h-10 w-[50px] items-center justify-center"
-                //       date={date}
-                //       habit={habit}
-                //     />
-                //   ))}
-                // </div>
-                <CalendarRow
-                  key={habit.id}
-                  habit={habit}
-                  totalDays={totalDays}
-                />
+                <div className="calendar-row flex" key={habit.id}>
+                  {totalDays.map((date) => (
+                    <TaskValue
+                      key={`${date.toLocaleDateString()}-${habit.id}`}
+                      className="flex h-10 w-[50px] items-center justify-center"
+                      date={date}
+                      habit={habit}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           </div>
@@ -199,57 +198,6 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
           );
         })}
       </div>
-    </div>
-  );
-}
-
-function CalendarRow({
-  habit,
-  totalDays,
-}: {
-  habit: Habit;
-  totalDays: EachDayOfIntervalResult<
-    {
-      start: Date;
-      end: Date;
-    },
-    undefined
-  >;
-}) {
-  // const appContext = use(AppContext);
-  // if (!appContext) {
-  //   throw new Error("CalendarList must be used within a AppProvider");
-  // }
-  // const {} = appContext;
-
-  const [result, setResult] = useState<Repositories.HabitsByDate2>();
-
-  useEffect(() => {
-    (async () => {
-      const result = await Repositories.getHabitsByDate2(habit.id);
-      setResult(result);
-    })();
-  }, [habit]);
-
-  return (
-    <div className="calendar-row flex" key={habit.id}>
-      {totalDays.map((date) => (
-        <TaskValue
-          key={`${date.toLocaleDateString()}-${habit.id}`}
-          className="flex h-10 w-[50px] items-center justify-center"
-          date={date}
-          habit={habit}
-          result={result}
-          toggleHabitTrack2={(date) => {
-            setResult((result) => {
-              const newResult = { ...result };
-              newResult[date.toLocaleDateString()] =
-                !newResult[date.toLocaleDateString()];
-              return newResult;
-            });
-          }}
-        />
-      ))}
     </div>
   );
 }

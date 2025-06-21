@@ -1,6 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import * as Repositories from "./repositories";
-import { Habit, HabitsByDate } from "./repositories/types";
+import { Habit } from "./repositories/types";
 
 type ThemeType = "light" | "dark";
 
@@ -8,8 +8,6 @@ interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
   habits: Habit[] | undefined;
-  habitsByDate: HabitsByDate;
-  toggleHabitTrack: (date: Date, habitId: number) => Promise<boolean>;
   addHabit: (habit: string) => Promise<boolean>;
   renameHabit: (id: number, newName: string) => Promise<boolean>;
   moveHabit: (selectedIndex: number, targetIndex: number | null) => void;
@@ -21,18 +19,15 @@ const AppContext = createContext({} as AppContextProps);
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [habits, setHabits] = useState<Habit[]>(); // undefined when loading
-  const [habitsByDate, setHabitsByDate] = useState<HabitsByDate>({});
 
   useEffect(() => {
     let mounted = true;
 
     (async () => {
       const habits = await Repositories.getHabit();
-      const habitsByDate = await Repositories.getHabitsByDate();
 
       if (mounted) {
         setHabits(habits);
-        setHabitsByDate(habitsByDate);
       }
     })();
 
@@ -120,32 +115,10 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  const toggleHabitTrack = async (date: Date, habitId: number) => {
-    const dateString = date.toLocaleDateString();
-    const isChecked = habitsByDate[dateString]?.[habitId] ?? false;
-
-    try {
-      await Repositories.setHabitByDate(habitId, !isChecked, date);
-      setHabitsByDate((prev) => ({
-        ...prev,
-        [dateString]: {
-          ...prev[dateString],
-          [habitId]: !isChecked,
-        },
-      }));
-      return true;
-    } catch (error) {
-      console.error("Error toggling habit track:", error);
-      return false;
-    }
-  };
-
   const value = {
     theme,
     toggleTheme,
     habits,
-    habitsByDate,
-    toggleHabitTrack,
     addHabit,
     renameHabit,
     moveHabit,

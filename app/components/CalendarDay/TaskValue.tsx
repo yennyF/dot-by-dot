@@ -3,40 +3,31 @@
 import React, { use } from "react";
 import { addDays } from "date-fns";
 import { AppContext } from "../../AppContext";
-import { Habit, HabitsByDate2, setHabitByDate } from "../../repositories";
+import { Habit } from "../../repositories";
 import { motion } from "motion/react";
 import clsx from "clsx";
+import { useStore } from "@/app/Store";
+import * as Repositories from "../../repositories";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
   habit: Habit;
-  result: HabitsByDate2 | undefined;
-  toggleHabitTrack2: (date: Date) => void;
 }
 
 export default function TaskValue({
   date,
   habit,
-  result,
-  toggleHabitTrack2,
   className,
   ...props
 }: TaskValueProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
+  const dataSet = useStore((s) => s.habitGroup[habit.id]);
+  const toggleHabit = useStore((s) => s.toggleHabit);
 
-  const { toggleHabitTrack } = appContext;
+  if (!dataSet) return;
 
-  const isCurrentActive = result?.[date.toLocaleDateString()] || false;
-  const isPrevActive =
-    result?.[addDays(date, -1).toLocaleDateString()] || false;
-  const isNextActive = result?.[addDays(date, 1).toLocaleDateString()] || false;
-
-  // const handleTicked = async (date: Date, habitId: number) => {
-  //   await toggleHabitTrack(date, habitId);
-  // };
+  const isCurrentActive = dataSet.has(date.toLocaleDateString());
+  const isPrevActive = dataSet.has(addDays(date, -1).toLocaleDateString());
+  const isNextActive = dataSet.has(addDays(date, 1).toLocaleDateString());
 
   return (
     <div
@@ -58,13 +49,11 @@ export default function TaskValue({
         )}
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.8 }}
-        onClick={async () => {
-          // toggleHabitTrack(date, habit.id);
-          toggleHabitTrack2(date);
+        onClick={() => {
+          toggleHabit(date, habit.id);
 
-          const dateString = date.toLocaleDateString();
-          const isChecked = result?.[dateString] ?? false;
-          await setHabitByDate(habit.id, !isChecked, date);
+          const isChecked = dataSet.has(date.toLocaleDateString());
+          Repositories.setHabitByDate(habit.id, !isChecked, date);
         }}
         onMouseEnter={() => {
           const el = document.querySelector(
