@@ -10,7 +10,7 @@ type Store = {
   dateGroup: DateGroup;
   loadHabitGroup: () => Promise<void>;
   loadDateGroup: () => Promise<void>;
-  toggleHabit: (date: Date, habitId: number) => void;
+  setHabitChecked: (date: Date, habitId: number, checked: boolean) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -40,29 +40,32 @@ export const useStore = create<Store>((set) => ({
       }));
     });
   },
-  toggleHabit: (date: Date, habitId: number) =>
+  setHabitChecked: (date: Date, habitId: number, checked: boolean) => {
     set((state) => {
       const dateString = date.toLocaleDateString();
-      const checked = state.habitGroup[habitId]?.has(dateString) ?? false;
-      const nextChecked = !checked;
 
       const newHabitGroup = { ...state.habitGroup };
       newHabitGroup[habitId] = new Set(state.habitGroup[habitId]);
-
       const newDateGroup = { ...state.dateGroup };
       newDateGroup[dateString] = new Set(state.dateGroup[dateString]);
 
-      if (nextChecked) {
+      if (checked) {
         newHabitGroup[habitId].add(dateString);
         newDateGroup[dateString].add(habitId);
       } else {
         newHabitGroup[habitId].delete(dateString);
         newDateGroup[dateString].delete(habitId);
       }
-
       return {
         habitGroup: newHabitGroup,
         dateGroup: newDateGroup,
       };
-    }),
+    });
+
+    try {
+      Repositories.setHabitByDate(habitId, checked, date);
+    } catch {
+      // TODO rollback and message
+    }
+  },
 }));

@@ -1,13 +1,11 @@
 "use client";
 
-import React, { use } from "react";
+import React from "react";
 import { addDays } from "date-fns";
-import { AppContext } from "../../AppContext";
 import { Habit } from "../../repositories";
 import { motion } from "motion/react";
 import clsx from "clsx";
 import { useStore } from "@/app/Store";
-import * as Repositories from "../../repositories";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
@@ -21,7 +19,7 @@ export default function TaskValue({
   ...props
 }: TaskValueProps) {
   const dataSet = useStore((s) => s.habitGroup[habit.id]);
-  const toggleHabit = useStore((s) => s.toggleHabit);
+  const setHabitChecked = useStore((s) => s.setHabitChecked);
 
   if (!dataSet) return;
 
@@ -50,10 +48,7 @@ export default function TaskValue({
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.8 }}
         onClick={() => {
-          toggleHabit(date, habit.id);
-
-          const isChecked = dataSet.has(date.toLocaleDateString());
-          Repositories.setHabitByDate(habit.id, !isChecked, date);
+          setHabitChecked(date, habit.id, !isCurrentActive);
         }}
         onMouseEnter={() => {
           const el = document.querySelector(
