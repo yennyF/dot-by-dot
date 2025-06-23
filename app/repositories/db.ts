@@ -1,5 +1,5 @@
 import Dexie, { EntityTable } from "dexie";
-import { Habit, Track, HabitTrack } from "./types";
+import { Task, Track, TaskTrack } from "./types";
 import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
@@ -7,16 +7,16 @@ import { subDays } from "date-fns";
 const dbVersion = 1;
 
 export class TickedDB extends Dexie {
-  habits!: EntityTable<Habit, "id">;
+  tasks!: EntityTable<Task, "id">;
   tracks!: EntityTable<Track, "id">;
-  habit_track!: EntityTable<HabitTrack>;
+  task_track!: EntityTable<TaskTrack>;
 
   constructor() {
     super("TickedDB");
     this.version(dbVersion).stores({
-      habits: "++id, &name",
+      tasks: "++id, &name",
       tracks: "++id, &date",
-      habit_track: "[habitId+trackId], habitId, trackId",
+      task_track: "[taskId+trackId], taskId, trackId",
     });
   }
 
@@ -27,17 +27,17 @@ export class TickedDB extends Dexie {
       console.log("Database opened successfully");
 
       // Check if tables are empty
-      const habitCount = await this.habits.count();
+      const taskCount = await this.tasks.count();
       const trackCount = await this.tracks.count();
-      const habitTrackCount = await this.habit_track.count();
+      const taskTrackCount = await this.task_track.count();
 
       // Optional: Initialize with default data if empty
-      if (habitCount === 0) {
+      if (taskCount === 0) {
         await this.initializeDefaultData();
       }
 
       console.log(
-        `Database contains: ${habitCount} habits, ${trackCount} tracks, ${habitTrackCount} habit_track`
+        `Database contains: ${taskCount} tasks, ${trackCount} tracks, ${taskTrackCount} task_track`
       );
 
       return true;
@@ -50,8 +50,8 @@ export class TickedDB extends Dexie {
   private async initializeDefaultData() {
     console.log("Initializing default data...");
 
-    // Add some default habits
-    const habitNames = [
+    // Add some default tasks
+    const taskNames = [
       "React",
       "LeetCode",
       "Behavioral",
@@ -59,8 +59,8 @@ export class TickedDB extends Dexie {
       "My Project",
       "Workout",
     ];
-    await this.habits.bulkAdd(
-      habitNames.map((name) => ({ name })),
+    await this.tasks.bulkAdd(
+      taskNames.map((name) => ({ name })),
       { allKeys: true }
     );
 
@@ -75,17 +75,17 @@ export class TickedDB extends Dexie {
       { allKeys: true }
     );
 
-    // Add some default habit tracks
-    const habits = await this.habits.toArray();
+    // Add some default task tracks
+    const tasks = await this.tasks.toArray();
     const tracks = await this.tracks.toArray();
     for (const track of tracks) {
-      const habitTracks = habits.reduce((acc, habit) => {
+      const taskTracks = tasks.reduce((acc, task) => {
         if (Math.random() > 0.7) {
-          acc.push({ habitId: habit.id, trackId: track.id });
+          acc.push({ taskId: task.id, trackId: track.id });
         }
         return acc;
-      }, [] as HabitTrack[]);
-      await this.habit_track.bulkAdd(habitTracks, { allKeys: true });
+      }, [] as TaskTrack[]);
+      await this.task_track.bulkAdd(taskTracks, { allKeys: true });
     }
 
     console.log("Default data initialized");

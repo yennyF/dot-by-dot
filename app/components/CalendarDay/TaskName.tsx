@@ -1,28 +1,28 @@
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, use, useState } from "react";
 import { AppContext } from "../../AppContext";
-import DeleteHabitDialog from "../DeleteHabitDialog";
-import RenameHabitPopover from "../RenameHabitPopover";
-import { Habit } from "../../repositories";
+import DeleteTaskDialog from "../DeleteTaskDialog";
+import RenameTaskPopover from "../RenameTaskPopover";
+import { Task } from "../../repositories";
 import clsx from "clsx";
 
 interface TaskNameProps {
-  habit: Habit;
+  task: Task;
 }
 
-export default function TaskName({ habit }: TaskNameProps) {
+export default function TaskName({ task }: TaskNameProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("TaskName must be used within a AppProvider");
   }
-  const { deleteHabit } = appContext;
+  const { deleteTask } = appContext;
 
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
     // e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("habitId", habit.id.toString());
+    e.dataTransfer.setData("taskId", task.id.toString());
     setDragging(true);
   };
 
@@ -32,7 +32,7 @@ export default function TaskName({ habit }: TaskNameProps) {
   };
 
   const handleDeleteConfirm = async () => {
-    await deleteHabit(habit.id);
+    await deleteTask(task.id);
   };
 
   return (
@@ -42,32 +42,32 @@ export default function TaskName({ habit }: TaskNameProps) {
         "[&.highlight]:font-bold"
       )}
       draggable="true"
-      data-id={habit.id}
+      data-id={task.id}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
       <div className="overflow-hidden text-ellipsis text-nowrap">
-        {habit.name}
+        {task.name}
       </div>
       {!dragging && (
         <div
           className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
           data-state={open ? "open" : "closed"}
         >
-          <RenameHabitPopover habit={habit} onOpenChange={setOpen}>
+          <RenameTaskPopover task={task} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
             </button>
-          </RenameHabitPopover>
-          <DeleteHabitDialog
-            habit={habit}
+          </RenameTaskPopover>
+          <DeleteTaskDialog
+            task={task}
             onOpenChange={setOpen}
             onConfirm={handleDeleteConfirm}
           >
             <button className="button-icon">
               <TrashIcon />
             </button>
-          </DeleteHabitDialog>
+          </DeleteTaskDialog>
         </div>
       )}
     </div>

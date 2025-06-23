@@ -2,24 +2,24 @@
 
 import React from "react";
 import { addDays } from "date-fns";
-import { Habit } from "../../repositories";
+import { Task } from "../../repositories";
 import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
 import { useStore } from "@/app/Store";
 
 interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
-  habit: Habit;
+  task: Task;
 }
 
 export default function TaskValue({
   date,
-  habit,
+  task,
   className,
   ...props
 }: TaskValueProps) {
-  const dateSet = useStore((s) => s.habitGroup?.[habit.id]);
-  const setHabitChecked = useStore((s) => s.setHabitChecked);
+  const dateSet = useStore((s) => s.habitGroup?.[task.id]);
+  const setTaskChecked = useStore((s) => s.setTaskChecked);
 
   const isCurrentActive = dateSet?.has(date.toLocaleDateString());
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
@@ -60,18 +60,14 @@ export default function TaskValue({
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.8 }}
         onClick={() => {
-          setHabitChecked(date, habit.id, !isCurrentActive);
+          setTaskChecked(date, task.id, !isCurrentActive);
         }}
         onMouseEnter={() => {
-          const el = document.querySelector(
-            `.task-name[data-id="${habit.id}"]`
-          );
+          const el = document.querySelector(`.task-name[data-id="${task.id}"]`);
           el?.classList.add("highlight");
         }}
         onMouseLeave={() => {
-          const el = document.querySelector(
-            `.task-name[data-id="${habit.id}"]`
-          );
+          const el = document.querySelector(`.task-name[data-id="${task.id}"]`);
           el?.classList.remove("highlight");
         }}
       ></motion.button>

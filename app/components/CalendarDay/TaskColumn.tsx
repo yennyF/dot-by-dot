@@ -10,7 +10,7 @@ export default function TaskColumn() {
     throw new Error("CalendarList must be used within a AppProvider");
   }
 
-  const { habits, moveHabit } = appContext;
+  const { habits, moveTask } = appContext;
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ export default function TaskColumn() {
   };
 
   const handleDragEnd = (e: DragEvent) => {
-    const habitId = e.dataTransfer.getData("habitId");
+    const taskId = e.dataTransfer.getData("taskId");
 
     clearHighlights();
 
@@ -29,9 +29,9 @@ export default function TaskColumn() {
     const beforeId = el.element.dataset.before;
 
     if (beforeId === "-1") {
-      moveHabit(Number(habitId), null);
-    } else if (beforeId !== habitId) {
-      moveHabit(Number(habitId), Number(beforeId));
+      moveTask(Number(taskId), null);
+    } else if (beforeId !== taskId) {
+      moveTask(Number(taskId), Number(beforeId));
     }
   };
 
@@ -98,13 +98,13 @@ export default function TaskColumn() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {habits.map((habit) => (
-        <div key={habit.id} className="relative flex h-10">
+      {habits.map((task) => (
+        <div key={task.id} className="relative flex h-10">
           <DropIndicator
-            beforeId={habit.id}
+            beforeId={task.id}
             className="drop-indicator absolute top-0"
           />
-          <TaskName habit={habit} />
+          <TaskName task={task} />
         </div>
       ))}
       <DropIndicator beforeId={-1} className="drop-indicator" />

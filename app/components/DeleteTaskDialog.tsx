@@ -2,21 +2,21 @@
 
 import { Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
-import { Habit } from "../repositories";
+import { Task } from "../repositories";
 
-interface DeleteHabitDialogProps {
+interface DeleteTaskDialogProps {
   children: React.ReactNode;
-  habit: Habit;
+  task: Task;
   onConfirm: () => void;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function DeleteHabitDialog({
+export default function DeleteTaskDialog({
   children,
-  habit,
+  task,
   onConfirm,
   onOpenChange,
-}: DeleteHabitDialogProps) {
+}: DeleteTaskDialogProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function DeleteHabitDialog({
                 Delete Confirmation
               </Dialog.Title>
               <Dialog.Description className="dialog-description text-center">
-                Are you sure you want to delete &quot;{habit.name}&quot;?
+                Are you sure you want to delete &quot;{task.name}&quot;?
                 <br />
                 <br />
                 <span className="text-red-600">

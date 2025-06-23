@@ -4,11 +4,11 @@ import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface AddHabitPopoverProps {
+interface AddTaskPopoverProps {
   children: React.ReactNode;
 }
 
-export default function AddHabitPopover({ children }: AddHabitPopoverProps) {
+export default function AddTaskPopover({ children }: AddTaskPopoverProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,7 +30,7 @@ function Content() {
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { habits, addHabit } = appContext;
+  const { habits, addTask } = appContext;
 
   const [nameInput, setNameInput] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
@@ -45,12 +45,12 @@ function Content() {
     }
   }, [nameInput, habits]);
 
-  const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await addHabit(nameInput)) {
+    if (await addTask(nameInput)) {
       setNameInput("");
     }
   };
@@ -70,17 +70,17 @@ function Content() {
       alignOffset={0}
       onKeyDown={handleKeyDown}
     >
-      <p className="">Enter a new habit</p>
+      <p className="">Enter a new task</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={nameInput}
-          onChange={handleHabitInputChange}
-          placeholder="New habit"
+          onChange={handleTaskInputChange}
+          placeholder="New task"
           className="basis-full"
         ></input>
         <div className="text-xs text-[var(--accent)]">
-          {isDuplicated ? "This habit already exists" : "\u00A0"}
+          {isDuplicated ? "This task already exists" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">

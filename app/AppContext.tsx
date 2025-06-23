@@ -1,32 +1,32 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import * as Repositories from "./repositories";
-import { Habit } from "./repositories/types";
+import { Task } from "./repositories/types";
 
 type ThemeType = "light" | "dark";
 
 interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
-  habits: Habit[] | undefined;
-  addHabit: (habit: string) => Promise<boolean>;
-  renameHabit: (id: number, newName: string) => Promise<boolean>;
-  moveHabit: (selectedIndex: number, targetIndex: number | null) => void;
-  deleteHabit: (id: number) => Promise<boolean>;
+  habits: Task[] | undefined;
+  addTask: (task: string) => Promise<boolean>;
+  renameTask: (id: number, newName: string) => Promise<boolean>;
+  moveTask: (selectedIndex: number, targetIndex: number | null) => void;
+  deleteTask: (id: number) => Promise<boolean>;
 }
 
 const AppContext = createContext({} as AppContextProps);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
-  const [habits, setHabits] = useState<Habit[]>(); // undefined when loading
+  const [habits, setTasks] = useState<Task[]>(); // undefined when loading
 
   useEffect(() => {
     let mounted = true;
 
     (async () => {
-      const habits = await Repositories.getHabit();
+      const habits = await Repositories.getTask();
       if (mounted) {
-        setHabits(habits);
+        setTasks(habits);
       }
     })();
 
@@ -39,24 +39,24 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const addHabit = async (name: string) => {
+  const addTask = async (name: string) => {
     if (!habits) return false;
     if (!name.length) return false;
     if (habits.some((h) => h.name === name)) return false;
 
     try {
-      const habit = await Repositories.addHabit(name);
-      const newHabits = [...habits, habit];
-      setHabits(newHabits);
+      const task = await Repositories.addTask(name);
+      const newTasks = [...habits, task];
+      setTasks(newTasks);
     } catch (error) {
-      console.error("Error adding habit:", error);
+      console.error("Error adding task:", error);
       return false;
     }
 
     return true;
   };
 
-  const renameHabit = async (id: number, newName: string) => {
+  const renameTask = async (id: number, newName: string) => {
     if (!habits) return false;
     if (!newName.length) return false;
     if (habits.some((h) => id !== h.id && h.name === newName)) return false;
@@ -65,49 +65,49 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     if (index < 0) return false;
 
     try {
-      const habit = await Repositories.updateHabit(id, newName);
-      const newHabits = [...habits];
-      newHabits.splice(index, 1, habit);
-      setHabits(newHabits);
+      const task = await Repositories.updateTask(id, newName);
+      const newTasks = [...habits];
+      newTasks.splice(index, 1, task);
+      setTasks(newTasks);
     } catch (error) {
-      console.error("Error renaming habit:", error);
+      console.error("Error renaming task:", error);
       return false;
     }
 
     return true;
   };
 
-  const moveHabit = (habitId: number, beforeId: number | null) => {
+  const moveTask = (taskId: number, beforeId: number | null) => {
     if (!habits) return false;
 
-    const newHabits = [...habits];
+    const newTasks = [...habits];
 
-    const habitIndex = habits.findIndex((habit) => habit.id === habitId);
-    const habit = habits[habitIndex];
-    newHabits.splice(habitIndex, 1);
+    const habitIndex = habits.findIndex((task) => task.id === taskId);
+    const task = habits[habitIndex];
+    newTasks.splice(habitIndex, 1);
 
     if (beforeId === null) {
-      newHabits.push(habit);
+      newTasks.push(task);
     } else {
-      const beforeIndex = habits.findIndex((habit) => habit.id === beforeId);
-      newHabits.splice(beforeIndex, 0, habit);
+      const beforeIndex = habits.findIndex((task) => task.id === beforeId);
+      newTasks.splice(beforeIndex, 0, task);
     }
-    setHabits(newHabits);
+    setTasks(newTasks);
   };
 
-  const deleteHabit = async (id: number) => {
+  const deleteTask = async (id: number) => {
     if (!habits) return false;
 
     const index = habits.findIndex((h) => h.id === id);
     if (index < 0) return false;
 
     try {
-      await Repositories.deleteHabit(id);
-      const newHabits = [...habits];
-      newHabits.splice(index, 1);
-      setHabits(newHabits);
+      await Repositories.deleteTask(id);
+      const newTasks = [...habits];
+      newTasks.splice(index, 1);
+      setTasks(newTasks);
     } catch (error) {
-      console.error("Error deleting habit:", error);
+      console.error("Error deleting task:", error);
       return false;
     }
 
@@ -118,10 +118,10 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     theme,
     toggleTheme,
     habits,
-    addHabit,
-    renameHabit,
-    moveHabit,
-    deleteHabit,
+    addTask,
+    renameTask,
+    moveTask,
+    deleteTask,
   };
 
   return <AppContext value={value}>{children}</AppContext>;

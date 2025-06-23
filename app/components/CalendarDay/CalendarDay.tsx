@@ -22,7 +22,7 @@ import TaskValue from "./TaskValue";
 import TaskColumn from "./TaskColumn";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
-import AddHabitPopover from "../AddHabitPopover";
+import AddTaskPopover from "../AddTaskPopover";
 import { useStore } from "@/app/Store";
 
 export default function CalendarDay() {
@@ -47,11 +47,11 @@ export default function CalendarDay() {
     end: maxDate,
   });
 
-  const loadHabitGroup = useStore((s) => s.loadHabitGroup);
+  const loadTaskGroup = useStore((s) => s.loadTaskGroup);
 
   useEffect(() => {
-    loadHabitGroup();
-  }, [loadHabitGroup]);
+    loadTaskGroup();
+  }, [loadTaskGroup]);
 
   if (!habits || habits.length === 0) {
     return;
@@ -71,12 +71,12 @@ export default function CalendarDay() {
         <button className="button-outline" onClick={scrollToTarget}>
           Today
         </button>
-        <AddHabitPopover>
+        <AddTaskPopover>
           <button className="button-accent">
             <PlusIcon />
-            New Habit
+            New Task
           </button>
-        </AddHabitPopover>
+        </AddTaskPopover>
         {/* </div> */}
       </div>
 
@@ -103,14 +103,14 @@ export default function CalendarDay() {
           <div className="calendar-body mt-1 flex w-fit">
             <TaskColumn />
             <div className="sticky left-[200px] flex flex-col">
-              {habits.map((habit) => (
-                <div className="calendar-row flex" key={habit.id}>
+              {habits.map((task) => (
+                <div className="calendar-row flex" key={task.id}>
                   {totalDays.map((date) => (
                     <TaskValue
-                      key={`${date.toLocaleDateString()}-${habit.id}`}
+                      key={`${date.toLocaleDateString()}-${task.id}`}
                       className="flex h-10 w-[50px] items-center justify-center"
                       date={date}
-                      habit={habit}
+                      task={task}
                     />
                   ))}
                 </div>

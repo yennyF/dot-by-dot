@@ -1,6 +1,6 @@
 export type LocaleDateString = string; // Format: "M/D/YYYY"
 
-export type Habit = {
+export type Task = {
   id: number;
   name: string;
 };
@@ -10,7 +10,7 @@ export type Track = {
   date: LocaleDateString;
 };
 
-export type HabitTrack = {
-  habitId: number;
+export type TaskTrack = {
+  taskId: number;
   trackId: number;
 };

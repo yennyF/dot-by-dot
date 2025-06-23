@@ -1,4 +1,4 @@
 export * from "./db";
-export * from "./habit";
+export * from "./task";
 export * from "./track";
 export * from "./types";

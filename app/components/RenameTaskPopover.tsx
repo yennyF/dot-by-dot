@@ -3,19 +3,19 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
-import { Habit } from "../repositories";
+import { Task } from "../repositories";
 
-interface RenameHabitPopoverProps {
+interface RenameTaskPopoverProps {
   children: React.ReactNode;
-  habit: Habit;
+  task: Task;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function RenameHabitPopover({
+export default function RenameTaskPopover({
   children,
-  habit,
+  task,
   onOpenChange,
-}: RenameHabitPopoverProps) {
+}: RenameTaskPopoverProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function RenameHabitPopover({
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content setOpen={setOpen} habit={habit} />
+          <Content setOpen={setOpen} task={task} />
         </Popover.Portal>
       )}
     </Popover.Root>
@@ -36,34 +36,34 @@ export default function RenameHabitPopover({
 
 interface ContentProps {
   setOpen: (open: boolean) => void;
-  habit: Habit;
+  task: Task;
 }
 
-function Content({ setOpen, habit }: ContentProps) {
+function Content({ setOpen, task }: ContentProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { habits, renameHabit } = appContext;
+  const { habits, renameTask } = appContext;
 
-  const [nameInput, setNameInput] = useState(habit.name);
+  const [nameInput, setNameInput] = useState(task.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
     if (!habits) return;
-    if (habits.some((h) => h.id !== habit.id && h.name === nameInput)) {
+    if (habits.some((h) => h.id !== task.id && h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [habit, nameInput, habits]);
+  }, [task, nameInput, habits]);
 
-  const handleHabitInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await renameHabit(habit.id, nameInput)) {
+    if (await renameTask(task.id, nameInput)) {
       setOpen(false);
     }
   };
@@ -83,17 +83,17 @@ function Content({ setOpen, habit }: ContentProps) {
       alignOffset={0}
       onKeyDown={handleKeyDown}
     >
-      <p>Rename the habit</p>
+      <p>Rename the task</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={nameInput}
-          onChange={handleHabitInputChange}
-          placeholder={habit.name}
+          onChange={handleTaskInputChange}
+          placeholder={task.name}
           className="basis-full"
         ></input>
         <div className="text-xs text-red-500">
-          {isDuplicated ? "This habit already exists" : "\u00A0"}
+          {isDuplicated ? "This task already exists" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
@@ -104,7 +104,7 @@ function Content({ setOpen, habit }: ContentProps) {
           className="button-accept"
           onClick={handleSaveClick}
           disabled={
-            nameInput.length === 0 || isDuplicated || nameInput === habit.name
+            nameInput.length === 0 || isDuplicated || nameInput === task.name
           }
         >
           Rename
