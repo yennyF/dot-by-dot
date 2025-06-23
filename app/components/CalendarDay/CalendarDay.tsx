@@ -53,11 +53,7 @@ export default function CalendarDay() {
     loadHabitGroup();
   }, [loadHabitGroup]);
 
-  useEffect(() => {
-    console.log("CalendarDay");
-  });
-
-  if (!habits || habits.length === 0 || !totalDays || totalDays.length === 0) {
+  if (!habits || habits.length === 0) {
     return;
   }
 

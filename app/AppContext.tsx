@@ -25,7 +25,6 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
     (async () => {
       const habits = await Repositories.getHabit();
-
       if (mounted) {
         setHabits(habits);
       }
