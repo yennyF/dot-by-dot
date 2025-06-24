@@ -1,5 +1,5 @@
 import Dexie, { EntityTable, Table } from "dexie";
-import { normalizeDateUTC, Task, Track } from "./types";
+import { Group, normalizeDateUTC, Task, Track } from "./types";
 import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
@@ -7,13 +7,15 @@ import { subDays } from "date-fns";
 const dbVersion = 1;
 
 export class TickedDB extends Dexie {
+  group!: EntityTable<Group, "id">;
   tasks!: EntityTable<Task, "id">;
   tracks!: Table<Track, [number, Date]>;
 
   constructor() {
     super("TickedDB");
     this.version(dbVersion).stores({
-      tasks: "++id, &name",
+      groups: "++id, name",
+      tasks: "++id, &name, groupId",
       tracks: "[taskId+date], taskId, date",
     });
   }
@@ -48,18 +50,23 @@ export class TickedDB extends Dexie {
     console.log("Initializing default data...");
 
     // Add some default tasks
-    const taskNames = [
-      "React",
-      "LeetCode",
-      "Behavioral",
-      "English",
-      "My Project",
-      "Workout",
+    const groups = [
+      { id: 1, name: "Interview" },
+      { id: 2, name: "Workout" },
     ];
-    const taskIds = await this.tasks.bulkAdd(
-      taskNames.map((name) => ({ name }) as Task),
-      { allKeys: true }
-    );
+    await this.group.bulkAdd(groups, { allKeys: true });
+
+    // Add some default tasks
+    const tasks = [
+      { id: 1, name: "React", groupId: 1 },
+      { id: 2, name: "LeetCode", groupId: 1 },
+      { id: 3, name: "Behavioral", groupId: 1 },
+      { id: 4, name: "English", groupId: 1 },
+      { id: 5, name: "My Project", groupId: 1 },
+      { id: 6, name: "Rower", groupId: 2 },
+      { id: 6, name: "Rotation", groupId: 2 },
+    ];
+    await this.tasks.bulkAdd(tasks, { allKeys: true });
 
     // Add some default tracks
     const currentDate = new Date();
@@ -68,9 +75,9 @@ export class TickedDB extends Dexie {
       end: subDays(currentDate, 1),
     });
     for (const date of totalDays) {
-      const tracks = taskIds.reduce<Track[]>((acc, taskId) => {
+      const tracks = tasks.reduce<Track[]>((acc, task) => {
         if (Math.random() > 0.7) {
-          acc.push({ taskId, date: normalizeDateUTC(date) });
+          acc.push({ taskId: task.id, date: normalizeDateUTC(date) });
         }
         return acc;
       }, []);
