@@ -30,20 +30,20 @@ function Content() {
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { habits, addTask } = appContext;
+  const { tasks, addTask } = appContext;
 
   const [nameInput, setNameInput] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (habits === undefined) return;
+    if (tasks === undefined) return;
 
-    if (habits.some((h) => h.name === nameInput)) {
+    if (tasks.some((h) => h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [nameInput, habits]);
+  }, [nameInput, tasks]);
 
   const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);

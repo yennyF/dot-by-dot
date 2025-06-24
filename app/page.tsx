@@ -18,9 +18,9 @@ function Content() {
   if (!appContext) {
     throw new Error("Home must be used within a AppProvider");
   }
-  const { habits } = appContext;
+  const { tasks } = appContext;
 
-  if (!habits) {
+  if (!tasks) {
     return <Loading />;
   }
 

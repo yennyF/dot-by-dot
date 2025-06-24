@@ -44,19 +44,19 @@ function Content({ setOpen, task }: ContentProps) {
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { habits, renameTask } = appContext;
+  const { tasks, renameTask } = appContext;
 
   const [nameInput, setNameInput] = useState(task.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (!habits) return;
-    if (habits.some((h) => h.id !== task.id && h.name === nameInput)) {
+    if (!tasks) return;
+    if (tasks.some((h) => h.id !== task.id && h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [task, nameInput, habits]);
+  }, [task, nameInput, tasks]);
 
   const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);

@@ -30,7 +30,7 @@ export default function CalendarDay() {
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { habits } = appContext;
+  const { tasks } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -53,7 +53,7 @@ export default function CalendarDay() {
     loadTaskGroup();
   }, [loadTaskGroup]);
 
-  if (!habits || habits.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return;
   }
 
@@ -103,7 +103,7 @@ export default function CalendarDay() {
           <div className="calendar-body mt-1 flex w-fit">
             <TaskColumn />
             <div className="sticky left-[200px] flex flex-col">
-              {habits.map((task) => (
+              {tasks.map((task) => (
                 <div className="calendar-row flex" key={task.id}>
                   {totalDays.map((date) => (
                     <TaskValue

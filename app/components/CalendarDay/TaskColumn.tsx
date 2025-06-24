@@ -10,7 +10,7 @@ export default function TaskColumn() {
     throw new Error("CalendarList must be used within a AppProvider");
   }
 
-  const { habits, moveTask } = appContext;
+  const { tasks, moveTask } = appContext;
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
@@ -87,7 +87,7 @@ export default function TaskColumn() {
     clearHighlights();
   };
 
-  if (!habits || habits.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return;
   }
 
@@ -98,7 +98,7 @@ export default function TaskColumn() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {habits.map((task) => (
+      {tasks.map((task) => (
         <div key={task.id} className="relative flex h-10">
           <DropIndicator
             beforeId={task.id}

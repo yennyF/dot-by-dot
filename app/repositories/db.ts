@@ -1,5 +1,5 @@
 import Dexie, { EntityTable } from "dexie";
-import { Task, Track, TaskTrack } from "./types";
+import { Task, Track } from "./types";
 import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
@@ -8,15 +8,13 @@ const dbVersion = 1;
 
 export class TickedDB extends Dexie {
   tasks!: EntityTable<Task, "id">;
-  tracks!: EntityTable<Track, "id">;
-  task_track!: EntityTable<TaskTrack>;
+  tracks!: EntityTable<Track>;
 
   constructor() {
     super("TickedDB");
     this.version(dbVersion).stores({
       tasks: "++id, &name",
-      tracks: "&id",
-      task_track: "[taskId+trackId], taskId, trackId",
+      tracks: "[taskId+date], taskId, date",
     });
   }
 
@@ -29,7 +27,6 @@ export class TickedDB extends Dexie {
       // Check if tables are empty
       const taskCount = await this.tasks.count();
       const trackCount = await this.tracks.count();
-      const taskTrackCount = await this.task_track.count();
 
       // Optional: Initialize with default data if empty
       if (taskCount === 0) {
@@ -37,7 +34,7 @@ export class TickedDB extends Dexie {
       }
 
       console.log(
-        `Database contains: ${taskCount} tasks, ${trackCount} tracks, ${taskTrackCount} task_track`
+        `Database contains: ${taskCount} tasks, ${trackCount} tracks`
       );
 
       return true;
@@ -59,7 +56,7 @@ export class TickedDB extends Dexie {
       "My Project",
       "Workout",
     ];
-    await this.tasks.bulkAdd(
+    const taskIds = await this.tasks.bulkAdd(
       taskNames.map((name) => ({ name }) as Task),
       { allKeys: true }
     );
@@ -70,22 +67,14 @@ export class TickedDB extends Dexie {
       start: subMonths(currentDate, 1),
       end: subDays(currentDate, 1),
     });
-    await this.tracks.bulkAdd(
-      totalDays.map((date) => ({ id: date.toLocaleDateString() }) as Track),
-      { allKeys: true }
-    );
-
-    // Add some default task tracks
-    const tasks = await this.tasks.toArray();
-    const tracks = await this.tracks.toArray();
-    for (const track of tracks) {
-      const taskTracks = tasks.reduce((acc, task) => {
+    for (const date of totalDays) {
+      const tracks = taskIds.reduce((acc, taskId) => {
         if (Math.random() > 0.7) {
-          acc.push({ taskId: task.id, trackId: track.id });
+          acc.push({ taskId, date });
         }
         return acc;
-      }, [] as TaskTrack[]);
-      await this.task_track.bulkAdd(taskTracks, { allKeys: true });
+      }, [] as Track[]);
+      await this.tracks.bulkAdd(tracks, { allKeys: true });
     }
 
     console.log("Default data initialized");

@@ -109,11 +109,11 @@ function DayCell({ date }: DayCellProps) {
   if (!appContext) {
     throw new Error("CalendarGrid must be used within a AppProvider");
   }
-  const { habits } = appContext;
+  const { tasks } = appContext;
 
-  const habitSet = useStore((s) => s.dateGroup?.[date.toLocaleDateString()]);
+  const taskSet = useStore((s) => s.dateGroup?.[date.toLocaleDateString()]);
 
-  const percentage = habits && habitSet ? habitSet.size / habits.length : 0;
+  const percentage = tasks && taskSet ? taskSet.size / tasks.length : 0;
 
   return (
     <div

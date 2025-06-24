@@ -3,10 +3,11 @@ import * as Repositories from "./repositories";
 import { LocaleDateString } from "./repositories";
 
 export type DateGroup = Record<LocaleDateString, Set<number>> | undefined;
+// Store date strings for reliable value-based Set comparison
 export type TaskGroup = Record<string, Set<LocaleDateString>> | undefined;
 
 type Store = {
-  habitGroup: TaskGroup;
+  taskGroup: TaskGroup;
   dateGroup: DateGroup;
   loadTaskGroup: () => Promise<void>;
   loadDateGroup: () => Promise<void>;
@@ -14,24 +15,27 @@ type Store = {
 };
 
 export const useStore = create<Store>((set) => ({
-  habitGroup: undefined,
+  taskGroup: undefined,
   dateGroup: undefined,
   loadTaskGroup: async () => {
-    const habits = await Repositories.getTask();
+    const tasks = await Repositories.getTask();
     const entries = await Promise.all(
-      habits.map(async (task) => {
+      tasks.map(async (task) => {
         const dates = await Repositories.getDatesByTask(task.id);
-        return [task.id, dates] as const;
+        return [task.id, dates] as [number, Set<LocaleDateString>];
       })
     );
-    set(() => ({ habitGroup: Object.fromEntries(entries) }));
+    set(() => ({ taskGroup: Object.fromEntries(entries) }));
   },
   loadDateGroup: async () => {
     const tracks = await Repositories.getTracks();
     const entries = await Promise.all(
       tracks.map(async (track) => {
-        const tasks = await Repositories.getTasksByDate(track.id);
-        return [track.id, tasks] as const;
+        const tasks = await Repositories.getTasksByDate(track.date);
+        return [track.date.toLocaleDateString(), tasks] as [
+          LocaleDateString,
+          Set<number>,
+        ];
       })
     );
     set(() => ({ dateGroup: Object.fromEntries(entries) }));
@@ -40,20 +44,20 @@ export const useStore = create<Store>((set) => ({
     set((state) => {
       const dateString = date.toLocaleDateString();
 
-      const newTaskGroup = { ...state.habitGroup };
-      newTaskGroup[taskId] = new Set(state.habitGroup?.[taskId]);
+      const newTaskGroup = { ...state.taskGroup };
+      newTaskGroup[taskId] = new Set(state.taskGroup?.[taskId]);
       const newDateGroup = { ...state.dateGroup };
       newDateGroup[dateString] = new Set(state.dateGroup?.[dateString]);
 
       if (checked) {
-        newTaskGroup[taskId].add(dateString);
+        newTaskGroup[taskId].add(date.toLocaleDateString());
         newDateGroup[dateString].add(taskId);
       } else {
-        newTaskGroup[taskId].delete(dateString);
+        newTaskGroup[taskId].delete(date.toLocaleDateString());
         newDateGroup[dateString].delete(taskId);
       }
       return {
-        habitGroup: newTaskGroup,
+        taskGroup: newTaskGroup,
         dateGroup: newDateGroup,
       };
     });

@@ -18,7 +18,7 @@ export default function TaskValue({
   className,
   ...props
 }: TaskValueProps) {
-  const dateSet = useStore((s) => s.habitGroup?.[task.id]);
+  const dateSet = useStore((s) => s.taskGroup?.[task.id]);
   const setTaskChecked = useStore((s) => s.setTaskChecked);
 
   const isCurrentActive = dateSet?.has(date.toLocaleDateString());

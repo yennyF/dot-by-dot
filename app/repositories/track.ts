@@ -1,36 +1,22 @@
 import { db } from "./db";
 import { LocaleDateString, Track } from "./types";
 
-export async function addTrack(date: Date): Promise<Track> {
-  const dateString = date.toLocaleDateString();
-  const id = await db.tracks.add({ id: dateString });
-  return { id };
-}
-
 export async function getTracks(): Promise<Track[]> {
   return await db.tracks.toArray();
 }
 
-export async function getTasksByDate(
-  trackId: LocaleDateString
-): Promise<Set<number>> {
-  const habitTracks = await db.task_track
-    .where("trackId")
-    .equals(trackId)
-    .toArray();
-  const taskIds = habitTracks.map((habitTrack) => habitTrack.taskId);
+export async function getTasksByDate(date: Date): Promise<Set<number>> {
+  const tracks = await db.tracks.where("date").equals(date).toArray();
+  const taskIds = tracks.map((track) => track.taskId);
   return new Set(taskIds);
 }
 
 export async function getDatesByTask(
   taskId: number
 ): Promise<Set<LocaleDateString>> {
-  const habitTracks = await db.task_track
-    .where("taskId")
-    .equals(taskId)
-    .toArray();
-  const trackIds = habitTracks.map((habitTrack) => habitTrack.trackId);
-  return new Set(trackIds);
+  const tracks = await db.tracks.where("taskId").equals(taskId).toArray();
+  const dates = tracks.map((track) => track.date.toLocaleDateString());
+  return new Set(dates);
 }
 
 export async function setTaskByDate(
@@ -43,21 +29,9 @@ export async function setTaskByDate(
     throw new Error("Task not found");
   }
 
-  const dateString = date.toLocaleDateString();
-
-  let trackId = (await db.tracks.where("date").equals(dateString).first())?.id;
-  if (trackId === undefined) {
-    trackId = await db.tracks.add({ date: dateString });
-  }
-
   if (isChecked) {
-    await db.task_track.add({ taskId, trackId });
+    await db.tracks.add({ taskId, date });
   } else {
-    await db.task_track
-      .where(["taskId", "trackId"])
-      .equals([taskId, trackId])
-      .delete();
+    await db.tracks.where(["taskId", "date"]).equals([taskId, date]).delete();
   }
-
-  return trackId;
 }
