@@ -18,7 +18,7 @@ export const useStore = create<Store>((set) => ({
   taskGroup: undefined,
   dateGroup: undefined,
   loadTaskGroup: async () => {
-    const tasks = await Repositories.getTask();
+    const tasks = await Repositories.getTasks();
     const entries = await Promise.all(
       tasks.map(async (task) => {
         const dates = await Repositories.getDatesByTask(task.id);

@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { Task } from "./types";
 
-export async function getTask(): Promise<Task[]> {
+export async function getTasks(): Promise<Task[]> {
   return await db.tasks.toArray();
 }
 

@@ -24,7 +24,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     let mounted = true;
 
     (async () => {
-      const tasks = await Repositories.getTask();
+      const tasks = await Repositories.getTasks();
       if (mounted) {
         setTasks(tasks);
       }
