@@ -1,5 +1,5 @@
-import Dexie, { EntityTable } from "dexie";
-import { Task, Track } from "./types";
+import Dexie, { EntityTable, InsertType } from "dexie";
+import { normalizeDateUTC, Task, Track } from "./types";
 import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
@@ -8,13 +8,13 @@ const dbVersion = 1;
 
 export class TickedDB extends Dexie {
   tasks!: EntityTable<Task, "id">;
-  tracks!: EntityTable<Track>;
+  tracks!: EntityTable<Track, "id">;
 
   constructor() {
     super("TickedDB");
     this.version(dbVersion).stores({
       tasks: "++id, &name",
-      tracks: "[taskId+date], taskId, date",
+      tracks: "++id, [taskId+date]&, taskId, date",
     });
   }
 
@@ -68,12 +68,15 @@ export class TickedDB extends Dexie {
       end: subDays(currentDate, 1),
     });
     for (const date of totalDays) {
-      const tracks = taskIds.reduce((acc, taskId) => {
-        if (Math.random() > 0.7) {
-          acc.push({ taskId, date });
-        }
-        return acc;
-      }, [] as Track[]);
+      const tracks = taskIds.reduce<InsertType<Track, "id">[]>(
+        (acc, taskId) => {
+          if (Math.random() > 0.7) {
+            acc.push({ taskId, date: normalizeDateUTC(date) });
+          }
+          return acc;
+        },
+        []
+      );
       await this.tracks.bulkAdd(tracks, { allKeys: true });
     }
 

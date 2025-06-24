@@ -63,7 +63,11 @@ export const useStore = create<Store>((set) => ({
     });
 
     try {
-      Repositories.setTaskByDate(taskId, checked, date);
+      if (checked) {
+        Repositories.addTrack(taskId, date);
+      } else {
+        Repositories.deleteTrack(taskId, date);
+      }
     } catch {
       // TODO rollback and message
     }

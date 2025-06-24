@@ -6,6 +6,13 @@ export type Task = {
 };
 
 export type Track = {
+  id: number;
   taskId: number;
   date: Date;
 };
+
+export function normalizeDateUTC(date: Date): Date {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  );
+}
