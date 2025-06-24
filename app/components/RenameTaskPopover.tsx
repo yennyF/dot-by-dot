@@ -92,8 +92,8 @@ function Content({ setOpen, task }: ContentProps) {
           placeholder={task.name}
           className="basis-full"
         ></input>
-        <div className="text-xs text-red-500">
-          {isDuplicated ? "This task already exists" : "\u00A0"}
+        <div className="text-xs text-orange-500">
+          {isDuplicated ? "This task is duplicated" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
@@ -103,9 +103,7 @@ function Content({ setOpen, task }: ContentProps) {
         <button
           className="button-accept"
           onClick={handleSaveClick}
-          disabled={
-            nameInput.length === 0 || isDuplicated || nameInput === task.name
-          }
+          disabled={nameInput.length === 0 || nameInput === task.name}
         >
           Rename
         </button>

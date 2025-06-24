@@ -7,7 +7,7 @@ import { subDays } from "date-fns";
 const dbVersion = 1;
 
 export class TickedDB extends Dexie {
-  group!: EntityTable<Group, "id">;
+  groups!: EntityTable<Group, "id">;
   tasks!: EntityTable<Task, "id">;
   tracks!: Table<Track, [number, Date]>;
 
@@ -15,7 +15,7 @@ export class TickedDB extends Dexie {
     super("TickedDB");
     this.version(dbVersion).stores({
       groups: "++id, name",
-      tasks: "++id, &name, groupId",
+      tasks: "++id, name, groupId",
       tracks: "[taskId+date], taskId, date",
     });
   }
@@ -54,7 +54,7 @@ export class TickedDB extends Dexie {
       { id: 1, name: "Interview" },
       { id: 2, name: "Workout" },
     ];
-    await this.group.bulkAdd(groups, { allKeys: true });
+    await this.groups.bulkAdd(groups, { allKeys: true });
 
     // Add some default tasks
     const tasks = [
@@ -64,7 +64,7 @@ export class TickedDB extends Dexie {
       { id: 4, name: "English", groupId: 1 },
       { id: 5, name: "My Project", groupId: 1 },
       { id: 6, name: "Rower", groupId: 2 },
-      { id: 6, name: "Rotation", groupId: 2 },
+      { id: 7, name: "Rotation", groupId: 2 },
     ];
     await this.tasks.bulkAdd(tasks, { allKeys: true });
 
