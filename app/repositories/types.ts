@@ -6,7 +6,6 @@ export type Task = {
 };
 
 export type Track = {
-  id: number;
   taskId: number;
   date: Date;
 };

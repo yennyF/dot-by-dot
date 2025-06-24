@@ -2,9 +2,9 @@ import { create } from "zustand";
 import * as Repositories from "./repositories";
 import { LocaleDateString } from "./repositories";
 
-export type DateGroup = Record<LocaleDateString, Set<number>> | undefined;
 // Store date strings for reliable value-based Set comparison
 export type TaskGroup = Record<string, Set<LocaleDateString>> | undefined;
+export type DateGroup = Record<LocaleDateString, Set<number>> | undefined;
 
 type Store = {
   taskGroup: TaskGroup;

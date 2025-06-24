@@ -23,21 +23,15 @@ export async function getDatesByTask(
 }
 
 export async function addTrack(taskId: number, date: Date): Promise<Track> {
-  const normalizedDate = normalizeDateUTC(date);
-  let track = await db.tracks
-    .where(["taskId", "date"])
-    .equals([taskId, normalizedDate])
-    ?.first();
+  date = normalizeDateUTC(date);
+  let track = await db.tracks.get([taskId, date]);
   if (!track) {
-    const id = await db.tracks.add({ taskId, date: normalizedDate });
-    track = { id, taskId, date: normalizedDate };
+    await db.tracks.add({ taskId, date });
+    track = { taskId, date };
   }
   return track;
 }
 
 export async function deleteTrack(taskId: number, date: Date) {
-  await db.tracks
-    .where(["taskId", "date"])
-    .equals([taskId, normalizeDateUTC(date)])
-    .delete();
+  await db.tracks.delete([taskId, date]);
 }
