@@ -30,8 +30,8 @@ export const useStore = create<Store>((set) => ({
     const tracks = await Repositories.getTracks();
     const entries = await Promise.all(
       tracks.map(async (track) => {
-        const dates = await Repositories.getTasksByDate(track.id);
-        return [track.date, dates] as const;
+        const tasks = await Repositories.getTasksByDate(track.id);
+        return [track.id, tasks] as const;
       })
     );
     set(() => ({ dateGroup: Object.fromEntries(entries) }));

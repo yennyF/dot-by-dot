@@ -6,11 +6,10 @@ export type Task = {
 };
 
 export type Track = {
-  id: number;
-  date: LocaleDateString;
+  id: LocaleDateString;
 };
 
 export type TaskTrack = {
   taskId: number;
-  trackId: number;
+  trackId: LocaleDateString;
 };

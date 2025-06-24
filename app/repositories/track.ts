@@ -3,24 +3,23 @@ import { LocaleDateString, Track } from "./types";
 
 export async function addTrack(date: Date): Promise<Track> {
   const dateString = date.toLocaleDateString();
-  const id = await db.tracks.add({ date: dateString });
-  return { id, date: dateString };
+  const id = await db.tracks.add({ id: dateString });
+  return { id };
 }
 
 export async function getTracks(): Promise<Track[]> {
   return await db.tracks.toArray();
 }
 
-export async function getTasksByDate(trackId: number): Promise<Set<number>> {
+export async function getTasksByDate(
+  trackId: LocaleDateString
+): Promise<Set<number>> {
   const habitTracks = await db.task_track
     .where("trackId")
     .equals(trackId)
     .toArray();
-  const habitIds = habitTracks.map((habitTrack) => habitTrack.taskId);
-  // const tasks = await db.tasks.where("id").anyOf(habitIds).toArray();
-
-  // return new Set(tasks.map((task) => task.name));
-  return new Set(habitIds);
+  const taskIds = habitTracks.map((habitTrack) => habitTrack.taskId);
+  return new Set(taskIds);
 }
 
 export async function getDatesByTask(
@@ -31,9 +30,7 @@ export async function getDatesByTask(
     .equals(taskId)
     .toArray();
   const trackIds = habitTracks.map((habitTrack) => habitTrack.trackId);
-  const tracks = await db.tracks.where("id").anyOf(trackIds).toArray();
-
-  return new Set(tracks.map((track) => track.date));
+  return new Set(trackIds);
 }
 
 export async function setTaskByDate(

@@ -15,7 +15,7 @@ export class TickedDB extends Dexie {
     super("TickedDB");
     this.version(dbVersion).stores({
       tasks: "++id, &name",
-      tracks: "++id, &date",
+      tracks: "&id",
       task_track: "[taskId+trackId], taskId, trackId",
     });
   }
@@ -60,7 +60,7 @@ export class TickedDB extends Dexie {
       "Workout",
     ];
     await this.tasks.bulkAdd(
-      taskNames.map((name) => ({ name })),
+      taskNames.map((name) => ({ name }) as Task),
       { allKeys: true }
     );
 
@@ -71,7 +71,7 @@ export class TickedDB extends Dexie {
       end: subDays(currentDate, 1),
     });
     await this.tracks.bulkAdd(
-      totalDays.map((date) => ({ date: date.toLocaleDateString() })),
+      totalDays.map((date) => ({ id: date.toLocaleDateString() }) as Track),
       { allKeys: true }
     );
 
