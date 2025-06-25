@@ -18,12 +18,11 @@ import {
 } from "date-fns";
 import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
-import TaskValue from "./TaskValue";
-import TaskColumn from "./TaskColumn";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
 import AddTaskPopover from "../AddTaskPopover";
 import { useStore } from "@/app/Store";
+import TaskGroup from "./TaskGroup";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -81,9 +80,9 @@ export default function CalendarDay() {
       </div>
 
       {/* Calendar */}
-      <div className="calendar relative">
-        <div className="no-scrollbar top-0 h-[calc(100vh-100px)] overflow-x-auto overflow-y-scroll">
-          {/* Calendar Header */}
+      <div className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-100px)] overflow-x-auto overflow-y-scroll">
+        {/* Calendar Header */}
+        <div className="w-fit">
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
             <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
             <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
@@ -100,44 +99,17 @@ export default function CalendarDay() {
           </div>
 
           {/* Calendar Body */}
-          <div className="calendar-body flex flex-col gap-2">
-            {groups?.map((group) => {
-              const filteredTask = tasks.filter(
-                (task) => task.groupId === group.id
-              );
-              return (
-                <div key={group.id} className="w-fit">
-                  <div className="sticky left-0 flex h-[50px] w-fit items-center justify-center px-3 font-bold">
-                    {group.name}
-                  </div>
-                  <div className="flex w-fit">
-                    <TaskColumn tasks={filteredTask} />
-                    <div className="sticky left-[200px] flex flex-col">
-                      {filteredTask.map((task) => (
-                        <div className="calendar-row flex" key={task.id}>
-                          {totalDays.map((date) => (
-                            <TaskValue
-                              key={`${task.id}-${date.toLocaleDateString()}`}
-                              className="flex h-10 w-[50px] items-center justify-center"
-                              date={date}
-                              task={task}
-                            />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex flex-col gap-10">
+            {groups?.map((group) => (
+              <TaskGroup key={group.id} group={group} totalDays={totalDays} />
+            ))}
           </div>
         </div>
-
         {/* Shadows */}
-        <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
+        {/* <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
         <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
         <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
-        <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>
+        <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div> */}
       </div>
     </div>
   );
