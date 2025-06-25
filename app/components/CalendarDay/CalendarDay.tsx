@@ -30,7 +30,7 @@ export default function CalendarDay() {
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { tasks } = appContext;
+  const { tasks, groups } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -100,22 +100,36 @@ export default function CalendarDay() {
           </div>
 
           {/* Calendar Body */}
-          <div className="calendar-body mt-1 flex w-fit">
-            <TaskColumn />
-            <div className="sticky left-[200px] flex flex-col">
-              {tasks.map((task) => (
-                <div className="calendar-row flex" key={task.id}>
-                  {totalDays.map((date) => (
-                    <TaskValue
-                      key={`${date.toLocaleDateString()}-${task.id}`}
-                      className="flex h-10 w-[50px] items-center justify-center"
-                      date={date}
-                      task={task}
-                    />
-                  ))}
+          <div className="calendar-body flex flex-col gap-2">
+            {groups?.map((group) => {
+              const filteredTask = tasks.filter(
+                (task) => task.groupId === group.id
+              );
+              return (
+                <div key={group.id} className="w-fit">
+                  <div className="sticky left-0 flex h-[50px] w-fit items-center justify-center px-3 font-bold">
+                    {group.name}
+                  </div>
+                  <div className="flex w-fit">
+                    <TaskColumn tasks={filteredTask} />
+                    <div className="sticky left-[200px] flex flex-col">
+                      {filteredTask.map((task) => (
+                        <div className="calendar-row flex" key={task.id}>
+                          {totalDays.map((date) => (
+                            <TaskValue
+                              key={`${task.id}-${date.toLocaleDateString()}`}
+                              className="flex h-10 w-[50px] items-center justify-center"
+                              date={date}
+                              task={task}
+                            />
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
 

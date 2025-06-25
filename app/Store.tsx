@@ -3,18 +3,19 @@ import * as Repositories from "./repositories";
 import { LocaleDateString } from "./repositories";
 
 // Store date strings for reliable value-based Set comparison
-export type TaskGroup = Record<string, Set<LocaleDateString>> | undefined;
-export type DateGroup = Record<LocaleDateString, Set<number>> | undefined;
+export type TaskGroup = Record<string, Set<LocaleDateString>>;
+export type DateGroup = Record<LocaleDateString, Set<number>>;
 
 type Store = {
-  taskGroup: TaskGroup;
-  dateGroup: DateGroup;
+  taskGroup: TaskGroup | undefined;
+  dateGroup: DateGroup | undefined;
   loadTaskGroup: () => Promise<void>;
   loadDateGroup: () => Promise<void>;
   setTaskChecked: (date: Date, taskId: number, checked: boolean) => void;
 };
 
 export const useStore = create<Store>((set) => ({
+  tasks: undefined,
   taskGroup: undefined,
   dateGroup: undefined,
   loadTaskGroup: async () => {

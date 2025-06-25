@@ -53,20 +53,34 @@ export class TickedDB extends Dexie {
     const groups = [
       { id: 1, name: "Interview" },
       { id: 2, name: "Workout" },
+      { id: 3, name: "Portfolio" },
     ];
     await this.groups.bulkAdd(groups, { allKeys: true });
 
     // Add some default tasks
     const tasks = [
-      { id: 1, name: "React", groupId: 1 },
-      { id: 2, name: "LeetCode", groupId: 1 },
-      { id: 3, name: "Behavioral", groupId: 1 },
-      { id: 4, name: "English", groupId: 1 },
-      { id: 5, name: "My Project", groupId: 1 },
-      { id: 6, name: "Rower", groupId: 2 },
-      { id: 7, name: "Rotation", groupId: 2 },
+      { name: "React", groupId: 1 },
+      { name: "LeetCode", groupId: 1 },
+      { name: "Behavioral", groupId: 1 },
+      { name: "English", groupId: 1 },
+      { name: "Mock Interview", groupId: 1 },
+      { name: "System Design", groupId: 1 },
+      { name: "AI", groupId: 1 },
+      { name: "Tecnhology", groupId: 1 },
+
+      { name: "Rower", groupId: 2 },
+      { name: "Rotations", groupId: 2 },
+      { name: "Squads", groupId: 2 },
+      { name: "Skate", groupId: 2 },
+      { name: "Sport Climb", groupId: 2 },
+      { name: "Yoga", groupId: 2 },
+
+      { name: "CLimb App", groupId: 3 },
+      { name: "Habit App", groupId: 3 },
+      { name: "Photography", groupId: 3 },
+      { name: "Drawing", groupId: 3 },
     ];
-    await this.tasks.bulkAdd(tasks, { allKeys: true });
+    const taskIds = await this.tasks.bulkAdd(tasks, { allKeys: true });
 
     // Add some default tracks
     const currentDate = new Date();
@@ -75,9 +89,9 @@ export class TickedDB extends Dexie {
       end: subDays(currentDate, 1),
     });
     for (const date of totalDays) {
-      const tracks = tasks.reduce<Track[]>((acc, task) => {
+      const tracks = taskIds.reduce<Track[]>((acc, taskId) => {
         if (Math.random() > 0.7) {
-          acc.push({ taskId: task.id, date: normalizeDateUTC(date) });
+          acc.push({ taskId, date: normalizeDateUTC(date) });
         }
         return acc;
       }, []);

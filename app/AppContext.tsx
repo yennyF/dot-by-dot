@@ -1,12 +1,13 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import * as Repositories from "./repositories";
-import { Task } from "./repositories/types";
+import { Task, Group } from "./repositories/types";
 
 type ThemeType = "light" | "dark";
 
 interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
+  groups: Group[] | undefined;
   tasks: Task[] | undefined;
   addTask: (task: string) => Promise<boolean>;
   renameTask: (id: number, newName: string) => Promise<boolean>;
@@ -18,14 +19,17 @@ const AppContext = createContext({} as AppContextProps);
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
-  const [tasks, setTasks] = useState<Task[]>(); // undefined when loading
+  const [groups, setGroups] = useState<Group[]>();
+  const [tasks, setTasks] = useState<Task[]>();
 
   useEffect(() => {
     let mounted = true;
 
     (async () => {
+      const groups = await Repositories.getGroups();
       const tasks = await Repositories.getTasks();
       if (mounted) {
+        setGroups(groups);
         setTasks(tasks);
       }
     })();
@@ -117,6 +121,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     theme,
     toggleTheme,
+    groups,
     tasks,
     addTask,
     renameTask,

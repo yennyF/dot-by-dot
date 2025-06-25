@@ -3,14 +3,15 @@
 import React, { DragEvent, use } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
+import { Task } from "@/app/repositories";
 
-export default function TaskColumn() {
+export default function TaskColumn({ tasks }: { tasks: Task[] }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
 
-  const { tasks, moveTask } = appContext;
+  const { moveTask } = appContext;
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
