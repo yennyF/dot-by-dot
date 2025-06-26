@@ -15,7 +15,6 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
 import { useStore } from "../Store";
-import { motion } from "motion/react";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -119,12 +118,10 @@ function DayCell({ date }: DayCellProps) {
     <div
       className={`calendar-day relative grid h-8 w-8 place-items-center rounded-full text-xs text-black ${isToday(date) ? "outline" : ""}`}
     >
-      <motion.div
-        className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)]`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: percentage }}
-        exit={{ opacity: 0 }}
-      ></motion.div>
+      <div
+        className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)] transition-opacity duration-100`}
+        style={{ opacity: percentage }}
+      ></div>
       {format(date, "d")}
     </div>
   );

@@ -12,9 +12,14 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
-      scale: {
-        "130": "1.3",
-        "70": "0.7",
+      animation: {
+        "fade-in": "fadeIn 0.2s ease-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
     },
   },

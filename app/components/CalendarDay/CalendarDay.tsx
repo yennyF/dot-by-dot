@@ -52,6 +52,10 @@ export default function CalendarDay() {
     loadTaskGroup();
   }, [loadTaskGroup]);
 
+  useEffect(() => {
+    console.log("CalendarDay re-render");
+  });
+
   if (!tasks || tasks.length === 0) {
     return;
   }

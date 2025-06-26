@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useMemo } from "react";
 import { AppContext } from "../../AppContext";
 import TaskValue from "./TaskValue";
 import TaskColumn from "./TaskColumn";
@@ -11,7 +11,6 @@ import {
   RowSpacingIcon,
   Cross1Icon,
 } from "@radix-ui/react-icons";
-import { useStore } from "@/app/Store";
 import { Group } from "@/app/repositories";
 import { Collapsible } from "radix-ui";
 import { EachDayOfIntervalResult } from "date-fns";
@@ -37,17 +36,18 @@ export default function TaskGroup({
 
   const [open, setOpen] = React.useState(true);
 
-  const loadTaskGroup = useStore((s) => s.loadTaskGroup);
-
   useEffect(() => {
-    loadTaskGroup();
-  }, [loadTaskGroup]);
+    console.log("TaskGroup re-render");
+  });
+
+  const filteredTask = useMemo(
+    () => (tasks ? tasks.filter((task) => task.groupId === group.id) : []),
+    [tasks, group.id]
+  );
 
   if (!tasks || tasks.length === 0) {
     return;
   }
-
-  const filteredTask = tasks.filter((task) => task.groupId === group.id);
 
   return (
     <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
