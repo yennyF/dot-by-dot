@@ -6,28 +6,15 @@ import TrackTask from "./TrackTask";
 import TaskColumn from "./TaskColumn";
 import { RowSpacingIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { Collapsible } from "radix-ui";
-import { EachDayOfIntervalResult } from "date-fns";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
 
-export default function GroupTask({
-  group,
-  totalDays,
-}: {
-  group: Group;
-  totalDays: EachDayOfIntervalResult<
-    {
-      start: Date;
-      end: Date;
-    },
-    undefined
-  >;
-}) {
+export default function GroupTask({ group }: { group: Group }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { tasks } = appContext;
+  const { tasks, totalDays } = appContext;
 
   const [open, setOpen] = React.useState(true);
 

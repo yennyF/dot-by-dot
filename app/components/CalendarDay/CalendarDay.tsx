@@ -10,7 +10,6 @@ import {
   isToday,
   startOfMonth,
   isBefore,
-  eachYearOfInterval,
   endOfYear,
   isAfter,
   startOfYear,
@@ -29,7 +28,7 @@ export default function CalendarDay() {
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { groups } = appContext;
+  const { groups, totalYears } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -37,20 +36,12 @@ export default function CalendarDay() {
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 0);
-  const totalYears = eachYearOfInterval({
-    start: minDate,
-    end: maxDate,
-  });
-  const totalDays = eachDayOfInterval({
-    start: minDate,
-    end: maxDate,
-  });
 
-  const loadTaskGroup = useStore((s) => s.loadTaskGroup);
+  const loadTrack = useStore((s) => s.loadTrack);
 
   useEffect(() => {
-    loadTaskGroup();
-  }, [loadTaskGroup]);
+    loadTrack();
+  }, [loadTrack]);
 
   useEffect(() => {
     console.log("CalendarDay re-render");
@@ -100,9 +91,7 @@ export default function CalendarDay() {
 
           {/* Calendar Body */}
           <div className="flex flex-col gap-10">
-            {groups?.map((group) => (
-              <GroupTask key={group.id} group={group} totalDays={totalDays} />
-            ))}
+            {groups?.map((group) => <GroupTask key={group.id} group={group} />)}
           </div>
         </div>
         {/* Shadows */}

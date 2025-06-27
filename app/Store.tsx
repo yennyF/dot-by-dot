@@ -2,58 +2,44 @@ import { create } from "zustand";
 import { LocaleDateString, normalizeDateUTC } from "./repositories/types";
 import { db } from "./repositories/db";
 
-// Store date strings for reliable value-based Set comparison
-export type GroupTask = Record<string, Set<LocaleDateString>>;
-export type DateGroup = Record<LocaleDateString, Set<number>>;
-
 type Store = {
-  taskGroup: GroupTask | undefined;
-  dateGroup: DateGroup | undefined;
-  loadTaskGroup: () => Promise<void>;
-  loadDateGroup: () => Promise<void>;
+  // Store date strings for reliable value-based Set comparison
+  datesByTask: Record<string, Set<LocaleDateString>> | undefined;
+  tasksByDate: Record<LocaleDateString, Set<number>> | undefined;
+  loadTrack: () => Promise<void>;
   setTaskChecked: (date: Date, taskId: number, checked: boolean) => void;
 };
 
 export const useStore = create<Store>((set) => ({
-  tasks: undefined,
-  taskGroup: undefined,
-  dateGroup: undefined,
-  loadTaskGroup: async () => {
-    const tasks = await db.tasks.toArray();
-    const entries = await Promise.all(
-      tasks.map(async (task) => {
-        const tracks = await db.tracks
-          .where("taskId")
-          .equals(task.id)
-          .toArray();
-        const dates = tracks.map((track) => track.date.toLocaleDateString());
-        return [task.id, new Set(dates)];
-      })
-    );
-    set(() => ({ taskGroup: Object.fromEntries(entries) }));
-  },
-  loadDateGroup: async () => {
+  datesByTask: undefined,
+  tasksByDate: undefined,
+  loadTrack: async () => {
+    const datesByTask: Record<string, Set<LocaleDateString>> = {};
+    const tasksByDate: Record<LocaleDateString, Set<number>> = {};
     const tracks = await db.tracks.toArray();
-    const entries = await Promise.all(
-      tracks.map(async (track) => {
-        const tracks = await db.tracks
-          .where("date")
-          .equals(normalizeDateUTC(track.date))
-          .toArray();
-        const taskIds = tracks.map((track) => track.taskId);
-        return [track.date.toLocaleDateString(), new Set(taskIds)];
-      })
-    );
-    set(() => ({ dateGroup: Object.fromEntries(entries) }));
+
+    tracks.forEach((track) => {
+      if (!datesByTask[track.taskId]) {
+        datesByTask[track.taskId] = new Set<LocaleDateString>();
+      }
+      datesByTask[track.taskId].add(track.date.toLocaleDateString());
+
+      if (!tasksByDate[track.date.toLocaleDateString()]) {
+        tasksByDate[track.date.toLocaleDateString()] = new Set<number>();
+      }
+      tasksByDate[track.date.toLocaleDateString()].add(track.taskId);
+    });
+
+    set(() => ({ datesByTask, tasksByDate }));
   },
   setTaskChecked: async (date: Date, taskId: number, checked: boolean) => {
     set((state) => {
       const dateString = date.toLocaleDateString();
 
-      const newTaskGroup = { ...state.taskGroup };
-      newTaskGroup[taskId] = new Set(state.taskGroup?.[taskId]);
-      const newDateGroup = { ...state.dateGroup };
-      newDateGroup[dateString] = new Set(state.dateGroup?.[dateString]);
+      const newTaskGroup = { ...state.datesByTask };
+      newTaskGroup[taskId] = new Set(state.datesByTask?.[taskId]);
+      const newDateGroup = { ...state.tasksByDate };
+      newDateGroup[dateString] = new Set(state.tasksByDate?.[dateString]);
 
       if (checked) {
         newTaskGroup[taskId].add(date.toLocaleDateString());
@@ -63,8 +49,8 @@ export const useStore = create<Store>((set) => ({
         newDateGroup[dateString].delete(taskId);
       }
       return {
-        taskGroup: newTaskGroup,
-        dateGroup: newDateGroup,
+        datesByTask: newTaskGroup,
+        tasksByDate: newDateGroup,
       };
     });
 

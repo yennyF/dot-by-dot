@@ -1,12 +1,21 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { Task, Group } from "./repositories/types";
 import { db } from "./repositories/db";
+import {
+  startOfMonth,
+  subMonths,
+  addDays,
+  eachYearOfInterval,
+  eachDayOfInterval,
+} from "date-fns";
 
 type ThemeType = "light" | "dark";
 
 interface AppContextProps {
   theme: ThemeType;
   toggleTheme: () => void;
+  totalYears: Date[];
+  totalDays: Date[];
   groups: Group[] | undefined;
   tasks: Task[] | undefined;
   addTask: (task: string, groupId: number) => Promise<boolean>;
@@ -25,6 +34,18 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [groups, setGroups] = useState<Group[]>();
   const [tasks, setTasks] = useState<Task[]>();
+
+  const currentDate = new Date();
+  const minDate = startOfMonth(subMonths(currentDate, 3));
+  const maxDate = addDays(currentDate, 0);
+  const totalYears = eachYearOfInterval({
+    start: minDate,
+    end: maxDate,
+  });
+  const totalDays = eachDayOfInterval({
+    start: minDate,
+    end: maxDate,
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -194,6 +215,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     theme,
     toggleTheme,
+    totalYears,
+    totalDays,
     groups,
     tasks,
     addTask,

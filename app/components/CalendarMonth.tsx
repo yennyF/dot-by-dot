@@ -22,12 +22,6 @@ export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalDays, setTotalDays] = useState<Date[]>([]);
 
-  const loadDateGroup = useStore((s) => s.loadDateGroup);
-
-  useEffect(() => {
-    loadDateGroup();
-  }, [loadDateGroup]);
-
   useEffect(() => {
     const startOfCurrentMonth = startOfMonth(currentDate);
     const endOfCurrentMonth = endOfMonth(currentDate);
@@ -110,7 +104,7 @@ function DayCell({ date }: DayCellProps) {
   }
   const { tasks } = appContext;
 
-  const taskSet = useStore((s) => s.dateGroup?.[date.toLocaleDateString()]);
+  const taskSet = useStore((s) => s.tasksByDate?.[date.toLocaleDateString()]);
 
   const percentage = tasks && taskSet ? taskSet.size / tasks.length : 0;
 
