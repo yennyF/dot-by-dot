@@ -2,25 +2,25 @@
 
 import { Dialog } from "radix-ui";
 import { use, useEffect, useState } from "react";
-import { Task } from "../repositories";
+import { Group } from "../repositories";
 import { AppContext } from "../AppContext";
 
-interface DeleteTaskDialogProps {
+interface DeleteGroupDialogProps {
   children: React.ReactNode;
-  task: Task;
+  group: Group;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function DeleteTaskDialog({
+export default function DeleteGroupDialog({
   children,
-  task,
+  group,
   onOpenChange,
-}: DeleteTaskDialogProps) {
+}: DeleteGroupDialogProps) {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("TaskName must be used within a AppProvider");
+    throw new Error("GroupName must be used within a AppProvider");
   }
-  const { deleteTask } = appContext;
+  const { deleteGroup } = appContext;
 
   const [open, setOpen] = useState(false);
 
@@ -29,7 +29,7 @@ export default function DeleteTaskDialog({
   }, [onOpenChange, open]);
 
   const handleDeleteConfirm = async () => {
-    await deleteTask(task.id);
+    await deleteGroup(group.id);
   };
 
   return (
@@ -43,7 +43,7 @@ export default function DeleteTaskDialog({
                 Delete Confirmation
               </Dialog.Title>
               <Dialog.Description className="dialog-description">
-                Are you sure you want to delete &quot;{task.name}&quot;?
+                Are you sure you want to delete &quot;{group.name}&quot;?
                 <br />
                 <br />
                 <span className="text-red-600">

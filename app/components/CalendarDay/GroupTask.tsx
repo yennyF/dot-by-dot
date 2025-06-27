@@ -14,8 +14,9 @@ import {
 import { Group } from "@/app/repositories";
 import { Collapsible } from "radix-ui";
 import { EachDayOfIntervalResult } from "date-fns";
+import GroupName from "./GroupName";
 
-export default function TaskGroup({
+export default function GroupTask({
   group,
   totalDays,
 }: {
@@ -37,7 +38,7 @@ export default function TaskGroup({
   const [open, setOpen] = React.useState(true);
 
   useEffect(() => {
-    console.log("TaskGroup re-render");
+    console.log("GroupTask re-render");
   });
 
   const filteredTask = useMemo(
@@ -52,23 +53,12 @@ export default function TaskGroup({
   return (
     <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
       <div className="sticky left-0 flex h-[50px] w-[calc(100vw-320px-100px)] items-center justify-between rounded-md px-3">
-        <div>{group.name}</div>
-        <div className="flex gap-1">
+        <GroupName group={group} />
+        <Collapsible.Trigger asChild>
           <button className="button-icon">
-            <PlusIcon />
+            {open ? <Cross1Icon /> : <RowSpacingIcon />}
           </button>
-          <button className="button-icon">
-            <Pencil1Icon />
-          </button>
-          <button className="button-icon">
-            <TrashIcon />
-          </button>
-          <Collapsible.Trigger asChild>
-            <button className="button-icon">
-              {open ? <Cross1Icon /> : <RowSpacingIcon />}
-            </button>
-          </Collapsible.Trigger>
-        </div>
+        </Collapsible.Trigger>
       </div>
       <Collapsible.Content className="flex w-fit">
         <TaskColumn tasks={filteredTask} />

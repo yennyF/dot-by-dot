@@ -20,16 +20,16 @@ import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
-import AddTaskPopover from "../AddTaskPopover";
+import AddGroupPopover from "../AddGroupPopover";
 import { useStore } from "@/app/Store";
-import TaskGroup from "./TaskGroup";
+import GroupTask from "./GroupTask";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { tasks, groups } = appContext;
+  const { groups } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -56,10 +56,6 @@ export default function CalendarDay() {
     console.log("CalendarDay re-render");
   });
 
-  if (!tasks || tasks.length === 0) {
-    return;
-  }
-
   return (
     <div className="mx-[50px] overflow-hidden">
       {/* Controls */}
@@ -74,12 +70,12 @@ export default function CalendarDay() {
         <button className="button-outline" onClick={scrollToTarget}>
           Today
         </button>
-        <AddTaskPopover>
+        <AddGroupPopover>
           <button className="button-accent">
             <PlusIcon />
-            New Task
+            New Group
           </button>
-        </AddTaskPopover>
+        </AddGroupPopover>
         {/* </div> */}
       </div>
 
@@ -105,7 +101,7 @@ export default function CalendarDay() {
           {/* Calendar Body */}
           <div className="flex flex-col gap-10">
             {groups?.map((group) => (
-              <TaskGroup key={group.id} group={group} totalDays={totalDays} />
+              <GroupTask key={group.id} group={group} totalDays={totalDays} />
             ))}
           </div>
         </div>

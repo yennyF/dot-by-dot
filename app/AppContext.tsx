@@ -1,6 +1,6 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
-import * as Repositories from "./repositories";
 import { Task, Group } from "./repositories/types";
+import { db } from "./repositories/db";
 
 type ThemeType = "light" | "dark";
 
@@ -9,10 +9,14 @@ interface AppContextProps {
   toggleTheme: () => void;
   groups: Group[] | undefined;
   tasks: Task[] | undefined;
-  addTask: (task: string) => Promise<boolean>;
+  addTask: (task: string, groupId: number) => Promise<boolean>;
   renameTask: (id: number, newName: string) => Promise<boolean>;
   moveTask: (selectedIndex: number, targetIndex: number | null) => void;
   deleteTask: (id: number) => Promise<boolean>;
+  addGroup: (task: string) => Promise<boolean>;
+  renameGroup: (id: number, newName: string) => Promise<boolean>;
+  moveGroup: (selectedIndex: number, targetIndex: number | null) => void;
+  deleteGroup: (id: number) => Promise<boolean>;
 }
 
 const AppContext = createContext({} as AppContextProps);
@@ -26,8 +30,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     let mounted = true;
 
     (async () => {
-      const groups = await Repositories.getGroups();
-      const tasks = await Repositories.getTasks();
+      const groups = await db.groups.toArray();
+      const tasks = await db.tasks.toArray();
       if (mounted) {
         setGroups(groups);
         setTasks(tasks);
@@ -43,15 +47,14 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const addTask = async (name: string) => {
+  const addTask = async (name: string, groupId: number) => {
     if (!tasks) return false;
     if (!name.length) return false;
-    if (tasks.some((h) => h.name === name)) return false;
 
     try {
-      const task = await Repositories.addTask(name);
-      const newTasks = [...tasks, task];
-      setTasks(newTasks);
+      const id = await db.tasks.add({ name, groupId });
+      const task: Task = { id, name, groupId };
+      setTasks([...tasks, task]);
     } catch (error) {
       console.error("Error adding task:", error);
       return false;
@@ -60,19 +63,17 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  const renameTask = async (id: number, newName: string) => {
+  const renameTask = async (id: number, name: string) => {
     if (!tasks) return false;
-    if (!newName.length) return false;
-    if (tasks.some((h) => id !== h.id && h.name === newName)) return false;
+    if (!name.length) return false;
 
     const index = tasks.findIndex((h) => h.id === id);
     if (index < 0) return false;
 
     try {
-      const task = await Repositories.updateTask(id, newName);
-      const newTasks = [...tasks];
-      newTasks.splice(index, 1, task);
-      setTasks(newTasks);
+      await db.tasks.update(id, { name });
+      tasks[index].name = name;
+      setTasks([...tasks]);
     } catch (error) {
       console.error("Error renaming task:", error);
       return false;
@@ -81,12 +82,12 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  const moveTask = (taskId: number, beforeId: number | null) => {
+  const moveTask = (id: number, beforeId: number | null) => {
     if (!tasks) return false;
 
     const newTasks = [...tasks];
 
-    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    const taskIndex = tasks.findIndex((task) => task.id === id);
     const task = tasks[taskIndex];
     newTasks.splice(taskIndex, 1);
 
@@ -106,12 +107,84 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     if (index < 0) return false;
 
     try {
-      await Repositories.deleteTask(id);
+      await db.tasks.delete(id);
       const newTasks = [...tasks];
       newTasks.splice(index, 1);
       setTasks(newTasks);
     } catch (error) {
       console.error("Error deleting task:", error);
+      return false;
+    }
+
+    return true;
+  };
+
+  const addGroup = async (name: string) => {
+    if (!groups) return false;
+    if (!name.length) return false;
+
+    try {
+      const id = await db.groups.add({ name });
+      const group: Group = { id, name };
+      setGroups([...groups, group]);
+    } catch (error) {
+      console.error("Error adding group:", error);
+      return false;
+    }
+
+    return true;
+  };
+
+  const renameGroup = async (id: number, name: string) => {
+    if (!groups) return false;
+    if (!name.length) return false;
+
+    const index = groups.findIndex((h) => h.id === id);
+    if (index < 0) return false;
+
+    try {
+      await db.groups.update(id, { name });
+      groups[index].name = name;
+      setGroups([...groups]);
+    } catch (error) {
+      console.error("Error renaming group:", error);
+      return false;
+    }
+
+    return true;
+  };
+
+  const moveGroup = (id: number, beforeId: number | null) => {
+    if (!groups) return false;
+
+    const newGroups = [...groups];
+
+    const taskIndex = groups.findIndex((group) => group.id === id);
+    const group = groups[taskIndex];
+    newGroups.splice(taskIndex, 1);
+
+    if (beforeId === null) {
+      newGroups.push(group);
+    } else {
+      const beforeIndex = groups.findIndex((group) => group.id === beforeId);
+      newGroups.splice(beforeIndex, 0, group);
+    }
+    setGroups(newGroups);
+  };
+
+  const deleteGroup = async (id: number) => {
+    if (!groups) return false;
+
+    const index = groups.findIndex((h) => h.id === id);
+    if (index < 0) return false;
+
+    try {
+      await db.groups.delete(id);
+      const newGroups = [...groups];
+      newGroups.splice(index, 1);
+      setGroups(newGroups);
+    } catch (error) {
+      console.error("Error deleting group:", error);
       return false;
     }
 
@@ -127,6 +200,10 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     renameTask,
     moveTask,
     deleteTask,
+    addGroup,
+    renameGroup,
+    moveGroup,
+    deleteGroup,
   };
 
   return <AppContext value={value}>{children}</AppContext>;

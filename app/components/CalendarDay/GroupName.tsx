@@ -1,23 +1,22 @@
-"use client";
-
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useState } from "react";
-import DeleteTaskDialog from "../DeleteTaskDialog";
-import RenameTaskPopover from "../RenameTaskPopover";
-import { Task } from "../../repositories";
+import DeleteGroupDialog from "../DeleteGroupDialog";
+import AddTaskPopover from "../AddTaskPopover";
 import clsx from "clsx";
+import { Group } from "@/app/repositories";
+import RenameGroupPopover from "../RenameGroupPopover";
 
-interface TaskNameProps {
-  task: Task;
+interface GroupNameProps {
+  group: Group;
 }
 
-export default function TaskName({ task }: TaskNameProps) {
+export default function GroupName({ group }: GroupNameProps) {
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
     // e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("taskId", task.id.toString());
+    e.dataTransfer.setData("taskId", group.id.toString());
     setDragging(true);
   };
 
@@ -29,32 +28,37 @@ export default function TaskName({ task }: TaskNameProps) {
   return (
     <div
       className={clsx(
-        "task-name draggable group flex w-full cursor-grab items-center justify-between gap-1 px-3 active:cursor-grabbing",
-        "[&.highlight]:font-bold"
+        "task-name draggable group flex cursor-grab items-center justify-between gap-1 active:cursor-grabbing",
+        "w-[200px] [&.highlight]:font-bold"
       )}
       draggable="true"
-      data-id={task.id}
+      data-id={group.id}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
       <div className="overflow-hidden text-ellipsis text-nowrap">
-        {task.name}
+        {group.name}
       </div>
       {!dragging && (
         <div
           className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
           data-state={open ? "open" : "closed"}
         >
-          <RenameTaskPopover task={task} onOpenChange={setOpen}>
+          <AddTaskPopover task={group} onOpenChange={setOpen}>
+            <button className="button-icon">
+              <PlusIcon />
+            </button>
+          </AddTaskPopover>
+          <RenameGroupPopover group={group} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
             </button>
-          </RenameTaskPopover>
-          <DeleteTaskDialog task={task} onOpenChange={setOpen}>
+          </RenameGroupPopover>
+          <DeleteGroupDialog group={group} onOpenChange={setOpen}>
             <button className="button-icon">
               <TrashIcon />
             </button>
-          </DeleteTaskDialog>
+          </DeleteGroupDialog>
         </div>
       )}
     </div>
