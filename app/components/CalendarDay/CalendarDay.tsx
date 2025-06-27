@@ -20,7 +20,7 @@ import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
-import AddGroupPopover from "../AddGroupPopover";
+import GroupAddPopover from "../GroupAddPopover";
 import { useStore } from "@/app/Store";
 import GroupTask from "./GroupTask";
 
@@ -70,12 +70,12 @@ export default function CalendarDay() {
         <button className="button-outline" onClick={scrollToTarget}>
           Today
         </button>
-        <AddGroupPopover>
+        <GroupAddPopover>
           <button className="button-accent">
             <PlusIcon />
             New Group
           </button>
-        </AddGroupPopover>
+        </GroupAddPopover>
         {/* </div> */}
       </div>
 

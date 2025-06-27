@@ -2,21 +2,21 @@
 
 import React from "react";
 import { addDays } from "date-fns";
-import { Task } from "../../repositories";
-import clsx from "clsx";
+]import clsx from "clsx";
 import { useStore } from "@/app/Store";
+import { Task } from "@/app/repositories/types";
 
-interface TaskValueProps extends React.HTMLAttributes<HTMLDivElement> {
+interface TrackTaskProps extends React.HTMLAttributes<HTMLDivElement> {
   date: Date;
   task: Task;
 }
 
-export default function TaskValue({
+export default function TrackTask({
   date,
   task,
   className,
   ...props
-}: TaskValueProps) {
+}: TrackTaskProps) {
   const dateSet = useStore((s) => s.taskGroup?.[task.id]);
   const setTaskChecked = useStore((s) => s.setTaskChecked);
 

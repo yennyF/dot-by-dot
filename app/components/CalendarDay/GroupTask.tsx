@@ -2,19 +2,13 @@
 
 import React, { use, useEffect, useMemo } from "react";
 import { AppContext } from "../../AppContext";
-import TaskValue from "./TaskValue";
+import TrackTask from "./TrackTask";
 import TaskColumn from "./TaskColumn";
-import {
-  Pencil1Icon,
-  PlusIcon,
-  TrashIcon,
-  RowSpacingIcon,
-  Cross1Icon,
-} from "@radix-ui/react-icons";
-import { Group } from "@/app/repositories";
+import { RowSpacingIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { Collapsible } from "radix-ui";
 import { EachDayOfIntervalResult } from "date-fns";
 import GroupName from "./GroupName";
+import { Group } from "@/app/repositories/types";
 
 export default function GroupTask({
   group,
@@ -66,7 +60,7 @@ export default function GroupTask({
           {filteredTask.map((task) => (
             <div className="calendar-row flex" key={task.id}>
               {totalDays.map((date) => (
-                <TaskValue
+                <TrackTask
                   key={`${task.id}-${date.toLocaleDateString()}`}
                   className="flex h-10 w-[50px] items-center justify-center"
                   date={date}

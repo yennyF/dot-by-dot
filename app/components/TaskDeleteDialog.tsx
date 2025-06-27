@@ -2,20 +2,20 @@
 
 import { Dialog } from "radix-ui";
 import { use, useEffect, useState } from "react";
-import { Task } from "../repositories";
 import { AppContext } from "../AppContext";
+import { Task } from "../repositories/types";
 
-interface DeleteTaskDialogProps {
+interface TaskDeleteDialogProps {
   children: React.ReactNode;
   task: Task;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function DeleteTaskDialog({
+export default function TaskDeleteDialog({
   children,
   task,
   onOpenChange,
-}: DeleteTaskDialogProps) {
+}: TaskDeleteDialogProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("TaskName must be used within a AppProvider");

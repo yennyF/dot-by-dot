@@ -3,68 +3,55 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
-import { Group } from "../repositories";
 
-interface RenameGroupPopoverProps {
+interface GroupAddPopoverProps {
   children: React.ReactNode;
-  group: Group;
-  onOpenChange?: (open: boolean) => void;
 }
 
-export default function RenameGroupPopover({
-  children,
-  group,
-  onOpenChange,
-}: RenameGroupPopoverProps) {
+export default function GroupAddPopover({ children }: GroupAddPopoverProps) {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    onOpenChange?.(open);
-  }, [onOpenChange, open]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>{children}</Popover.Trigger>
+      <Popover.Trigger data-state={open ? "open" : "close"} asChild>
+        {children}
+      </Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content setOpen={setOpen} group={group} />
+          <Content />
         </Popover.Portal>
       )}
     </Popover.Root>
   );
 }
 
-interface ContentProps {
-  setOpen: (open: boolean) => void;
-  group: Group;
-}
-
-function Content({ setOpen, group }: ContentProps) {
+function Content() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { groups, renameGroup } = appContext;
+  const { groups, addGroup } = appContext;
 
-  const [nameInput, setNameInput] = useState(group.name);
+  const [nameInput, setNameInput] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (!groups) return;
-    if (groups.some((h) => h.id !== group.id && h.name === nameInput)) {
+    if (groups === undefined) return;
+
+    if (groups.some((h) => h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [group, nameInput, groups]);
+  }, [nameInput, groups]);
 
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleGroupInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await renameGroup(group.id, nameInput)) {
-      setOpen(false);
+    if (await addGroup(nameInput)) {
+      setNameInput("");
     }
   };
 
@@ -79,21 +66,21 @@ function Content({ setOpen, group }: ContentProps) {
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
       sideOffset={10}
-      align="center"
+      align="end"
       alignOffset={0}
       onKeyDown={handleKeyDown}
     >
-      <p>Rename the group</p>
+      <p className="">Enter a new group</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={nameInput}
-          onChange={handleNameChange}
-          placeholder={group.name}
+          onChange={handleGroupInputChange}
+          placeholder="New group"
           className="basis-full"
         ></input>
-        <div className="text-xs text-orange-500">
-          {isDuplicated ? "This group is duplicated" : "\u00A0"}
+        <div className="text-xs text-[var(--accent)]">
+          {isDuplicated ? "This group already exists" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
@@ -101,11 +88,11 @@ function Content({ setOpen, group }: ContentProps) {
           <div className="button-cancel">Cancel</div>
         </Popover.Close>
         <button
-          className="button-accept"
+          className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || nameInput === group.name}
+          disabled={nameInput.length === 0 || isDuplicated}
         >
-          Rename
+          Add
         </button>
       </div>
       <Popover.Arrow className="arrow" />

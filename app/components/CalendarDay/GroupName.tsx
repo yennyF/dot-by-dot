@@ -1,10 +1,10 @@
 import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useState } from "react";
-import DeleteGroupDialog from "../DeleteGroupDialog";
-import AddTaskPopover from "../AddTaskPopover";
+import GroupDeleteDialog from "../GroupDeleteDialog";
+import TaskAddPopover from "../TaskAddPopover";
 import clsx from "clsx";
 import { Group } from "@/app/repositories";
-import RenameGroupPopover from "../RenameGroupPopover";
+import GroupRenamePopover from "../GroupRenamePopover";
 
 interface GroupNameProps {
   group: Group;
@@ -44,21 +44,21 @@ export default function GroupName({ group }: GroupNameProps) {
           className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
           data-state={open ? "open" : "closed"}
         >
-          <AddTaskPopover task={group} onOpenChange={setOpen}>
+          <TaskAddPopover task={group} onOpenChange={setOpen}>
             <button className="button-icon">
               <PlusIcon />
             </button>
-          </AddTaskPopover>
-          <RenameGroupPopover group={group} onOpenChange={setOpen}>
+          </TaskAddPopover>
+          <GroupRenamePopover group={group} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
             </button>
-          </RenameGroupPopover>
-          <DeleteGroupDialog group={group} onOpenChange={setOpen}>
+          </GroupRenamePopover>
+          <GroupDeleteDialog group={group} onOpenChange={setOpen}>
             <button className="button-icon">
               <TrashIcon />
             </button>
-          </DeleteGroupDialog>
+          </GroupDeleteDialog>
         </div>
       )}
     </div>

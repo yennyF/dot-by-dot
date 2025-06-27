@@ -4,11 +4,11 @@ import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 
-interface AddTaskPopoverProps {
+interface TaskAddPopoverProps {
   children: React.ReactNode;
 }
 
-export default function AddTaskPopover({ children }: AddTaskPopoverProps) {
+export default function TaskAddPopover({ children }: TaskAddPopoverProps) {
   const [open, setOpen] = useState(false);
 
   return (

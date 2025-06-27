@@ -3,19 +3,19 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
-import { Task } from "../repositories";
+import { Group } from "../repositories/types";
 
-interface RenameTaskPopoverProps {
+interface GroupRenamePopoverProps {
   children: React.ReactNode;
-  task: Task;
+  group: Group;
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function RenameTaskPopover({
+export default function GroupRenamePopover({
   children,
-  task,
+  group,
   onOpenChange,
-}: RenameTaskPopoverProps) {
+}: GroupRenamePopoverProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function RenameTaskPopover({
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content setOpen={setOpen} task={task} />
+          <Content setOpen={setOpen} group={group} />
         </Popover.Portal>
       )}
     </Popover.Root>
@@ -36,34 +36,34 @@ export default function RenameTaskPopover({
 
 interface ContentProps {
   setOpen: (open: boolean) => void;
-  task: Task;
+  group: Group;
 }
 
-function Content({ setOpen, task }: ContentProps) {
+function Content({ setOpen, group }: ContentProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { tasks, renameTask } = appContext;
+  const { groups, renameGroup } = appContext;
 
-  const [nameInput, setNameInput] = useState(task.name);
+  const [nameInput, setNameInput] = useState(group.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (!tasks) return;
-    if (tasks.some((h) => h.id !== task.id && h.name === nameInput)) {
+    if (!groups) return;
+    if (groups.some((h) => h.id !== group.id && h.name === nameInput)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [task, nameInput, tasks]);
+  }, [group, nameInput, groups]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await renameTask(task.id, nameInput)) {
+    if (await renameGroup(group.id, nameInput)) {
       setOpen(false);
     }
   };
@@ -83,17 +83,17 @@ function Content({ setOpen, task }: ContentProps) {
       alignOffset={0}
       onKeyDown={handleKeyDown}
     >
-      <p>Rename the task</p>
+      <p>Rename the group</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={nameInput}
           onChange={handleNameChange}
-          placeholder={task.name}
+          placeholder={group.name}
           className="basis-full"
         ></input>
         <div className="text-xs text-orange-500">
-          {isDuplicated ? "This task is duplicated" : "\u00A0"}
+          {isDuplicated ? "This group is duplicated" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
@@ -103,7 +103,7 @@ function Content({ setOpen, task }: ContentProps) {
         <button
           className="button-accept"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || nameInput === task.name}
+          disabled={nameInput.length === 0 || nameInput === group.name}
         >
           Rename
         </button>

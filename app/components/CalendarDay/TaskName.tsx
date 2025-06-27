@@ -2,8 +2,8 @@
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useState } from "react";
-import DeleteTaskDialog from "../DeleteTaskDialog";
-import RenameTaskPopover from "../RenameTaskPopover";
+import TaskDeleteDialog from "../TaskDeleteDialog";
+import TaskRenamePopover from "../TaskRenamePopover";
 import { Task } from "../../repositories";
 import clsx from "clsx";
 
@@ -45,16 +45,16 @@ export default function TaskName({ task }: TaskNameProps) {
           className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
           data-state={open ? "open" : "closed"}
         >
-          <RenameTaskPopover task={task} onOpenChange={setOpen}>
+          <TaskRenamePopover task={task} onOpenChange={setOpen}>
             <button className="button-icon">
               <Pencil1Icon />
             </button>
-          </RenameTaskPopover>
-          <DeleteTaskDialog task={task} onOpenChange={setOpen}>
+          </TaskRenamePopover>
+          <TaskDeleteDialog task={task} onOpenChange={setOpen}>
             <button className="button-icon">
               <TrashIcon />
             </button>
-          </DeleteTaskDialog>
+          </TaskDeleteDialog>
         </div>
       )}
     </div>
