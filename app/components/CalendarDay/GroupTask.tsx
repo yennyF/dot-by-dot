@@ -8,6 +8,7 @@ import { RowSpacingIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { Collapsible } from "radix-ui";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
+import TrackGroup from "./TrackGroup";
 
 export default function GroupTask({ group }: { group: Group }) {
   const appContext = use(AppContext);
@@ -33,13 +34,22 @@ export default function GroupTask({ group }: { group: Group }) {
 
   return (
     <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
-      <div className="sticky left-0 flex h-[50px] w-[calc(100vw-320px-100px)] items-center justify-between rounded-md px-3">
+      <div className="sticky left-0 flex h-[40px] w-fit">
         <GroupName group={group} />
-        <Collapsible.Trigger asChild>
+        <div className="sticky left-[200px] flex">
+          {totalDays.map((date) => (
+            <TrackGroup
+              key={date.toLocaleDateString()}
+              date={date}
+              tasks={filteredTask}
+            />
+          ))}
+        </div>
+        {/* <Collapsible.Trigger asChild>
           <button className="button-icon">
             {open ? <Cross1Icon /> : <RowSpacingIcon />}
           </button>
-        </Collapsible.Trigger>
+        </Collapsible.Trigger> */}
       </div>
       <Collapsible.Content className="flex w-fit">
         <TaskColumn tasks={filteredTask} />
@@ -48,8 +58,7 @@ export default function GroupTask({ group }: { group: Group }) {
             <div className="calendar-row flex" key={task.id}>
               {totalDays.map((date) => (
                 <TrackTask
-                  key={`${task.id}-${date.toLocaleDateString()}`}
-                  className="flex h-10 w-[50px] items-center justify-center"
+                  key={date.toLocaleDateString()}
                   date={date}
                   task={task}
                 />

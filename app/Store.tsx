@@ -13,21 +13,16 @@ type Store = {
 export const useStore = create<Store>((set) => ({
   datesByTask: undefined,
   tasksByDate: undefined,
+  strikes: undefined,
   loadTrack: async () => {
     const datesByTask: Record<string, Set<LocaleDateString>> = {};
     const tasksByDate: Record<LocaleDateString, Set<number>> = {};
+
     const tracks = await db.tracks.toArray();
-
     tracks.forEach((track) => {
-      if (!datesByTask[track.taskId]) {
-        datesByTask[track.taskId] = new Set<LocaleDateString>();
-      }
-      datesByTask[track.taskId].add(track.date.toLocaleDateString());
-
-      if (!tasksByDate[track.date.toLocaleDateString()]) {
-        tasksByDate[track.date.toLocaleDateString()] = new Set<number>();
-      }
-      tasksByDate[track.date.toLocaleDateString()].add(track.taskId);
+      const dateString = track.date.toLocaleDateString();
+      (datesByTask[track.taskId] ??= new Set()).add(dateString);
+      (tasksByDate[dateString] ??= new Set()).add(track.taskId);
     });
 
     set(() => ({ datesByTask, tasksByDate }));

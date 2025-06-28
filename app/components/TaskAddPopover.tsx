@@ -3,13 +3,24 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
+import { Group } from "../repositories/types";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
+  group: Group;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function TaskAddPopover({ children }: TaskAddPopoverProps) {
+export default function TaskAddPopover({
+  children,
+  group,
+  onOpenChange,
+}: TaskAddPopoverProps) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -18,14 +29,14 @@ export default function TaskAddPopover({ children }: TaskAddPopoverProps) {
       </Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content />
+          <Content group={group} />
         </Popover.Portal>
       )}
     </Popover.Root>
   );
 }
 
-function Content() {
+function Content({ group }: { group: Group }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
@@ -50,7 +61,7 @@ function Content() {
   };
 
   const handleSaveClick = async () => {
-    if (await addTask(nameInput)) {
+    if (await addTask(nameInput, group.id)) {
       setNameInput("");
     }
   };

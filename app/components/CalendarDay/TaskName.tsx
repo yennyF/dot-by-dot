@@ -4,8 +4,7 @@ import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useState } from "react";
 import TaskDeleteDialog from "../TaskDeleteDialog";
 import TaskRenamePopover from "../TaskRenamePopover";
-import { Task } from "../../repositories";
-import clsx from "clsx";
+import { Task } from "@/app/repositories/types";
 
 interface TaskNameProps {
   task: Task;
@@ -28,10 +27,9 @@ export default function TaskName({ task }: TaskNameProps) {
 
   return (
     <div
-      className={clsx(
-        "task-name draggable group flex w-full cursor-grab items-center justify-between gap-1 px-3 active:cursor-grabbing",
-        "[&.highlight]:font-bold"
-      )}
+      className={
+        "task-name draggable group flex w-full cursor-grab items-center justify-between gap-1 px-3 active:cursor-grabbing [&.highlight]:font-bold"
+      }
       draggable="true"
       data-id={task.id}
       onDragStart={(e) => handleDragStart(e)}
