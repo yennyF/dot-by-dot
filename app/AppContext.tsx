@@ -20,11 +20,12 @@ interface AppContextProps {
   tasks: Task[] | undefined;
   addTask: (task: string, groupId: number) => Promise<boolean>;
   renameTask: (id: number, newName: string) => Promise<boolean>;
-  moveTask: (selectedIndex: number, targetIndex: number | null) => void;
+  moveTask: (id: number, beforeId: number | null) => boolean;
+  updateTask: (id: number, groupId: number | undefined) => Promise<boolean>;
   deleteTask: (id: number) => Promise<boolean>;
   addGroup: (task: string) => Promise<boolean>;
   renameGroup: (id: number, newName: string) => Promise<boolean>;
-  moveGroup: (selectedIndex: number, targetIndex: number | null) => void;
+  moveGroup: (selectedIndex: number, targetIndex: number | null) => boolean;
   deleteGroup: (id: number) => Promise<boolean>;
 }
 
@@ -103,22 +104,42 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  const moveTask = (id: number, beforeId: number | null) => {
+  const updateTask = async (id: number, groupId: number | undefined) => {
     if (!tasks) return false;
 
-    const newTasks = [...tasks];
+    const task = tasks.find((task) => task.id === id);
+    if (!task) return false;
+    if (task.groupId === groupId) return true;
 
-    const taskIndex = tasks.findIndex((task) => task.id === id);
-    const task = tasks[taskIndex];
-    newTasks.splice(taskIndex, 1);
+    task.groupId = groupId;
 
+    try {
+      await db.tasks.update(id, { groupId });
+      setTasks([...tasks]);
+    } catch (error) {
+      console.error("Error updating task groupId:", error);
+      return false;
+    }
+
+    return true;
+  };
+
+  const moveTask = (id: number, beforeId: number | null) => {
+    if (!tasks) return false;
+    if (beforeId === id) return true;
+
+    const index = tasks.findIndex((task) => task.id === id);
+    if (index < 0) return false;
+
+    const deletedTasks = tasks.splice(index, 1);
     if (beforeId === null) {
-      newTasks.push(task);
+      tasks.push(...deletedTasks);
     } else {
       const beforeIndex = tasks.findIndex((task) => task.id === beforeId);
-      newTasks.splice(beforeIndex, 0, task);
+      tasks.splice(beforeIndex, 0, ...deletedTasks);
     }
-    setTasks(newTasks);
+    setTasks([...tasks]);
+    return true;
   };
 
   const deleteTask = async (id: number) => {
@@ -177,20 +198,20 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const moveGroup = (id: number, beforeId: number | null) => {
     if (!groups) return false;
+    if (beforeId === id) return true;
 
-    const newGroups = [...groups];
+    const index = groups.findIndex((group) => group.id === id);
+    if (index < 0) return false;
 
-    const taskIndex = groups.findIndex((group) => group.id === id);
-    const group = groups[taskIndex];
-    newGroups.splice(taskIndex, 1);
-
+    const deletedGroups = groups.splice(index, 1);
     if (beforeId === null) {
-      newGroups.push(group);
+      groups.push(...deletedGroups);
     } else {
       const beforeIndex = groups.findIndex((group) => group.id === beforeId);
-      newGroups.splice(beforeIndex, 0, group);
+      groups.splice(beforeIndex, 0, ...deletedGroups);
     }
-    setGroups(newGroups);
+    setGroups([...groups]);
+    return true;
   };
 
   const deleteGroup = async (id: number) => {
@@ -222,6 +243,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     addTask,
     renameTask,
     moveTask,
+    updateTask,
     deleteTask,
     addGroup,
     renameGroup,

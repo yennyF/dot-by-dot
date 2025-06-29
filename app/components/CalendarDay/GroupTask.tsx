@@ -52,7 +52,7 @@ export default function GroupTask({ group }: { group: Group }) {
         </Collapsible.Trigger> */}
       </div>
       <Collapsible.Content className="flex w-fit">
-        <TaskColumn tasks={filteredTask} />
+        <TaskColumn group={group} tasks={filteredTask} />
         <div className="sticky left-[200px] flex flex-col">
           {filteredTask.map((task) => (
             <div className="calendar-row flex" key={task.id}>

@@ -1,101 +1,68 @@
 "use client";
 
-import React, { DragEvent, use } from "react";
+import { DragEvent, RefObject, use, useRef } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
-import { Task } from "@/app/repositories";
+import { Group, Task } from "@/app/repositories/types";
+import { useDrop } from "./useDrop";
 
-export default function TaskColumn({ tasks }: { tasks: Task[] }) {
+export default function TaskColumn({
+  group,
+  tasks,
+}: {
+  group: Group;
+  tasks: Task[];
+}) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
+  const { moveTask, updateTask } = appContext;
 
-  const { moveTask } = appContext;
+  const ref = useRef<HTMLDivElement>(null);
+
+  const {
+    getIndicators,
+    clearHighlights,
+    highlightIndicator,
+    getNearestIndicator,
+  } = useDrop(ref);
+
+  const handleDrop = (e: DragEvent) => {
+    clearHighlights();
+
+    const indicators = getIndicators();
+    const el = getNearestIndicator(e, indicators);
+    if (!el) return;
+
+    const beforeId = Number(el.element.dataset.beforeId);
+    const taskId = Number(e.dataTransfer.getData("taskId"));
+
+    updateTask(taskId, group.id);
+
+    if (beforeId === -1) {
+      moveTask(taskId, null);
+    } else if (beforeId !== taskId) {
+      moveTask(taskId, beforeId);
+    }
+  };
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     highlightIndicator(e);
   };
 
-  const handleDragEnd = (e: DragEvent) => {
-    const taskId = e.dataTransfer.getData("taskId");
-
-    clearHighlights();
-
-    const indicators = getIndicators();
-    const el = getNearestIndicator(e, indicators);
-    if (!el) return;
-
-    const beforeId = el.element.dataset.before;
-
-    if (beforeId === "-1") {
-      moveTask(Number(taskId), null);
-    } else if (beforeId !== taskId) {
-      moveTask(Number(taskId), Number(beforeId));
-    }
-  };
-
-  const clearHighlights = (els?: HTMLElement[]) => {
-    const indicators = els || getIndicators();
-
-    indicators.forEach((i) => {
-      i.style.opacity = "0";
-    });
-  };
-
-  const highlightIndicator = (e: DragEvent) => {
-    const indicators = getIndicators();
-
-    clearHighlights(indicators);
-
-    const el = getNearestIndicator(e, indicators);
-    if (!el) return;
-
-    el.element.style.opacity = "1";
-  };
-
-  const getNearestIndicator = (e: DragEvent, indicators: HTMLElement[]) => {
-    const DISTANCE_OFFSET = 25;
-
-    const el = indicators.reduce(
-      (closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = e.clientY - (box.top + DISTANCE_OFFSET);
-
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      },
-      {
-        offset: Number.NEGATIVE_INFINITY,
-        element: indicators[indicators.length - 1],
-      }
-    );
-
-    return el;
-  };
-
-  const getIndicators = () => {
-    return Array.from(
-      document.querySelectorAll(`.drop-indicator`)
-    ) as HTMLElement[];
-  };
-
   const handleDragLeave = () => {
     clearHighlights();
   };
 
-  if (!tasks || tasks.length === 0) {
-    return;
-  }
+  // const dropIndicatorRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   return (
     <div
+      ref={ref}
       className="sticky left-0 z-[9] flex w-[200px] flex-col bg-[var(--background)]"
-      onDrop={handleDragEnd}
+      onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
@@ -103,30 +70,36 @@ export default function TaskColumn({ tasks }: { tasks: Task[] }) {
         <div key={task.id} className="relative flex h-10">
           <DropIndicator
             beforeId={task.id}
-            className="drop-indicator absolute top-0"
+            className="absolute top-0"
+            // ref={(el) => {
+            //   dropIndicatorRefs.current[task.id] = el;
+            // }}
           />
           <TaskName task={task} />
         </div>
       ))}
-      <DropIndicator beforeId={-1} className="drop-indicator" />
+      <DropIndicator
+        beforeId={-1}
+        // ref={(el) => {
+        //   dropIndicatorRefs.current[-1] = el;
+        // }}
+      />
     </div>
   );
 }
 
-interface DropIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DropIndicatorProps {
   beforeId: number;
+  className?: string;
+  ref?: RefObject<HTMLInputElement>;
 }
 
-const DropIndicator = ({
-  beforeId,
-  className,
-  ...props
-}: DropIndicatorProps) => {
+const DropIndicator = ({ beforeId, className, ref }: DropIndicatorProps) => {
   return (
     <div
-      {...props}
-      data-before={beforeId}
+      ref={ref}
       className={`${className} drop-indicator left-2 right-2 h-0.5 rounded bg-[var(--inverted)] opacity-0`}
+      data-before-id={beforeId}
     />
   );
 };

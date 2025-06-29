@@ -27,11 +27,8 @@ export default function TaskName({ task }: TaskNameProps) {
 
   return (
     <div
-      className={
-        "task-name draggable group flex w-full cursor-grab items-center justify-between gap-1 px-3 active:cursor-grabbing [&.highlight]:font-bold"
-      }
+      className="task-name draggable group flex w-full cursor-grab items-center justify-between gap-1 px-3 active:cursor-grabbing [&.highlight]:font-bold"
       draggable="true"
-      data-id={task.id}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
