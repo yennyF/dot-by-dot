@@ -6,12 +6,12 @@ import clsx from "clsx";
 import { useStore } from "@/app/Store";
 import { Task } from "@/app/repositories/types";
 
-interface TrackTaskProps {
+interface TaskTrackProps {
   date: Date;
   task: Task;
 }
 
-export default function TrackTask({ date, task }: TrackTaskProps) {
+export default function TaskTrack({ date, task }: TaskTrackProps) {
   const dateSet = useStore((s) => s.datesByTask?.[task.id]);
   const setTaskChecked = useStore((s) => s.setTaskChecked);
 

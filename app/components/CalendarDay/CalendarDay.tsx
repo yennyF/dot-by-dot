@@ -21,7 +21,9 @@ import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon } from "@radix-ui/react-icons";
 import GroupAddPopover from "../GroupAddPopover";
 import { useStore } from "@/app/Store";
-import GroupTask from "./GroupTask";
+import Group from "./Group";
+import TaskAddPopover from "../TaskAddPopover";
+import Ungroup from "./Ungroup";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -38,14 +40,9 @@ export default function CalendarDay() {
   const maxDate = addDays(currentDate, 0);
 
   const loadTrack = useStore((s) => s.loadTrack);
-
   useEffect(() => {
     loadTrack();
   }, [loadTrack]);
-
-  useEffect(() => {
-    console.log("CalendarDay re-render");
-  });
 
   return (
     <div className="mx-[50px] overflow-hidden">
@@ -67,6 +64,12 @@ export default function CalendarDay() {
             New Group
           </button>
         </GroupAddPopover>
+        <TaskAddPopover>
+          <button className="button-accent">
+            <PlusIcon />
+            New Task
+          </button>
+        </TaskAddPopover>
         {/* </div> */}
       </div>
 
@@ -90,8 +93,11 @@ export default function CalendarDay() {
           </div>
 
           {/* Calendar Body */}
-          <div className="flex flex-col gap-10">
-            {groups?.map((group) => <GroupTask key={group.id} group={group} />)}
+          <div className="mt-5 flex flex-col">
+            <Ungroup />
+          </div>
+          <div className="mt-10 flex flex-col gap-10">
+            {groups?.map((group) => <Group key={group.id} group={group} />)}
           </div>
         </div>
         {/* Shadows */}

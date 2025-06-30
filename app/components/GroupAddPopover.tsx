@@ -90,7 +90,7 @@ function Content() {
         <button
           className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || isDuplicated}
+          disabled={nameInput.length === 0}
         >
           Add
         </button>

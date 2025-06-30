@@ -1,4 +1,28 @@
+import clsx from "clsx";
 import { DragEvent, RefObject } from "react";
+
+interface DropIndicatorProps {
+  beforeId: number;
+  className?: string;
+  ref?: RefObject<HTMLInputElement>;
+}
+
+export const DropIndicator = ({
+  beforeId,
+  className,
+  ref,
+}: DropIndicatorProps) => {
+  return (
+    <div
+      ref={ref}
+      className={clsx(
+        "drop-indicator left-2 right-2 h-0.5 rounded bg-[var(--inverted)] opacity-0",
+        className
+      )}
+      data-before-id={beforeId}
+    />
+  );
+};
 
 export const useDrop = (ref: RefObject<HTMLDivElement | null>) => {
   const getIndicators = () => {
@@ -22,7 +46,7 @@ export const useDrop = (ref: RefObject<HTMLDivElement | null>) => {
 
     const el = getNearestIndicator(e, indicators);
     if (!el) return;
-
+    console.log(indicators);
     el.element.style.opacity = "1";
   };
 

@@ -7,7 +7,7 @@ import { Group } from "../repositories/types";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
-  group: Group;
+  group?: Group;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -36,7 +36,7 @@ export default function TaskAddPopover({
   );
 }
 
-function Content({ group }: { group: Group }) {
+function Content({ group }: { group?: Group }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
@@ -61,7 +61,7 @@ function Content({ group }: { group: Group }) {
   };
 
   const handleSaveClick = async () => {
-    if (await addTask(nameInput, group.id)) {
+    if (await addTask(nameInput, group?.id)) {
       setNameInput("");
     }
   };
@@ -101,7 +101,7 @@ function Content({ group }: { group: Group }) {
         <button
           className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || isDuplicated}
+          disabled={nameInput.length === 0}
         >
           Add
         </button>

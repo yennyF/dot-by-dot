@@ -6,12 +6,12 @@ import { Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays } from "date-fns";
 
-interface TrackGroupProps {
+interface GroupTrackProps {
   date: Date;
   tasks: Task[];
 }
 
-export default function TrackGroup({ date, tasks }: TrackGroupProps) {
+export default function GroupTrack({ date, tasks }: GroupTrackProps) {
   const dateTasks = useStore((s) => s.tasksByDate?.[date.toLocaleDateString()]);
   const prevDateTasks = useStore(
     (s) => s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]
@@ -37,9 +37,7 @@ export default function TrackGroup({ date, tasks }: TrackGroupProps) {
           <CheckIcon className="text-white" />
         </div>
       ) : (
-        <div
-          className={"h-4 w-4 rounded-full border-[1px] border-[var(--gray-9)]"}
-        ></div>
+        <div className={"h-4 w-4 rounded-full bg-[var(--gray)]"}></div>
       )}
     </div>
   );

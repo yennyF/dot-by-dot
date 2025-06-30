@@ -18,7 +18,7 @@ interface AppContextProps {
   totalDays: Date[];
   groups: Group[] | undefined;
   tasks: Task[] | undefined;
-  addTask: (task: string, groupId: number) => Promise<boolean>;
+  addTask: (name: string, groupId?: number) => Promise<boolean>;
   renameTask: (id: number, newName: string) => Promise<boolean>;
   moveTask: (id: number, beforeId: number | null) => boolean;
   updateTask: (id: number, groupId: number | undefined) => Promise<boolean>;
@@ -69,14 +69,16 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const addTask = async (name: string, groupId: number) => {
+  const addTask = async (name: string, groupId?: number) => {
     if (!tasks) return false;
     if (!name.length) return false;
 
+    const task: Task = { id: -1, name, groupId };
+    setTasks([...tasks, task]);
+
     try {
       const id = await db.tasks.add({ name, groupId });
-      const task: Task = { id, name, groupId };
-      setTasks([...tasks, task]);
+      task.id = id;
     } catch (error) {
       console.error("Error adding task:", error);
       return false;
