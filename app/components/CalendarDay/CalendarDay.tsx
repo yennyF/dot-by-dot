@@ -94,7 +94,7 @@ export default function CalendarDay() {
 
           {/* Calendar Body */}
           <Ungroup />
-          <div className="flex flex-col">
+          <div className="mt-10 flex flex-col gap-10">
             {groups?.map((group) => <Group key={group.id} group={group} />)}
           </div>
         </div>
@@ -139,10 +139,10 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
 
           return (
             <div className="month-item w-fit" key={index}>
-              <div className="sticky left-[200px] w-fit bg-[var(--background)] pl-[14px] pr-[14px] text-xl font-bold">
+              <div className="sticky left-[200px] w-fit bg-[var(--background)] px-[14px] text-xl font-bold">
                 {format(date, "MMMM")}
               </div>
-              <div className="days mt-4 flex justify-center">
+              <div className="days mt-4 flex">
                 {totalDays.map((date, index) => {
                   const isTodayDate = isToday(date);
                   return (

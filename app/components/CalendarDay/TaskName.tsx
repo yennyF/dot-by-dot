@@ -27,12 +27,13 @@ export default function TaskName({ task }: TaskNameProps) {
 
   return (
     <div
-      className="task-name draggable group sticky left-0 z-[9] flex w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] pl-6 pr-3 active:cursor-grabbing [&.highlight]:font-bold"
+      className="task-name draggable group sticky left-0 z-[9] ml-[-1px] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 border-l-2 bg-[var(--background)] hover:font-bold active:cursor-grabbing [&.highlight]:font-bold"
       draggable="true"
+      data-id={task.id}
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
-      <div className="overflow-hidden text-ellipsis text-nowrap">
+      <div className="ml-[-2] overflow-hidden text-ellipsis text-nowrap border-l-2 pl-3 text-[var(--gray-9)] group-hover:border-[var(--accent)] group-[.highlight]:border-[var(--accent)]">
         {task.name}
       </div>
       {!dragging && (

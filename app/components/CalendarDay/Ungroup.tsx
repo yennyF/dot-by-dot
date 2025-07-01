@@ -38,7 +38,7 @@ export default function Ungroup() {
   return (
     <div
       ref={ref}
-      className="mt-5 flex flex-col"
+      className="flex flex-col"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

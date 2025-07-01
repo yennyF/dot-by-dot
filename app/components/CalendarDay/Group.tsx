@@ -1,10 +1,8 @@
 "use client";
 
-import { Fragment, use, useMemo, useRef, useState, DragEvent } from "react";
+import { Fragment, use, useMemo, useRef, DragEvent } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
-import { ChevronDownIcon, MinusIcon } from "@radix-ui/react-icons";
-import { Collapsible } from "radix-ui";
 import GroupName from "./GroupName";
 import { Group as GroupType } from "@/app/repositories/types";
 import GroupTrack from "./GroupTrack";
@@ -36,20 +34,15 @@ export default function Group({ group }: { group: GroupType }) {
     }
   );
 
-  const [open, setOpen] = useState(true);
-
   const filteredTasks = useMemo(
     () => (tasks ? tasks.filter((task) => task.groupId === group.id) : []),
     [tasks, group.id]
   );
 
   return (
-    <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
+    <div>
       <div className="flex h-[40px] w-fit">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
-          <Collapsible.Trigger className="flex h-fit items-center bg-[var(--background)]">
-            {open ? <MinusIcon /> : <ChevronDownIcon />}
-          </Collapsible.Trigger>
           <GroupName group={group} />
         </div>
         <div className="sticky left-[200px] flex">
@@ -62,8 +55,7 @@ export default function Group({ group }: { group: GroupType }) {
           ))}
         </div>
       </div>
-
-      <Collapsible.Content
+      <div
         ref={ref}
         className="w-fit"
         onDrop={handleDrop}
@@ -98,7 +90,7 @@ export default function Group({ group }: { group: GroupType }) {
           //   dropIndicatorRefs.current[task.id] = el;
           // }}
         />
-      </Collapsible.Content>
-    </Collapsible.Root>
+      </div>
+    </div>
   );
 }
