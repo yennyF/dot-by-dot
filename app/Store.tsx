@@ -8,6 +8,7 @@ type Store = {
   tasksByDate: Record<LocaleDateString, Set<number>> | undefined;
   loadTrack: () => Promise<void>;
   setTaskChecked: (date: Date, taskId: number, checked: boolean) => void;
+  setTasksChecked: (date: Date, taskIds: number[], checked: boolean) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -31,21 +32,66 @@ export const useStore = create<Store>((set) => ({
     set((state) => {
       const dateString = date.toLocaleDateString();
 
-      const newTaskGroup = { ...state.datesByTask };
-      newTaskGroup[taskId] = new Set(state.datesByTask?.[taskId]);
-      const newDateGroup = { ...state.tasksByDate };
-      newDateGroup[dateString] = new Set(state.tasksByDate?.[dateString]);
+      state.datesByTask ??= {};
+      state.datesByTask[taskId] = new Set(state.datesByTask[taskId]);
+      state.tasksByDate ??= {};
+      state.tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
 
       if (checked) {
-        newTaskGroup[taskId].add(date.toLocaleDateString());
-        newDateGroup[dateString].add(taskId);
+        state.datesByTask[taskId].add(date.toLocaleDateString());
+        state.tasksByDate[dateString].add(taskId);
       } else {
-        newTaskGroup[taskId].delete(date.toLocaleDateString());
-        newDateGroup[dateString].delete(taskId);
+        state.datesByTask[taskId].delete(date.toLocaleDateString());
+        state.tasksByDate[dateString].delete(taskId);
       }
       return {
-        datesByTask: newTaskGroup,
-        tasksByDate: newDateGroup,
+        datesByTask: { ...state.datesByTask },
+        tasksByDate: { ...state.tasksByDate },
+      };
+    });
+
+    try {
+      if (checked) {
+        await db.tracks.add({
+          taskId,
+          date: normalizeDateUTC(date),
+        });
+      } else {
+        await db.tracks.delete([taskId, date]);
+      }
+    } catch {
+      // TODO rollback and message
+    }
+  },
+  setTasksChecked: async (date: Date, taskIds: number[], checked: boolean) => {
+    set((state) => {
+      const dateString = date.toLocaleDateString();
+
+      state.datesByTask ??= {};
+      const datesByTask = state.datesByTask;
+      taskIds.forEach((taskId) => {
+        datesByTask[taskId] = new Set(datesByTask[taskId]);
+        if (checked) {
+          datesByTask[taskId].add(date.toLocaleDateString());
+        } else {
+          datesByTask[taskId].delete(date.toLocaleDateString());
+        }
+      });
+
+      state.tasksByDate ??= {};
+      const tasksByDate = state.tasksByDate;
+      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
+      taskIds.forEach((taskId) => {
+        if (checked) {
+          tasksByDate[dateString].add(taskId);
+        } else {
+          tasksByDate[dateString].delete(taskId);
+        }
+      });
+
+      return {
+        datesByTask: { ...state.datesByTask },
+        tasksByDate: { ...state.tasksByDate },
       };
     });
 
