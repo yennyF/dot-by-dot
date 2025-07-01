@@ -1,5 +1,8 @@
+"use client";
+
+import { AppContext } from "@/app/AppContext";
 import clsx from "clsx";
-import { DragEvent, RefObject } from "react";
+import { DragEvent, RefObject, use } from "react";
 
 interface DropIndicatorProps {
   beforeId: number;
@@ -24,7 +27,15 @@ export const DropIndicator = ({
   );
 };
 
-export const useDrop = (ref: RefObject<HTMLDivElement | null>) => {
+export const useDrop = (
+  ref: RefObject<HTMLDivElement | null>,
+  onDrop: (e: DragEvent, el: HTMLElement) => void
+) => {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarList must be used within a AppProvider");
+  }
+
   const getIndicators = () => {
     return Array.from(
       ref.current?.querySelectorAll(`.drop-indicator`) ?? []
@@ -69,10 +80,32 @@ export const useDrop = (ref: RefObject<HTMLDivElement | null>) => {
     return el;
   };
 
+  const handleDrop = (e: DragEvent) => {
+    clearHighlights();
+
+    const indicators = getIndicators();
+    const el = getNearestIndicator(e, indicators);
+    if (!el) return;
+
+    onDrop(e, el.element);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    highlightIndicator(e);
+  };
+
+  const handleDragLeave = () => {
+    clearHighlights();
+  };
+
   return {
     getIndicators,
     clearHighlights,
     highlightIndicator,
     getNearestIndicator,
+    handleDrop,
+    handleDragOver,
+    handleDragLeave,
   };
 };

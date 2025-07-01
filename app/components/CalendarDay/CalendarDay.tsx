@@ -93,9 +93,7 @@ export default function CalendarDay() {
           </div>
 
           {/* Calendar Body */}
-          <div className="mt-5 flex flex-col">
-            <Ungroup />
-          </div>
+          <Ungroup />
           <div className="mt-10 flex flex-col gap-10">
             {groups?.map((group) => <Group key={group.id} group={group} />)}
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { DragEvent, Fragment, use, useMemo, useRef, useState } from "react";
+import { Fragment, use, useMemo, useRef, useState, DragEvent } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
 import { RowSpacingIcon, Cross1Icon } from "@radix-ui/react-icons";
@@ -18,41 +18,23 @@ export default function Group({ group }: { group: GroupType }) {
   }
   const { tasks, totalDays, moveTask, updateTask } = appContext;
 
+  // const dropIndicatorRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const ref = useRef<HTMLDivElement>(null);
-  const {
-    getIndicators,
-    clearHighlights,
-    highlightIndicator,
-    getNearestIndicator,
-  } = useDrop(ref);
+  const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
+    ref,
+    (e: DragEvent, el: HTMLElement) => {
+      const beforeId = Number(el.dataset.beforeId);
+      const taskId = Number(e.dataTransfer.getData("taskId"));
 
-  const handleDrop = (e: DragEvent) => {
-    clearHighlights();
+      updateTask(taskId, group.id);
 
-    const indicators = getIndicators();
-    const el = getNearestIndicator(e, indicators);
-    if (!el) return;
-
-    const beforeId = Number(el.element.dataset.beforeId);
-    const taskId = Number(e.dataTransfer.getData("taskId"));
-
-    updateTask(taskId, group.id);
-
-    if (beforeId === -1) {
-      moveTask(taskId, null);
-    } else if (beforeId !== taskId) {
-      moveTask(taskId, beforeId);
+      if (beforeId === -1) {
+        moveTask(taskId, null);
+      } else if (beforeId !== taskId) {
+        moveTask(taskId, beforeId);
+      }
     }
-  };
-
-  const handleDragOver = (e: DragEvent) => {
-    e.preventDefault();
-    highlightIndicator(e);
-  };
-
-  const handleDragLeave = () => {
-    clearHighlights();
-  };
+  );
 
   const [open, setOpen] = useState(true);
 
@@ -61,15 +43,13 @@ export default function Group({ group }: { group: GroupType }) {
     [tasks, group.id]
   );
 
-  // const dropIndicatorRefs = useRef<Record<number, HTMLDivElement | null>>({});
-
   return (
     <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
-      <Collapsible.Trigger>
-        <div className="sticky left-0 flex w-[200px] items-center gap-2">
+      <div>
+        <Collapsible.Trigger className="sticky left-0 flex items-center gap-2">
           {open ? <Cross1Icon /> : <RowSpacingIcon />}
           <span className="text-xs">Total task: {filteredTasks.length}</span>
-        </div>
+        </Collapsible.Trigger>
         <div className="sticky left-0 flex h-[40px] w-fit">
           <GroupName group={group} />
           <div className="sticky left-[200px] flex">
@@ -82,7 +62,7 @@ export default function Group({ group }: { group: GroupType }) {
             ))}
           </div>
         </div>
-      </Collapsible.Trigger>
+      </div>
       <Collapsible.Content
         ref={ref}
         className="w-fit"

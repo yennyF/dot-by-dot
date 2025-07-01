@@ -1,17 +1,34 @@
 "use client";
 
-import { Fragment, use, useMemo } from "react";
+import { Fragment, use, useMemo, useRef, DragEvent } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
 import UngroupTrack from "./UngroupTrack";
-import { DropIndicator } from "./useDrop";
+import { DropIndicator, useDrop } from "./useDrop";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { tasks, totalDays } = appContext;
+  const { tasks, totalDays, updateTask, moveTask } = appContext;
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
+    ref,
+    (e: DragEvent, el: HTMLElement) => {
+      const beforeId = Number(el.dataset.beforeId);
+      const taskId = Number(e.dataTransfer.getData("taskId"));
+
+      updateTask(taskId, undefined);
+
+      if (beforeId === -1) {
+        moveTask(taskId, null);
+      } else if (beforeId !== taskId) {
+        moveTask(taskId, beforeId);
+      }
+    }
+  );
 
   const filteredTasks = useMemo(
     () => (tasks ? tasks.filter((task) => task.groupId === undefined) : []),
@@ -19,7 +36,13 @@ export default function Ungroup() {
   );
 
   return (
-    <>
+    <div
+      ref={ref}
+      className="mt-5 flex flex-col"
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
       {filteredTasks.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator beforeId={task.id} />
@@ -38,6 +61,6 @@ export default function Ungroup() {
         </Fragment>
       ))}
       <DropIndicator beforeId={-1} />
-    </>
+    </div>
   );
 }
