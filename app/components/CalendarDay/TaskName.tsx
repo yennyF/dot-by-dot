@@ -27,7 +27,7 @@ export default function TaskName({ task }: TaskNameProps) {
 
   return (
     <div
-      className="task-name draggable group sticky left-0 z-[9] flex w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] px-3 active:cursor-grabbing [&.highlight]:font-bold"
+      className="task-name draggable group sticky left-0 z-[9] flex w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] pl-6 pr-3 active:cursor-grabbing [&.highlight]:font-bold"
       draggable="true"
       onDragStart={(e) => handleDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e)}

@@ -19,11 +19,13 @@ export const DropIndicator = ({
     <div
       ref={ref}
       className={clsx(
-        "drop-indicator left-2 right-2 h-0.5 rounded bg-[var(--inverted)] opacity-0",
+        "drop-indicator sticky left-0 w-[200px] opacity-0",
         className
       )}
       data-before-id={beforeId}
-    />
+    >
+      <div className="round h-0.5 w-full bg-[var(--inverted)]" />
+    </div>
   );
 };
 

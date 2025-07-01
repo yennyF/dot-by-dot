@@ -3,7 +3,7 @@
 import { Fragment, use, useMemo, useRef, useState, DragEvent } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
-import { RowSpacingIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, MinusIcon } from "@radix-ui/react-icons";
 import { Collapsible } from "radix-ui";
 import GroupName from "./GroupName";
 import { Group as GroupType } from "@/app/repositories/types";
@@ -45,24 +45,24 @@ export default function Group({ group }: { group: GroupType }) {
 
   return (
     <Collapsible.Root className="" open={open} onOpenChange={setOpen}>
-      <div>
-        <Collapsible.Trigger className="sticky left-0 flex items-center gap-2">
-          {open ? <Cross1Icon /> : <RowSpacingIcon />}
-          <span className="text-xs">Total task: {filteredTasks.length}</span>
-        </Collapsible.Trigger>
-        <div className="sticky left-0 flex h-[40px] w-fit">
+      <div className="flex h-[40px] w-fit">
+        <div className="sticky left-0 z-[9] flex w-[200px] items-center">
+          <Collapsible.Trigger className="flex h-fit items-center bg-[var(--background)]">
+            {open ? <MinusIcon /> : <ChevronDownIcon />}
+          </Collapsible.Trigger>
           <GroupName group={group} />
-          <div className="sticky left-[200px] flex">
-            {totalDays.map((date) => (
-              <GroupTrack
-                key={date.toLocaleDateString()}
-                date={date}
-                tasks={filteredTasks}
-              />
-            ))}
-          </div>
+        </div>
+        <div className="sticky left-[200px] flex">
+          {totalDays.map((date) => (
+            <GroupTrack
+              key={date.toLocaleDateString()}
+              date={date}
+              tasks={filteredTasks}
+            />
+          ))}
         </div>
       </div>
+
       <Collapsible.Content
         ref={ref}
         className="w-fit"
