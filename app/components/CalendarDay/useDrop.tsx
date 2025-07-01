@@ -5,26 +5,35 @@ import clsx from "clsx";
 import { DragEvent, RefObject, use } from "react";
 
 interface DropIndicatorProps {
-  beforeId: number;
-  className?: string;
+  beforeId?: number;
   ref?: RefObject<HTMLInputElement>;
+  level: 0 | 1;
 }
 
-export const DropIndicator = ({
-  beforeId,
-  className,
-  ref,
-}: DropIndicatorProps) => {
+export const DropIndicator = ({ beforeId, ref, level }: DropIndicatorProps) => {
   return (
     <div
       ref={ref}
       className={clsx(
-        "drop-indicator sticky left-0 w-[200px] opacity-0",
-        className
+        "drop-indicator sticky left-0 flex w-[200px] items-center opacity-0",
+        level === 1 && "pl-[15px]"
       )}
-      data-before-id={beforeId}
+      data-before-id={beforeId || -1}
     >
-      <div className="round h-0.5 w-full bg-[var(--inverted)]" />
+      <div
+        className={clsx(
+          "h-2 w-2 rounded-full bg-[var(--accent)]",
+          level === 0 && "bg-[var(--green)]",
+          level === 1 && "bg-[var(--accent)]"
+        )}
+      ></div>
+      <div
+        className={clsx(
+          "h-0.5 flex-1 bg-[var(--accent)]",
+          level === 0 && "bg-[var(--green)]",
+          level === 1 && "bg-[var(--accent)]"
+        )}
+      />
     </div>
   );
 };
@@ -59,7 +68,6 @@ export const useDrop = (
 
     const el = getNearestIndicator(e, indicators);
     if (!el) return;
-    console.log(indicators);
     el.element.style.opacity = "1";
   };
 

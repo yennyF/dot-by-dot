@@ -21,15 +21,19 @@ export default function Group({ group }: { group: GroupType }) {
   const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
     ref,
     (e: DragEvent, el: HTMLElement) => {
-      const beforeId = Number(el.dataset.beforeId);
       const taskId = Number(e.dataTransfer.getData("taskId"));
+      if (!taskId) return;
 
-      updateTask(taskId, group.id);
-
-      if (beforeId === -1) {
-        moveTask(taskId, null);
-      } else if (beforeId !== taskId) {
-        moveTask(taskId, beforeId);
+      const beforeId = Number(el.dataset.beforeId);
+      if (beforeId === -2) {
+        updateTask(taskId, undefined);
+      } else {
+        updateTask(taskId, group.id);
+        if (beforeId === -1) {
+          moveTask(taskId, null);
+        } else if (beforeId !== taskId) {
+          moveTask(taskId, beforeId);
+        }
       }
     }
   );
@@ -40,7 +44,20 @@ export default function Group({ group }: { group: GroupType }) {
   );
 
   return (
-    <div>
+    <div
+      ref={ref}
+      className="w-fit"
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
+      <DropIndicator
+        beforeId={-2}
+        level={0}
+        // ref={(el) => {
+        //   dropIndicatorRefs.current[task.id] = el;
+        // }}
+      />
       <div className="flex h-[40px] w-fit">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
           <GroupName group={group} />
@@ -55,23 +72,18 @@ export default function Group({ group }: { group: GroupType }) {
           ))}
         </div>
       </div>
-      <div
-        ref={ref}
-        className="w-fit"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
+      <div className="w-fit">
         {filteredTasks.map((task) => (
           <Fragment key={task.id}>
             <DropIndicator
               beforeId={task.id}
+              level={1}
               // ref={(el) => {
               //   dropIndicatorRefs.current[task.id] = el;
               // }}
             />
             <div className="flex h-[40px] w-fit items-center">
-              <TaskName task={task} />
+              <TaskName task={task} level={1} />
               <div className="sticky left-[200px] flex">
                 {totalDays.map((date) => (
                   <TaskTrack
@@ -85,7 +97,7 @@ export default function Group({ group }: { group: GroupType }) {
           </Fragment>
         ))}
         <DropIndicator
-          beforeId={-1}
+          level={1}
           // ref={(el) => {
           //   dropIndicatorRefs.current[task.id] = el;
           // }}

@@ -78,7 +78,7 @@ export default function CalendarDay() {
         {/* Calendar Header */}
         <div className="w-fit">
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
-            <div className="sticky left-0 z-10 w-[200px] bg-[var(--background)]"></div>
+            <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
             <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
               {totalYears.map((date, index) => (
                 <YearItem
@@ -93,9 +93,11 @@ export default function CalendarDay() {
           </div>
 
           {/* Calendar Body */}
-          <Ungroup />
-          <div className="mt-10 flex flex-col gap-10">
-            {groups?.map((group) => <Group key={group.id} group={group} />)}
+          <div className="flex w-fit flex-col gap-5">
+            <Ungroup />
+            <div className="flex flex-col gap-5">
+              {groups?.map((group) => <Group key={group.id} group={group} />)}
+            </div>
           </div>
         </div>
         {/* Shadows */}

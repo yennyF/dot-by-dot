@@ -35,6 +35,10 @@ export default function Ungroup() {
     [tasks]
   );
 
+  if (filteredTasks.length === 0) {
+    return null;
+  }
+
   return (
     <div
       ref={ref}
@@ -45,9 +49,9 @@ export default function Ungroup() {
     >
       {filteredTasks.map((task) => (
         <Fragment key={task.id}>
-          <DropIndicator beforeId={task.id} />
+          <DropIndicator beforeId={task.id} level={0} />
           <div className="flex h-[40px] w-fit items-center">
-            <TaskName task={task} />
+            <TaskName task={task} level={0} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
                 <UngroupTrack
@@ -60,7 +64,7 @@ export default function Ungroup() {
           </div>
         </Fragment>
       ))}
-      <DropIndicator beforeId={-1} />
+      <DropIndicator level={0} />
     </div>
   );
 }
