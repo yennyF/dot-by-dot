@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppProvider } from "./AppContext";
 import CalendarDay from "./components/CalendarDay/CalendarDay";
 import Sidebar from "./components/Sidebar";
 import { useTaskStore } from "./stores/TaskStore";
 import { useTrackStore } from "./stores/TrackStore";
+import { useGroupStore } from "./stores/GroupStore";
 
 export default function Home() {
   return (
@@ -16,17 +17,20 @@ export default function Home() {
 }
 
 function Content() {
-  const loadTask = useTaskStore((s) => s.loadTasks);
-  const tasks = useTaskStore((s) => s.tasks);
-
+  const loadTasks = useTaskStore((s) => s.loadTasks);
+  const loadGroups = useGroupStore((s) => s.loadGroups);
   const loadTracks = useTrackStore((s) => s.loadTracks);
 
-  useEffect(() => {
-    loadTask();
-    loadTracks();
-  }, [loadTask, loadTracks]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!tasks) {
+  useEffect(() => {
+    (async () => {
+      await Promise.all([loadGroups(), loadTasks(), loadTracks()]);
+      setIsLoading(false);
+    })();
+  }, [loadGroups, loadTasks, loadTracks]);
+
+  if (isLoading) {
     return <Loading />;
   }
 

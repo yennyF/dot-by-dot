@@ -1,9 +1,9 @@
 "use client";
 
 import { Dialog } from "radix-ui";
-import { use, useEffect, useState } from "react";
-import { AppContext } from "../AppContext";
+import { useEffect, useState } from "react";
 import { Group } from "../repositories/types";
+import { useGroupStore } from "../stores/GroupStore";
 
 interface GroupDeleteDialogProps {
   children: React.ReactNode;
@@ -16,11 +16,7 @@ export default function GroupDeleteDialog({
   group,
   onOpenChange,
 }: GroupDeleteDialogProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("GroupName must be used within a AppProvider");
-  }
-  const { deleteGroup } = appContext;
+  const deleteGroup = useGroupStore((s) => s.deleteGroup);
 
   const [open, setOpen] = useState(false);
 

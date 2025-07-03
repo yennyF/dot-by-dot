@@ -16,7 +16,7 @@ export default function GroupName({ group }: GroupNameProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="task-name group sticky left-0 z-[9] flex w-full items-center justify-between gap-1 bg-[var(--background)] pl-2">
+    <div className="app-GroupName group sticky left-0 z-[9] flex w-full items-center justify-between gap-1 bg-[var(--background)] pl-2">
       <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
         {group.name}
       </div>

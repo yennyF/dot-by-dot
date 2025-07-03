@@ -31,7 +31,7 @@ export default function TaskName({ task, level }: TaskNameProps) {
   return (
     <div
       className={clsx(
-        "task-name draggable group sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold active:cursor-grabbing [&.highlight]:font-bold",
+        "app-TaskName draggable group sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold active:cursor-grabbing [&.highlight]:font-bold",
         level === 1 && "border-l-2"
       )}
       draggable="true"

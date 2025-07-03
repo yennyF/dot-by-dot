@@ -90,18 +90,18 @@ export default function CalendarMonth() {
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
         {totalDays.map((day, index) => (
-          <DayCell key={index} date={day} />
+          <DayItem key={index} date={day} />
         ))}
       </div>
     </div>
   );
 }
 
-interface DayCellProps {
+interface DayItemProps {
   date: Date;
 }
 
-function DayCell({ date }: DayCellProps) {
+function DayItem({ date }: DayItemProps) {
   const tasksTotal = useTaskStore((s) => s.tasks?.length ?? 0);
 
   const filteredTasksTotal = useTrackStore(

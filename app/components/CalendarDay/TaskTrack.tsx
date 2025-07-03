@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { addDays } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
@@ -19,8 +19,12 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
   const isNextActive = dateSet?.has(addDays(date, 1).toLocaleDateString());
 
+  useEffect(() => {
+    console.log("TaskTrack rendered");
+  });
+
   return (
-    <div className={"relative flex h-10 w-[50px] items-center justify-center"}>
+    <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">
       {isPrevActive && isActive && (
         <div className="absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in bg-[var(--accent-4)] opacity-0" />
       )}

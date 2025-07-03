@@ -1,9 +1,9 @@
 "use client";
 
 import { Popover } from "radix-ui";
-import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
-import { AppContext } from "../AppContext";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Group } from "../repositories/types";
+import { useGroupStore } from "../stores/GroupStore";
 
 interface GroupRenamePopoverProps {
   children: React.ReactNode;
@@ -40,30 +40,27 @@ interface ContentProps {
 }
 
 function Content({ setOpen, group }: ContentProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Content must be used within a AppProvider");
-  }
-  const { groups, renameGroup } = appContext;
+  const groups = useGroupStore((s) => s.groups);
+  const updateGroup = useGroupStore((s) => s.updateGroup);
 
-  const [nameInput, setNameInput] = useState(group.name);
+  const [name, setNameInput] = useState(group.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
     if (!groups) return;
-    if (groups.some((h) => h.id !== group.id && h.name === nameInput)) {
+    if (groups.some((h) => h.id !== group.id && h.name === name)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [group, nameInput, groups]);
+  }, [group, name, groups]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await renameGroup(group.id, nameInput)) {
+    if (await updateGroup(group.id, { name })) {
       setOpen(false);
     }
   };
@@ -87,7 +84,7 @@ function Content({ setOpen, group }: ContentProps) {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={nameInput}
+          value={name}
           onChange={handleNameChange}
           placeholder={group.name}
           className="basis-full"
@@ -103,7 +100,7 @@ function Content({ setOpen, group }: ContentProps) {
         <button
           className="button-accept"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || nameInput === group.name}
+          disabled={name.length === 0 || name === group.name}
         >
           Rename
         </button>

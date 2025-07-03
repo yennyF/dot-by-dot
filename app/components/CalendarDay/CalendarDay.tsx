@@ -20,19 +20,21 @@ import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { CardStackPlusIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import GroupAddPopover from "../GroupAddPopover";
-import Group from "./Group";
+import GroupItem from "./GroupItem";
 import Ungroup from "./Ungroup";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
+import { useGroupStore } from "@/app/stores/GroupStore";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { groups, totalYears } = appContext;
+  const { totalYears } = appContext;
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
+  const groups = useGroupStore((s) => s.groups);
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -43,10 +45,10 @@ export default function CalendarDay() {
 
   useEffect(() => {
     console.log("CalendarDay rendered");
-  }, []);
+  });
 
   return (
-    <div className="mx-[50px] overflow-hidden">
+    <div className="app-CalendarDay mx-[50px] overflow-hidden">
       {/* Controls */}
       <div className="flex h-[80px] w-full items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -97,20 +99,16 @@ export default function CalendarDay() {
               ))}
             </div>
           </div>
-
           {/* Calendar Body */}
-          <div className="flex w-fit flex-col gap-5">
+          <div className="flex flex-col gap-5">
             <Ungroup />
             <div className="flex flex-col gap-5">
-              {groups?.map((group) => <Group key={group.id} group={group} />)}
+              {groups?.map((group) => (
+                <GroupItem key={group.id} group={group} />
+              ))}
             </div>
           </div>
         </div>
-        {/* Shadows */}
-        {/* <div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
-        <div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
-        <div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
-        <div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div> */}
       </div>
     </div>
   );
@@ -184,3 +182,9 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
     </div>
   );
 }
+
+/* Shadows */
+//<div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
+//<div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
+//<div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
+//<div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>

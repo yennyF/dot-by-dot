@@ -1,9 +1,9 @@
 "use client";
 
 import { Popover } from "radix-ui";
-import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
-import { AppContext } from "../AppContext";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useGroupStore } from "../stores/GroupStore";
 
 interface GroupAddPopoverProps {
   children: React.ReactNode;
@@ -27,11 +27,8 @@ export default function GroupAddPopover({ children }: GroupAddPopoverProps) {
 }
 
 function Content() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Content must be used within a AppProvider");
-  }
-  const { groups, addGroup } = appContext;
+  const groups = useGroupStore((s) => s.groups);
+  const addGroup = useGroupStore((s) => s.addGroup);
 
   const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
