@@ -1,18 +1,18 @@
 export type LocaleDateString = string; // Format: "M/D/YYYY"
 
 export type Group = {
-  id: number;
+  id: string;
   name: string;
 };
 
 export type Task = {
-  id: number;
+  id: string;
   name: string;
-  groupId?: number;
+  groupId?: string;
 };
 
 export type Track = {
-  taskId: number;
+  taskId: string;
   date: Date;
 };
 

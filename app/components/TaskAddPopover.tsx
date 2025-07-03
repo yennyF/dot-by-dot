@@ -3,67 +3,73 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
-import { Group } from "../repositories/types";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
-  group?: Group;
   onOpenChange?: (open: boolean) => void;
 }
 
 export default function TaskAddPopover({
   children,
-  group,
   onOpenChange,
 }: TaskAddPopoverProps) {
-  const [open, setOpen] = useState(false);
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("Content must be used within a AppProvider");
+  }
+  const { setDummyTask } = appContext;
 
-  useEffect(() => {
-    onOpenChange?.(open);
-  }, [onOpenChange, open]);
+  const [open, setOpen] = useState(true);
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger data-state={open ? "open" : "close"} asChild>
-        {children}
-      </Popover.Trigger>
+    <Popover.Root
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) {
+          setDummyTask(undefined);
+        }
+        setOpen(open);
+        onOpenChange?.(open);
+      }}
+    >
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content group={group} />
+          <Content />
         </Popover.Portal>
       )}
     </Popover.Root>
   );
 }
 
-function Content({ group }: { group?: Group }) {
+function Content() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("Content must be used within a AppProvider");
   }
-  const { tasks, addTask } = appContext;
+  const { tasks, addTask, dummyTask, setDummyTask } = appContext;
 
-  const [nameInput, setNameInput] = useState("");
+  const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (tasks === undefined) return;
-
-    if (tasks.some((h) => h.name === nameInput)) {
+    if (tasks?.some((h) => h.name === name)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [nameInput, tasks]);
+  }, [name, tasks]);
 
   const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameInput(event.target.value);
+    setName(event.target.value);
   };
 
-  const handleSaveClick = async () => {
-    if (await addTask(nameInput, group?.id)) {
-      setNameInput("");
-    }
+  const handleSaveClick = () => {
+    if (!dummyTask) return;
+    dummyTask.name = name;
+    addTask(dummyTask);
+    setName("");
+    setDummyTask(undefined);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -85,7 +91,7 @@ function Content({ group }: { group?: Group }) {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={nameInput}
+          value={name}
           onChange={handleTaskInputChange}
           placeholder="New task"
           className="basis-full"
@@ -96,15 +102,15 @@ function Content({ group }: { group?: Group }) {
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>
-          <div className="button-cancel">Cancel</div>
+          <div className="button-cancel">Discard</div>
         </Popover.Close>
-        <button
+        <Popover.Close
           className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0}
+          disabled={name.length === 0}
         >
           Add
-        </button>
+        </Popover.Close>
       </div>
       <Popover.Arrow className="arrow" />
     </Popover.Content>

@@ -8,7 +8,7 @@ import { Task } from "../repositories/types";
 interface TaskRenamePopoverProps {
   children: React.ReactNode;
   task: Task;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
 }
 
 export default function TaskRenamePopover({
@@ -18,12 +18,14 @@ export default function TaskRenamePopover({
 }: TaskRenamePopoverProps) {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    onOpenChange?.(open);
-  }, [onOpenChange, open]);
-
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        onOpenChange(open);
+      }}
+    >
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>

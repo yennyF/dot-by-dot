@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { DragEvent, RefObject, use } from "react";
 
 interface DropIndicatorProps {
-  beforeId?: number;
+  beforeId?: string;
   ref?: RefObject<HTMLInputElement>;
   level: 0 | 1;
 }

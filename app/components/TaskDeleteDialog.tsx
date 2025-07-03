@@ -1,14 +1,14 @@
 "use client";
 
 import { Dialog } from "radix-ui";
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import { AppContext } from "../AppContext";
 import { Task } from "../repositories/types";
 
 interface TaskDeleteDialogProps {
   children: React.ReactNode;
   task: Task;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
 }
 
 export default function TaskDeleteDialog({
@@ -24,16 +24,18 @@ export default function TaskDeleteDialog({
 
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    onOpenChange?.(open);
-  }, [onOpenChange, open]);
-
   const handleDeleteConfirm = async () => {
     await deleteTask(task.id);
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        onOpenChange(open);
+      }}
+    >
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       {open && (
         <Dialog.Portal>

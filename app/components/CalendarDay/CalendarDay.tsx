@@ -18,19 +18,19 @@ import {
 import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { CardStackPlusIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import GroupAddPopover from "../GroupAddPopover";
 import { useStore } from "@/app/Store";
 import Group from "./Group";
-import TaskAddPopover from "../TaskAddPopover";
 import Ungroup from "./Ungroup";
+import { v4 as uuidv4 } from "uuid";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { groups, totalYears } = appContext;
+  const { groups, totalYears, setDummyTask } = appContext;
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -47,30 +47,35 @@ export default function CalendarDay() {
   return (
     <div className="mx-[50px] overflow-hidden">
       {/* Controls */}
-      <div className="flex h-[80px] w-full items-center justify-end gap-2">
-        {/* <div className="flex items-center gap-2"> */}
-        {/* <button className="button-icon">
+      <div className="flex h-[80px] w-full items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <GroupAddPopover>
+            <button className="button-accent">
+              <CardStackPlusIcon />
+              New Group
+            </button>
+          </GroupAddPopover>
+          <button
+            className="button-accent"
+            onClick={() => {
+              setDummyTask({ id: uuidv4(), name: "(No Name)" });
+            }}
+          >
+            <FilePlusIcon />
+            New Task
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* <button className="button-icon">
             <CaretLeftIcon />
           </button>
           <button className="button-icon">
             <CaretRightIcon />
           </button> */}
-        <button className="button-outline" onClick={scrollToTarget}>
-          Today
-        </button>
-        <GroupAddPopover>
-          <button className="button-accent">
-            <PlusIcon />
-            New Group
+          <button className="button-outline" onClick={scrollToTarget}>
+            Today
           </button>
-        </GroupAddPopover>
-        <TaskAddPopover>
-          <button className="button-accent">
-            <PlusIcon />
-            New Task
-          </button>
-        </TaskAddPopover>
-        {/* </div> */}
+        </div>
       </div>
 
       {/* Calendar */}

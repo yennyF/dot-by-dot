@@ -3,6 +3,7 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
+import { v4 as uuidv4 } from "uuid";
 
 interface GroupAddPopoverProps {
   children: React.ReactNode;
@@ -32,26 +33,26 @@ function Content() {
   }
   const { groups, addGroup } = appContext;
 
-  const [nameInput, setNameInput] = useState("");
+  const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
     if (groups === undefined) return;
 
-    if (groups.some((h) => h.name === nameInput)) {
+    if (groups.some((h) => h.name === name)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [nameInput, groups]);
+  }, [name, groups]);
 
   const handleGroupInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameInput(event.target.value);
+    setName(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await addGroup(nameInput)) {
-      setNameInput("");
+    if (await addGroup({ id: uuidv4(), name })) {
+      setName("");
     }
   };
 
@@ -74,7 +75,7 @@ function Content() {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={nameInput}
+          value={name}
           onChange={handleGroupInputChange}
           placeholder="New group"
           className="basis-full"
@@ -87,13 +88,13 @@ function Content() {
         <Popover.Close>
           <div className="button-cancel">Cancel</div>
         </Popover.Close>
-        <button
+        <Popover.Close
           className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0}
+          disabled={name.length === 0}
         >
           Add
-        </button>
+        </Popover.Close>
       </div>
       <Popover.Arrow className="arrow" />
     </Popover.Content>

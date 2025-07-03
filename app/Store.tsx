@@ -5,10 +5,10 @@ import { db } from "./repositories/db";
 type Store = {
   // Store date strings for reliable value-based Set comparison
   datesByTask: Record<string, Set<LocaleDateString>> | undefined;
-  tasksByDate: Record<LocaleDateString, Set<number>> | undefined;
+  tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
   loadTrack: () => Promise<void>;
-  setTaskChecked: (date: Date, taskId: number, checked: boolean) => void;
-  setTasksChecked: (date: Date, taskIds: number[], checked: boolean) => void;
+  setTaskChecked: (date: Date, taskId: string, checked: boolean) => void;
+  setTasksChecked: (date: Date, taskIds: string[], checked: boolean) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -17,7 +17,7 @@ export const useStore = create<Store>((set) => ({
   strikes: undefined,
   loadTrack: async () => {
     const datesByTask: Record<string, Set<LocaleDateString>> = {};
-    const tasksByDate: Record<LocaleDateString, Set<number>> = {};
+    const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     const tracks = await db.tracks.toArray();
     tracks.forEach((track) => {
@@ -28,7 +28,7 @@ export const useStore = create<Store>((set) => ({
 
     set(() => ({ datesByTask, tasksByDate }));
   },
-  setTaskChecked: async (date: Date, taskId: number, checked: boolean) => {
+  setTaskChecked: async (date: Date, taskId: string, checked: boolean) => {
     set((state) => {
       const dateString = date.toLocaleDateString();
 
@@ -63,7 +63,7 @@ export const useStore = create<Store>((set) => ({
       // TODO rollback and message
     }
   },
-  setTasksChecked: async (date: Date, taskIds: number[], checked: boolean) => {
+  setTasksChecked: async (date: Date, taskIds: string[], checked: boolean) => {
     set((state) => {
       const dateString = date.toLocaleDateString();
 
@@ -96,13 +96,18 @@ export const useStore = create<Store>((set) => ({
     });
 
     try {
+      const normalizeDate = normalizeDateUTC(date);
       if (checked) {
-        await db.tracks.add({
-          taskId,
-          date: normalizeDateUTC(date),
-        });
+        await db.tracks.bulkAdd(
+          taskIds.map((taskId) => ({
+            taskId,
+            date: normalizeDate,
+          }))
+        );
       } else {
-        await db.tracks.delete([taskId, date]);
+        await db.tracks.bulkDelete(
+          taskIds.map((taskId) => [taskId, normalizeDate])
+        );
       }
     } catch {
       // TODO rollback and message

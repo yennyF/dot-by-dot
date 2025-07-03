@@ -6,6 +6,7 @@ import TaskDeleteDialog from "../TaskDeleteDialog";
 import TaskRenamePopover from "../TaskRenamePopover";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
+import TaskAddPopover from "../TaskAddPopover";
 
 interface TaskNameProps {
   task: Task;
@@ -13,7 +14,7 @@ interface TaskNameProps {
 }
 
 export default function TaskName({ task, level }: TaskNameProps) {
-  const [open, setOpen] = useState(false);
+  const [forceShow, setForceShow] = useState(false);
   const [dragging, setDragging] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
@@ -49,21 +50,52 @@ export default function TaskName({ task, level }: TaskNameProps) {
       </div>
       {!dragging && (
         <div
-          className="action-buttons hidden gap-1 group-hover:flex [&[data-state=open]]:flex"
-          data-state={open ? "open" : "closed"}
+          className={clsx(
+            "action-buttons gap-1",
+            forceShow ? "flex" : "hidden group-hover:flex"
+          )}
         >
-          <TaskRenamePopover task={task} onOpenChange={setOpen}>
+          <TaskRenamePopover task={task} onOpenChange={setForceShow}>
             <button className="button-icon">
               <Pencil1Icon />
             </button>
           </TaskRenamePopover>
-          <TaskDeleteDialog task={task} onOpenChange={setOpen}>
+          <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
             <button className="button-icon">
               <TrashIcon />
             </button>
           </TaskDeleteDialog>
         </div>
       )}
+    </div>
+  );
+}
+
+export function DummyTaskName({ task, level }: TaskNameProps) {
+  return (
+    <div
+      className={clsx(
+        "task-name sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
+        level === 1 && "border-l-2"
+      )}
+      data-id={task.id}
+    >
+      <div
+        className={clsx(
+          "overflow-hidden text-ellipsis text-nowrap text-[var(--gray-9)]",
+          level === 0 && "pl-2",
+          level === 1 && "pl-5"
+        )}
+      >
+        {task.name}
+      </div>
+      <div className="action-buttons">
+        <TaskAddPopover>
+          <button className="button-icon">
+            <Pencil1Icon />
+          </button>
+        </TaskAddPopover>
+      </div>
     </div>
   );
 }
