@@ -1,21 +1,20 @@
 import { create } from "zustand";
-import { LocaleDateString, normalizeDateUTC } from "./repositories/types";
-import { db } from "./repositories/db";
+import { LocaleDateString, normalizeDateUTC } from "../repositories/types";
+import { db } from "../repositories/db";
 
-type Store = {
+type TrackStore = {
   // Store date strings for reliable value-based Set comparison
   datesByTask: Record<string, Set<LocaleDateString>> | undefined;
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
-  loadTrack: () => Promise<void>;
+  loadTracks: () => Promise<void>;
   setTaskChecked: (date: Date, taskId: string, checked: boolean) => void;
   setTasksChecked: (date: Date, taskIds: string[], checked: boolean) => void;
 };
 
-export const useStore = create<Store>((set) => ({
+export const useTrackStore = create<TrackStore>((set) => ({
   datesByTask: undefined,
   tasksByDate: undefined,
-  strikes: undefined,
-  loadTrack: async () => {
+  loadTracks: async () => {
     const datesByTask: Record<string, Set<LocaleDateString>> = {};
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 

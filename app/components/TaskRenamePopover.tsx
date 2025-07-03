@@ -53,7 +53,12 @@ function Content({ setOpen, task }: ContentProps) {
 
   useEffect(() => {
     if (!tasks) return;
-    if (tasks.some((h) => h.id !== task.id && h.name === nameInput)) {
+    if (
+      tasks.some(
+        (t) =>
+          t.id !== task.id && t.groupId === task.groupId && t.name === nameInput
+      )
+    ) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
@@ -95,7 +100,11 @@ function Content({ setOpen, task }: ContentProps) {
           className="basis-full"
         ></input>
         <div className="text-xs text-orange-500">
-          {isDuplicated ? "This task is duplicated" : "\u00A0"}
+          {isDuplicated
+            ? task.groupId !== undefined
+              ? "There is a task with the same name in this group"
+              : "There is a task with the same name"
+            : ""}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">

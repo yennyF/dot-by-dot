@@ -14,13 +14,17 @@ import {
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { AppContext } from "../AppContext";
-import { useStore } from "../Store";
+import { useTrackStore } from "../stores/TrackStore";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
 export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalDays, setTotalDays] = useState<Date[]>([]);
+
+  useEffect(() => {
+    console.log("CalendarMonth rendered");
+  });
 
   useEffect(() => {
     const startOfCurrentMonth = startOfMonth(currentDate);
@@ -104,7 +108,9 @@ function DayCell({ date }: DayCellProps) {
   }
   const { tasks } = appContext;
 
-  const taskSet = useStore((s) => s.tasksByDate?.[date.toLocaleDateString()]);
+  const taskSet = useTrackStore(
+    (s) => s.tasksByDate?.[date.toLocaleDateString()]
+  );
 
   const percentage = tasks && taskSet ? taskSet.size / tasks.length : 0;
 

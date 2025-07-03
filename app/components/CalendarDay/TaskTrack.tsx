@@ -3,7 +3,7 @@
 import React from "react";
 import { addDays } from "date-fns";
 import clsx from "clsx";
-import { useStore } from "@/app/Store";
+import { useTrackStore } from "@/app/stores/TrackStore";
 import { Task } from "@/app/repositories/types";
 
 interface TaskTrackProps {
@@ -12,8 +12,8 @@ interface TaskTrackProps {
 }
 
 export default function TaskTrack({ date, task }: TaskTrackProps) {
-  const dateSet = useStore((s) => s.datesByTask?.[task.id]);
-  const setTaskChecked = useStore((s) => s.setTaskChecked);
+  const dateSet = useTrackStore((s) => s.datesByTask?.[task.id]);
+  const setTaskChecked = useTrackStore((s) => s.setTaskChecked);
 
   const isActive = dateSet?.has(date.toLocaleDateString());
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());

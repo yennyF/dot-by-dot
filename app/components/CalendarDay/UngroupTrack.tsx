@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useStore } from "@/app/Store";
+import { useTrackStore } from "@/app/stores/TrackStore";
 import { Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays } from "date-fns";
@@ -13,8 +13,8 @@ interface UngroupTrackProps {
 }
 
 export default function UngroupTrack({ date, task }: UngroupTrackProps) {
-  const dateSet = useStore((s) => s.datesByTask?.[task.id]);
-  const setTaskChecked = useStore((s) => s.setTaskChecked);
+  const dateSet = useTrackStore((s) => s.datesByTask?.[task.id]);
+  const setTaskChecked = useTrackStore((s) => s.setTaskChecked);
 
   const isActive = dateSet?.has(date.toLocaleDateString());
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());

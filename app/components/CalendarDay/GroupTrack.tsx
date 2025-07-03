@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useStore } from "@/app/Store";
+import { useTrackStore } from "@/app/stores/TrackStore";
 import { Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays } from "date-fns";
@@ -13,13 +13,15 @@ interface GroupTrackProps {
 }
 
 export default function GroupTrack({ date, tasks }: GroupTrackProps) {
-  const setTasksChecked = useStore((s) => s.setTasksChecked);
+  const setTasksChecked = useTrackStore((s) => s.setTasksChecked);
 
-  const dateTasks = useStore((s) => s.tasksByDate?.[date.toLocaleDateString()]);
-  const prevDateTasks = useStore(
+  const dateTasks = useTrackStore(
+    (s) => s.tasksByDate?.[date.toLocaleDateString()]
+  );
+  const prevDateTasks = useTrackStore(
     (s) => s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]
   );
-  const nextDateTasks = useStore(
+  const nextDateTasks = useTrackStore(
     (s) => s.tasksByDate?.[addDays(date, 1).toLocaleDateString()]
   );
 

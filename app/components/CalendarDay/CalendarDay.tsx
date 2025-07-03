@@ -20,7 +20,7 @@ import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { CardStackPlusIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import GroupAddPopover from "../GroupAddPopover";
-import { useStore } from "@/app/Store";
+import { useTrackStore } from "@/app/stores/TrackStore";
 import Group from "./Group";
 import Ungroup from "./Ungroup";
 import { v4 as uuidv4 } from "uuid";
@@ -39,10 +39,14 @@ export default function CalendarDay() {
   const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 0);
 
-  const loadTrack = useStore((s) => s.loadTrack);
+  const loadTracks = useTrackStore((s) => s.loadTracks);
   useEffect(() => {
-    loadTrack();
-  }, [loadTrack]);
+    loadTracks();
+  }, [loadTracks]);
+
+  useEffect(() => {
+    console.log("CalendarDay rendered");
+  }, []);
 
   return (
     <div className="mx-[50px] overflow-hidden">
