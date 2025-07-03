@@ -20,17 +20,19 @@ import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { CardStackPlusIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import GroupAddPopover from "../GroupAddPopover";
-import { useTrackStore } from "@/app/stores/TrackStore";
 import Group from "./Group";
 import Ungroup from "./Ungroup";
 import { v4 as uuidv4 } from "uuid";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { groups, totalYears, setDummyTask } = appContext;
+  const { groups, totalYears } = appContext;
+
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const scrollTarget = useRef<HTMLDivElement>(null);
   const scrollToTarget = useScrollTo(scrollTarget);
@@ -38,11 +40,6 @@ export default function CalendarDay() {
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 0);
-
-  const loadTracks = useTrackStore((s) => s.loadTracks);
-  useEffect(() => {
-    loadTracks();
-  }, [loadTracks]);
 
   useEffect(() => {
     console.log("CalendarDay rendered");

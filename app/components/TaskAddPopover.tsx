@@ -1,8 +1,8 @@
 "use client";
 
 import { Popover } from "radix-ui";
-import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
-import { AppContext } from "../AppContext";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { useTaskStore } from "../stores/TaskStore";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
@@ -13,25 +13,19 @@ export default function TaskAddPopover({
   children,
   onOpenChange,
 }: TaskAddPopoverProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Content must be used within a AppProvider");
-  }
-  const { setDummyTask } = appContext;
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const [open, setOpen] = useState(true);
 
+  useEffect(() => {
+    if (!open) {
+      setDummyTask(undefined);
+    }
+    onOpenChange?.(open);
+  }, [open, setDummyTask, onOpenChange]);
+
   return (
-    <Popover.Root
-      open={open}
-      onOpenChange={(open) => {
-        if (!open) {
-          setDummyTask(undefined);
-        }
-        setOpen(open);
-        onOpenChange?.(open);
-      }}
-    >
+    <Popover.Root open={open} onOpenChange={setOpen} modal>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
@@ -43,11 +37,11 @@ export default function TaskAddPopover({
 }
 
 function Content() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Content must be used within a AppProvider");
-  }
-  const { tasks, addTask, dummyTask, setDummyTask } = appContext;
+  const dummyTask = useTaskStore((s) => s.dummyTask);
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
+
+  const tasks = useTaskStore((s) => s.tasks);
+  const addTask = useTaskStore((s) => s.addTask);
 
   const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);

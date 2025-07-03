@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   format,
   startOfMonth,
@@ -13,8 +13,8 @@ import {
   isToday,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { AppContext } from "../AppContext";
 import { useTrackStore } from "../stores/TrackStore";
+import { useTaskStore } from "../stores/TaskStore";
 
 const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -102,17 +102,13 @@ interface DayCellProps {
 }
 
 function DayCell({ date }: DayCellProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarGrid must be used within a AppProvider");
-  }
-  const { tasks } = appContext;
+  const tasksTotal = useTaskStore((s) => s.tasks?.length ?? 0);
 
-  const taskSet = useTrackStore(
-    (s) => s.tasksByDate?.[date.toLocaleDateString()]
+  const filteredTasksTotal = useTrackStore(
+    (s) => s.tasksByDate?.[date.toLocaleDateString()]?.size ?? 0
   );
 
-  const percentage = tasks && taskSet ? taskSet.size / tasks.length : 0;
+  const percentage = filteredTasksTotal / tasksTotal;
 
   return (
     <div

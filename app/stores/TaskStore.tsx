@@ -1,19 +1,24 @@
 import { create } from "zustand";
 import { Task } from "../repositories/types";
 import { db } from "../repositories/db";
-import { clone, merge } from "lodash";
 
-type TaskStore = {
+type State = {
   tasks: Task[] | undefined;
+  dummyTask: Task | undefined;
+};
+
+type Action = {
   loadTasks: () => Promise<void>;
   addTask: (task: Task) => Promise<boolean>;
   updateTask: (id: string, task: Partial<Task>) => Promise<boolean>;
   deleteTask: (id: string) => Promise<boolean>;
   moveTask: (id: string, beforeId: string | null) => boolean;
+  setDummyTask: (task: Task | undefined) => void;
 };
 
-export const useTrackStore = create<TaskStore>((set) => ({
+export const useTaskStore = create<State & Action>((set) => ({
   tasks: undefined,
+  dummyTask: undefined,
   loadTasks: async () => {
     const tasks = await db.tasks.toArray();
     set(() => ({ tasks }));
@@ -55,11 +60,11 @@ export const useTrackStore = create<TaskStore>((set) => ({
         const target = state.tasks.find((h) => h.id === id);
         if (!target) return {};
 
-        prevTask = clone(target);
-        merge(target, task);
-        return { tasks: { ...state.tasks } };
-      });
+        prevTask = structuredClone(target);
+        Object.assign(target, task);
 
+        return {};
+      });
       await db.tasks.update(id, task);
     } catch (error) {
       console.error("Error renaming task:", error);
@@ -72,7 +77,7 @@ export const useTrackStore = create<TaskStore>((set) => ({
         if (index < 0) return {};
 
         states.tasks[index] = prevTask;
-        return { tasks: [...states.tasks] };
+        return {};
       });
 
       return false;
@@ -134,4 +139,5 @@ export const useTrackStore = create<TaskStore>((set) => ({
 
     return true;
   },
+  setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
 }));

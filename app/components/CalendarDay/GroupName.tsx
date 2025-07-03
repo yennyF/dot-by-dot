@@ -1,21 +1,17 @@
 import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
-import { use, useState } from "react";
+import { useState } from "react";
 import GroupDeleteDialog from "../GroupDeleteDialog";
 import GroupRenamePopover from "../GroupRenamePopover";
 import { Group } from "@/app/repositories/types";
-import { AppContext } from "@/app/AppContext";
 import { v4 as uuidv4 } from "uuid";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 interface GroupNameProps {
   group: Group;
 }
 
 export default function GroupName({ group }: GroupNameProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { setDummyTask } = appContext;
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const [open, setOpen] = useState(false);
 

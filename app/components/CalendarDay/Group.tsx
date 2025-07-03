@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, use, useMemo, useRef, DragEvent, useEffect } from "react";
+import { Fragment, use, useMemo, useRef, DragEvent } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
@@ -8,13 +8,18 @@ import { Group as GroupType } from "@/app/repositories/types";
 import GroupTrack from "./GroupTrack";
 import { DropIndicator, useDrop } from "./useDrop";
 import TaskName, { DummyTaskName } from "./TaskName";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 export default function Group({ group }: { group: GroupType }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
   }
-  const { tasks, totalDays, dummyTask, moveTask, updateTask } = appContext;
+  const { totalDays } = appContext;
+
+  const tasks = useTaskStore((s) => s.tasks);
+  const updateTask = useTaskStore((s) => s.updateTask);
+  const moveTask = useTaskStore((s) => s.moveTask);
 
   // const dropIndicatorRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const ref = useRef<HTMLDivElement>(null);
@@ -26,9 +31,9 @@ export default function Group({ group }: { group: GroupType }) {
 
       const beforeId = el.dataset.beforeId;
       if (beforeId === "-2") {
-        updateTask(taskId, undefined);
+        updateTask(taskId, { groupId: undefined });
       } else {
-        updateTask(taskId, group.id);
+        updateTask(taskId, { groupId: group.id });
         if (beforeId === "-1") {
           moveTask(taskId, null);
         } else if (beforeId !== taskId) {
@@ -73,23 +78,7 @@ export default function Group({ group }: { group: GroupType }) {
         </div>
       </div>
       <div className="w-fit">
-        {dummyTask && dummyTask.groupId === group.id && (
-          <>
-            <DropIndicator beforeId={dummyTask.id} level={1} />
-            <div className="flex h-[40px] w-fit items-center">
-              <DummyTaskName task={dummyTask} level={0} />
-              <div className="sticky left-[200px] flex">
-                {totalDays.map((date) => (
-                  <TaskTrack
-                    key={date.toLocaleDateString()}
-                    date={date}
-                    task={dummyTask}
-                  />
-                ))}
-              </div>
-            </div>
-          </>
-        )}
+        <DummyTaskRow group={group} />
         {filteredTasks.map((task) => (
           <Fragment key={task.id}>
             <DropIndicator
@@ -121,5 +110,35 @@ export default function Group({ group }: { group: GroupType }) {
         />
       </div>
     </div>
+  );
+}
+
+function DummyTaskRow({ group }: { group: GroupType }) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarList must be used within a AppProvider");
+  }
+  const { totalDays } = appContext;
+
+  const dummyTask = useTaskStore((s) => s.dummyTask);
+
+  if (!dummyTask || dummyTask.groupId !== group.id) return null;
+
+  return (
+    <>
+      <DropIndicator beforeId={dummyTask.id} level={1} />
+      <div className="flex h-[40px] w-fit items-center">
+        <DummyTaskName task={dummyTask} level={0} />
+        <div className="sticky left-[200px] flex">
+          {totalDays.map((date) => (
+            <TaskTrack
+              key={date.toLocaleDateString()}
+              date={date}
+              task={dummyTask}
+            />
+          ))}
+        </div>
+      </div>
+    </>
   );
 }

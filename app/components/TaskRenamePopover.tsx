@@ -1,9 +1,9 @@
 "use client";
 
 import { Popover } from "radix-ui";
-import { ChangeEvent, KeyboardEvent, use, useEffect, useState } from "react";
-import { AppContext } from "../AppContext";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Task } from "../repositories/types";
+import { useTaskStore } from "../stores/TaskStore";
 
 interface TaskRenamePopoverProps {
   children: React.ReactNode;
@@ -18,14 +18,12 @@ export default function TaskRenamePopover({
 }: TaskRenamePopoverProps) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    onOpenChange(open);
+  }, [open, onOpenChange]);
+
   return (
-    <Popover.Root
-      open={open}
-      onOpenChange={(open) => {
-        setOpen(open);
-        onOpenChange(open);
-      }}
-    >
+    <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
@@ -42,35 +40,31 @@ interface ContentProps {
 }
 
 function Content({ setOpen, task }: ContentProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Content must be used within a AppProvider");
-  }
-  const { tasks, renameTask } = appContext;
+  const tasks = useTaskStore((s) => s.tasks);
+  const updateTask = useTaskStore((s) => s.updateTask);
 
-  const [nameInput, setNameInput] = useState(task.name);
+  const [name, setNameInput] = useState(task.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
     if (!tasks) return;
     if (
       tasks.some(
-        (t) =>
-          t.id !== task.id && t.groupId === task.groupId && t.name === nameInput
+        (t) => t.id !== task.id && t.groupId === task.groupId && t.name === name
       )
     ) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [task, nameInput, tasks]);
+  }, [task, name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await renameTask(task.id, nameInput)) {
+    if (await updateTask(task.id, { name })) {
       setOpen(false);
     }
   };
@@ -94,7 +88,7 @@ function Content({ setOpen, task }: ContentProps) {
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
-          value={nameInput}
+          value={name}
           onChange={handleNameChange}
           placeholder={task.name}
           className="basis-full"
@@ -114,9 +108,9 @@ function Content({ setOpen, task }: ContentProps) {
         <button
           className="button-accept"
           onClick={handleSaveClick}
-          disabled={nameInput.length === 0 || nameInput === task.name}
+          disabled={name.length === 0 || name === task.name}
         >
-          Rename
+          Save
         </button>
       </div>
       <Popover.Arrow className="arrow" />

@@ -1,9 +1,11 @@
 "use client";
 
-import { AppContext, AppProvider } from "./AppContext";
-import { use } from "react";
+import { useEffect } from "react";
+import { AppProvider } from "./AppContext";
 import CalendarDay from "./components/CalendarDay/CalendarDay";
 import Sidebar from "./components/Sidebar";
+import { useTaskStore } from "./stores/TaskStore";
+import { useTrackStore } from "./stores/TrackStore";
 
 export default function Home() {
   return (
@@ -14,11 +16,15 @@ export default function Home() {
 }
 
 function Content() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("Home must be used within a AppProvider");
-  }
-  const { tasks } = appContext;
+  const loadTask = useTaskStore((s) => s.loadTasks);
+  const tasks = useTaskStore((s) => s.tasks);
+
+  const loadTracks = useTrackStore((s) => s.loadTracks);
+
+  useEffect(() => {
+    loadTask();
+    loadTracks();
+  }, [loadTask, loadTracks]);
 
   if (!tasks) {
     return <Loading />;
