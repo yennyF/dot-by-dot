@@ -2,17 +2,21 @@ import { create } from "zustand";
 import { Task } from "../repositories/types";
 import { db } from "../repositories/db";
 
+export const UNGROUPED_KEY = "_ungrouped";
+
 type State = {
   tasks: Task[] | undefined;
   dummyTask: Task | undefined;
-  tasksUngrouped: Task[];
   tasksByGroup: Record<string, Task[]>;
 };
 
 type Action = {
   loadTasks: () => Promise<void>;
   addTask: (task: Task) => Promise<boolean>;
-  updateTask: (id: string, task: Pick<Task, "name">) => Promise<boolean>;
+  updateTask: (
+    id: string,
+    task: Pick<Task, "name" | "groupId">
+  ) => Promise<boolean>;
   deleteTask: (id: string) => Promise<boolean>;
   moveTask: (id: string, beforeId: string | null) => boolean;
   setDummyTask: (task: Task | undefined) => void;
@@ -22,14 +26,12 @@ export const useTaskStore = create<State & Action>((set) => ({
   tasks: undefined,
   dummyTask: undefined,
   tasksByGroup: {},
-  tasksUngrouped: [],
 
   loadTasks: async () => {
     const tasks = await db.tasks.toArray();
     set(() => ({
       tasks,
       tasksByGroup: groupTasksById(tasks),
-      tasksUngrouped: tasks.filter((t) => !t.groupId),
     }));
   },
   addTask: async (task: Task) => {
@@ -37,16 +39,11 @@ export const useTaskStore = create<State & Action>((set) => ({
       const tasks = state.tasks ? [task, ...state.tasks] : [task];
 
       const tasksByGroup = state.tasksByGroup;
-      let tasksUngrouped = state.tasksUngrouped;
+      const key = task.groupId ?? UNGROUPED_KEY;
+      tasksByGroup[key] = [task, ...tasksByGroup[key]];
 
-      if (task.groupId) {
-        tasksByGroup[task.groupId] = [task, ...tasksByGroup[task.groupId]];
-      } else {
-        tasksUngrouped = [task, ...tasksUngrouped];
-      }
       return {
         tasks,
-        tasksUngrouped,
         tasksByGroup,
       };
     });
@@ -59,7 +56,7 @@ export const useTaskStore = create<State & Action>((set) => ({
     }
     return true;
   },
-  updateTask: async (id: string, task: Pick<Task, "name">) => {
+  updateTask: async (id: string, task: Pick<Task, "name" | "groupId">) => {
     set((state) => {
       if (!state.tasks) return {};
 
@@ -82,32 +79,36 @@ export const useTaskStore = create<State & Action>((set) => ({
     set((state) => {
       if (!state.tasks) return {};
 
-      let index = state.tasks.findIndex((h) => h.id === id);
-      if (index < 0) return {};
+      const taskIndex = state.tasks.findIndex((h) => h.id === id);
+      if (taskIndex < 0) return {};
 
-      const groupId = state.tasks[index].groupId;
-      const tasksByGroup = state.tasksByGroup;
-      let tasksUngrouped = state.tasksUngrouped;
+      const task = state.tasks[taskIndex];
+      const key = task.groupId ?? UNGROUPED_KEY;
 
-      if (groupId) {
-        index = tasksByGroup[groupId].findIndex((h) => h.id === id);
-        if (index > -1) {
-          tasksByGroup[groupId].splice(index, 1);
-          tasksByGroup[groupId] = [...tasksByGroup[groupId]];
-        }
-      } else {
-        index = tasksUngrouped.findIndex((h) => h.id === id);
-        if (index > -1) {
-          tasksUngrouped.splice(index, 1);
-          tasksUngrouped = [...tasksUngrouped];
-        }
-      }
+      // Create new tasks array without the task
+      const tasks = [
+        ...state.tasks.slice(0, taskIndex),
+        ...state.tasks.slice(taskIndex + 1),
+      ];
 
-      state.tasks.splice(index, 1);
+      const groupTasks = state.tasksByGroup[key] ?? [];
+      const groupTaskIndex = groupTasks.findIndex((h) => h.id === id);
+      if (groupTaskIndex < 0) return {};
+
+      // Create a new group array without the task
+      const updatedGroupTasks = [
+        ...groupTasks.slice(0, groupTaskIndex),
+        ...groupTasks.slice(groupTaskIndex + 1),
+      ];
+
+      // Create new tasksByGroup object with updated group
+      const tasksByGroup = {
+        ...state.tasksByGroup,
+        [key]: updatedGroupTasks,
+      };
 
       return {
-        tasks: [...state.tasks],
-        tasksUngrouped,
+        tasks,
         tasksByGroup,
       };
     });
@@ -149,9 +150,8 @@ export const useTaskStore = create<State & Action>((set) => ({
 
 function groupTasksById(tasks: Task[]): Record<string, Task[]> {
   return tasks.reduce<Record<string, Task[]>>((acc, task) => {
-    if (!task.groupId) return acc;
-    acc[task.groupId] = acc[task.groupId] || [];
-    acc[task.groupId].push(task);
+    const key = task.groupId ?? UNGROUPED_KEY;
+    (acc[key] ??= []).push(task);
     return acc;
   }, {});
 }

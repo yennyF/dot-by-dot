@@ -5,7 +5,7 @@ import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
 import UngroupTrack from "./UngroupTrack";
 import { DropIndicator, useDrop } from "./useDrop";
-import { useTaskStore } from "@/app/stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import TaskDummyItem from "./TaskDummyItem";
 
 export default function Ungroup() {
@@ -15,7 +15,7 @@ export default function Ungroup() {
   }
   const { totalDays } = appContext;
 
-  const tasks = useTaskStore((s) => s.tasksUngrouped);
+  const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]);
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
 
