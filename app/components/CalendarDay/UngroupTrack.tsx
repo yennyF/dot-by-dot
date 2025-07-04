@@ -20,9 +20,9 @@ export default function UngroupTrack({ date, task }: UngroupTrackProps) {
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
   const isNextActive = dateSet?.has(addDays(date, 1).toLocaleDateString());
 
-  useEffect(() => {
-    console.log("UngroupTrack rendered");
-  });
+  // useEffect(() => {
+  //   console.log("UngroupTrack rendered");
+  // });
 
   return (
     <div

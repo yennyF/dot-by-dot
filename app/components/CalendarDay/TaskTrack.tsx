@@ -19,9 +19,9 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
   const isNextActive = dateSet?.has(addDays(date, 1).toLocaleDateString());
 
-  useEffect(() => {
-    console.log("TaskTrack rendered");
-  });
+  // useEffect(() => {
+  //   console.log("TaskTrack rendered");
+  // });
 
   return (
     <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">

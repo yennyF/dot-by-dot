@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, use, useMemo, useRef, DragEvent, useEffect } from "react";
+import { Fragment, use, useRef, DragEvent, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName from "./TaskName";
 import UngroupTrack from "./UngroupTrack";
@@ -15,7 +15,7 @@ export default function Ungroup() {
   }
   const { totalDays } = appContext;
 
-  const tasks = useTaskStore((s) => s.tasks);
+  const tasks = useTaskStore((s) => s.tasksUngrouped);
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
 
@@ -40,12 +40,7 @@ export default function Ungroup() {
     console.log("Ungroup rendered");
   });
 
-  const filteredTasks = useMemo(
-    () => (tasks ? tasks.filter((task) => task.groupId === undefined) : []),
-    [tasks]
-  );
-
-  if (filteredTasks.length === 0) {
+  if (tasks?.length === 0) {
     return null;
   }
 
@@ -58,19 +53,19 @@ export default function Ungroup() {
       onDragLeave={handleDragLeave}
     >
       <TaskDummyItem />
-      {filteredTasks.map((task) => (
+      {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator beforeId={task.id} level={0} />
           <div className="flex h-[40px] items-center">
             <TaskName task={task} level={0} />
             <div className="sticky left-[200px] flex">
-              {/* {totalDays.map((date) => (
+              {totalDays.map((date) => (
                 <UngroupTrack
                   key={date.toLocaleDateString()}
                   date={date}
                   task={task}
                 />
-              ))} */}
+              ))}
             </div>
           </div>
         </Fragment>

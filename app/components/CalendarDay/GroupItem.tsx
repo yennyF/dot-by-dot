@@ -1,15 +1,15 @@
 "use client";
 
-import { Fragment, use, useMemo, useRef, DragEvent, useEffect } from "react";
+import { Fragment, use, useRef, DragEvent, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
-import GroupTrack from "./GroupTrack";
 import { DropIndicator, useDrop } from "./useDrop";
 import TaskName from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import TaskDummyItem from "./TaskDummyItem";
+import GroupTrack from "./GroupTrack";
 
 export default function GroupItem({ group }: { group: Group }) {
   const appContext = use(AppContext);
@@ -18,7 +18,7 @@ export default function GroupItem({ group }: { group: Group }) {
   }
   const { totalDays } = appContext;
 
-  const tasks = useTaskStore((s) => s.tasks);
+  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]);
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
 
@@ -42,11 +42,6 @@ export default function GroupItem({ group }: { group: Group }) {
         }
       }
     }
-  );
-
-  const filteredTasks = useMemo(
-    () => (tasks ? tasks.filter((task) => task.groupId === group.id) : []),
-    [tasks, group.id]
   );
 
   useEffect(() => {
@@ -73,19 +68,19 @@ export default function GroupItem({ group }: { group: Group }) {
           <GroupName group={group} />
         </div>
         <div className="sticky left-[200px] flex">
-          {/* {totalDays.map((date) => (
+          {totalDays.map((date) => (
             <GroupTrack
               key={date.toLocaleDateString()}
               date={date}
-              tasks={filteredTasks}
+              tasks={tasks}
             />
-          ))} */}
+          ))}
         </div>
       </div>
 
       <TaskDummyItem group={group} />
 
-      {filteredTasks.map((task) => (
+      {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator
             beforeId={task.id}

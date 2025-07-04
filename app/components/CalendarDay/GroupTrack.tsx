@@ -29,9 +29,9 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
   const isPrevActive = tasks.some((task) => prevDateTasks?.has(task.id));
   const isNextActive = tasks.some((task) => nextDateTasks?.has(task.id));
 
-  useEffect(() => {
-    console.log("GroupTrack rendered");
-  });
+  // useEffect(() => {
+  //   console.log("GroupTrack rendered");
+  // });
 
   return (
     <div className="app-GroupTrack relative flex h-10 w-[50px] items-center justify-center">

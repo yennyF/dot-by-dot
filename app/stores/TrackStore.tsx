@@ -17,6 +17,7 @@ type Action = {
 export const useTrackStore = create<State & Action>((set) => ({
   datesByTask: undefined,
   tasksByDate: undefined,
+
   loadTracks: async () => {
     const datesByTask: Record<string, Set<LocaleDateString>> = {};
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};

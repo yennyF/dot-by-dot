@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { db } from "../repositories/db";
-import { get } from "lodash";
-import { useTaskStore } from "./TaskStore";
 
 type State = {
   groups: Group[] | undefined;
@@ -18,6 +16,7 @@ type Action = {
 
 export const useGroupStore = create<State & Action>((set) => ({
   groups: undefined,
+
   loadGroups: async () => {
     const groups = await db.groups.toArray();
     set(() => ({ groups }));
