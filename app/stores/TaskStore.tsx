@@ -37,21 +37,9 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       }));
     },
     addTask: async (task: Task) => {
-      // set((state) => {
-      //   const tasks = state.tasks ? [task, ...state.tasks] : [task];
-
-      //   const tasksByGroup = state.tasksByGroup;
-      //   const key = task.groupId ?? UNGROUPED_KEY;
-      //   tasksByGroup[key] = [task, ...tasksByGroup[key]];
-
-      //   return {
-      //     tasks,
-      //     tasksByGroup,
-      //   };
-      // });
-
       set((state) => {
-        (state.tasks ??= []).unshift(task);
+        if (!state.tasks) return;
+        state.tasks.unshift(task);
 
         const key = task.groupId ?? UNGROUPED_KEY;
         (state.tasksByGroup[key] ??= []).unshift(task);
@@ -65,15 +53,19 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       }
       return true;
     },
-    updateTask: async (id: string, task: Pick<Task, "name" | "groupId">) => {
+    updateTask: async (
+      id: string,
+      task: Partial<Pick<Task, "name" | "groupId">>
+    ) => {
       set((state) => {
-        if (!state.tasks) return {};
-
-        const target = state.tasks.find((h) => h.id === id);
-        if (!target) return {};
-
+        let target = state.tasks?.find((t) => t.id === id);
+        if (!target) return;
         Object.assign(target, task);
-        return {};
+
+        const key = task.groupId ?? UNGROUPED_KEY;
+        target = state.tasksByGroup[key]?.find((t) => t.id === id);
+        if (!target) return;
+        Object.assign(target, task);
       });
 
       try {
@@ -85,63 +77,19 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       return true;
     },
     deleteTask: async (id: string) => {
-      // set((state) => {
-      //   if (!state.tasks) return {};
-
-      //   const taskIndex = state.tasks.findIndex((h) => h.id === id);
-      //   if (taskIndex < 0) return {};
-
-      //   const task = state.tasks[taskIndex];
-      //   const key = task.groupId ?? UNGROUPED_KEY;
-
-      //   // Create new tasks array without the task
-      //   const tasks = [
-      //     ...state.tasks.slice(0, taskIndex),
-      //     ...state.tasks.slice(taskIndex + 1),
-      //   ];
-
-      //   const groupTasks = state.tasksByGroup[key] ?? [];
-      //   const groupTaskIndex = groupTasks.findIndex((h) => h.id === id);
-      //   if (groupTaskIndex < 0) return {};
-
-      //   // Create a new group array without the task
-      //   const updatedGroupTasks = [
-      //     ...groupTasks.slice(0, groupTaskIndex),
-      //     ...groupTasks.slice(groupTaskIndex + 1),
-      //   ];
-
-      //   // Create new tasksByGroup object with updated group
-      //   const tasksByGroup = {
-      //     ...state.tasksByGroup,
-      //     [key]: updatedGroupTasks,
-      //   };
-
-      //   return {
-      //     tasks,
-      //     tasksByGroup,
-      //   };
-      // });
-
       set((state) => {
         if (!state.tasks) return;
 
-        const taskIndex = state.tasks.findIndex((h) => h.id === id);
-        if (taskIndex < 0) return;
+        let index = state.tasks.findIndex((h) => h.id === id);
+        if (index < 0) return;
 
-        const task = state.tasks[taskIndex];
+        const task = state.tasks[index];
+        state.tasks.splice(index, 1);
+
         const key = task.groupId ?? UNGROUPED_KEY;
-
-        // === With immer, you can mutate state directly ===
-        state.tasks.splice(taskIndex, 1);
-
-        const groupTasks = state.tasksByGroup[key] ?? [];
-        const groupTaskIndex = groupTasks.findIndex((h) => h.id === id);
-        if (groupTaskIndex >= 0) {
-          groupTasks.splice(groupTaskIndex, 1);
-        }
-
-        // Assign the updated group array back into tasksByGroup
-        state.tasksByGroup[key] = groupTasks;
+        index = state.tasksByGroup[key]?.findIndex((h) => h.id === id);
+        if (index < 0) return;
+        state.tasksByGroup[key].splice(index, 1);
       });
 
       try {
@@ -156,12 +104,14 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       if (beforeId === id) return true;
 
       set((state) => {
-        if (!state.tasks) return {};
+        if (!state.tasks) return;
 
-        const index = state.tasks.findIndex((h) => h.id === id);
-        if (index < 0) return {};
+        let index = state.tasks.findIndex((h) => h.id === id);
+        if (index < 0) return;
 
-        const deletedTasks = state.tasks.splice(index, 1);
+        const task = state.tasks[index];
+
+        let deletedTasks = state.tasks.splice(index, 1);
         if (beforeId === null) {
           state.tasks.push(...deletedTasks);
         } else {
@@ -171,7 +121,19 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           state.tasks.splice(beforeIndex, 0, ...deletedTasks);
         }
 
-        return { tasks: [...state.tasks] };
+        const key = task.groupId ?? UNGROUPED_KEY;
+        index = state.tasksByGroup[key].findIndex((h) => h.id === id);
+        if (index < 0) return;
+
+        deletedTasks = state.tasksByGroup[key].splice(index, 1);
+        if (beforeId === null) {
+          state.tasksByGroup[key].push(...deletedTasks);
+        } else {
+          const beforeIndex = state.tasksByGroup[key].findIndex(
+            (task) => task.id === beforeId
+          );
+          state.tasksByGroup[key].splice(beforeIndex, 0, ...deletedTasks);
+        }
       });
 
       return true;

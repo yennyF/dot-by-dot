@@ -43,7 +43,7 @@ function Content({ setOpen, task }: ContentProps) {
   const tasks = useTaskStore((s) => s.tasks);
   const updateTask = useTaskStore((s) => s.updateTask);
 
-  const [name, setNameInput] = useState(task.name);
+  const [name, setName] = useState(task.name);
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
@@ -60,11 +60,11 @@ function Content({ setOpen, task }: ContentProps) {
   }, [task, name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameInput(event.target.value);
+    setName(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    if (await updateTask(task.id, { name })) {
+    if (await updateTask(task.id, { name, groupId: task.groupId })) {
       setOpen(false);
     }
   };
