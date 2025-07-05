@@ -3,7 +3,7 @@
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Task } from "../repositories/types";
-import { useTaskStore } from "../stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "../stores/TaskStore";
 
 interface TaskRenamePopoverProps {
   children: React.ReactNode;
@@ -40,7 +40,9 @@ interface ContentProps {
 }
 
 function Content({ setOpen, task }: ContentProps) {
-  const tasks = useTaskStore((s) => s.tasks);
+  const tasks = useTaskStore(
+    (s) => s.tasksByGroup[task.groupId ?? UNGROUPED_KEY]
+  );
   const updateTask = useTaskStore((s) => s.updateTask);
 
   const [name, setName] = useState(task.name);

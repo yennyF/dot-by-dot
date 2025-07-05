@@ -6,7 +6,6 @@ import { immer } from "zustand/middleware/immer";
 export const UNGROUPED_KEY = "_ungrouped";
 
 type State = {
-  tasks: Task[] | undefined;
   dummyTask: Task | undefined;
   tasksByGroup: Record<string, Task[]>;
 };
@@ -21,26 +20,27 @@ type Action = {
   deleteTask: (id: string) => Promise<boolean>;
   moveTask: (id: string, beforeId: string | null) => boolean;
   setDummyTask: (task: Task | undefined) => void;
+  getTaskLength: () => number;
+  findTaskById: (id: string) => Task | undefined;
 };
 
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
-  immer((set) => ({
-    tasks: undefined,
+  immer((set, get) => ({
     dummyTask: undefined,
     tasksByGroup: {},
 
     loadTasks: async () => {
       const tasks = await db.tasks.toArray();
-      set(() => ({
-        tasks,
-        tasksByGroup: groupTasksById(tasks),
-      }));
+      const tasksByGroup = tasks.reduce<Record<string, Task[]>>((acc, task) => {
+        const key = task.groupId ?? UNGROUPED_KEY;
+        (acc[key] ??= []).push(task);
+        return acc;
+      }, {});
+
+      set(() => ({ tasksByGroup }));
     },
     addTask: async (task: Task) => {
       set((state) => {
-        if (!state.tasks) return;
-        state.tasks.unshift(task);
-
         const key = task.groupId ?? UNGROUPED_KEY;
         (state.tasksByGroup[key] ??= []).unshift(task);
       });
@@ -58,12 +58,8 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       task: Partial<Pick<Task, "name" | "groupId">>
     ) => {
       set((state) => {
-        let target = state.tasks?.find((t) => t.id === id);
-        if (!target) return;
-        Object.assign(target, task);
-
         const key = task.groupId ?? UNGROUPED_KEY;
-        target = state.tasksByGroup[key]?.find((t) => t.id === id);
+        const target = state.tasksByGroup[key]?.find((t) => t.id === id);
         if (!target) return;
         Object.assign(target, task);
       });
@@ -78,16 +74,11 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     },
     deleteTask: async (id: string) => {
       set((state) => {
-        if (!state.tasks) return;
-
-        let index = state.tasks.findIndex((h) => h.id === id);
-        if (index < 0) return;
-
-        const task = state.tasks[index];
-        state.tasks.splice(index, 1);
+        const task = get().findTaskById(id);
+        if (!task) return;
 
         const key = task.groupId ?? UNGROUPED_KEY;
-        index = state.tasksByGroup[key]?.findIndex((h) => h.id === id);
+        const index = state.tasksByGroup[key]?.findIndex((h) => h.id === id);
         if (index < 0) return;
         state.tasksByGroup[key].splice(index, 1);
       });
@@ -139,13 +130,19 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       return true;
     },
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
+    getTaskLength: () => {
+      return Object.values(get().tasksByGroup).reduce(
+        (total, tasks) => total + tasks.length,
+        0
+      );
+    },
+    findTaskById: (id: string) => {
+      const { tasksByGroup } = get();
+      for (const tasks of Object.values(tasksByGroup)) {
+        const found = tasks.find((task) => task.id === id);
+        if (found) return found;
+      }
+      return undefined; // not found
+    },
   }))
 );
-
-function groupTasksById(tasks: Task[]): Record<string, Task[]> {
-  return tasks.reduce<Record<string, Task[]>>((acc, task) => {
-    const key = task.groupId ?? UNGROUPED_KEY;
-    (acc[key] ??= []).push(task);
-    return acc;
-  }, {});
-}

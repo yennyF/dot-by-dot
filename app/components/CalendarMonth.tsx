@@ -102,13 +102,13 @@ interface DayItemProps {
 }
 
 function DayItem({ date }: DayItemProps) {
-  const tasksTotal = useTaskStore((s) => s.tasks?.length ?? 0);
+  const getTaskLength = useTaskStore((s) => s.getTaskLength);
 
   const filteredTasksTotal = useTrackStore(
     (s) => s.tasksByDate?.[date.toLocaleDateString()]?.size ?? 0
   );
 
-  const percentage = filteredTasksTotal / tasksTotal;
+  const percentage = filteredTasksTotal / getTaskLength();
 
   return (
     <div

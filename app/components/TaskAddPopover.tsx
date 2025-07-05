@@ -2,7 +2,7 @@
 
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { useTaskStore } from "../stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "../stores/TaskStore";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
@@ -40,7 +40,9 @@ function Content() {
   const dummyTask = useTaskStore((s) => s.dummyTask);
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
-  const tasks = useTaskStore((s) => s.tasks);
+  const tasks = useTaskStore(
+    (s) => s.tasksByGroup[dummyTask?.groupId ?? UNGROUPED_KEY]
+  );
   const addTask = useTaskStore((s) => s.addTask);
 
   const [name, setName] = useState("");
