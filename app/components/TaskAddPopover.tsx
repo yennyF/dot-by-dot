@@ -60,8 +60,7 @@ function Content() {
 
   const handleSaveClick = () => {
     if (!dummyTask) return;
-    dummyTask.name = name;
-    addTask(dummyTask);
+    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
     setName("");
     setDummyTask(undefined);
   };
