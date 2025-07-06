@@ -4,7 +4,7 @@ import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { Group } from "../repositories/types";
 import { useGroupStore } from "../stores/GroupStore";
-import { CheckIcon } from "@radix-ui/react-icons";
+import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 interface GroupDeleteDialogProps {
   children: React.ReactNode;
@@ -38,9 +38,16 @@ export default function GroupDeleteDialog({
         <Dialog.Portal>
           <Dialog.Overlay className="overlay">
             <Dialog.Content className="dialog-content">
-              <Dialog.Title className="dialog-title">
-                Delete your group
-              </Dialog.Title>
+              <div className="flex justify-between">
+                <Dialog.Title className="dialog-title">
+                  Delete your group
+                </Dialog.Title>
+                <Dialog.Close asChild>
+                  <button className="button-icon shrink-0">
+                    <Cross1Icon />
+                  </button>
+                </Dialog.Close>
+              </div>
               <Dialog.Description className="dialog-description">
                 This will remove all content that was associated with this
                 group.
@@ -54,6 +61,9 @@ export default function GroupDeleteDialog({
                   <Checkbox.Indicator>
                     <CheckIcon />
                   </Checkbox.Indicator>
+                  {!checked && (
+                    <CheckIcon className="hidden text-[var(--gray)] group-hover:block" />
+                  )}
                 </Checkbox.Root>
                 <label className="text-sm text-red-500">
                   I confirm that I want to delete this group and all associated

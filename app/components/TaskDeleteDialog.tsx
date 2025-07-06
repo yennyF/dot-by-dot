@@ -4,7 +4,7 @@ import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { Task } from "../repositories/types";
 import { useTaskStore } from "../stores/TaskStore";
-import { CheckIcon } from "@radix-ui/react-icons";
+import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 interface TaskDeleteDialogProps {
   children: React.ReactNode;
@@ -38,9 +38,16 @@ export default function TaskDeleteDialog({
         <Dialog.Portal>
           <Dialog.Overlay className="overlay">
             <Dialog.Content className="dialog-content">
-              <Dialog.Title className="dialog-title">
-                Delete your task
-              </Dialog.Title>
+              <div className="flex justify-between">
+                <Dialog.Title className="dialog-title">
+                  Delete your task
+                </Dialog.Title>
+                <Dialog.Close asChild>
+                  <button className="button-icon shrink-0">
+                    <Cross1Icon />
+                  </button>
+                </Dialog.Close>
+              </div>
               <Dialog.Description className="dialog-description">
                 This will remove all track that was associated with this task.
               </Dialog.Description>
