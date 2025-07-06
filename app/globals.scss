@@ -83,8 +83,8 @@ input {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: 500px;
-  max-height: 85vh;
+  max-width: 580px;
+  max-height: 90vh;
   padding: 30px;
   background: var(--background);
   display: flex;
@@ -93,18 +93,16 @@ input {
 }
 
 .dialog-title {
-  @apply text-lg;
+  @apply text-xl;
   font-weight: bold;
-  text-align: center;
 }
 
 .dialog-description {
-    margin-top: 20px;
-    text-align: center;
+    margin-top: 50px;
 }
 
 .dialog-bottom {
-  margin-top: 40px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   @apply gap-3;

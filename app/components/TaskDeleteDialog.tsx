@@ -1,9 +1,10 @@
 "use client";
 
-import { Dialog } from "radix-ui";
+import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { Task } from "../repositories/types";
 import { useTaskStore } from "../stores/TaskStore";
+import { CheckIcon } from "@radix-ui/react-icons";
 
 interface TaskDeleteDialogProps {
   children: React.ReactNode;
@@ -19,6 +20,8 @@ export default function TaskDeleteDialog({
   const deleteTask = useTaskStore((s) => s.deleteTask);
 
   const [open, setOpen] = useState(false);
+
+  const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
   useEffect(() => {
     onOpenChange(open);
@@ -36,25 +39,43 @@ export default function TaskDeleteDialog({
           <Dialog.Overlay className="overlay">
             <Dialog.Content className="dialog-content">
               <Dialog.Title className="dialog-title">
-                Delete Confirmation
+                Delete your task
               </Dialog.Title>
               <Dialog.Description className="dialog-description">
-                Are you sure you want to delete &quot;{task.name}&quot;?
-                <br />
-                <br />
-                <span className="text-red-600">
-                  This action cannot be undone and all associated data will be
-                  permanently removed.
-                </span>
+                This will remove all track that was associated with this task.
               </Dialog.Description>
+              <br />
+              <div className="flex">
+                <Checkbox.Root
+                  id="c1"
+                  className="group flex size-[18px] flex-shrink-0 appearance-none items-center justify-center rounded bg-white outline-none outline-1 outline-offset-0 outline-[var(--gray)]"
+                  onCheckedChange={setChecked}
+                >
+                  <Checkbox.Indicator>
+                    <CheckIcon />
+                  </Checkbox.Indicator>
+                  {!checked && (
+                    <CheckIcon className="hidden text-[var(--gray)] group-hover:block" />
+                  )}
+                </Checkbox.Root>
+                <label
+                  htmlFor="c1"
+                  className="pl-[15px] text-sm text-red-500 hover:cursor-pointer"
+                >
+                  I confirm that I want to delete this task and all associated
+                  content
+                </label>
+              </div>
+
               <div className="dialog-bottom">
-                <Dialog.Close>
-                  <div className="button-cancel" onClick={handleDeleteConfirm}>
-                    Yes, delete
-                  </div>
-                </Dialog.Close>
-                <Dialog.Close>
-                  <div className="button-accept">Keep</div>
+                <Dialog.Close asChild>
+                  <button
+                    className="button-accept"
+                    onClick={handleDeleteConfirm}
+                    disabled={checked === false}
+                  >
+                    Delete
+                  </button>
                 </Dialog.Close>
               </div>
             </Dialog.Content>
