@@ -77,7 +77,6 @@ input {
 }
 
 .dialog-content {
-  border-radius: 6px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -90,26 +89,25 @@ input {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
 
-.dialog-title {
-  @apply text-xl;
-  font-weight: bold;
-}
+  .dialog-title {
+    @apply text-xl;
+    font-weight: bold;
+  }
 
-.dialog-description {
-    margin-top: 50px;
-}
+  .dialog-description {
+      margin-top: 50px;
+  }
 
-.dialog-bottom {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  @apply gap-3;
+  .dialog-bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    @apply gap-3;
+  }
 }
 
 .popover-content {
-  border-radius: 6px;
   padding: 25px;
   background: var(--background);
   box-shadow:
@@ -119,6 +117,27 @@ input {
   .arrow {
     fill: var(--background);
   }
+}
+
+.dropdown-content {
+  background: var(--background);
+  box-shadow:
+    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+
+    .dropdown-item {
+      padding: 10px 15px;
+      cursor: default;
+
+      &:hover {
+        background: var(--gray-9);
+        color: var(--white);
+      }
+    }
+
+    .arrow {
+      fill: var(--background);
+    }
 }
 
 .shadow-background-bottom {

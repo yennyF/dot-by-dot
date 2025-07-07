@@ -18,13 +18,13 @@ import {
 import { AppContext } from "../../AppContext";
 import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
-import { CardStackPlusIcon, FilePlusIcon } from "@radix-ui/react-icons";
-import GroupAddPopover from "../GroupAddPopover";
+import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import GroupItem from "./GroupItem";
 import Ungroup from "./Ungroup";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useGroupStore } from "@/app/stores/GroupStore";
+import { DropdownMenu } from "radix-ui";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -52,21 +52,38 @@ export default function CalendarDay() {
       {/* Controls */}
       <div className="flex h-[80px] w-full items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <GroupAddPopover>
-            <button className="button-accent">
-              <CardStackPlusIcon />
-              New Group
-            </button>
-          </GroupAddPopover>
-          <button
-            className="button-accent"
-            onClick={() => {
-              setDummyTask({ id: uuidv4(), name: "(No Name)" });
-            }}
-          >
-            <FilePlusIcon />
-            New Task
-          </button>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button className="button-accent">
+                <PlusIcon />
+                Create
+                <TriangleDownIcon />
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="dropdown-content z-20 w-[150px]"
+                side="bottom"
+                align="start"
+              >
+                <DropdownMenu.Item className="dropdown-item">
+                  <div className="flex gap-2">Group</div>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item className="dropdown-item">
+                  <div
+                    className="flex gap-2"
+                    onClick={() => {
+                      setDummyTask({ id: uuidv4(), name: "(No name)" });
+                    }}
+                  >
+                    Task
+                  </div>
+                </DropdownMenu.Item>
+                <DropdownMenu.Arrow className="arrow" />
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </div>
         <div className="flex items-center gap-2">
           {/* <button className="button-icon">

@@ -29,7 +29,7 @@ export default function GroupName({ group }: GroupNameProps) {
           onClick={() => {
             setDummyTask({
               id: uuidv4(),
-              name: "(No Name)",
+              name: "(No name)",
               groupId: group.id,
             });
           }}

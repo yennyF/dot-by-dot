@@ -1,9 +1,15 @@
 "use client";
 
-import { Cross1Icon, CalendarIcon } from "@radix-ui/react-icons";
+import {
+  Cross1Icon,
+  CalendarIcon,
+  CardStackPlusIcon,
+  FilePlusIcon,
+} from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import CalendarMonth from "./CalendarMonth";
+import GroupAddPopover from "./GroupAddPopover";
 
 export default function Sidebar() {
   const [openSidebar, setOpenSidebar] = useState(true);
@@ -33,7 +39,7 @@ export default function Sidebar() {
             transition={{ duration: 0.2 }}
           >
             <div className="fixed h-screen w-[320px] border-r-[1px] border-[var(--gray)]">
-              <div className="mt-[80px] flex w-full items-center justify-center">
+              <div className="mt-[10px] flex w-full flex-col items-center justify-center">
                 <CalendarMonth />
               </div>
             </div>
