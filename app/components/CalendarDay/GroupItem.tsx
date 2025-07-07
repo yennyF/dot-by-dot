@@ -6,9 +6,8 @@ import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
 import { DropIndicator, useDrop } from "./useDrop";
-import TaskName from "./TaskName";
+import TaskName, { DummyTaskName } from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import TaskDummyItem from "./TaskDummyItem";
 import GroupTrack from "./GroupTrack";
 
 export default function GroupItem({ group }: { group: Group }) {
@@ -18,6 +17,9 @@ export default function GroupItem({ group }: { group: Group }) {
   }
   const { totalDays } = appContext;
 
+  const dummyTask = useTaskStore((s) =>
+    s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
+  );
   const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) ?? [];
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
@@ -78,7 +80,23 @@ export default function GroupItem({ group }: { group: Group }) {
         </div>
       </div>
 
-      <TaskDummyItem group={group} />
+      {dummyTask && (
+        <>
+          <DropIndicator beforeId={dummyTask.id} level={1} />
+          <div className="app-TaskDummyItem flex h-[40px] items-center">
+            <DummyTaskName task={dummyTask} level={1} />
+            <div className="sticky left-[200px] flex">
+              {totalDays.map((date) => (
+                <TaskTrack
+                  key={date.toLocaleDateString()}
+                  date={date}
+                  task={dummyTask}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {tasks?.map((task) => (
         <Fragment key={task.id}>

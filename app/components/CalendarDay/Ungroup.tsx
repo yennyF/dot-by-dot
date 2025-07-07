@@ -2,11 +2,11 @@
 
 import { Fragment, use, useRef, DragEvent, useEffect } from "react";
 import { AppContext } from "../../AppContext";
-import TaskName from "./TaskName";
+import TaskName, { DummyTaskName } from "./TaskName";
 import UngroupTrack from "./UngroupTrack";
 import { DropIndicator, useDrop } from "./useDrop";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
-import TaskDummyItem from "./TaskDummyItem";
+import TaskTrack from "./TaskTrack";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
@@ -15,6 +15,9 @@ export default function Ungroup() {
   }
   const { totalDays } = appContext;
 
+  const dummyTask = useTaskStore((s) =>
+    s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
+  );
   const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]);
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
@@ -40,10 +43,6 @@ export default function Ungroup() {
     console.log("Ungroup rendered");
   });
 
-  if (tasks?.length === 0) {
-    return null;
-  }
-
   return (
     <div
       ref={ref}
@@ -52,7 +51,23 @@ export default function Ungroup() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      <TaskDummyItem />
+      {dummyTask && (
+        <>
+          <DropIndicator beforeId={dummyTask.id} level={0} />
+          <div className="app-TaskDummyItem flex h-[40px] items-center">
+            <DummyTaskName task={dummyTask} level={0} />
+            <div className="sticky left-[200px] flex">
+              {totalDays.map((date) => (
+                <TaskTrack
+                  key={date.toLocaleDateString()}
+                  date={date}
+                  task={dummyTask}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
       {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator beforeId={task.id} level={0} />
