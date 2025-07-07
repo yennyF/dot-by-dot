@@ -4,6 +4,7 @@ import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
 
 type State = {
+  dummyGroup: Group | undefined;
   groups: Group[] | undefined;
 };
 
@@ -13,10 +14,12 @@ type Action = {
   updateGroup: (id: string, group: Partial<Group>) => Promise<boolean>;
   deleteGroup: (id: string) => Promise<boolean>;
   moveGroup: (id: string, beforeId: string | null) => boolean;
+  setDummyGroup: (group: Group | undefined) => void;
 };
 
 export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
   immer((set) => ({
+    dummyGroup: undefined,
     groups: undefined,
 
     loadGroups: async () => {
@@ -92,5 +95,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
       return true;
     },
+    setDummyGroup: (group: Group | undefined) =>
+      set(() => ({ dummyGroup: group })),
   }))
 );

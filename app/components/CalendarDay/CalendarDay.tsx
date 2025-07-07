@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { DropdownMenu } from "radix-ui";
+import GroupDummyItem from "./GroupDummyItem";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -34,6 +35,7 @@ export default function CalendarDay() {
   const { totalYears } = appContext;
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
+  const setDummyGroup = useGroupStore((s) => s.setDummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
   const scrollTarget = useRef<HTMLDivElement>(null);
@@ -52,9 +54,9 @@ export default function CalendarDay() {
       {/* Controls */}
       <div className="flex h-[80px] w-full items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <DropdownMenu.Root>
+          <DropdownMenu.Root modal={false}>
             <DropdownMenu.Trigger asChild>
-              <button className="button-accent">
+              <button className="button-accent-outline">
                 <PlusIcon />
                 Create
                 <TriangleDownIcon />
@@ -66,13 +68,19 @@ export default function CalendarDay() {
                 className="dropdown-content z-20 w-[150px]"
                 side="bottom"
                 align="start"
+                sideOffset={5}
               >
                 <DropdownMenu.Item className="dropdown-item">
-                  <div className="flex gap-2">Group</div>
+                  <div
+                    onClick={() => {
+                      setDummyGroup({ id: uuidv4(), name: "(No name)" });
+                    }}
+                  >
+                    Group
+                  </div>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item className="dropdown-item">
                   <div
-                    className="flex gap-2"
                     onClick={() => {
                       setDummyTask({ id: uuidv4(), name: "(No name)" });
                     }}
@@ -120,6 +128,7 @@ export default function CalendarDay() {
           <div className="flex flex-col gap-5">
             <Ungroup />
             <div className="flex flex-col gap-5">
+              <GroupDummyItem />
               {groups?.map((group) => (
                 <GroupItem key={group.id} group={group} />
               ))}

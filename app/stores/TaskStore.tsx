@@ -19,9 +19,9 @@ type Action = {
   ) => Promise<boolean>;
   deleteTask: (id: string) => Promise<boolean>;
   moveTask: (id: string, beforeId: string | null) => boolean;
+  findTaskById: (id: string) => Task | undefined;
   setDummyTask: (task: Task | undefined) => void;
   getTaskLength: () => number;
-  findTaskById: (id: string) => Task | undefined;
 };
 
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
@@ -129,13 +129,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
       return true;
     },
-    setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
-    getTaskLength: () => {
-      return Object.values(get().tasksByGroup).reduce(
-        (total, tasks) => total + tasks.length,
-        0
-      );
-    },
     findTaskById: (id: string) => {
       const { tasksByGroup } = get();
       for (const tasks of Object.values(tasksByGroup)) {
@@ -143,6 +136,13 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         if (found) return found;
       }
       return undefined; // not found
+    },
+    setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
+    getTaskLength: () => {
+      return Object.values(get().tasksByGroup).reduce(
+        (total, tasks) => total + tasks.length,
+        0
+      );
     },
   }))
 );

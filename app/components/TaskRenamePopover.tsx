@@ -81,9 +81,8 @@ function Content({ setOpen, task }: ContentProps) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      sideOffset={10}
+      sideOffset={5}
       align="center"
-      alignOffset={0}
       onKeyDown={handleKeyDown}
     >
       <p>Rename the task</p>
@@ -93,9 +92,8 @@ function Content({ setOpen, task }: ContentProps) {
           value={name}
           onChange={handleNameChange}
           placeholder={task.name}
-          className="basis-full"
         ></input>
-        <div className="text-xs text-orange-500">
+        <div className="warning-xs">
           {isDuplicated
             ? task.groupId !== undefined
               ? "There is a task with the same name in this group"

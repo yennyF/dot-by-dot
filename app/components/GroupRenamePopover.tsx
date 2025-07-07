@@ -75,9 +75,8 @@ function Content({ setOpen, group }: ContentProps) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      sideOffset={10}
+      sideOffset={5}
       align="center"
-      alignOffset={0}
       onKeyDown={handleKeyDown}
     >
       <p>Rename the group</p>
@@ -87,10 +86,9 @@ function Content({ setOpen, group }: ContentProps) {
           value={name}
           onChange={handleNameChange}
           placeholder={group.name}
-          className="basis-full"
         ></input>
-        <div className="text-xs text-orange-500">
-          {isDuplicated ? "This group is duplicated" : "\u00A0"}
+        <div className="warning-xs">
+          {isDuplicated ? "There is a group with the same name" : "\u00A0"}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">

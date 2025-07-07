@@ -18,7 +18,7 @@ export default function GroupItem({ group }: { group: Group }) {
   }
   const { totalDays } = appContext;
 
-  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]);
+  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) ?? [];
   const updateTask = useTaskStore((s) => s.updateTask);
   const moveTask = useTaskStore((s) => s.moveTask);
 

@@ -67,7 +67,7 @@ export default function TaskDeleteDialog({
                 </Checkbox.Root>
                 <label
                   htmlFor="c1"
-                  className="pl-[15px] text-sm text-red-500 hover:cursor-pointer"
+                  className="warning-sm pl-[15px] hover:cursor-pointer"
                 >
                   I confirm that I want to delete this task and all associated
                   content

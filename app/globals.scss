@@ -43,6 +43,14 @@ input {
   @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
 }
 
+.warning-xs {
+  @apply text-xs text-red-500;
+}
+
+.warning-sm {
+  @apply text-sm text-red-500;
+}
+
 [draggable="true"] {
   /* To prevent user selecting inside the drag source */
   user-select: none;
@@ -128,6 +136,7 @@ input {
     .dropdown-item {
       padding: 10px 15px;
       cursor: default;
+      outline: none;
 
       &:hover {
         background: var(--gray-9);

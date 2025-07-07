@@ -1,0 +1,50 @@
+"use client";
+
+import { use, useEffect } from "react";
+import { AppContext } from "../../AppContext";
+import { DummyGroupName } from "./GroupName";
+import { DropIndicator } from "./useDrop";
+import GroupTrack from "./GroupTrack";
+import { useGroupStore } from "@/app/stores/GroupStore";
+
+export default function GroupDummyItem() {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("GroupDummyItem must be used within a AppProvider");
+  }
+  const { totalDays } = appContext;
+
+  const dummyGroup = useGroupStore((s) => s.dummyGroup);
+
+  useEffect(() => {
+    console.log("GroupDummyItem rendered");
+  });
+
+  if (!dummyGroup) return null;
+
+  return (
+    <div className="app-GroupDummyItem w-full">
+      <DropIndicator
+        beforeId={"-2"}
+        level={0}
+        // ref={(el) => {
+        //   dropIndicatorRefs.current[task.id] = el;
+        // }}
+      />
+      <div className="flex h-[40px]">
+        <div className="sticky left-0 z-[9] flex w-[200px] items-center">
+          <DummyGroupName group={dummyGroup} />
+        </div>
+        <div className="sticky left-[200px] flex">
+          {totalDays.map((date) => (
+            <GroupTrack
+              key={date.toLocaleDateString()}
+              date={date}
+              tasks={[]}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

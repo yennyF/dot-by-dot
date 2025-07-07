@@ -6,40 +6,33 @@ import { UNGROUPED_KEY, useTaskStore } from "../stores/TaskStore";
 
 interface TaskAddPopoverProps {
   children: React.ReactNode;
-  onOpenChange?: (open: boolean) => void;
 }
 
-export default function TaskAddPopover({
-  children,
-  onOpenChange,
-}: TaskAddPopoverProps) {
-  const setDummyTask = useTaskStore((s) => s.setDummyTask);
-
+export default function TaskAddPopover({ children }: TaskAddPopoverProps) {
   const [open, setOpen] = useState(true);
+
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   useEffect(() => {
     if (!open) {
       setDummyTask(undefined);
     }
-    onOpenChange?.(open);
-  }, [open, setDummyTask, onOpenChange]);
+  }, [open, setDummyTask]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen} modal>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content />
+          <Content setOpen={setOpen} />
         </Popover.Portal>
       )}
     </Popover.Root>
   );
 }
 
-function Content() {
+function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const dummyTask = useTaskStore((s) => s.dummyTask);
-  const setDummyTask = useTaskStore((s) => s.setDummyTask);
-
   const tasks = useTaskStore(
     (s) => s.tasksByGroup[dummyTask?.groupId ?? UNGROUPED_KEY]
   );
@@ -56,15 +49,15 @@ function Content() {
     }
   }, [name, tasks]);
 
-  const handleTaskInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     if (!dummyTask) return;
-    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
-    setName("");
-    setDummyTask(undefined);
+    if (await addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId })) {
+      setOpen(false);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -77,22 +70,24 @@ function Content() {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      sideOffset={10}
       align="center"
-      alignOffset={0}
+      sideOffset={5}
       onKeyDown={handleKeyDown}
     >
-      <p className="">Enter a new task</p>
+      <p>Enter a new name</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={name}
-          onChange={handleTaskInputChange}
+          onChange={handleNameChange}
           placeholder="New task"
-          className="basis-full"
         ></input>
-        <div className="text-xs text-[var(--accent)]">
-          {isDuplicated ? "This task already exists" : "\u00A0"}
+        <div className="warning-xs">
+          {isDuplicated
+            ? dummyTask?.groupId !== undefined
+              ? "There is a task with the same name in this group"
+              : "There is a task with the same name"
+            : ""}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
