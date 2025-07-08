@@ -28,7 +28,7 @@ export default function TaskDeleteDialog({
   }, [open, onOpenChange]);
 
   const handleDeleteConfirm = async () => {
-    await deleteTask(task.id);
+    deleteTask(task.id);
   };
 
   return (

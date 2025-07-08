@@ -66,9 +66,8 @@ function Content({ setOpen, task }: ContentProps) {
   };
 
   const handleSaveClick = async () => {
-    if (await updateTask(task.id, { name, groupId: task.groupId })) {
-      setOpen(false);
-    }
+    updateTask(task.id, { name, groupId: task.groupId });
+    setOpen(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {

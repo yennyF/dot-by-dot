@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
+import { useTaskStore } from "./TaskStore";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -12,7 +13,7 @@ type Action = {
   loadGroups: () => Promise<void>;
   addGroup: (group: Group) => Promise<boolean>;
   updateGroup: (id: string, group: Partial<Group>) => Promise<boolean>;
-  deleteGroup: (id: string) => Promise<boolean>;
+  deleteGroup: (id: string) => void;
   moveGroup: (id: string, beforeId: string | null) => boolean;
   setDummyGroup: (group: Group | undefined) => void;
 };
@@ -56,6 +57,12 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
       return true;
     },
     deleteGroup: async (id: string) => {
+      // delete tasks state
+      useTaskStore.setState((state) => {
+        delete state.tasksByGroup[id];
+      });
+
+      // delete group state
       set((state) => {
         if (!state.groups) return;
 
@@ -65,13 +72,15 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         state.groups.splice(index, 1);
       });
 
+      // delete from db
       try {
-        await db.groups.delete(id);
+        await db.transaction("rw", db.groups, db.tasks, async () => {
+          await db.tasks.where("groupId").equals(id).delete();
+          await db.groups.delete(id);
+        });
       } catch (error) {
         console.error("Error deleting group:", error);
-        return false;
       }
-      return true;
     },
     moveGroup: (id: string, beforeId: string | null) => {
       if (beforeId === id) return true;

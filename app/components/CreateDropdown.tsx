@@ -23,23 +23,21 @@ export default function CreateDropdown({
           align="start"
           sideOffset={5}
         >
-          <DropdownMenu.Item className="dropdown-item">
-            <div
-              onClick={() => {
-                setDummyGroup({ id: uuidv4(), name: "(No name)" });
-              }}
-            >
-              Group
-            </div>
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              setDummyGroup({ id: uuidv4(), name: "(No name)" });
+            }}
+          >
+            Group
           </DropdownMenu.Item>
-          <DropdownMenu.Item className="dropdown-item">
-            <div
-              onClick={() => {
-                setDummyTask({ id: uuidv4(), name: "(No name)" });
-              }}
-            >
-              Task
-            </div>
+          <DropdownMenu.Item
+            className="dropdown-item"
+            onClick={() => {
+              setDummyTask({ id: uuidv4(), name: "(No name)" });
+            }}
+          >
+            Task
           </DropdownMenu.Item>
           <DropdownMenu.Arrow className="arrow" />
         </DropdownMenu.Content>

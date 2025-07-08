@@ -12,12 +12,12 @@ type State = {
 
 type Action = {
   loadTasks: () => Promise<void>;
-  addTask: (task: Task) => Promise<boolean>;
+  addTask: (task: Task) => void;
   updateTask: (
     id: string,
     task: Partial<Pick<Task, "name" | "groupId">>
-  ) => Promise<boolean>;
-  deleteTask: (id: string) => Promise<boolean>;
+  ) => void;
+  deleteTask: (id: string) => void;
   moveTask: (id: string, beforeId: string | null) => boolean;
   findTaskById: (id: string) => Task | undefined;
   setDummyTask: (task: Task | undefined) => void;
@@ -49,9 +49,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.add(task);
       } catch (error) {
         console.error("Error adding task:", error);
-        return false;
       }
-      return true;
     },
     updateTask: async (
       id: string,
@@ -68,9 +66,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.update(id, task);
       } catch (error) {
         console.error("Error renaming task:", error);
-        return false;
       }
-      return true;
     },
     deleteTask: async (id: string) => {
       set((state) => {
@@ -87,45 +83,43 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.delete(id);
       } catch (error) {
         console.error("Error deleting task:", error);
-        return false;
       }
-      return true;
     },
     moveTask: (id: string, beforeId: string | null) => {
       if (beforeId === id) return true;
 
-      set((state) => {
-        if (!state.tasks) return;
+      // set((state) => {
+      //   if (!state.tasks) return;
 
-        let index = state.tasks.findIndex((h) => h.id === id);
-        if (index < 0) return;
+      //   let index = state.tasks.findIndex((h) => h.id === id);
+      //   if (index < 0) return;
 
-        const task = state.tasks[index];
+      //   const task = state.tasks[index];
 
-        let deletedTasks = state.tasks.splice(index, 1);
-        if (beforeId === null) {
-          state.tasks.push(...deletedTasks);
-        } else {
-          const beforeIndex = state.tasks.findIndex(
-            (task) => task.id === beforeId
-          );
-          state.tasks.splice(beforeIndex, 0, ...deletedTasks);
-        }
+      //   let deletedTasks = state.tasks.splice(index, 1);
+      //   if (beforeId === null) {
+      //     state.tasks.push(...deletedTasks);
+      //   } else {
+      //     const beforeIndex = state.tasks.findIndex(
+      //       (task) => task.id === beforeId
+      //     );
+      //     state.tasks.splice(beforeIndex, 0, ...deletedTasks);
+      //   }
 
-        const key = task.groupId ?? UNGROUPED_KEY;
-        index = state.tasksByGroup[key].findIndex((h) => h.id === id);
-        if (index < 0) return;
+      //   const key = task.groupId ?? UNGROUPED_KEY;
+      //   index = state.tasksByGroup[key].findIndex((h) => h.id === id);
+      //   if (index < 0) return;
 
-        deletedTasks = state.tasksByGroup[key].splice(index, 1);
-        if (beforeId === null) {
-          state.tasksByGroup[key].push(...deletedTasks);
-        } else {
-          const beforeIndex = state.tasksByGroup[key].findIndex(
-            (task) => task.id === beforeId
-          );
-          state.tasksByGroup[key].splice(beforeIndex, 0, ...deletedTasks);
-        }
-      });
+      //   deletedTasks = state.tasksByGroup[key].splice(index, 1);
+      //   if (beforeId === null) {
+      //     state.tasksByGroup[key].push(...deletedTasks);
+      //   } else {
+      //     const beforeIndex = state.tasksByGroup[key].findIndex(
+      //       (task) => task.id === beforeId
+      //     );
+      //     state.tasksByGroup[key].splice(beforeIndex, 0, ...deletedTasks);
+      //   }
+      // });
 
       return true;
     },

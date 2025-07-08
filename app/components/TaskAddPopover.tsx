@@ -53,11 +53,10 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
     setName(event.target.value);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = () => {
     if (!dummyTask) return;
-    if (await addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId })) {
-      setOpen(false);
-    }
+    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
+    setOpen(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
