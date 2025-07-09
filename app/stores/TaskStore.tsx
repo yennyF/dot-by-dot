@@ -22,7 +22,6 @@ type Action = {
   moveTask: (id: string, beforeId: string | null) => boolean;
   findTaskById: (id: string) => Task | undefined;
   setDummyTask: (task: Task | undefined) => void;
-  getTaskLength: () => number;
 };
 
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
@@ -143,11 +142,5 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       return undefined; // not found
     },
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
-    getTaskLength: () => {
-      return Object.values(get().tasksByGroup).reduce(
-        (total, tasks) => total + tasks.length,
-        0
-      );
-    },
   }))
 );
