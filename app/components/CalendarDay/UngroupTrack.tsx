@@ -13,16 +13,21 @@ interface UngroupTrackProps {
 }
 
 export default function UngroupTrack({ date, task }: UngroupTrackProps) {
-  const dateSet = useTrackStore((s) => s.datesByTask?.[task.id]);
   const setTaskChecked = useTrackStore((s) => s.setTaskChecked);
 
-  const isActive = dateSet?.has(date.toLocaleDateString());
-  const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
-  const isNextActive = dateSet?.has(addDays(date, 1).toLocaleDateString());
+  const isActive = useTrackStore((s) =>
+    s.tasksByDate?.[date.toLocaleDateString()]?.has(task.id)
+  );
+  const isPrevActive = useTrackStore((s) =>
+    s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]?.has(task.id)
+  );
+  const isNextActive = useTrackStore((s) =>
+    s.tasksByDate?.[addDays(date, 1).toLocaleDateString()]?.has(task.id)
+  );
 
-  // useEffect(() => {
-  //   console.log("UngroupTrack rendered");
-  // });
+  useEffect(() => {
+    console.log("UngroupTrack rendered", task.name);
+  });
 
   return (
     <div

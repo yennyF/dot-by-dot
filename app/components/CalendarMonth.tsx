@@ -110,6 +110,10 @@ function DayItem({ date }: DayItemProps) {
 
   const percentage = filteredTasksTotal / getTaskLength();
 
+  useEffect(() => {
+    console.log("DayItem", date.toLocaleDateString());
+  });
+
   return (
     <div
       className={`calendar-day relative grid h-8 w-8 place-items-center rounded-full text-xs text-black ${isToday(date) ? "outline" : ""}`}

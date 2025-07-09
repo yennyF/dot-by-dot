@@ -3,6 +3,7 @@ import { Group } from "../repositories/types";
 import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
 import { useTaskStore } from "./TaskStore";
+import { useTrackStore } from "./TrackStore";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -57,6 +58,16 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
       return true;
     },
     deleteGroup: async (id: string) => {
+      // delete track state
+      const tasks = useTaskStore.getState().tasksByGroup[id] ?? [];
+      useTrackStore.setState((state) => {
+        const updatedTasksByDate = { ...state.tasksByDate };
+        for (const date in updatedTasksByDate) {
+          tasks.forEach((t) => updatedTasksByDate[date].delete(t.id));
+        }
+        return { tasksByDate: updatedTasksByDate };
+      });
+
       // delete tasks state
       useTaskStore.setState((state) => {
         delete state.tasksByGroup[id];
@@ -74,7 +85,14 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
       // delete from db
       try {
-        await db.transaction("rw", db.groups, db.tasks, async () => {
+        await db.transaction("rw", db.groups, db.tasks, db.tracks, async () => {
+          const taskIds = await db.tasks
+            .where("groupId")
+            .equals(id)
+            .primaryKeys();
+          if (taskIds.length > 0) {
+            await db.tracks.where("taskId").anyOf(taskIds).delete();
+          }
           await db.tasks.where("groupId").equals(id).delete();
           await db.groups.delete(id);
         });

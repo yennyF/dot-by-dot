@@ -15,23 +15,25 @@ interface GroupTrackProps {
 export default function GroupTrack({ date, tasks }: GroupTrackProps) {
   const setTasksChecked = useTrackStore((s) => s.setTasksChecked);
 
-  const dateTasks = useTrackStore(
-    (s) => s.tasksByDate?.[date.toLocaleDateString()]
-  );
-  const prevDateTasks = useTrackStore(
-    (s) => s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]
-  );
-  const nextDateTasks = useTrackStore(
-    (s) => s.tasksByDate?.[addDays(date, 1).toLocaleDateString()]
-  );
+  const ids = new Set(tasks.map((t) => t.id));
 
-  const isActive = tasks.some((task) => dateTasks?.has(task.id));
-  const isPrevActive = tasks.some((task) => prevDateTasks?.has(task.id));
-  const isNextActive = tasks.some((task) => nextDateTasks?.has(task.id));
+  const todayKey = date.toLocaleDateString();
+  const prevKey = addDays(date, -1).toLocaleDateString();
+  const nextKey = addDays(date, 1).toLocaleDateString();
 
-  // useEffect(() => {
-  //   console.log("GroupTrack rendered");
-  // });
+  const isActive =
+    (useTrackStore((s) => s.tasksByDate?.[todayKey]?.intersection(ids).size) ??
+      0) > 0;
+  const isPrevActive =
+    (useTrackStore((s) => s.tasksByDate?.[prevKey]?.intersection(ids).size) ??
+      0) > 0;
+  const isNextActive =
+    (useTrackStore((s) => s.tasksByDate?.[nextKey]?.intersection(ids).size) ??
+      0) > 0;
+
+  useEffect(() => {
+    console.log("GroupTrack rendered");
+  });
 
   return (
     <div className="app-GroupTrack relative flex h-10 w-[50px] items-center justify-center">

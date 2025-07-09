@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Task } from "../repositories/types";
 import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
+import { useTrackStore } from "./TrackStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -69,6 +70,16 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       }
     },
     deleteTask: async (id: string) => {
+      // delete track state
+      useTrackStore.setState((state) => {
+        const updatedTasksByDate = { ...state.tasksByDate };
+        for (const date in updatedTasksByDate) {
+          updatedTasksByDate[date].delete(id);
+        }
+        return { tasksByDate: updatedTasksByDate };
+      });
+
+      // delete task state
       set((state) => {
         const task = get().findTaskById(id);
         if (!task) return;

@@ -12,16 +12,21 @@ interface TaskTrackProps {
 }
 
 export default function TaskTrack({ date, task }: TaskTrackProps) {
-  const dateSet = useTrackStore((s) => s.datesByTask?.[task.id]);
   const setTaskChecked = useTrackStore((s) => s.setTaskChecked);
 
-  const isActive = dateSet?.has(date.toLocaleDateString());
-  const isPrevActive = dateSet?.has(addDays(date, -1).toLocaleDateString());
-  const isNextActive = dateSet?.has(addDays(date, 1).toLocaleDateString());
+  const isActive = useTrackStore((s) =>
+    s.tasksByDate?.[date.toLocaleDateString()]?.has(task.id)
+  );
+  const isPrevActive = useTrackStore((s) =>
+    s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]?.has(task.id)
+  );
+  const isNextActive = useTrackStore((s) =>
+    s.tasksByDate?.[addDays(date, 1).toLocaleDateString()]?.has(task.id)
+  );
 
-  // useEffect(() => {
-  //   console.log("TaskTrack rendered");
-  // });
+  useEffect(() => {
+    console.log("TaskTrack rendered", task.name);
+  });
 
   return (
     <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">
