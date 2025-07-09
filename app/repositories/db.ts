@@ -1,5 +1,5 @@
 import Dexie, { EntityTable, Table } from "dexie";
-import { Group, normalizeDateUTC, Task, Track } from "./types";
+import { Group, midnightUTC, Task, Track } from "./types";
 import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
@@ -95,7 +95,7 @@ export class TickedDB extends Dexie {
     for (const date of totalDays) {
       const tracks = taskIds.reduce<Track[]>((acc, taskId) => {
         if (Math.random() > 0.7) {
-          acc.push({ taskId, date: normalizeDateUTC(date) });
+          acc.push({ taskId, date: midnightUTC(date) });
         }
         return acc;
       }, []);

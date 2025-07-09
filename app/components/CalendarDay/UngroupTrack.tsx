@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Task } from "@/app/repositories/types";
+import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays } from "date-fns";
 import clsx from "clsx";
@@ -13,21 +13,22 @@ interface UngroupTrackProps {
 }
 
 export default function UngroupTrack({ date, task }: UngroupTrackProps) {
-  const setTaskChecked = useTrackStore((s) => s.setTaskChecked);
+  const addTrack = useTrackStore((s) => s.addTrack);
+  const deleteTrack = useTrackStore((s) => s.deleteTrack);
 
   const isActive = useTrackStore((s) =>
-    s.tasksByDate?.[date.toLocaleDateString()]?.has(task.id)
+    s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id)
   );
   const isPrevActive = useTrackStore((s) =>
-    s.tasksByDate?.[addDays(date, -1).toLocaleDateString()]?.has(task.id)
+    s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id)
   );
   const isNextActive = useTrackStore((s) =>
-    s.tasksByDate?.[addDays(date, 1).toLocaleDateString()]?.has(task.id)
+    s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id)
   );
 
-  useEffect(() => {
-    console.log("UngroupTrack rendered", task.name);
-  });
+  // useEffect(() => {
+  //   console.log("UngroupTrack rendered", task.name);
+  // });
 
   return (
     <div
@@ -49,7 +50,11 @@ export default function UngroupTrack({ date, task }: UngroupTrackProps) {
             : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
         )}
         onClick={() => {
-          setTaskChecked(date, task.id, !isActive);
+          if (isActive) {
+            deleteTrack(date, task.id);
+          } else {
+            addTrack(date, task.id);
+          }
         }}
         onMouseEnter={() => {
           const el = document.querySelector(`.task-name[data-id="${task.id}"]`);

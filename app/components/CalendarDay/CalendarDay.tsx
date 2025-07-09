@@ -78,9 +78,9 @@ export default function CalendarDay() {
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
             <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
             <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
-              {totalYears.map((date, index) => (
+              {totalYears.map((date) => (
                 <YearItem
-                  key={index}
+                  key={date.toLocaleDateString()}
                   date={date}
                   minDate={minDate}
                   maxDate={maxDate}
@@ -124,7 +124,7 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
         {format(date, "yyyy")}
       </div>
       <div className="months mt-3 flex">
-        {totalMonths.map((date, index) => {
+        {totalMonths.map((date) => {
           const totalDays = eachDayOfInterval({
             start: isAfter(startOfMonth(date), minDate)
               ? startOfMonth(date)
@@ -135,16 +135,16 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
           });
 
           return (
-            <div className="month-item w-fit" key={index}>
+            <div className="month-item w-fit" key={date.toLocaleDateString()}>
               <div className="sticky left-[200px] w-fit bg-[var(--background)] px-[14px] text-xl font-bold">
                 {format(date, "MMMM")}
               </div>
               <div className="days mt-4 flex">
-                {totalDays.map((date, index) => {
+                {totalDays.map((date) => {
                   const isTodayDate = isToday(date);
                   return (
                     <div
-                      key={index}
+                      key={date.toLocaleDateString()}
                       className={`day-item flex w-[50px] flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
                     >
                       <div className="text-center text-xs">

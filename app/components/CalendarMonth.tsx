@@ -14,9 +14,10 @@ import {
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { useTrackStore } from "../stores/TrackStore";
+import { midnightUTCstring } from "../repositories/types";
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
-const MAX_TASK_SIZE = 5;
+const MAX_TASK_SIZE = 8;
 
 export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -89,8 +90,8 @@ export default function CalendarMonth() {
         className="grid grid-cols-7 gap-2 text-neutral-400"
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
-        {totalDays.map((day, index) => (
-          <DayItem key={index} date={day} />
+        {totalDays.map((date) => (
+          <DayItem key={date.toLocaleDateString()} date={date} />
         ))}
       </div>
     </div>
@@ -103,14 +104,14 @@ interface DayItemProps {
 
 function DayItem({ date }: DayItemProps) {
   const totalChecked = useTrackStore(
-    (s) => s.tasksByDate?.[date.toLocaleDateString()]?.size ?? 0
+    (s) => s.tasksByDate?.[midnightUTCstring(date)]?.size ?? 0
   );
 
   const percentage = Math.min(totalChecked, MAX_TASK_SIZE) / MAX_TASK_SIZE;
 
-  useEffect(() => {
-    console.log("DayItem", date.toLocaleDateString());
-  });
+  // useEffect(() => {
+  //   console.log("DayItem", date.toLocaleDateString());
+  // });
 
   return (
     <div

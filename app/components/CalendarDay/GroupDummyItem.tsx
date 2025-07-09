@@ -37,11 +37,7 @@ export default function GroupDummyItem() {
         </div>
         <div className="sticky left-[200px] flex">
           {totalDays.map((date) => (
-            <GroupTrack
-              key={date.toLocaleDateString()}
-              date={date}
-              tasks={[]}
-            />
+            <GroupTrack key={date.toDateString()} date={date} tasks={[]} />
           ))}
         </div>
       </div>

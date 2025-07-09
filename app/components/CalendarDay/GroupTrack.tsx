@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Task } from "@/app/repositories/types";
+import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays } from "date-fns";
 import clsx from "clsx";
@@ -13,27 +13,31 @@ interface GroupTrackProps {
 }
 
 export default function GroupTrack({ date, tasks }: GroupTrackProps) {
-  const setTasksChecked = useTrackStore((s) => s.setTasksChecked);
+  const addTracks = useTrackStore((s) => s.addTracks);
+  const deleteTracks = useTrackStore((s) => s.deleteTracks);
 
-  const ids = new Set(tasks.map((t) => t.id));
+  const taskIdSet = new Set(tasks.map((t) => t.id));
 
-  const todayKey = date.toLocaleDateString();
-  const prevKey = addDays(date, -1).toLocaleDateString();
-  const nextKey = addDays(date, 1).toLocaleDateString();
+  const todayKey = midnightUTCstring(date);
+  const prevKey = midnightUTCstring(addDays(date, -1));
+  const nextKey = midnightUTCstring(addDays(date, 1));
 
   const isActive =
-    (useTrackStore((s) => s.tasksByDate?.[todayKey]?.intersection(ids).size) ??
-      0) > 0;
+    (useTrackStore(
+      (s) => s.tasksByDate?.[todayKey]?.intersection(taskIdSet).size
+    ) ?? 0) > 0;
   const isPrevActive =
-    (useTrackStore((s) => s.tasksByDate?.[prevKey]?.intersection(ids).size) ??
-      0) > 0;
+    (useTrackStore(
+      (s) => s.tasksByDate?.[prevKey]?.intersection(taskIdSet).size
+    ) ?? 0) > 0;
   const isNextActive =
-    (useTrackStore((s) => s.tasksByDate?.[nextKey]?.intersection(ids).size) ??
-      0) > 0;
+    (useTrackStore(
+      (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size
+    ) ?? 0) > 0;
 
-  useEffect(() => {
-    console.log("GroupTrack rendered");
-  });
+  // useEffect(() => {
+  //   console.log("GroupTrack rendered");
+  // });
 
   return (
     <div className="app-GroupTrack relative flex h-10 w-[50px] items-center justify-center">
@@ -51,11 +55,12 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
             : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
         )}
         onClick={() => {
-          setTasksChecked(
-            date,
-            tasks.map((task) => task.id),
-            !isActive
-          );
+          const taskIds = Array.from(taskIdSet);
+          if (isActive) {
+            deleteTracks(date, taskIds);
+          } else {
+            addTracks(date, taskIds);
+          }
         }}
       >
         {isActive && <CheckIcon className="text-white" />}

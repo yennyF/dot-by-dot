@@ -16,8 +16,12 @@ export type Track = {
   date: Date;
 };
 
-export function normalizeDateUTC(date: Date): Date {
+export function midnightUTC(date: Date): Date {
   return new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   );
+}
+
+export function midnightUTCstring(date: Date): string {
+  return midnightUTC(date).toLocaleDateString();
 }

@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { LocaleDateString, normalizeDateUTC } from "../repositories/types";
+import {
+  midnightUTCstring,
+  LocaleDateString,
+  midnightUTC,
+} from "../repositories/types";
 import { db } from "../repositories/db";
 
 type State = {
@@ -9,8 +13,10 @@ type State = {
 
 type Action = {
   loadTracks: () => Promise<void>;
-  setTaskChecked: (date: Date, taskId: string, checked: boolean) => void;
-  setTasksChecked: (date: Date, taskIds: string[], checked: boolean) => void;
+  addTrack: (date: Date, taskId: string) => void;
+  deleteTrack: (date: Date, taskId: string) => void;
+  addTracks: (date: Date, taskIds: string[]) => void;
+  deleteTracks: (date: Date, taskIds: string[]) => void;
 };
 
 export const useTrackStore = create<State & Action>((set) => ({
@@ -27,70 +33,78 @@ export const useTrackStore = create<State & Action>((set) => ({
 
     set(() => ({ tasksByDate }));
   },
-  setTaskChecked: async (date: Date, taskId: string, checked: boolean) => {
+  addTrack: async (date: Date, taskId: string) => {
+    const dateString = midnightUTCstring(date);
     set((state) => {
-      const dateString = date.toLocaleDateString();
-
       state.tasksByDate ??= {};
       state.tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
-
-      if (checked) {
-        state.tasksByDate[dateString].add(taskId);
-      } else {
-        state.tasksByDate[dateString].delete(taskId);
-      }
+      state.tasksByDate[dateString].add(taskId);
       return {
         tasksByDate: { ...state.tasksByDate },
       };
     });
 
     try {
-      if (checked) {
-        await db.tracks.add({
-          taskId,
-          date: normalizeDateUTC(date),
-        });
-      } else {
-        await db.tracks.delete([taskId, date]);
-      }
+      await db.tracks.add({ taskId, date: midnightUTC(date) });
     } catch (error) {
       console.error("Error checking task:", error);
     }
   },
-  setTasksChecked: async (date: Date, taskIds: string[], checked: boolean) => {
+  deleteTrack: async (date: Date, taskId: string) => {
+    const dateString = midnightUTCstring(date);
     set((state) => {
-      const dateString = date.toLocaleDateString();
-
       state.tasksByDate ??= {};
-      const tasksByDate = state.tasksByDate;
-      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
-      taskIds.forEach((taskId) => {
-        if (checked) {
-          tasksByDate[dateString].add(taskId);
-        } else {
-          tasksByDate[dateString].delete(taskId);
-        }
-      });
-
+      state.tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
+      state.tasksByDate[dateString].delete(taskId);
       return {
         tasksByDate: { ...state.tasksByDate },
       };
     });
 
     try {
-      const normalizeDate = normalizeDateUTC(date);
-      if (checked) {
-        await db.tracks.bulkAdd(
-          taskIds.map((taskId) => ({
-            taskId,
-            date: normalizeDate,
-          }))
-        );
-      } else {
-        await db.tracks.bulkDelete(
-          taskIds.map((taskId) => [taskId, normalizeDate])
-        );
-      }
+      await db.tracks.delete([taskId, midnightUTC(date)]);
+    } catch (error) {
+      console.error("Error checking task:", error);
+    }
+  },
+  addTracks: async (date: Date, taskIds) => {
+    const dateString = midnightUTCstring(date);
+    set((state) => {
+      state.tasksByDate ??= {};
+      const tasksByDate = state.tasksByDate;
+      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
+      taskIds.forEach((taskId) => tasksByDate[dateString].add(taskId));
+      return {
+        tasksByDate: { ...state.tasksByDate },
+      };
+    });
+
+    try {
+      const normalizedDate = midnightUTC(date);
+      await db.tracks.bulkAdd(
+        taskIds.map((taskId) => ({ taskId, date: normalizedDate }))
+      );
+    } catch (error) {
+      console.error("Error checking tasks:", error);
+    }
+  },
+  deleteTracks: async (date: Date, taskIds: string[]) => {
+    const dateString = midnightUTCstring(date);
+    set((state) => {
+      state.tasksByDate ??= {};
+      const tasksByDate = state.tasksByDate;
+      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
+      taskIds.forEach((taskId) => tasksByDate[dateString].delete(taskId));
+      return {
+        tasksByDate: { ...state.tasksByDate },
+      };
+    });
+
+    try {
+      const normalizedDate = midnightUTC(date);
+      await db.tracks.bulkDelete(
+        taskIds.map((taskId) => [taskId, normalizedDate])
+      );
     } catch (error) {
       console.error("Error checking tasks:", error);
     }
