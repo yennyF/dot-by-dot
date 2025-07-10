@@ -9,6 +9,7 @@ export type Task = {
   id: string;
   name: string;
   groupId?: string;
+  order: string;
 };
 
 export type Track = {

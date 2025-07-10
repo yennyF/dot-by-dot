@@ -4,6 +4,7 @@ import { eachDayOfInterval } from "date-fns";
 import { subMonths } from "date-fns";
 import { subDays } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import { LexoRank } from "lexorank";
 
 const dbVersion = 1;
 
@@ -59,31 +60,37 @@ export class TickedDB extends Dexie {
     await this.groups.bulkAdd(groups, { allKeys: true });
 
     // Add some default tasks
-    const tasks: Task[] = [
-      { id: uuidv4(), name: "Blah" },
-      { id: uuidv4(), name: "Blah Blah" },
+    const items: Pick<Task, "name" | "groupId">[] = [
+      { name: "Blah" },
+      { name: "Blah Blah" },
 
-      { id: uuidv4(), name: "React", groupId: "1" },
-      { id: uuidv4(), name: "LeetCode", groupId: "1" },
-      { id: uuidv4(), name: "Behavioral", groupId: "1" },
-      { id: uuidv4(), name: "English", groupId: "1" },
-      { id: uuidv4(), name: "Mock Interview", groupId: "1" },
-      { id: uuidv4(), name: "System Design", groupId: "1" },
-      { id: uuidv4(), name: "AI", groupId: "1" },
-      { id: uuidv4(), name: "Tecnhology", groupId: "1" },
+      { name: "React", groupId: "1" },
+      { name: "LeetCode", groupId: "1" },
+      { name: "Behavioral", groupId: "1" },
+      { name: "English", groupId: "1" },
+      { name: "Mock Interview", groupId: "1" },
+      { name: "System Design", groupId: "1" },
+      { name: "AI", groupId: "1" },
+      { name: "Tecnhology", groupId: "1" },
 
-      { id: uuidv4(), name: "Rower", groupId: "2" },
-      { id: uuidv4(), name: "Rotations", groupId: "2" },
-      { id: uuidv4(), name: "Squads", groupId: "2" },
-      { id: uuidv4(), name: "Skate", groupId: "2" },
-      { id: uuidv4(), name: "Sport Climb", groupId: "2" },
-      { id: uuidv4(), name: "Yoga", groupId: "2" },
+      { name: "Rower", groupId: "2" },
+      { name: "Rotations", groupId: "2" },
+      { name: "Squads", groupId: "2" },
+      { name: "Skate", groupId: "2" },
+      { name: "Sport Climb", groupId: "2" },
+      { name: "Yoga", groupId: "2" },
 
-      { id: uuidv4(), name: "CLimb App", groupId: "3" },
-      { id: uuidv4(), name: "Habit App", groupId: "3" },
-      { id: uuidv4(), name: "Photography", groupId: "3" },
-      { id: uuidv4(), name: "Drawing", groupId: "3" },
+      { name: "CLimb App", groupId: "3" },
+      { name: "Habit App", groupId: "3" },
+      { name: "Photography", groupId: "3" },
+      { name: "Drawing", groupId: "3" },
     ];
+    let lexoRank = LexoRank.middle();
+    const tasks: Task[] = items.map((item) => {
+      const prev = lexoRank;
+      lexoRank = lexoRank.genNext();
+      return { id: uuidv4(), order: prev.toString(), ...item };
+    });
     const taskIds = await this.tasks.bulkAdd(tasks, { allKeys: true });
 
     // Add some default tracks

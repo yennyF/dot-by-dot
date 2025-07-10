@@ -3,6 +3,7 @@ import { Task } from "../repositories/types";
 import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
 import { useTrackStore } from "./TrackStore";
+import { LexoRank } from "lexorank";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -13,55 +14,68 @@ type State = {
 
 type Action = {
   loadTasks: () => Promise<void>;
-  addTask: (task: Task) => void;
+  addTask: (task: Omit<Task, "order">) => void;
   updateTask: (
     id: string,
     task: Partial<Pick<Task, "name" | "groupId">>
   ) => void;
   deleteTask: (id: string) => void;
   moveTask: (id: string, beforeId: string | null) => boolean;
-  findTaskById: (id: string) => Task | undefined;
   setDummyTask: (task: Task | undefined) => void;
 };
 
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
-  immer((set, get) => ({
+  immer((set) => ({
     dummyTask: undefined,
     tasksByGroup: {},
 
     loadTasks: async () => {
       const tasksByGroup: Record<string, Task[]> = {};
-      await db.tasks.each((task) => {
+
+      await db.tasks.orderBy("order").each((task) => {
         const key = task.groupId ?? UNGROUPED_KEY;
         (tasksByGroup[key] ??= []).push(task);
       });
+
       set(() => ({ tasksByGroup }));
     },
-    addTask: async (task: Task) => {
+    addTask: async (props: Omit<Task, "order">) => {
+      let task: Task;
+
       set((state) => {
-        const key = task.groupId ?? UNGROUPED_KEY;
+        const key = props.groupId ?? UNGROUPED_KEY;
+        const tasks = state.tasksByGroup[key] ?? [];
+
+        const firstOrder = tasks[0]?.order;
+        const order = firstOrder
+          ? LexoRank.parse(firstOrder).genPrev().toString()
+          : LexoRank.middle().toString();
+
+        task = { ...props, order };
         (state.tasksByGroup[key] ??= []).unshift(task);
       });
 
       try {
-        await db.tasks.add(task);
+        await db.tasks.add(task!);
       } catch (error) {
         console.error("Error adding task:", error);
       }
     },
     updateTask: async (
       id: string,
-      task: Partial<Pick<Task, "name" | "groupId">>
+      props: Partial<Pick<Task, "name" | "groupId">>
     ) => {
       set((state) => {
-        const key = task.groupId ?? UNGROUPED_KEY;
+        const key = props.groupId ?? UNGROUPED_KEY;
+
         const target = state.tasksByGroup[key]?.find((t) => t.id === id);
         if (!target) return;
-        Object.assign(target, task);
+
+        Object.assign(target, props);
       });
 
       try {
-        await db.tasks.update(id, task);
+        await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error renaming task:", error);
       }
@@ -70,21 +84,23 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       // delete track state
       useTrackStore.setState((state) => {
         const updatedTasksByDate = { ...state.tasksByDate };
+
         for (const date in updatedTasksByDate) {
           updatedTasksByDate[date].delete(id);
         }
+
         return { tasksByDate: updatedTasksByDate };
       });
 
       // delete task state
       set((state) => {
-        const task = get().findTaskById(id);
-        if (!task) return;
-
-        const key = task.groupId ?? UNGROUPED_KEY;
-        const index = state.tasksByGroup[key]?.findIndex((h) => h.id === id);
-        if (index < 0) return;
-        state.tasksByGroup[key].splice(index, 1);
+        for (const tasks of Object.values(state.tasksByGroup)) {
+          const index = tasks.findIndex((t) => t.id === id);
+          if (index > -1) {
+            tasks.splice(index, 1);
+            return;
+          }
+        }
       });
 
       try {
@@ -130,14 +146,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       // });
 
       return true;
-    },
-    findTaskById: (id: string) => {
-      const { tasksByGroup } = get();
-      for (const tasks of Object.values(tasksByGroup)) {
-        const found = tasks.find((task) => task.id === id);
-        if (found) return found;
-      }
-      return undefined; // not found
     },
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
   }))
