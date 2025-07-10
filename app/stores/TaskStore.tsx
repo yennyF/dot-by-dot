@@ -30,13 +30,11 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     tasksByGroup: {},
 
     loadTasks: async () => {
-      const tasks = await db.tasks.toArray();
-      const tasksByGroup = tasks.reduce<Record<string, Task[]>>((acc, task) => {
+      const tasksByGroup: Record<string, Task[]> = {};
+      await db.tasks.each((task) => {
         const key = task.groupId ?? UNGROUPED_KEY;
-        (acc[key] ??= []).push(task);
-        return acc;
-      }, {});
-
+        (tasksByGroup[key] ??= []).push(task);
+      });
       set(() => ({ tasksByGroup }));
     },
     addTask: async (task: Task) => {

@@ -24,13 +24,10 @@ export const useTrackStore = create<State & Action>((set) => ({
 
   loadTracks: async () => {
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
-
-    const tracks = await db.tracks.toArray();
-    tracks.forEach((track) => {
+    await db.tracks.each((track) => {
       const dateString = track.date.toLocaleDateString();
       (tasksByDate[dateString] ??= new Set()).add(track.taskId);
     });
-
     set(() => ({ tasksByDate }));
   },
   addTrack: async (date: Date, taskId: string) => {

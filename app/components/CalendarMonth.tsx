@@ -17,7 +17,7 @@ import { useTrackStore } from "../stores/TrackStore";
 import { midnightUTCstring } from "../repositories/types";
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
-const MAX_TASK_SIZE = 8;
+const MAX_TASK_SIZE = 10;
 
 export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
