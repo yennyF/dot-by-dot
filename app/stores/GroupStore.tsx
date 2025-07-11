@@ -59,7 +59,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
     },
     deleteGroup: async (id: string) => {
       // delete track state
-      const tasks = useTaskStore.getState().tasksByGroup[id] ?? [];
+      const tasks = useTaskStore.getState().tasksByGroup?.[id] ?? [];
       useTrackStore.setState((state) => {
         const updatedTasksByDate = { ...state.tasksByDate };
         for (const date in updatedTasksByDate) {
@@ -70,7 +70,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
       // delete tasks state
       useTaskStore.setState((state) => {
-        delete state.tasksByGroup[id];
+        delete state.tasksByGroup?.[id];
       });
 
       // delete group state

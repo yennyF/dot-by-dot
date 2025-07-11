@@ -34,7 +34,7 @@ export default function TaskAddPopover({ children }: TaskAddPopoverProps) {
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const dummyTask = useTaskStore((s) => s.dummyTask);
   const tasks = useTaskStore(
-    (s) => s.tasksByGroup[dummyTask?.groupId ?? UNGROUPED_KEY]
+    (s) => s.tasksByGroup?.[dummyTask?.groupId ?? UNGROUPED_KEY]
   );
   const addTask = useTaskStore((s) => s.addTask);
 

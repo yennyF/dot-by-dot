@@ -18,7 +18,7 @@ export default function Ungroup() {
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
   );
-  const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]);
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
 
@@ -45,6 +45,8 @@ export default function Ungroup() {
     console.log("Ungroup rendered");
   });
 
+  if (!tasks) return;
+
   return (
     <div
       ref={ref}
@@ -70,7 +72,7 @@ export default function Ungroup() {
           </div>
         </>
       )}
-      {tasks?.map((task) => (
+      {tasks.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator beforeId={task.id} level={0} />
           <div className="flex h-[40px] items-center">
@@ -87,7 +89,7 @@ export default function Ungroup() {
           </div>
         </Fragment>
       ))}
-      {tasks?.length > 0 && (
+      {tasks.length > 0 && (
         <DropIndicator afterId={tasks[tasks.length - 1].id} level={0} />
       )}
     </div>

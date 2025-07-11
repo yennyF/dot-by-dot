@@ -20,7 +20,7 @@ export default function GroupItem({ group }: { group: Group }) {
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
   );
-  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]);
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
   const moveToGroup = useTaskStore((s) => s.moveToGroup);
@@ -50,6 +50,8 @@ export default function GroupItem({ group }: { group: Group }) {
   useEffect(() => {
     console.log("GroupItem rendered", group.name);
   });
+
+  if (!tasks) return;
 
   return (
     <div
@@ -98,7 +100,7 @@ export default function GroupItem({ group }: { group: Group }) {
         </>
       )}
 
-      {tasks?.map((task) => (
+      {tasks.map((task) => (
         <Fragment key={task.id}>
           <DropIndicator
             beforeId={task.id}
@@ -121,7 +123,7 @@ export default function GroupItem({ group }: { group: Group }) {
           </div>
         </Fragment>
       ))}
-      {tasks?.length > 0 && (
+      {tasks.length > 0 && (
         <DropIndicator
           afterId={tasks[tasks.length - 1].id}
           level={1}

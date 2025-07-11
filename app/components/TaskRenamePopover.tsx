@@ -41,7 +41,7 @@ interface ContentProps {
 
 function Content({ setOpen, task }: ContentProps) {
   const tasks = useTaskStore(
-    (s) => s.tasksByGroup[task.groupId ?? UNGROUPED_KEY]
+    (s) => s.tasksByGroup?.[task.groupId ?? UNGROUPED_KEY]
   );
   const updateTask = useTaskStore((s) => s.updateTask);
 
