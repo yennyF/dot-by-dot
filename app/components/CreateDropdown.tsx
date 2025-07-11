@@ -34,7 +34,7 @@ export default function CreateDropdown({
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() => {
-              setDummyTask({ id: uuidv4(), name: "(No name)" });
+              setDummyTask({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
             Task

@@ -34,7 +34,6 @@ export default function Ungroup() {
         moveTaskBefore(taskId, beforeId);
       } else {
         const afterId = el.dataset.afterId;
-        console.log(afterId);
         if (afterId) {
           moveTaskAfter(taskId, afterId);
         }

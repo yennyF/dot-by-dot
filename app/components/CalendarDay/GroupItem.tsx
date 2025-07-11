@@ -20,8 +20,10 @@ export default function GroupItem({ group }: { group: Group }) {
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
   );
-  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) ?? [];
+  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
+  const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
+  const moveToGroup = useTaskStore((s) => s.moveToGroup);
 
   // const dropIndicatorRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const ref = useRef<HTMLDivElement>(null);
@@ -37,7 +39,9 @@ export default function GroupItem({ group }: { group: Group }) {
       } else {
         const afterId = el.dataset.afterId;
         if (afterId) {
-          moveTaskBefore(taskId, afterId);
+          moveTaskAfter(taskId, afterId);
+        } else {
+          moveToGroup(taskId, null);
         }
       }
     }

@@ -35,8 +35,8 @@ export default function TaskName({ task, level }: TaskNameProps) {
       )}
       draggable="true"
       data-id={task.id}
-      onDragStart={(e) => handleDragStart(e)}
-      onDragEnd={(e) => handleDragEnd(e)}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
       <div
         className={clsx(

@@ -35,6 +35,7 @@ export default function GroupName({ group }: GroupNameProps) {
               id: uuidv4(),
               name: "(No name)",
               groupId: group.id,
+              order: "",
             });
           }}
         >

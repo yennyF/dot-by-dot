@@ -19,6 +19,7 @@ type Action = {
   changeGroup: (id: string, groupId: string | null) => void;
   moveTaskBefore: (id: string, beforeId: string) => void;
   moveTaskAfter: (id: string, afterId: string) => void;
+  moveToGroup: (id: string, groupId: string | null) => void;
   deleteTask: (id: string) => void;
   setDummyTask: (task: Task | undefined) => void;
   findTask: (id: string) => Task | null;
@@ -106,17 +107,17 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       set(({ tasksByGroup }) => {
         if (!tasksByGroup) return;
 
-        // Update position in the array
+        // Remove from current position
         const locTask = locateTask(id, tasksByGroup);
         if (!locTask) return;
         const task = tasksByGroup[locTask.key][locTask.index];
         tasksByGroup[locTask.key].splice(locTask.index, 1);
 
+        // Add to new position
         const locBefore = locateTask(beforeId, tasksByGroup);
         if (!locBefore) return;
         const beforeTask = tasksByGroup[locBefore.key][locBefore.index];
         const afterTask = tasksByGroup[locBefore.key][locBefore.index - 1];
-
         tasksByGroup[locBefore.key].splice(locBefore.index, 0, task);
 
         // Update order
@@ -149,21 +150,22 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       set(({ tasksByGroup }) => {
         if (!tasksByGroup) return;
 
-        // Update position in the array
-        const locTask = locateTask(id, tasksByGroup);
-        if (!locTask) return;
-        const task = tasksByGroup[locTask.key][locTask.index];
-        tasksByGroup[locTask.key].splice(locTask.index, 1);
+        // Remove from current position
+        const current = locateTask(id, tasksByGroup);
+        if (!current) return;
+        const task = tasksByGroup[current.key][current.index];
+        tasksByGroup[current.key].splice(current.index, 1);
 
-        const locAfter = locateTask(afterId, tasksByGroup);
-        if (!locAfter) return;
-        const afterTask = tasksByGroup[locAfter.key][locAfter.index];
-        const beforeTask = tasksByGroup[locAfter.key][locAfter.index + 1];
-        if (tasksByGroup[locAfter.key].length - 2) {
-          tasksByGroup[locAfter.key].splice(locAfter.index + 1, 0, task);
-        } else {
-          tasksByGroup[locAfter.key].push(task);
-        }
+        // Add to new position
+        const after = locateTask(afterId, tasksByGroup);
+        if (!after) return;
+        const afterTask = tasksByGroup[after.key][after.index];
+        const beforeTask = tasksByGroup[after.key][after.index + 1];
+        const safeIndex = Math.min(
+          after.index + 1,
+          tasksByGroup[after.key].length
+        );
+        tasksByGroup[after.key].splice(safeIndex, 0, task);
 
         // Update order
         const afterRank = LexoRank.parse(afterTask.order);
@@ -181,6 +183,46 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
       try {
         if (newOrder) {
           await db.tasks.update(id, { groupId: newGroupId, order: newOrder });
+        }
+      } catch (error) {
+        console.error("Error moving task:", error);
+      }
+    },
+    moveToGroup: async (id: string, groupId: string | null) => {
+      let newOrder: string | undefined;
+
+      set(({ tasksByGroup }) => {
+        if (!tasksByGroup) return;
+
+        // Remove from current position
+        const current = locateTask(id, tasksByGroup);
+        if (!current) return;
+        const task = tasksByGroup[current.key][current.index];
+        tasksByGroup[current.key].splice(current.index, 1);
+
+        // Add to new position
+        const key = groupId ?? UNGROUPED_KEY;
+        tasksByGroup[key] ??= [];
+        const afterTask = tasksByGroup[key][tasksByGroup[key].length - 1];
+        tasksByGroup[key].push(task);
+
+        // Update order
+        if (afterTask) {
+          const afterRank = LexoRank.parse(afterTask.order);
+          newOrder = afterRank.genNext().toString();
+        } else {
+          newOrder = LexoRank.middle().toString();
+        }
+        task.order = newOrder;
+        task.groupId = groupId || undefined;
+      });
+
+      try {
+        if (newOrder) {
+          await db.tasks.update(id, {
+            groupId: groupId || undefined,
+            order: newOrder,
+          });
         }
       } catch (error) {
         console.error("Error moving task:", error);
