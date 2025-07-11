@@ -21,8 +21,7 @@ export default function GroupItem({ group }: { group: Group }) {
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
   );
   const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) ?? [];
-  const updateTask = useTaskStore((s) => s.updateTask);
-  const moveTask = useTaskStore((s) => s.moveTask);
+  const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
 
   // const dropIndicatorRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const ref = useRef<HTMLDivElement>(null);
@@ -33,14 +32,12 @@ export default function GroupItem({ group }: { group: Group }) {
       if (!taskId) return;
 
       const beforeId = el.dataset.beforeId;
-      if (beforeId === "-2") {
-        updateTask(taskId, { groupId: undefined });
+      if (beforeId) {
+        moveTaskBefore(taskId, beforeId);
       } else {
-        updateTask(taskId, { groupId: group.id });
-        if (beforeId === "-1") {
-          moveTask(taskId, null);
-        } else if (beforeId !== taskId) {
-          moveTask(taskId, beforeId ?? null);
+        const afterId = el.dataset.afterId;
+        if (afterId) {
+          moveTaskBefore(taskId, afterId);
         }
       }
     }
@@ -59,7 +56,6 @@ export default function GroupItem({ group }: { group: Group }) {
       onDragLeave={handleDragLeave}
     >
       <DropIndicator
-        beforeId={"-2"}
         level={0}
         // ref={(el) => {
         //   dropIndicatorRefs.current[task.id] = el;
@@ -121,12 +117,15 @@ export default function GroupItem({ group }: { group: Group }) {
           </div>
         </Fragment>
       ))}
-      <DropIndicator
-        level={1}
-        // ref={(el) => {
-        //   dropIndicatorRefs.current[task.id] = el;
-        // }}
-      />
+      {tasks?.length > 0 && (
+        <DropIndicator
+          afterId={tasks[tasks.length - 1].id}
+          level={1}
+          // ref={(el) => {
+          //   dropIndicatorRefs.current[task.id] = el;
+          // }}
+        />
+      )}
     </div>
   );
 }

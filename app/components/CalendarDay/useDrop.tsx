@@ -6,11 +6,17 @@ import { DragEvent, RefObject, use } from "react";
 
 interface DropIndicatorProps {
   beforeId?: string;
+  afterId?: string;
   ref?: RefObject<HTMLInputElement>;
   level: 0 | 1;
 }
 
-export const DropIndicator = ({ beforeId, ref, level }: DropIndicatorProps) => {
+export const DropIndicator = ({
+  beforeId,
+  afterId,
+  ref,
+  level,
+}: DropIndicatorProps) => {
   return (
     <div
       ref={ref}
@@ -18,7 +24,8 @@ export const DropIndicator = ({ beforeId, ref, level }: DropIndicatorProps) => {
         "drop-indicator sticky left-0 flex w-[200px] items-center opacity-0",
         level === 1 && "pl-[15px]"
       )}
-      data-before-id={beforeId || -1}
+      data-before-id={beforeId}
+      data-after-id={afterId}
     >
       <div
         className={clsx(

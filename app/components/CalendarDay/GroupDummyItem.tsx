@@ -25,7 +25,6 @@ export default function GroupDummyItem() {
   return (
     <div className="app-GroupDummyItem w-full">
       <DropIndicator
-        beforeId={"-2"}
         level={0}
         // ref={(el) => {
         //   dropIndicatorRefs.current[task.id] = el;

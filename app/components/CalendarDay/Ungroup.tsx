@@ -19,22 +19,25 @@ export default function Ungroup() {
     s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
   );
   const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]);
-  const updateTask = useTaskStore((s) => s.updateTask);
-  const moveTask = useTaskStore((s) => s.moveTask);
+  const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
+  const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
 
   const ref = useRef<HTMLDivElement>(null);
   const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
     ref,
     (e: DragEvent, el: HTMLElement) => {
-      const beforeId = el.dataset.beforeId;
       const taskId = e.dataTransfer.getData("taskId");
+      if (!taskId) return;
 
-      updateTask(taskId, { groupId: undefined });
-
-      if (beforeId === "-1") {
-        moveTask(taskId, null);
-      } else if (beforeId !== taskId) {
-        moveTask(taskId, beforeId ?? null);
+      const beforeId = el.dataset.beforeId;
+      if (beforeId) {
+        moveTaskBefore(taskId, beforeId);
+      } else {
+        const afterId = el.dataset.afterId;
+        console.log(afterId);
+        if (afterId) {
+          moveTaskAfter(taskId, afterId);
+        }
       }
     }
   );
@@ -85,7 +88,9 @@ export default function Ungroup() {
           </div>
         </Fragment>
       ))}
-      <DropIndicator level={0} />
+      {tasks?.length > 0 && (
+        <DropIndicator afterId={tasks[tasks.length - 1].id} level={0} />
+      )}
     </div>
   );
 }

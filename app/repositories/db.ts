@@ -17,7 +17,7 @@ export class TickedDB extends Dexie {
     super("TickedDB");
     this.version(dbVersion).stores({
       groups: "id, name",
-      tasks: "id, name, groupId",
+      tasks: "id, name, groupId, order",
       tracks: "[taskId+date], taskId, date",
     });
   }
@@ -87,9 +87,9 @@ export class TickedDB extends Dexie {
     ];
     let lexoRank = LexoRank.middle();
     const tasks: Task[] = items.map((item) => {
-      const prev = lexoRank;
+      const order = lexoRank.toString();
       lexoRank = lexoRank.genNext();
-      return { id: uuidv4(), order: prev.toString(), ...item };
+      return { id: uuidv4(), order, ...item };
     });
     const taskIds = await this.tasks.bulkAdd(tasks, { allKeys: true });
 

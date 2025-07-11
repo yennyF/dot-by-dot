@@ -18,7 +18,6 @@ export default function TaskName({ task, level }: TaskNameProps) {
   const [dragging, setDragging] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
-    // e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("taskId", task.id.toString());
     setDragging(true);
   };
