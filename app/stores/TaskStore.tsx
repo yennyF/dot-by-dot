@@ -70,8 +70,8 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
           const allTasks = Object.values(tasksByGroup).flat();
           const task = allTasks.find((t) => t.id === id);
-
           if (!task) throw Error();
+
           task.name = props.name;
         });
 
@@ -224,7 +224,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           if (!tasksByGroup) return;
 
           const loc = locateTask(id, tasksByGroup);
-          if (!loc) throw Error();
+          if (!loc) return;
           tasksByGroup[loc.key].splice(loc.index, 1);
         });
 

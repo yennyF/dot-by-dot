@@ -3,6 +3,7 @@ export type LocaleDateString = string; // Format: "M/D/YYYY"
 export type Group = {
   id: string;
   name: string;
+  order: string;
 };
 
 export type Task = {

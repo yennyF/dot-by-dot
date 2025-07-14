@@ -27,9 +27,8 @@ export default function GroupItem({ group }: { group: Group }) {
 
   // const dropIndicatorRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const ref = useRef<HTMLDivElement>(null);
-  const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
-    ref,
-    (e: DragEvent, el: HTMLElement) => {
+  const { handleDrop, handleDragOver, handleDragLeave, handleDragStart } =
+    useDrop(ref, (e: DragEvent, el: HTMLElement) => {
       const taskId = e.dataTransfer.getData("taskId");
       if (!taskId) return;
 
@@ -44,8 +43,7 @@ export default function GroupItem({ group }: { group: Group }) {
           moveToGroup(taskId, null);
         }
       }
-    }
-  );
+    });
 
   useEffect(() => {
     console.log("GroupItem rendered", group.name);
@@ -60,6 +58,7 @@ export default function GroupItem({ group }: { group: Group }) {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      onDragStart={handleDragStart}
     >
       <DropIndicator
         level={0}

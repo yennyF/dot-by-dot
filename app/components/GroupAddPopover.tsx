@@ -53,9 +53,8 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   const handleSaveClick = async () => {
     if (!dummyGroup) return;
-    if (await addGroup({ id: dummyGroup.id, name })) {
-      setOpen(false);
-    }
+    await addGroup({ id: dummyGroup.id, name });
+    setOpen(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {

@@ -60,9 +60,8 @@ function Content({ setOpen, group }: ContentProps) {
   };
 
   const handleSaveClick = async () => {
-    if (await updateGroup(group.id, { name })) {
-      setOpen(false);
-    }
+    await updateGroup(group.id, { name });
+    setOpen(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {

@@ -23,9 +23,8 @@ export default function Ungroup() {
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
 
   const ref = useRef<HTMLDivElement>(null);
-  const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
-    ref,
-    (e: DragEvent, el: HTMLElement) => {
+  const { handleDrop, handleDragOver, handleDragLeave, handleDragStart } =
+    useDrop(ref, (e: DragEvent, el: HTMLElement) => {
       const taskId = e.dataTransfer.getData("taskId");
       if (!taskId) return;
 
@@ -38,8 +37,7 @@ export default function Ungroup() {
           moveTaskAfter(taskId, afterId);
         }
       }
-    }
-  );
+    });
 
   useEffect(() => {
     console.log("Ungroup rendered");
@@ -54,6 +52,7 @@ export default function Ungroup() {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      onDragStart={handleDragStart}
     >
       {dummyTask && (
         <>

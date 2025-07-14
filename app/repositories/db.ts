@@ -16,7 +16,7 @@ export class TickedDB extends Dexie {
   constructor() {
     super("TickedDB");
     this.version(dbVersion).stores({
-      groups: "id, name",
+      groups: "id, name, &order",
       tasks: "id, name, groupId, order",
       tracks: "[taskId+date], taskId, date",
     });
@@ -52,15 +52,21 @@ export class TickedDB extends Dexie {
     console.log("Initializing default data...");
 
     // Add some default tasks
-    const groups: Group[] = [
+    const groupProps: Pick<Group, "id" | "name">[] = [
       { id: "1", name: "Interview" },
       { id: "2", name: "Workout" },
       { id: "3", name: "Portfolio" },
     ];
+    let lexoRank = LexoRank.middle();
+    const groups: Group[] = groupProps.map((props) => {
+      const order = lexoRank.toString();
+      lexoRank = lexoRank.genNext();
+      return { order, ...props };
+    });
     await this.groups.bulkAdd(groups, { allKeys: true });
 
     // Add some default tasks
-    const items: Pick<Task, "name" | "groupId">[] = [
+    const taskProps: Pick<Task, "name" | "groupId">[] = [
       { name: "Blah" },
       { name: "Blah Blah" },
 
@@ -85,11 +91,11 @@ export class TickedDB extends Dexie {
       { name: "Photography", groupId: "3" },
       { name: "Drawing", groupId: "3" },
     ];
-    let lexoRank = LexoRank.middle();
-    const tasks: Task[] = items.map((item) => {
+    lexoRank = LexoRank.middle();
+    const tasks: Task[] = taskProps.map((props) => {
       const order = lexoRank.toString();
       lexoRank = lexoRank.genNext();
-      return { id: uuidv4(), order, ...item };
+      return { id: uuidv4(), order, ...props };
     });
     const taskIds = await this.tasks.bulkAdd(tasks, { allKeys: true });
 
