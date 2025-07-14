@@ -24,6 +24,7 @@ import Ungroup from "./Ungroup";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
+import { DraggableScrollContainer } from "./DraggableScroll";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -72,7 +73,7 @@ export default function CalendarDay() {
       </div>
 
       {/* Calendar */}
-      <div className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-100px)] overflow-x-auto overflow-y-scroll">
+      <DraggableScrollContainer className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-100px)] overflow-x-auto overflow-y-scroll">
         {/* Calendar Header */}
         <div className="w-fit">
           <div className="calendar-header sticky top-0 z-10 flex w-fit">
@@ -100,7 +101,7 @@ export default function CalendarDay() {
             </div>
           </div>
         </div>
-      </div>
+      </DraggableScrollContainer>
     </div>
   );
 }
