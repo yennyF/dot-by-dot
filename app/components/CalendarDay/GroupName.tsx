@@ -19,6 +19,7 @@ export default function GroupName({ group }: GroupNameProps) {
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const handleDragStart = (e: DragEvent) => {
+    e.dataTransfer.setData("sort", "group");
     e.dataTransfer.setData("groupId", group.id);
     setDragging(true);
   };

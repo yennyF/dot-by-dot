@@ -4,47 +4,67 @@ import clsx from "clsx";
 import { RefObject } from "react";
 
 interface DropIndicatorProps {
+  ref?: RefObject<HTMLInputElement>;
+  groupId: string | null;
   beforeId?: string;
   afterId?: string;
-  ref?: RefObject<HTMLInputElement>;
-  level: "group" | "task" | "ungroup-task";
 }
 
-export default function DropIndicator({
+export function DropIndicatorTask({
+  ref,
+  groupId,
   beforeId,
   afterId,
-  ref,
-  level,
 }: DropIndicatorProps) {
   return (
     <div
       ref={ref}
       className={clsx(
-        "drop-indicator group sticky left-0 flex w-[200px] items-center opacity-0",
-        level === "task" && "pl-[15px]"
+        "app-DropIndicatorTask drop-indicator sticky left-0 flex w-[200px] items-center opacity-0",
+        groupId ? "pl-[15px]" : "pl-0"
       )}
-      data-level={level}
+      data-sort="task"
+      data-group-id={groupId}
       data-before-id={beforeId}
       data-after-id={afterId}
     >
       <div
         className={clsx(
-          "h-2 w-2 rounded-full bg-[var(--green)]",
-          // level === "ungroup-task" && "bg-[var(--green)]",
-          "group-data-[level=ungroup-task]:bg-[var(--green)]",
-          // level === "task" && "bg-[var(--accent)]"
-          "group-data-[level=task]:bg-[var(--accent)]"
+          "h-2 w-2 rounded-full",
+          groupId ? "bg-[var(--accent)]" : "bg-[var(--green)]"
         )}
       ></div>
       <div
         className={clsx(
-          "h-0.5 flex-1 bg-[var(--green)]",
-          // level === "ungroup-task" && "bg-[var(--green)]",
-          "group-data-[level=ungroup-task]:bg-[var(--green)]",
-          // level === "task" && "bg-[var(--accent)]"
-          "group-data-[level=task]:bg-[var(--accent)]"
+          "h-0.5 flex-1",
+          groupId ? "bg-[var(--accent)]" : "bg-[var(--green)]"
         )}
       />
+    </div>
+  );
+}
+
+interface DropIndicatorGroupProps {
+  beforeId?: string;
+  afterId?: string;
+  ref?: RefObject<HTMLInputElement>;
+}
+
+export function DropIndicatorGroup({
+  beforeId,
+  afterId,
+  ref,
+}: DropIndicatorGroupProps) {
+  return (
+    <div
+      ref={ref}
+      className="app-DropIndicatorGroup drop-indicator sticky left-0 flex w-[200px] items-center opacity-0"
+      data-sort="group"
+      data-before-id={beforeId}
+      data-after-id={afterId}
+    >
+      <div className="h-2 w-2 rounded-full bg-[var(--green)]"></div>
+      <div className="h-0.5 flex-1 bg-[var(--green)]" />
     </div>
   );
 }

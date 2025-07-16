@@ -12,24 +12,20 @@ export default function DraggableScroll({
   "onDrag" | "onDrop" | "onDragOver" | "onDragLeave"
 >) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const taskId = useRef<string>(null);
-  const groupId = useRef<string>(null);
+  const dataSort = useRef<"task" | "group">(null);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
-  const moveToGroup = useTaskStore((s) => s.moveToGroup);
 
   const moveGroupBefore = useGroupStore((s) => s.moveGroupBefore);
   const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
 
   const getIndicators = () => {
+    if (!dataSort.current) return [];
+
     return Array.from(
       containerRef.current?.querySelectorAll(
-        taskId.current
-          ? `[data-level=task].drop-indicator, [data-level=ungroup-task].drop-indicator`
-          : groupId.current
-            ? `[data-level=group].drop-indicator`
-            : ""
+        `[data-sort=${dataSort.current}].drop-indicator`
       ) ?? []
     ) as HTMLElement[];
   };
@@ -85,6 +81,13 @@ export default function DraggableScroll({
     if (direction !== 0) container.scrollTop += direction * scrollSpeed;
   };
 
+  const handleDragStart = (e: DragEvent) => {
+    dataSort.current = e.dataTransfer.getData("sort") as
+      | "task"
+      | "group"
+      | null;
+  };
+
   const handleDrop = (e: DragEvent) => {
     clearHighlights();
 
@@ -92,27 +95,23 @@ export default function DraggableScroll({
     const el = getNearestIndicator(e, indicators);
     if (!el) return;
 
-    if (taskId.current) {
+    if (dataSort.current === "task") {
+      const taskId = e.dataTransfer.getData("taskId");
+      const groupId = el.element.dataset.groupId;
       const beforeId = el.element.dataset.beforeId;
+      console.log(groupId, beforeId);
       if (beforeId) {
-        moveTaskBefore(taskId.current, beforeId);
+        moveTaskBefore(taskId, beforeId, groupId ?? null);
       } else {
-        const afterId = el.element.dataset.afterId;
-        if (afterId) {
-          moveTaskAfter(taskId.current, afterId);
-        } else {
-          moveToGroup(taskId.current, null);
-        }
+        moveTaskAfter(taskId, null, groupId ?? null);
       }
-    } else if (groupId.current) {
+    } else if (dataSort.current === "group") {
+      const groupId = e.dataTransfer.getData("groupId");
       const beforeId = el.element.dataset.beforeId;
       if (beforeId) {
-        moveGroupBefore(groupId.current, beforeId);
+        moveGroupBefore(groupId, beforeId);
       } else {
-        const afterId = el.element.dataset.afterId;
-        if (afterId) {
-          moveGroupAfter(groupId.current, afterId);
-        }
+        moveGroupAfter(groupId, null);
       }
     }
   };
@@ -131,10 +130,7 @@ export default function DraggableScroll({
       {...props}
       ref={containerRef}
       onDrag={handleDrag}
-      onDragStart={(e) => {
-        taskId.current = e.dataTransfer.getData("taskId");
-        groupId.current = e.dataTransfer.getData("groupId");
-      }}
+      onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

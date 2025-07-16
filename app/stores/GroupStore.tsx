@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
-import { useTaskStore } from "./TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "./TaskStore";
 import { useTrackStore } from "./TrackStore";
 import { LexoRank } from "lexorank";
 
@@ -17,7 +17,7 @@ type Action = {
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
   deleteGroup: (id: string) => void;
   moveGroupBefore: (id: string, beforeId: string) => void;
-  moveGroupAfter: (id: string, afterId: string) => void;
+  moveGroupAfter: (id: string, afterId: string | null) => void;
   setDummyGroup: (group: Group | undefined) => void;
 };
 
@@ -34,6 +34,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
       try {
         let group: Group | undefined;
 
+        // Add group
         set(({ groups }) => {
           if (!groups) return;
 
@@ -44,6 +45,14 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
           group = { ...props, order };
           groups.unshift(group);
+        });
+
+        // Init empty task for group
+        useTaskStore.setState(({ tasksByGroup }) => {
+          if (!tasksByGroup) return;
+
+          const key = props.id ?? UNGROUPED_KEY;
+          tasksByGroup[key] = [];
         });
 
         if (!group) throw Error();
@@ -89,13 +98,11 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
           groups.splice(newIndex, 0, group);
 
           // Calculate new order
-          const prevTask = groups[newIndex - 1];
-          const nextTask = groups[newIndex + 1]; // beforeId
-          const rank = prevTask
-            ? LexoRank.parse(prevTask.order).between(
-                LexoRank.parse(nextTask.order)
-              )
-            : LexoRank.parse(nextTask.order).genPrev();
+          const prev = groups[newIndex - 1];
+          const next = groups[newIndex + 1]; // beforeId
+          const rank = prev
+            ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
+            : LexoRank.parse(next.order).genPrev();
 
           // Update group
           order = rank.toString();
@@ -108,7 +115,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         console.error("Error moving task:", error);
       }
     },
-    moveGroupAfter: async (id: string, afterId: string) => {
+    moveGroupAfter: async (id: string, afterId: string | null) => {
       if (afterId === id) return;
 
       let order: string | undefined;
@@ -123,23 +130,34 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
           const group = groups[index];
           groups.splice(index, 1);
 
-          // Add to new position
-          const newIndex = groups.findIndex((g) => g.id === afterId);
-          if (newIndex < 0) return Error();
-          const safeIndex = Math.min(newIndex + 1, groups.length);
-          groups.splice(safeIndex, 0, group);
+          if (afterId) {
+            // Add to new position
+            const newIndex = groups.findIndex((g) => g.id === afterId);
+            if (newIndex < 0) return Error();
+            const safeIndex = Math.min(newIndex + 1, groups.length);
+            groups.splice(safeIndex, 0, group);
 
-          // Calculate new order
-          const prevTask = groups[safeIndex - 1];
-          const nextTask = groups[safeIndex + 1]; // afterId
-          const rank = prevTask
-            ? LexoRank.parse(prevTask.order).between(
-                LexoRank.parse(nextTask.order)
-              )
-            : LexoRank.parse(nextTask.order).genPrev();
+            // Calculate new order
+            const prev = groups[safeIndex - 1];
+            const next = groups[safeIndex + 1]; // afterId
+            const rank = prev
+              ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
+              : LexoRank.parse(next.order).genPrev();
+            order = rank.toString();
+          } else {
+            // Add to new position
+            const newIndex = groups.length;
+            groups.push(group);
+
+            // Calculate new order
+            const prev = groups[newIndex - 1];
+            const rank = prev
+              ? LexoRank.parse(prev.order).genNext()
+              : LexoRank.middle();
+            order = rank.toString();
+          }
 
           // Update group
-          order = rank.toString();
           group.order = order;
         });
 

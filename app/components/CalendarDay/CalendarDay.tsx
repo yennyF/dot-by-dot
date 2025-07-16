@@ -25,7 +25,7 @@ import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import DropIndicator from "./Draggable/DropIndicator";
+import { DropIndicatorGroup } from "./Draggable/DropIndicator";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -97,15 +97,12 @@ export default function CalendarDay() {
           <GroupDummyItem />
           {groups?.map((group) => (
             <Fragment key={group.id}>
-              <DropIndicator level="group" beforeId={group.id} />
+              <DropIndicatorGroup beforeId={group.id} />
               <GroupItem group={group} />
             </Fragment>
           ))}
           {groups && groups.length > 0 && (
-            <DropIndicator
-              level="group"
-              afterId={groups[groups.length - 1].id}
-            />
+            <DropIndicatorGroup afterId={groups[groups.length - 1].id} />
           )}
         </div>
       </DraggableScroll>
