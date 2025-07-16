@@ -26,7 +26,7 @@ export default function CreateDropdown({
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={() => {
-              setDummyGroup({ id: uuidv4(), name: "(No name)" });
+              setDummyGroup({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
             Group

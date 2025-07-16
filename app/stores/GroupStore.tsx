@@ -43,6 +43,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
             : LexoRank.middle().toString();
 
           group = { ...props, order };
+          groups.unshift(group);
         });
 
         if (!group) throw Error();
@@ -79,12 +80,13 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
           // Remove from current position
           const index = groups.findIndex((g) => g.id === id);
           if (index < 0) return Error();
+          const group = groups[index];
+          groups.splice(index, 1);
 
           // Add to new position
           const newIndex = groups.findIndex((g) => g.id === beforeId);
           if (newIndex < 0) return Error();
-
-          groups.splice(newIndex, 0, groups[index]);
+          groups.splice(newIndex, 0, group);
 
           // Calculate new order
           const prevTask = groups[newIndex - 1];
@@ -119,16 +121,17 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
           const index = groups.findIndex((g) => g.id === id);
           if (index < 0) return Error();
           const group = groups[index];
+          groups.splice(index, 1);
 
           // Add to new position
           const newIndex = groups.findIndex((g) => g.id === afterId);
           if (newIndex < 0) return Error();
-
-          groups.splice(newIndex, 0, groups[index]);
+          const safeIndex = Math.min(newIndex + 1, groups.length);
+          groups.splice(safeIndex, 0, group);
 
           // Calculate new order
-          const prevTask = groups[newIndex - 1];
-          const nextTask = groups[newIndex + 1]; // afterId
+          const prevTask = groups[safeIndex - 1];
+          const nextTask = groups[safeIndex + 1]; // afterId
           const rank = prevTask
             ? LexoRank.parse(prevTask.order).between(
                 LexoRank.parse(nextTask.order)

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, use, useEffect, useRef } from "react";
+import React, { Fragment, RefObject, use, useEffect, useRef } from "react";
 import {
   format,
   subMonths,
@@ -24,7 +24,8 @@ import Ungroup from "./Ungroup";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
-import { DraggableScrollContainer } from "./DraggableScroll";
+import DraggableScroll from "./Draggable/DraggableScroll";
+import DropIndicator from "./Draggable/DropIndicator";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -73,35 +74,41 @@ export default function CalendarDay() {
       </div>
 
       {/* Calendar */}
-      <DraggableScrollContainer className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-100px)] overflow-x-auto overflow-y-scroll">
+      <DraggableScroll className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-100px)] overflow-x-auto overflow-y-scroll">
         {/* Calendar Header */}
-        <div className="w-fit">
-          <div className="calendar-header sticky top-0 z-10 flex w-fit">
-            <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
-            <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
-              {totalYears.map((date) => (
-                <YearItem
-                  key={date.toLocaleDateString()}
-                  date={date}
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  scrollTarget={scrollTarget}
-                />
-              ))}
-            </div>
-          </div>
-          {/* Calendar Body */}
-          <div className="flex flex-col gap-5">
-            <Ungroup />
-            <div className="flex flex-col gap-5">
-              <GroupDummyItem />
-              {groups?.map((group) => (
-                <GroupItem key={group.id} group={group} />
-              ))}
-            </div>
+        <div className="calendar-header sticky top-0 z-10 flex w-fit">
+          <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
+          <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
+            {totalYears.map((date) => (
+              <YearItem
+                key={date.toLocaleDateString()}
+                date={date}
+                minDate={minDate}
+                maxDate={maxDate}
+                scrollTarget={scrollTarget}
+              />
+            ))}
           </div>
         </div>
-      </DraggableScrollContainer>
+
+        {/* Calendar Body */}
+        <div className="flex w-fit flex-col gap-3">
+          <Ungroup />
+          <GroupDummyItem />
+          {groups?.map((group) => (
+            <Fragment key={group.id}>
+              <DropIndicator level="group" beforeId={group.id} />
+              <GroupItem group={group} />
+            </Fragment>
+          ))}
+          {groups && groups.length > 0 && (
+            <DropIndicator
+              level="group"
+              afterId={groups[groups.length - 1].id}
+            />
+          )}
+        </div>
+      </DraggableScroll>
     </div>
   );
 }

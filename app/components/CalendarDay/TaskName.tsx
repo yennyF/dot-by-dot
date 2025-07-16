@@ -10,7 +10,7 @@ import TaskAddPopover from "../TaskAddPopover";
 
 interface TaskNameProps {
   task: Task;
-  level: 0 | 1;
+  level: "ungroup-task" | "task";
 }
 
 export default function TaskName({ task, level }: TaskNameProps) {
@@ -18,7 +18,7 @@ export default function TaskName({ task, level }: TaskNameProps) {
   const [dragging, setDragging] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
-    e.dataTransfer.setData("taskId", task.id.toString());
+    e.dataTransfer.setData("taskId", task.id);
     setDragging(true);
   };
 
@@ -31,7 +31,7 @@ export default function TaskName({ task, level }: TaskNameProps) {
     <div
       className={clsx(
         "app-TaskName draggable group sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold active:cursor-grabbing [&.highlight]:font-bold",
-        level === 1 && "border-l-2"
+        level === "task" && "border-l-2"
       )}
       draggable="true"
       data-id={task.id}
@@ -41,8 +41,8 @@ export default function TaskName({ task, level }: TaskNameProps) {
       <div
         className={clsx(
           "overflow-hidden text-ellipsis text-nowrap text-[var(--gray-9)]",
-          level === 0 && "pl-2",
-          level === 1 && "pl-5"
+          level === "ungroup-task" && "pl-2",
+          level === "task" && "pl-5"
         )}
       >
         {task.name}

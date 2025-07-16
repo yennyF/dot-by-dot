@@ -3,7 +3,7 @@
 import { use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { DummyGroupName } from "./GroupName";
-import { DropIndicator } from "./useDrop";
+import DropIndicator from "./Draggable/DropIndicator";
 import GroupTrack from "./GroupTrack";
 import { useGroupStore } from "@/app/stores/GroupStore";
 
@@ -24,12 +24,7 @@ export default function GroupDummyItem() {
 
   return (
     <div className="app-GroupDummyItem w-full">
-      <DropIndicator
-        level={0}
-        // ref={(el) => {
-        //   dropIndicatorRefs.current[task.id] = el;
-        // }}
-      />
+      <DropIndicator level={"ungroup-task"} />
       <div className="flex h-[40px]">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
           <DummyGroupName group={dummyGroup} />

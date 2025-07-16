@@ -1,11 +1,11 @@
 "use client";
 
-import { Fragment, use, useRef, DragEvent, useEffect } from "react";
+import { Fragment, use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
-import { DropIndicator, useDrop } from "./useDrop";
+import DropIndicator from "./Draggable/DropIndicator";
 import TaskName, { DummyTaskName } from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import GroupTrack from "./GroupTrack";
@@ -21,52 +21,13 @@ export default function GroupItem({ group }: { group: Group }) {
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
   );
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]);
-  const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
-  const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
-  const moveToGroup = useTaskStore((s) => s.moveToGroup);
-
-  // const dropIndicatorRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const ref = useRef<HTMLDivElement>(null);
-  const { handleDrop, handleDragOver, handleDragLeave } = useDrop(
-    ref,
-    (e: DragEvent, el: HTMLElement) => {
-      const taskId = e.dataTransfer.getData("taskId");
-      if (!taskId) return;
-
-      const beforeId = el.dataset.beforeId;
-      if (beforeId) {
-        moveTaskBefore(taskId, beforeId);
-      } else {
-        const afterId = el.dataset.afterId;
-        if (afterId) {
-          moveTaskAfter(taskId, afterId);
-        } else {
-          moveToGroup(taskId, null);
-        }
-      }
-    }
-  );
 
   useEffect(() => {
     console.log("GroupItem rendered", group.name);
   });
 
-  if (!tasks) return;
-
   return (
-    <div
-      ref={ref}
-      className="app-GroupItem w-full"
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-    >
-      <DropIndicator
-        level={0}
-        // ref={(el) => {
-        //   dropIndicatorRefs.current[task.id] = el;
-        // }}
-      />
+    <div className="app-GroupItem w-full">
       <div className="flex h-[40px]">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
           <GroupName group={group} />
@@ -76,7 +37,7 @@ export default function GroupItem({ group }: { group: Group }) {
             <GroupTrack
               key={date.toLocaleDateString()}
               date={date}
-              tasks={tasks}
+              tasks={tasks || []}
             />
           ))}
         </div>
@@ -84,9 +45,9 @@ export default function GroupItem({ group }: { group: Group }) {
 
       {dummyTask && (
         <>
-          <DropIndicator beforeId={dummyTask.id} level={1} />
+          <DropIndicator beforeId={dummyTask.id} level={"task"} />
           <div className="app-TaskDummyItem flex h-[40px] items-center">
-            <DummyTaskName task={dummyTask} level={1} />
+            <DummyTaskName task={dummyTask} level={"task"} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
                 <TaskTrack
@@ -100,17 +61,11 @@ export default function GroupItem({ group }: { group: Group }) {
         </>
       )}
 
-      {tasks.map((task) => (
+      {tasks?.map((task) => (
         <Fragment key={task.id}>
-          <DropIndicator
-            beforeId={task.id}
-            level={1}
-            // ref={(el) => {
-            //   dropIndicatorRefs.current[task.id] = el;
-            // }}
-          />
+          <DropIndicator beforeId={task.id} level={"task"} />
           <div className="flex h-[40px] items-center">
-            <TaskName task={task} level={1} />
+            <TaskName task={task} level={"task"} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
                 <TaskTrack
@@ -123,14 +78,8 @@ export default function GroupItem({ group }: { group: Group }) {
           </div>
         </Fragment>
       ))}
-      {tasks.length > 0 && (
-        <DropIndicator
-          afterId={tasks[tasks.length - 1].id}
-          level={1}
-          // ref={(el) => {
-          //   dropIndicatorRefs.current[task.id] = el;
-          // }}
-        />
+      {tasks && tasks.length > 0 && (
+        <DropIndicator afterId={tasks[tasks.length - 1].id} level={"task"} />
       )}
     </div>
   );
