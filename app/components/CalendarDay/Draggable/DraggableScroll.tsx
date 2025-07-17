@@ -2,16 +2,15 @@
 
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import { useRef, DragEvent } from "react";
+import { useRef, DragEvent, ReactNode } from "react";
 
-export default function DraggableScroll({
-  children,
-  ...props
-}: Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "onDrag" | "onDrop" | "onDragOver" | "onDragLeave"
->) {
-  const containerRef = useRef<HTMLDivElement>(null);
+interface DraggableScrollProps {
+  children: ReactNode;
+}
+
+export default function DraggableScroll({ children }: DraggableScrollProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
   const dataSort = useRef<"task" | "group">(null);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
@@ -24,7 +23,7 @@ export default function DraggableScroll({
     if (!dataSort.current) return [];
 
     return Array.from(
-      containerRef.current?.querySelectorAll(
+      ref.current?.querySelectorAll(
         `[data-sort=${dataSort.current}].drop-indicator`
       ) ?? []
     ) as HTMLElement[];
@@ -63,22 +62,6 @@ export default function DraggableScroll({
     const el = getNearestIndicator(e, indicators);
     if (!el) return;
     el.element.style.opacity = "1";
-  };
-
-  // Scroll vertical
-  const handleDrag = (e: DragEvent) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const scrollSpeed = 5;
-    const threshold = { top: 150, bottom: 10 };
-
-    const { top, bottom } = container.getBoundingClientRect();
-    const y = e.clientY;
-    const direction =
-      y - top < threshold.top ? -1 : bottom - y < threshold.bottom ? 1 : 0;
-
-    if (direction !== 0) container.scrollTop += direction * scrollSpeed;
   };
 
   const handleDragStart = (e: DragEvent) => {
@@ -126,9 +109,8 @@ export default function DraggableScroll({
 
   return (
     <div
-      {...props}
-      ref={containerRef}
-      onDrag={handleDrag}
+      ref={ref}
+      className="w-fit"
       onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

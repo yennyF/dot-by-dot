@@ -78,7 +78,7 @@ export default function GroupName({ group }: GroupNameProps) {
 
 export function DummyGroupName({ group }: GroupNameProps) {
   return (
-    <div className="app-DummyGroupName group sticky left-0 z-[9] flex w-full items-center justify-between gap-1 bg-[var(--background)] pl-2">
+    <div className="app-DummyGroupName group sticky left-0 z-[9] flex w-full items-center justify-between gap-1 bg-[var(--background)]">
       <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
         {group.name}
       </div>

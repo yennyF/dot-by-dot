@@ -178,7 +178,7 @@ input {
 
 @layer components {
   .button {
-    @apply focus:outline-none;
+    @apply focus:outline-none disabled:pointer-events-none disabled:opacity-20;
   }
 
   .button-accent {

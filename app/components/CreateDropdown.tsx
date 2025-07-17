@@ -18,7 +18,7 @@ export default function CreateDropdown({
       <DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="dropdown-content z-20 w-[150px]"
+          className="dropdown-content z-20 w-[160px]"
           side="bottom"
           align="start"
           sideOffset={5}
