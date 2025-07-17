@@ -134,15 +134,14 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
             // Add to new position
             const newIndex = groups.findIndex((g) => g.id === afterId);
             if (newIndex < 0) return Error();
-            const safeIndex = Math.min(newIndex + 1, groups.length);
-            groups.splice(safeIndex, 0, group);
+            groups.splice(newIndex + 1, 0, group);
 
             // Calculate new order
-            const prev = groups[safeIndex - 1];
-            const next = groups[safeIndex + 1]; // afterId
-            const rank = prev
+            const prev = groups[newIndex - 1]; // afterId
+            const next = groups[newIndex + 1];
+            const rank = next
               ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
-              : LexoRank.parse(next.order).genPrev();
+              : LexoRank.parse(prev.order).genPrev();
             order = rank.toString();
           } else {
             // Add to new position

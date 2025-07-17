@@ -104,10 +104,10 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           if (!tasksByGroup[key]) throw Error();
 
           // Remove from current position
-          const locTask = locateTask(id, tasksByGroup);
-          if (!locTask) throw Error();
-          const task = tasksByGroup[locTask.key][locTask.index];
-          tasksByGroup[locTask.key].splice(locTask.index, 1);
+          const loc = locateTask(id, tasksByGroup);
+          if (!loc) throw Error();
+          const task = tasksByGroup[loc.key][loc.index];
+          tasksByGroup[loc.key].splice(loc.index, 1);
 
           // Add to new position
           const newIndex = tasksByGroup[key].findIndex(
@@ -117,13 +117,11 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           tasksByGroup[key].splice(newIndex, 0, task);
 
           // Calculate new order
-          const prevTask = tasksByGroup[key][newIndex - 1];
-          const nextTask = tasksByGroup[key][newIndex + 1]; // beforeId
-          const rank = prevTask
-            ? LexoRank.parse(prevTask.order).between(
-                LexoRank.parse(nextTask.order)
-              )
-            : LexoRank.parse(nextTask.order).genPrev();
+          const prev = tasksByGroup[key][newIndex - 1];
+          const next = tasksByGroup[key][newIndex + 1]; // beforeId
+          const rank = prev
+            ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
+            : LexoRank.parse(next.order).genPrev();
 
           // Update task
           props = {
@@ -154,10 +152,10 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           if (!tasksByGroup[key]) throw Error();
 
           // Remove from current position
-          const current = locateTask(id, tasksByGroup);
-          if (!current) throw Error();
-          const task = tasksByGroup[current.key][current.index];
-          tasksByGroup[current.key].splice(current.index, 1);
+          const loc = locateTask(id, tasksByGroup);
+          if (!loc) throw Error();
+          const task = tasksByGroup[loc.key][loc.index];
+          tasksByGroup[loc.key].splice(loc.index, 1);
 
           if (afterId) {
             // Add to new position
@@ -165,27 +163,27 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
               (t) => t.id === afterId
             );
             if (newIndex < 0) return Error();
-            const safeIndex = Math.min(newIndex + 1, tasksByGroup[key].length);
-            tasksByGroup[key].splice(safeIndex, 0, task);
+            tasksByGroup[key].splice(newIndex + 1, 0, task);
 
             // Calculate new order
-            const prev = tasksByGroup[key][safeIndex - 1];
-            const next = tasksByGroup[key][safeIndex + 1]; // afterId
-            const rank = prev
+            const prev = tasksByGroup[key][newIndex - 1]; // afterId
+            const next = tasksByGroup[key][newIndex + 1];
+            const rank = next
               ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
-              : LexoRank.parse(next.order).genPrev();
+              : LexoRank.parse(prev.order).genNext();
             props = {
               groupId: groupId || undefined,
               order: rank.toString(),
             };
           } else {
             // Add to new position
+            const newIndex = tasksByGroup[key].length;
             tasksByGroup[key].push(task);
 
             // Calculate new order
-            const prevTask = tasksByGroup[key][tasksByGroup[key].length - 2];
-            const rank = prevTask
-              ? LexoRank.parse(prevTask.order).genNext()
+            const prev = tasksByGroup[key][newIndex - 1];
+            const rank = prev
+              ? LexoRank.parse(prev.order).genNext()
               : LexoRank.middle();
             props = {
               groupId: groupId || undefined,

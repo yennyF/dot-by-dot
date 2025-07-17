@@ -3,9 +3,9 @@
 import { Fragment, use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import TaskName, { DummyTaskName } from "./TaskName";
-import UngroupTrack from "./UngroupTrack";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "./Draggable/DropIndicatorTask";
+import TaskTrack from "./TaskTrack";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
@@ -34,7 +34,7 @@ export default function Ungroup() {
             <DummyTaskName task={dummyTask} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
-                <UngroupTrack
+                <TaskTrack
                   key={date.toLocaleDateString()}
                   date={date}
                   task={dummyTask}
@@ -51,7 +51,7 @@ export default function Ungroup() {
             <TaskName task={task} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
-                <UngroupTrack
+                <TaskTrack
                   key={date.toLocaleDateString()}
                   date={date}
                   task={task}

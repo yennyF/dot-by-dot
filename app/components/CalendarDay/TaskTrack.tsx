@@ -5,6 +5,7 @@ import { addDays } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
+import { CheckIcon } from "@radix-ui/react-icons";
 
 interface TaskTrackProps {
   date: Date;
@@ -32,17 +33,31 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   return (
     <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">
       {isPrevActive && isActive && (
-        <div className="absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in bg-[var(--accent-4)] opacity-0" />
+        <div
+          className={clsx(
+            "absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in opacity-0",
+            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--green-5)]"
+          )}
+        />
       )}
       {isNextActive && isActive && (
-        <div className="absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in bg-[var(--accent-4)] opacity-0" />
+        <div
+          className={clsx(
+            "absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in opacity-0",
+            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--green-5)]"
+          )}
+        />
       )}
       <button
         className={clsx(
           "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
           isActive
-            ? "bg-[var(--accent)]"
-            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+            ? task.groupId
+              ? "bg-[var(--accent)]"
+              : "bg-[var(--green)]"
+            : task.groupId
+              ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+              : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
         )}
         onClick={() => {
           if (isActive) {
@@ -52,14 +67,20 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
           }
         }}
         onMouseEnter={() => {
-          const el = document.querySelector(`.task-name[data-id="${task.id}"]`);
+          const el = document.querySelector(
+            `.app-TaskName[data-id="${task.id}"]`
+          );
           el?.classList.add("highlight");
         }}
         onMouseLeave={() => {
-          const el = document.querySelector(`.task-name[data-id="${task.id}"]`);
+          const el = document.querySelector(
+            `.app-TaskName[data-id="${task.id}"]`
+          );
           el?.classList.remove("highlight");
         }}
-      ></button>
+      >
+        {isActive && !task.groupId && <CheckIcon className="text-white" />}
+      </button>
     </div>
   );
 }
