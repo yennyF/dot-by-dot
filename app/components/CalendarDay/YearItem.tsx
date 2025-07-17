@@ -19,14 +19,14 @@ interface YearItemProps {
   date: Date;
   minDate: Date;
   maxDate: Date;
-  scrollTarget: RefObject<HTMLDivElement | null>;
+  todayRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function YearItem({
   date,
   minDate,
   maxDate,
-  scrollTarget,
+  todayRef,
 }: YearItemProps) {
   const totalMonths = eachMonthOfInterval({
     start: isAfter(startOfYear(date), minDate) ? startOfYear(date) : minDate,
@@ -72,7 +72,7 @@ export default function YearItem({
                       </div>
                       {isTodayDate && (
                         <div
-                          ref={scrollTarget}
+                          ref={todayRef}
                           // important: added the height as an offset for useScrollTo, do not delete it
                           className="absolute right-0 w-[160px]"
                         ></div>

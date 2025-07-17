@@ -14,10 +14,10 @@ const defaultOptions: ScrollOptions = {
   behavior: "smooth",
 };
 
-const useScrollTo = (
+export default function useScrollToTarget(
   ref: RefObject<HTMLElement | null>,
   options: ScrollOptions = defaultOptions
-) => {
+) {
   const { autoScroll, behavior, block, inline } = options;
 
   // Memoized scroll function to prevent unnecessary re-renders
@@ -60,6 +60,4 @@ const useScrollTo = (
   }, [autoScroll, scrollToTarget]);
 
   return scrollToTarget;
-};
-
-export default useScrollTo;
+}

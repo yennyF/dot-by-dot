@@ -3,7 +3,7 @@
 import React, { Fragment, use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
-import useScrollTo from "@/app/hooks/useScrollTo";
+import useScrollToTarget from "@/app/hooks/useScrollToTarget";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -29,13 +29,10 @@ export default function CalendarDay() {
   }
   const { totalYears } = appContext;
 
-  const groups = useGroupStore((s) => s.groups);
+  const todayRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
-  const scrollTarget = useRef<HTMLDivElement>(null);
-  const scrollToTarget = useScrollTo(scrollTarget);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-
+  const scrollToTarget = useScrollToTarget(todayRef);
   const {
     isAtTop,
     isAtBottom,
@@ -46,7 +43,9 @@ export default function CalendarDay() {
     scrollToLeft,
     scrollToRight,
     scrollVertically,
-  } = useScrollToSides(scrollRef);
+  } = useScrollToSides(viewportRef);
+
+  const groups = useGroupStore((s) => s.groups);
 
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
@@ -94,7 +93,7 @@ export default function CalendarDay() {
 
       {/* Calendar */}
       <div
-        ref={scrollRef}
+        ref={viewportRef}
         className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-150px)] overflow-x-auto overflow-y-scroll"
         onDrag={scrollVertically}
       >
@@ -109,7 +108,7 @@ export default function CalendarDay() {
                   date={date}
                   minDate={minDate}
                   maxDate={maxDate}
-                  scrollTarget={scrollTarget}
+                  todayRef={todayRef}
                 />
               ))}
             </div>
