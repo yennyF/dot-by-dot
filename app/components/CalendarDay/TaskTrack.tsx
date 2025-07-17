@@ -26,6 +26,24 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
     s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id)
   );
 
+  const handleClick = () => {
+    if (isActive) {
+      deleteTrack(date, task.id);
+    } else {
+      addTrack(date, task.id);
+    }
+  };
+
+  const handleMouseEnter = () => {
+    const el = document.querySelector(`.app-TaskName[data-id="${task.id}"]`);
+    el?.classList.add("highlight");
+  };
+
+  const handleMouseLeave = () => {
+    const el = document.querySelector(`.app-TaskName[data-id="${task.id}"]`);
+    el?.classList.remove("highlight");
+  };
+
   // useEffect(() => {
   //   console.log("TaskTrack rendered", task.name);
   // });
@@ -59,25 +77,9 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
               ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
               : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
         )}
-        onClick={() => {
-          if (isActive) {
-            deleteTrack(date, task.id);
-          } else {
-            addTrack(date, task.id);
-          }
-        }}
-        onMouseEnter={() => {
-          const el = document.querySelector(
-            `.app-TaskName[data-id="${task.id}"]`
-          );
-          el?.classList.add("highlight");
-        }}
-        onMouseLeave={() => {
-          const el = document.querySelector(
-            `.app-TaskName[data-id="${task.id}"]`
-          );
-          el?.classList.remove("highlight");
-        }}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {isActive && !task.groupId && <CheckIcon className="text-white" />}
       </button>

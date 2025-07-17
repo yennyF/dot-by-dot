@@ -35,6 +35,15 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
       (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size
     ) ?? 0) > 0;
 
+  const handleClick = () => {
+    const taskIds = Array.from(taskIdSet);
+    if (isActive) {
+      deleteTracks(date, taskIds);
+    } else {
+      addTracks(date, taskIds);
+    }
+  };
+
   // useEffect(() => {
   //   console.log("GroupTrack rendered");
   // });
@@ -54,14 +63,7 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
             ? "bg-[var(--green)]"
             : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
         )}
-        onClick={() => {
-          const taskIds = Array.from(taskIdSet);
-          if (isActive) {
-            deleteTracks(date, taskIds);
-          } else {
-            addTracks(date, taskIds);
-          }
-        }}
+        onClick={handleClick}
       >
         {isActive && <CheckIcon className="text-white" />}
       </button>

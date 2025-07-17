@@ -1,22 +1,8 @@
 "use client";
 
-import React, { Fragment, RefObject, use, useEffect, useRef } from "react";
-import {
-  format,
-  subMonths,
-  eachDayOfInterval,
-  addDays,
-  endOfMonth,
-  isToday,
-  startOfMonth,
-  isBefore,
-  endOfYear,
-  isAfter,
-  startOfYear,
-  isWeekend,
-} from "date-fns";
+import React, { Fragment, use, useEffect, useRef } from "react";
+import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
-import { eachMonthOfInterval } from "date-fns/fp";
 import useScrollTo from "@/app/hooks/useScrollTo";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import GroupItem from "./GroupItem";
@@ -26,6 +12,7 @@ import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
+import YearItem from "./YearItem";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -106,75 +93,6 @@ export default function CalendarDay() {
           )}
         </div>
       </DraggableScroll>
-    </div>
-  );
-}
-
-interface YearItemProps {
-  date: Date;
-  minDate: Date;
-  maxDate: Date;
-  scrollTarget: RefObject<HTMLDivElement | null>;
-}
-
-function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
-  const totalMonths = eachMonthOfInterval({
-    start: isAfter(startOfYear(date), minDate) ? startOfYear(date) : minDate,
-    end: isBefore(endOfYear(date), maxDate) ? endOfYear(date) : maxDate,
-  });
-
-  return (
-    <div className="year-item w-fit">
-      <div className="sticky left-[200px] w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold">
-        {format(date, "yyyy")}
-      </div>
-      <div className="months mt-3 flex">
-        {totalMonths.map((date) => {
-          const totalDays = eachDayOfInterval({
-            start: isAfter(startOfMonth(date), minDate)
-              ? startOfMonth(date)
-              : minDate,
-            end: isBefore(endOfMonth(date), maxDate)
-              ? endOfMonth(date)
-              : maxDate,
-          });
-
-          return (
-            <div className="month-item w-fit" key={date.toLocaleDateString()}>
-              <div className="sticky left-[200px] w-fit bg-[var(--background)] px-[14px] text-xl font-bold">
-                {format(date, "MMMM")}
-              </div>
-              <div className="days mt-4 flex">
-                {totalDays.map((date) => {
-                  const isTodayDate = isToday(date);
-                  return (
-                    <div
-                      key={date.toLocaleDateString()}
-                      className={`day-item flex w-[50px] flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
-                    >
-                      <div className="text-center text-xs">
-                        {format(date, "EEE")}
-                      </div>
-                      <div
-                        className={`mt-1 flex h-[40px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
-                      >
-                        {format(date, "dd")}
-                      </div>
-                      {isTodayDate && (
-                        <div
-                          ref={scrollTarget}
-                          // important: added the height as an offset for useScrollTo, do not delete it
-                          className="absolute right-0 w-[160px]"
-                        ></div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }
