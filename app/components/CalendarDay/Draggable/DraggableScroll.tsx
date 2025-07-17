@@ -99,7 +99,6 @@ export default function DraggableScroll({
       const taskId = e.dataTransfer.getData("taskId");
       const groupId = el.element.dataset.groupId;
       const beforeId = el.element.dataset.beforeId;
-      console.log(groupId, beforeId);
       if (beforeId) {
         moveTaskBefore(taskId, beforeId, groupId ?? null);
       } else {

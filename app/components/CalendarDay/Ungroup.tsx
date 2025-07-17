@@ -5,8 +5,7 @@ import { AppContext } from "../../AppContext";
 import TaskName, { DummyTaskName } from "./TaskName";
 import UngroupTrack from "./UngroupTrack";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
-import TaskTrack from "./TaskTrack";
-import { DropIndicatorTask } from "./Draggable/DropIndicator";
+import DropIndicatorTask from "./Draggable/DropIndicatorTask";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
@@ -35,7 +34,7 @@ export default function Ungroup() {
             <DummyTaskName task={dummyTask} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
-                <TaskTrack
+                <UngroupTrack
                   key={date.toLocaleDateString()}
                   date={date}
                   task={dummyTask}

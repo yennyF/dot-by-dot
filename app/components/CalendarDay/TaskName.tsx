@@ -31,7 +31,7 @@ export default function TaskName({ task }: TaskNameProps) {
     <div
       className={clsx(
         "app-TaskName draggable group sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold active:cursor-grabbing [&.highlight]:font-bold",
-        task.groupId ? "border-l-2" : "border-l-0"
+        task.groupId && "border-l-2"
       )}
       draggable="true"
       data-id={task.id}
@@ -74,7 +74,7 @@ export function DummyTaskName({ task }: TaskNameProps) {
     <div
       className={clsx(
         "task-name sticky left-0 z-[9] flex h-full w-[200px] cursor-grab items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
-        !task.groupId && "border-l-2"
+        task.groupId && "border-l-2"
       )}
       data-id={task.id}
     >

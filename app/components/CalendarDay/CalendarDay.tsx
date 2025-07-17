@@ -25,7 +25,7 @@ import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import { DropIndicatorGroup } from "./Draggable/DropIndicator";
+import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -92,7 +92,7 @@ export default function CalendarDay() {
         </div>
 
         {/* Calendar Body */}
-        <div className="flex w-fit flex-col gap-3">
+        <div className="flex w-fit flex-col gap-2">
           <Ungroup />
           <GroupDummyItem />
           {groups?.map((group) => (
@@ -156,7 +156,7 @@ function YearItem({ date, minDate, maxDate, scrollTarget }: YearItemProps) {
                         {format(date, "EEE")}
                       </div>
                       <div
-                        className={`mt-1 flex h-[35px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
+                        className={`mt-1 flex h-[40px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
                       >
                         {format(date, "dd")}
                       </div>

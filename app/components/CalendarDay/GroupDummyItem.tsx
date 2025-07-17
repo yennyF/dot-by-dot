@@ -3,7 +3,7 @@
 import { use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { DummyGroupName } from "./GroupName";
-import { DropIndicatorGroup } from "./Draggable/DropIndicator";
+import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import GroupTrack from "./GroupTrack";
 import { useGroupStore } from "@/app/stores/GroupStore";
 

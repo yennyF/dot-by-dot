@@ -5,7 +5,7 @@ import { AppContext } from "../../AppContext";
 import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
-import { DropIndicatorTask } from "./Draggable/DropIndicator";
+import DropIndicatorTask from "./Draggable/DropIndicatorTask";
 import TaskName, { DummyTaskName } from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import GroupTrack from "./GroupTrack";
