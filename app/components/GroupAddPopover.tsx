@@ -68,7 +68,6 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
       align="center"
-      sideOffset={5}
       onKeyDown={handleKeyDown}
     >
       <p>Enter a new name</p>

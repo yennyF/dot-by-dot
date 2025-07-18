@@ -74,7 +74,6 @@ function Content({ setOpen, group }: ContentProps) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      sideOffset={5}
       align="center"
       onKeyDown={handleKeyDown}
     >

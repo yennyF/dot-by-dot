@@ -84,6 +84,7 @@ export default function GroupItem({ group }: { group: Group }) {
           </div>
         </Fragment>
       ))}
+
       <DropIndicatorTask groupId={group.id} />
     </div>
   );

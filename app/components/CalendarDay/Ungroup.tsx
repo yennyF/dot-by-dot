@@ -6,6 +6,7 @@ import TaskName, { DummyTaskName } from "./TaskName";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "./Draggable/DropIndicatorTask";
 import TaskTrack from "./TaskTrack";
+import { Element } from "@/app/components/Scroll";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
@@ -27,23 +28,25 @@ export default function Ungroup() {
 
   return (
     <div className="app-Ungroup flex w-full flex-col">
-      {dummyTask && (
-        <>
-          <DropIndicatorTask groupId={null} beforeId={dummyTask.id} />
-          <div className="app-TaskDummyItem flex h-[40px] items-center">
-            <DummyTaskName task={dummyTask} />
-            <div className="sticky left-[200px] flex">
-              {totalDays.map((date) => (
-                <TaskTrack
-                  key={date.toLocaleDateString()}
-                  date={date}
-                  task={dummyTask}
-                />
-              ))}
+      <Element id="create-task">
+        {dummyTask && (
+          <>
+            <DropIndicatorTask groupId={null} beforeId={dummyTask.id} />
+            <div className="app-TaskDummyItem flex h-[40px] items-center">
+              <DummyTaskName task={dummyTask} />
+              <div className="sticky left-[200px] flex">
+                {totalDays.map((date) => (
+                  <TaskTrack
+                    key={date.toLocaleDateString()}
+                    date={date}
+                    task={dummyTask}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </Element>
       {tasks.map((task) => (
         <Fragment key={task.id}>
           <DropIndicatorTask groupId={null} beforeId={task.id} />

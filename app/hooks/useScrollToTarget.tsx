@@ -22,12 +22,13 @@ export default function useScrollToTarget(
 
   // Memoized scroll function to prevent unnecessary re-renders
   const scrollToTarget = useCallback(() => {
-    if (!ref.current) return;
+    const el = ref.current;
+    if (!el) return;
 
     // Use requestAnimationFrame for smoother scrolling
     const animate = () => {
       try {
-        ref.current?.scrollIntoView({
+        el.scrollIntoView({
           behavior,
           block,
           inline,
@@ -38,15 +39,14 @@ export default function useScrollToTarget(
           "Smooth scroll failed, falling back to instant scroll:",
           error
         );
-        ref.current?.scrollIntoView();
+        el.scrollIntoView();
       }
     };
 
     // Request animation frame for better performance
     const frameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frameId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref]);
+  }, [behavior, block, inline, ref]);
 
   useEffect(() => {
     if (!autoScroll) return;

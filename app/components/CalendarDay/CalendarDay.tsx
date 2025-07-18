@@ -21,6 +21,7 @@ import DraggableScroll from "./Draggable/DraggableScroll";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import YearItem from "./YearItem";
 import useScrollToSides from "../../hooks/useScrollToSides";
+import { Element } from "@/app/components/Scroll";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -130,7 +131,12 @@ export default function CalendarDay() {
           {/* Calendar Body */}
           <div className="flex w-fit flex-col gap-2">
             <Ungroup />
-            <GroupDummyItem />
+
+            <Element id="create-group">
+              <DropIndicatorGroup />
+              <GroupDummyItem />
+            </Element>
+
             {groups?.map((group) => (
               <Fragment key={group.id}>
                 <DropIndicatorGroup beforeId={group.id} />

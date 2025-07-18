@@ -4,6 +4,7 @@ import { DropdownMenu } from "radix-ui";
 import { useGroupStore } from "../stores/GroupStore";
 import { useTaskStore } from "../stores/TaskStore";
 import { v4 as uuidv4 } from "uuid";
+import { Link } from "./Scroll";
 
 export default function CreateDropdown({
   children,
@@ -21,7 +22,6 @@ export default function CreateDropdown({
           className="dropdown-content z-20 w-[160px]"
           side="bottom"
           align="start"
-          sideOffset={5}
         >
           <DropdownMenu.Item
             className="dropdown-item"
@@ -29,15 +29,19 @@ export default function CreateDropdown({
               setDummyGroup({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
-            Group
+            <Link to="create-group" options={{ block: "center" }}>
+              Group
+            </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item"
-            onClick={() => {
+            onClick={async () => {
               setDummyTask({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
-            Task
+            <Link to="create-task" options={{ block: "center" }}>
+              Task
+            </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Arrow className="arrow" />
         </DropdownMenu.Content>

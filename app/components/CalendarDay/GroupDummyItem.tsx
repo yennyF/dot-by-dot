@@ -3,7 +3,6 @@
 import { use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { DummyGroupName } from "./GroupName";
-import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import GroupTrack from "./GroupTrack";
 import { useGroupStore } from "@/app/stores/GroupStore";
 
@@ -24,7 +23,6 @@ export default function GroupDummyItem() {
 
   return (
     <div className="app-GroupDummyItem w-full">
-      <DropIndicatorGroup />
       <div className="flex h-[40px]">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
           <DummyGroupName group={dummyGroup} />
