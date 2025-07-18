@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useState, DragEvent } from "react";
 import clsx from "clsx";
-import GroupCreatePopover from "../GroupCreatePopover";
 
 interface GroupNameProps {
   group: Group;
@@ -72,23 +71,6 @@ export default function GroupName({ group }: GroupNameProps) {
           </GroupDeleteDialog>
         </div>
       )}
-    </div>
-  );
-}
-
-export function DummyGroupName({ group }: GroupNameProps) {
-  return (
-    <div className="app-DummyGroupName group sticky left-0 z-[9] flex w-full items-center justify-between gap-1 bg-[var(--background)]">
-      <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
-        {group.name}
-      </div>
-      <div className="action-buttons">
-        <GroupCreatePopover>
-          <button className="button-icon-sheer">
-            <Pencil1Icon />
-          </button>
-        </GroupCreatePopover>
-      </div>
     </div>
   );
 }

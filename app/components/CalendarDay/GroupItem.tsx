@@ -6,9 +6,10 @@ import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
 import DropIndicatorTask from "./Draggable/DropIndicatorTask";
-import TaskName, { DummyTaskName } from "./TaskName";
+import TaskName from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import GroupTrack from "./GroupTrack";
+import TaskNameDummy from "./TaskNameDummy";
 
 export default function GroupItem({ group }: { group: Group }) {
   const appContext = use(AppContext);
@@ -50,7 +51,7 @@ export default function GroupItem({ group }: { group: Group }) {
             beforeId={dummyTask.id}
           />
           <div className="app-TaskDummyItem flex h-[40px] items-center">
-            <DummyTaskName task={dummyTask} />
+            <TaskNameDummy task={dummyTask} />
             <div className="sticky left-[200px] flex">
               {totalDays.map((date) => (
                 <TaskTrack

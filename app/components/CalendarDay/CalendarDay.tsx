@@ -3,7 +3,6 @@
 import React, { Fragment, use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
-import useScrollToTarget from "@/app/hooks/useScrollToTarget";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -15,7 +14,7 @@ import {
 import GroupItem from "./GroupItem";
 import Ungroup from "./Ungroup";
 import { useGroupStore } from "@/app/stores/GroupStore";
-import GroupDummyItem from "./GroupDummyItem";
+import GroupItemDummy from "./GroupItemDummy";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
@@ -135,7 +134,7 @@ export default function CalendarDay() {
 
             <Element id="create-group">
               <DropIndicatorGroup />
-              <GroupDummyItem />
+              <GroupItemDummy />
             </Element>
 
             {groups?.map((group) => (

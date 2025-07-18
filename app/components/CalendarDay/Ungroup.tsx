@@ -2,11 +2,12 @@
 
 import { Fragment, use, useEffect } from "react";
 import { AppContext } from "../../AppContext";
-import TaskName, { DummyTaskName } from "./TaskName";
+import TaskName from "./TaskName";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "./Draggable/DropIndicatorTask";
 import TaskTrack from "./TaskTrack";
 import { Element } from "@/app/components/Scroll";
+import TaskNameDummy from "./TaskNameDummy";
 
 export default function Ungroup() {
   const appContext = use(AppContext);
@@ -33,7 +34,7 @@ export default function Ungroup() {
           <>
             <DropIndicatorTask groupId={null} beforeId={dummyTask.id} />
             <div className="app-TaskDummyItem flex h-[40px] items-center">
-              <DummyTaskName task={dummyTask} />
+              <TaskNameDummy task={dummyTask} />
               <div className="sticky left-[200px] flex">
                 {totalDays.map((date) => (
                   <TaskTrack
