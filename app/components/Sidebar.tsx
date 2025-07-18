@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  Cross1Icon,
-  CalendarIcon,
-  CardStackPlusIcon,
-  FilePlusIcon,
-} from "@radix-ui/react-icons";
+import { Cross1Icon, CalendarIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import CalendarMonth from "./CalendarMonth";
-import GroupAddPopover from "./GroupAddPopover";
 
 export default function Sidebar() {
   const [openSidebar, setOpenSidebar] = useState(true);

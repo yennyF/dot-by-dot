@@ -6,7 +6,7 @@ import TaskDeleteDialog from "../TaskDeleteDialog";
 import TaskRenamePopover from "../TaskRenamePopover";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
-import TaskAddPopover from "../TaskAddPopover";
+import TaskCreatePopover from "../TaskCreatePopover";
 
 interface TaskNameProps {
   task: Task;
@@ -87,11 +87,11 @@ export function DummyTaskName({ task }: TaskNameProps) {
         {task.name}
       </div>
       <div className="action-buttons">
-        <TaskAddPopover>
+        <TaskCreatePopover>
           <button className="button-icon">
             <Pencil1Icon />
           </button>
-        </TaskAddPopover>
+        </TaskCreatePopover>
       </div>
     </div>
   );

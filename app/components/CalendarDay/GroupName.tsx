@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useState, DragEvent } from "react";
 import clsx from "clsx";
-import GroupAddPopover from "../GroupAddPopover";
+import GroupCreatePopover from "../GroupCreatePopover";
 
 interface GroupNameProps {
   group: Group;
@@ -83,11 +83,11 @@ export function DummyGroupName({ group }: GroupNameProps) {
         {group.name}
       </div>
       <div className="action-buttons">
-        <GroupAddPopover>
+        <GroupCreatePopover>
           <button className="button-icon">
             <Pencil1Icon />
           </button>
-        </GroupAddPopover>
+        </GroupCreatePopover>
       </div>
     </div>
   );

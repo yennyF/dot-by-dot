@@ -2,22 +2,24 @@
 
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { useGroupStore } from "../stores/GroupStore";
+import { UNGROUPED_KEY, useTaskStore } from "../stores/TaskStore";
 
-interface GroupAddPopoverProps {
+interface TaskCreatePopoverProps {
   children: React.ReactNode;
 }
 
-export default function GroupAddPopover({ children }: GroupAddPopoverProps) {
+export default function TaskCreatePopover({
+  children,
+}: TaskCreatePopoverProps) {
   const [open, setOpen] = useState(true);
 
-  const setDummyGroup = useGroupStore((s) => s.setDummyGroup);
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   useEffect(() => {
     if (!open) {
-      setDummyGroup(undefined);
+      setDummyTask(undefined);
     }
-  }, [open, setDummyGroup]);
+  }, [open, setDummyTask]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen} modal>
@@ -32,28 +34,30 @@ export default function GroupAddPopover({ children }: GroupAddPopoverProps) {
 }
 
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const dummyGroup = useGroupStore((s) => s.dummyGroup);
-  const groups = useGroupStore((s) => s.groups);
-  const addGroup = useGroupStore((s) => s.addGroup);
+  const dummyTask = useTaskStore((s) => s.dummyTask);
+  const tasks = useTaskStore(
+    (s) => s.tasksByGroup?.[dummyTask?.groupId ?? UNGROUPED_KEY]
+  );
+  const addTask = useTaskStore((s) => s.addTask);
 
   const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (groups?.some((h) => h.name === name)) {
+    if (tasks?.some((h) => h.name === name)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [name, groups]);
+  }, [name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handleSaveClick = async () => {
-    if (!dummyGroup) return;
-    await addGroup({ id: dummyGroup.id, name });
+  const handleSaveClick = () => {
+    if (!dummyTask) return;
+    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
     setOpen(false);
   };
 
@@ -76,10 +80,14 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
           type="text"
           value={name}
           onChange={handleNameChange}
-          placeholder="New group"
+          placeholder="New task"
         ></input>
         <div className="warning-xs">
-          {isDuplicated ? "There is a group with the same name" : "\u00A0"}
+          {isDuplicated
+            ? dummyTask?.groupId !== undefined
+              ? "There is a task with the same name in this group"
+              : "There is a task with the same name"
+            : ""}
         </div>
       </fieldset>
       <div className="flex justify-center gap-3">
