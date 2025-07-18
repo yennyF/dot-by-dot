@@ -63,10 +63,10 @@ export default function CalendarMonth() {
           <button className="text-sm" onClick={today}>
             Today
           </button>
-          <button className="button-icon" onClick={previousMonth}>
+          <button className="button-icon-sheer" onClick={previousMonth}>
             <ChevronLeftIcon />
           </button>
-          <button className="button-icon" onClick={nextMonth}>
+          <button className="button-icon-sheer" onClick={nextMonth}>
             <ChevronRightIcon />
           </button>
         </div>

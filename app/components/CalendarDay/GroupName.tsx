@@ -48,7 +48,7 @@ export default function GroupName({ group }: GroupNameProps) {
           )}
         >
           <button
-            className="button-icon"
+            className="button-icon-sheer"
             onClick={() => {
               setDummyTask({
                 id: uuidv4(),
@@ -61,12 +61,12 @@ export default function GroupName({ group }: GroupNameProps) {
             <PlusIcon />
           </button>
           <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-            <button className="button-icon">
+            <button className="button-icon-sheer">
               <Pencil1Icon />
             </button>
           </GroupRenamePopover>
           <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-            <button className="button-icon">
+            <button className="button-icon-sheer">
               <TrashIcon />
             </button>
           </GroupDeleteDialog>
@@ -84,7 +84,7 @@ export function DummyGroupName({ group }: GroupNameProps) {
       </div>
       <div className="action-buttons">
         <GroupCreatePopover>
-          <button className="button-icon">
+          <button className="button-icon-sheer">
             <Pencil1Icon />
           </button>
         </GroupCreatePopover>

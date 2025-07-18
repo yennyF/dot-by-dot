@@ -43,7 +43,7 @@ export default function GroupDeleteDialog({
                   Delete your group
                 </Dialog.Title>
                 <Dialog.Close asChild>
-                  <button className="button-icon shrink-0">
+                  <button className="button-icon-sheer shrink-0">
                     <Cross1Icon />
                   </button>
                 </Dialog.Close>

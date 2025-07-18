@@ -178,7 +178,7 @@ input {
 
 @layer components {
   .button {
-    @apply focus:outline-none disabled:pointer-events-none disabled:opacity-20;
+    @apply focus:outline-none disabled:pointer-events-none ;
   }
 
   .button-accent {
@@ -206,7 +206,11 @@ input {
   }
 
   .button-icon {
-    @apply button h-fit w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)] flex justify-center items-center;
+    @apply disabled:opacity-20;
+  }
+
+  .button-icon-sheer {
+    @apply button button-icon h-fit w-fit cursor-pointer rounded-full p-1 transition-all hover:bg-[var(--black)] flex justify-center items-center;
 
     &:hover svg {
       @apply button text-[var(--white)];
@@ -222,7 +226,7 @@ input {
   }
 
   .button-icon-accent {
-    @apply button w-fit cursor-pointer rounded-full p-1 transition-all bg-[var(--accent)] hover:bg-[var(--black)] flex justify-center items-center;
+    @apply button button-icon w-fit cursor-pointer rounded-full p-1 transition-all bg-[var(--accent)] hover:bg-[var(--black)] flex justify-center items-center;
 
     svg {
       @apply text-[var(--white)]

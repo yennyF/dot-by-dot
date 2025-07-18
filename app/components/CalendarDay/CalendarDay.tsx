@@ -70,14 +70,14 @@ export default function CalendarDay() {
         <div className="flex items-center gap-8">
           <div className="flex gap-1">
             <button
-              className="button-icon"
+              className="button-icon-sheer"
               disabled={isAtLeft}
               onClick={scrollToLeft}
             >
               <ChevronLeftIcon />
             </button>
             <button
-              className="button-icon"
+              className="button-icon-sheer"
               disabled={isAtRight}
               onClick={scrollToRight}
             >
@@ -120,7 +120,7 @@ export default function CalendarDay() {
           <div className="sticky left-0 top-[148px] z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
             <div className="sticky left-0 flex w-[200px] justify-center">
               <button
-                className="button-icon"
+                className="button-icon-sheer"
                 disabled={isAtTop}
                 onClick={scrollToTop}
               >
@@ -153,7 +153,7 @@ export default function CalendarDay() {
           <div className="sticky bottom-0 left-0 z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
             <div className="sticky left-0 flex w-[200px] justify-center">
               <button
-                className="button-icon"
+                className="button-icon-sheer"
                 disabled={isAtBottom}
                 onClick={scrollToBottom}
               >

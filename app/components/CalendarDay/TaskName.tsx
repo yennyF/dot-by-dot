@@ -54,12 +54,12 @@ export default function TaskName({ task }: TaskNameProps) {
           )}
         >
           <TaskRenamePopover task={task} onOpenChange={setForceShow}>
-            <button className="button-icon">
+            <button className="button-icon-sheer">
               <Pencil1Icon />
             </button>
           </TaskRenamePopover>
           <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
-            <button className="button-icon">
+            <button className="button-icon-sheer">
               <TrashIcon />
             </button>
           </TaskDeleteDialog>
@@ -88,7 +88,7 @@ export function DummyTaskName({ task }: TaskNameProps) {
       </div>
       <div className="action-buttons">
         <TaskCreatePopover>
-          <button className="button-icon">
+          <button className="button-icon-sheer">
             <Pencil1Icon />
           </button>
         </TaskCreatePopover>
