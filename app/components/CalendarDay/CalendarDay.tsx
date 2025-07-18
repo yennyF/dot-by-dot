@@ -19,9 +19,9 @@ import GroupDummyItem from "./GroupDummyItem";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
-import YearItem from "./YearItem";
+import YearItem from "./HeaderItems/YearItem";
 import useScrollToSides from "../../hooks/useScrollToSides";
-import { Element } from "@/app/components/Scroll";
+import { Element, Link } from "@/app/components/Scroll";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -30,10 +30,8 @@ export default function CalendarDay() {
   }
   const { totalYears } = appContext;
 
-  const todayRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  const scrollToTarget = useScrollToTarget(todayRef);
   const {
     isAtTop,
     isAtBottom,
@@ -86,9 +84,13 @@ export default function CalendarDay() {
               <ChevronRightIcon />
             </button>
           </div>
-          <button className="button-outline" onClick={scrollToTarget}>
-            Today
-          </button>
+          <Link
+            to="element-today"
+            options={{ block: "end", behavior: "smooth", inline: "center" }}
+            autoScroll={true}
+          >
+            <button className="button-outline">Today</button>
+          </Link>
         </div>
       </div>
 
@@ -105,11 +107,10 @@ export default function CalendarDay() {
             <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
               {totalYears.map((date) => (
                 <YearItem
-                  key={date.toLocaleDateString()}
+                  key={date.getFullYear()}
                   date={date}
                   minDate={minDate}
                   maxDate={maxDate}
-                  todayRef={todayRef}
                 />
               ))}
             </div>
