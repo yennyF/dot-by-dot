@@ -3,14 +3,7 @@
 import React, { Fragment, use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  PlusIcon,
-  TriangleDownIcon,
-} from "@radix-ui/react-icons";
+import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import GroupItem from "./GroupItem";
 import Ungroup from "./Ungroup";
 import { useGroupStore } from "@/app/stores/GroupStore";
@@ -19,8 +12,11 @@ import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import YearItem from "./HeaderItems/YearItem";
-import useScrollToSides from "../../hooks/useScrollToSides";
 import { Element, Link } from "@/app/components/Scroll";
+import LeftButton from "./ButtonSide/LeftButton";
+import RightButton from "./ButtonSide/RightButton";
+import BottomButton from "./ButtonSide/BottomButton";
+import TopButton from "./ButtonSide/TopButton";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -30,18 +26,6 @@ export default function CalendarDay() {
   const { totalYears } = appContext;
 
   const viewportRef = useRef<HTMLDivElement>(null);
-
-  const {
-    isAtTop,
-    isAtBottom,
-    isAtLeft,
-    isAtRight,
-    scrollToTop,
-    scrollToBottom,
-    scrollToLeft,
-    scrollToRight,
-    scrollVertically,
-  } = useScrollToSides(viewportRef);
 
   const groups = useGroupStore((s) => s.groups);
 
@@ -68,20 +52,8 @@ export default function CalendarDay() {
         </div>
         <div className="flex items-center gap-8">
           <div className="flex gap-1">
-            <button
-              className="button-icon-sheer"
-              disabled={isAtLeft}
-              onClick={scrollToLeft}
-            >
-              <ChevronLeftIcon />
-            </button>
-            <button
-              className="button-icon-sheer"
-              disabled={isAtRight}
-              onClick={scrollToRight}
-            >
-              <ChevronRightIcon />
-            </button>
+            <LeftButton viewportRef={viewportRef} />
+            <RightButton viewportRef={viewportRef} />
           </div>
           <Link
             to="element-today"
@@ -97,7 +69,6 @@ export default function CalendarDay() {
       <div
         ref={viewportRef}
         className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-150px)] overflow-x-auto overflow-y-scroll"
-        onDrag={scrollVertically}
       >
         <DraggableScroll>
           {/* Calendar Header */}
@@ -118,13 +89,7 @@ export default function CalendarDay() {
           {/* Top Scroll */}
           <div className="sticky left-0 top-[148px] z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
             <div className="sticky left-0 flex w-[200px] justify-center">
-              <button
-                className="button-icon-sheer"
-                disabled={isAtTop}
-                onClick={scrollToTop}
-              >
-                <ChevronUpIcon />
-              </button>
+              <TopButton viewportRef={viewportRef} />
             </div>
           </div>
 
@@ -151,13 +116,7 @@ export default function CalendarDay() {
           {/* Bottom Scroll */}
           <div className="sticky bottom-0 left-0 z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
             <div className="sticky left-0 flex w-[200px] justify-center">
-              <button
-                className="button-icon-sheer"
-                disabled={isAtBottom}
-                onClick={scrollToBottom}
-              >
-                <ChevronDownIcon />
-              </button>
+              <BottomButton viewportRef={viewportRef} />
             </div>
           </div>
         </DraggableScroll>

@@ -19,6 +19,22 @@ export default function DraggableScroll({ children }: DraggableScrollProps) {
   const moveGroupBefore = useGroupStore((s) => s.moveGroupBefore);
   const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
 
+  const scrollVertically = (e: DragEvent) => {
+    const el = ref.current;
+    if (!el) return;
+
+    const scrollSpeed = 5;
+    // TODO handle custom threshold setup
+    const threshold = { top: 150, bottom: 10 };
+
+    const { top, bottom } = el.getBoundingClientRect();
+    const y = e.clientY;
+    const direction =
+      y - top < threshold.top ? -1 : bottom - y < threshold.bottom ? 1 : 0;
+
+    if (direction !== 0) el.scrollTop += direction * scrollSpeed;
+  };
+
   const getIndicators = () => {
     if (!dataSort.current) return [];
 
@@ -115,6 +131,7 @@ export default function DraggableScroll({ children }: DraggableScrollProps) {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      onDrag={scrollVertically}
     >
       {children}
     </div>

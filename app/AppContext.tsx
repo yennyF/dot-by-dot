@@ -16,9 +16,9 @@ interface AppContextProps {
   totalDays: Date[];
 }
 
-const AppContext = createContext({} as AppContextProps);
+export const AppContext = createContext({} as AppContextProps);
 
-const AppProvider = ({ children }: { children: ReactNode }) => {
+export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
 
   const currentDate = new Date();
@@ -45,5 +45,3 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
 
   return <AppContext value={value}>{children}</AppContext>;
 };
-
-export { AppContext, AppProvider };
