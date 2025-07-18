@@ -38,12 +38,11 @@ export function Link({ to, children, options, autoScroll }: LinkProps) {
   );
 }
 
-export function Element({
-  id,
-  children,
-}: {
+interface ElementProps {
   id: string;
   children?: ReactNode;
-}) {
+}
+
+export function Element({ id, children }: ElementProps) {
   return <div id={id}>{children}</div>;
 }
