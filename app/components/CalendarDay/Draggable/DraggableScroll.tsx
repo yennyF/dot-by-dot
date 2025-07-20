@@ -2,15 +2,19 @@
 
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import { useRef, DragEvent, ReactNode } from "react";
+import { useRef, DragEvent, ReactNode, RefObject } from "react";
 
 interface DraggableScrollProps {
   children: ReactNode;
+  className: string;
+  ref: RefObject<HTMLDivElement | null>;
 }
 
-export default function DraggableScroll({ children }: DraggableScrollProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
+export default function DraggableScroll({
+  children,
+  className,
+  ref,
+}: DraggableScrollProps) {
   const dataSort = useRef<"task" | "group">(null);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
@@ -25,7 +29,7 @@ export default function DraggableScroll({ children }: DraggableScrollProps) {
 
     const scrollSpeed = 5;
     // TODO handle custom threshold setup
-    const threshold = { top: 150, bottom: 10 };
+    const threshold = { top: 150, bottom: 50 };
 
     const { top, bottom } = el.getBoundingClientRect();
     const y = e.clientY;
@@ -126,7 +130,7 @@ export default function DraggableScroll({ children }: DraggableScrollProps) {
   return (
     <div
       ref={ref}
-      className="w-fit"
+      className={className}
       onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

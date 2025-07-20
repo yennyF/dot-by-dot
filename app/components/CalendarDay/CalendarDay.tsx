@@ -38,18 +38,16 @@ export default function CalendarDay() {
   });
 
   return (
-    <div className="app-CalendarDay mx-[50px] w-full overflow-hidden">
+    <div className="app-CalendarDay mx-[50px] flex h-[100vh] flex-1 flex-col overflow-hidden">
       {/* Controls */}
-      <div className="flex h-[80px] w-full items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <CreateDropdown>
-            <button className="button-accent-outline">
-              <PlusIcon />
-              Create
-              <TriangleDownIcon />
-            </button>
-          </CreateDropdown>
-        </div>
+      <div className="flex items-center justify-between gap-2 py-[10px]">
+        <CreateDropdown>
+          <button className="button-accent-outline">
+            <PlusIcon />
+            Create
+            <TriangleDownIcon />
+          </button>
+        </CreateDropdown>
         <div className="flex items-center gap-8">
           <div className="flex gap-1">
             <LeftButton viewportRef={viewportRef} />
@@ -66,61 +64,61 @@ export default function CalendarDay() {
       </div>
 
       {/* Calendar */}
-      <div
+      <DraggableScroll
         ref={viewportRef}
-        className="calendar-viewport no-scrollbar relative top-0 h-[calc(100vh-100px)] w-[calc(100vw-320px-150px)] overflow-x-auto overflow-y-scroll"
+        className="calendar-viewport no-scrollbar relative top-0 flex-1 overflow-x-auto overflow-y-scroll"
       >
-        <DraggableScroll>
-          {/* Calendar Header */}
-          <div className="calendar-header sticky top-0 z-10 flex w-fit">
-            <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
-            <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
-              {totalYears.map((date) => (
-                <YearItem
-                  key={date.getFullYear()}
-                  date={date}
-                  minDate={minDate}
-                  maxDate={maxDate}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Top Scroll */}
-          <div className="sticky left-0 top-[148px] z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
-            <div className="sticky left-0 flex w-[200px] justify-center">
-              <TopButton viewportRef={viewportRef} />
-            </div>
-          </div>
-
-          {/* Calendar Body */}
-          <div className="flex w-fit flex-col gap-2">
-            <Ungroup />
-
-            <Element id="create-group">
-              <DropIndicatorGroup />
-              <GroupItemDummy />
-            </Element>
-
-            {groups?.map((group) => (
-              <Fragment key={group.id}>
-                <DropIndicatorGroup beforeId={group.id} />
-                <GroupItem group={group} />
-              </Fragment>
+        {/* <DraggableScroll> */}
+        {/* Header */}
+        <div className="calendar-header sticky top-0 z-10 flex w-fit">
+          <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
+          <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
+            {totalYears.map((date) => (
+              <YearItem
+                key={date.getFullYear()}
+                date={date}
+                minDate={minDate}
+                maxDate={maxDate}
+              />
             ))}
-            {groups && groups.length > 0 && (
-              <DropIndicatorGroup afterId={groups[groups.length - 1].id} />
-            )}
           </div>
+        </div>
 
-          {/* Bottom Scroll */}
-          <div className="sticky bottom-0 left-0 z-10 flex w-[calc(100vw-320px-150px)] justify-center bg-[var(--background)] py-2">
-            <div className="sticky left-0 flex w-[200px] justify-center">
-              <BottomButton viewportRef={viewportRef} />
-            </div>
+        {/* Top Scroll */}
+        <div className="sticky left-0 top-[148px] z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
+          <div className="sticky left-0 flex w-[200px] justify-center">
+            <TopButton viewportRef={viewportRef} />
           </div>
-        </DraggableScroll>
-      </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex w-fit flex-col gap-2">
+          <Ungroup />
+
+          <Element id="create-group">
+            <DropIndicatorGroup />
+            <GroupItemDummy />
+          </Element>
+
+          {groups?.map((group) => (
+            <Fragment key={group.id}>
+              <DropIndicatorGroup beforeId={group.id} />
+              <GroupItem group={group} />
+            </Fragment>
+          ))}
+          {groups && groups.length > 0 && (
+            <DropIndicatorGroup afterId={groups[groups.length - 1].id} />
+          )}
+        </div>
+
+        {/* Bottom Scroll */}
+        <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
+          <div className="sticky left-0 flex w-[200px] justify-center">
+            <BottomButton viewportRef={viewportRef} />
+          </div>
+        </div>
+        {/* </DraggableScroll> */}
+      </DraggableScroll>
     </div>
   );
 }

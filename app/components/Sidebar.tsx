@@ -17,7 +17,7 @@ export default function Sidebar() {
       transition={{ duration: 0.2 }}
     >
       <div
-        className="button-icon-accent absolute right-0 top-5 z-10 h-[35px] w-[40px] translate-x-full rounded-none rounded-br-full rounded-tr-full"
+        className="button-icon-accent absolute right-0 top-2 z-10 h-[35px] w-[40px] translate-x-full rounded-none rounded-br-full rounded-tr-full"
         onClick={() => setOpenSidebar((prev) => !prev)}
       >
         {openSidebar ? <Cross1Icon /> : <CalendarIcon />}
@@ -27,9 +27,9 @@ export default function Sidebar() {
         {openSidebar && (
           <motion.div
             className="relative h-screen w-[320px] shrink-0"
-            initial={{ left: -320 }}
-            animate={{ left: 0 }}
-            exit={{ left: -320 }}
+            initial={{ x: -320 }}
+            animate={{ x: 0 }}
+            exit={{ x: -320 }}
             transition={{ duration: 0.2 }}
           >
             <div className="fixed h-screen w-[320px] border-r-[1px] border-[var(--gray)]">
