@@ -38,7 +38,7 @@ export default function CalendarDay() {
   });
 
   return (
-    <div className="app-CalendarDay mx-[50px] overflow-hidden">
+    <div className="app-CalendarDay mx-[50px] w-full overflow-hidden">
       {/* Controls */}
       <div className="flex h-[80px] w-full items-center justify-between gap-2">
         <div className="flex items-center gap-2">
