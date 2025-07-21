@@ -6,13 +6,16 @@ import { AppContext } from "../../AppContext";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import CreateDropdown from "./CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import YearItem from "./HeaderItems/YearItem";
+import YearItem from "./YearItem/YearItem";
 import { Link } from "@/app/components/Scroll";
 import LeftButton from "./SideButtons/LeftButton";
 import RightButton from "./SideButtons/RightButton";
 import BottomButton from "./SideButtons/BottomButton";
 import TopButton from "./SideButtons/TopButton";
-import CalendarBody from "./BodyItems/CalendarBody";
+import CalendarBody from "./GroupedTasks";
+import Ungroup from "./UngroupedTasks";
+import UngroupedTasks from "./UngroupedTasks";
+import GroupedTasks from "./GroupedTasks";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -83,7 +86,10 @@ export default function CalendarDay() {
         </div>
 
         {/* Body Calendar */}
-        <CalendarBody />
+        <div className="flex w-fit flex-col gap-2">
+          <UngroupedTasks />
+          <GroupedTasks />
+        </div>
 
         {/* Bottom Scroll */}
         <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
@@ -93,3 +99,9 @@ export default function CalendarDay() {
     </div>
   );
 }
+
+/* Shadows */
+//<div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
+//<div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
+//<div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
+//<div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>

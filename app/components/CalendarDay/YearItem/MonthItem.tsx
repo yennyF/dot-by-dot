@@ -9,7 +9,7 @@ import {
   isBefore,
   isAfter,
 } from "date-fns";
-import { Element } from "../../Scroll";
+import { LinkReceptor } from "../../Scroll";
 import DayItem from "./DayItem";
 
 interface MonthItemProps {
@@ -33,9 +33,9 @@ export default function MonthItem({ date, minDate, maxDate }: MonthItemProps) {
         {totalDays.map((date) => {
           const isTodayDate = isToday(date);
           return isTodayDate ? (
-            <Element key={date.toLocaleDateString()} id="element-today">
+            <LinkReceptor key={date.toLocaleDateString()} id="element-today">
               <DayItem date={date} isTodayDate={isTodayDate} />
-            </Element>
+            </LinkReceptor>
           ) : (
             <DayItem
               key={date.toLocaleDateString()}

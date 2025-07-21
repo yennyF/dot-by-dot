@@ -2,16 +2,19 @@
 
 import { Fragment, memo, use, useEffect } from "react";
 import { AppContext } from "../../../AppContext";
-import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
 import DropIndicatorTask from "../Draggable/DropIndicatorTask";
-import TaskName from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
+import TaskItem from "../TaskItem/TaskItem";
 import GroupTrack from "./GroupTrack";
-import TaskNameDummy from "./TaskNameDummy";
 
-function GroupItem({ group }: { group: Group }) {
+interface GroupItemWrapperProps {
+  group: Group;
+  isDummy?: boolean;
+}
+
+function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
@@ -30,9 +33,7 @@ function GroupItem({ group }: { group: Group }) {
   return (
     <div className="app-GroupItem w-full">
       <div className="flex h-[40px]">
-        <div className="sticky left-0 z-[9] flex w-[200px] items-center">
-          <GroupName group={group} />
-        </div>
+        <GroupName group={group} isDummy={isDummy} />
         <div className="sticky left-[200px] flex">
           {totalDays.map((date) => (
             <GroupTrack
@@ -46,22 +47,8 @@ function GroupItem({ group }: { group: Group }) {
 
       {dummyTask && (
         <>
-          <DropIndicatorTask
-            groupId={dummyTask.groupId ?? null}
-            beforeId={dummyTask.id}
-          />
-          <div className="app-TaskDummyItem flex h-[40px] items-center">
-            <TaskNameDummy task={dummyTask} />
-            <div className="sticky left-[200px] flex">
-              {totalDays.map((date) => (
-                <TaskTrack
-                  key={date.toLocaleDateString()}
-                  date={date}
-                  task={dummyTask}
-                />
-              ))}
-            </div>
-          </div>
+          <DropIndicatorTask groupId={group.id} beforeId={dummyTask.id} />
+          <TaskItem task={dummyTask} isDummy={true} />
         </>
       )}
 
@@ -71,25 +58,13 @@ function GroupItem({ group }: { group: Group }) {
             groupId={task.groupId ?? null}
             beforeId={task.id}
           />
-          <div className="flex h-[40px] items-center">
-            <TaskName task={task} />
-            <div className="sticky left-[200px] flex">
-              {totalDays.map((date) => (
-                <TaskTrack
-                  key={date.toLocaleDateString()}
-                  date={date}
-                  task={task}
-                />
-              ))}
-            </div>
-          </div>
+          <TaskItem task={task} />
         </Fragment>
       ))}
-
       <DropIndicatorTask groupId={group.id} />
     </div>
   );
 }
 
-const MemoizedGroupItem = memo(GroupItem);
-export default MemoizedGroupItem;
+const GroupItem = memo(GroupItemWrapper);
+export default GroupItem;
