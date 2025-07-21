@@ -1,10 +1,11 @@
 "use client";
 
 import { use, useEffect } from "react";
-import { AppContext } from "../../AppContext";
+import { AppContext } from "../../../AppContext";
 import GroupTrack from "./GroupTrack";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { GroupNameDummy } from "./GroupNameDummy";
+import DropIndicatorGroup from "../Draggable/DropIndicatorGroup";
 
 export default function GroupItemDummy() {
   const appContext = use(AppContext);
@@ -22,7 +23,8 @@ export default function GroupItemDummy() {
   if (!dummyGroup) return null;
 
   return (
-    <div className="app-GroupItemDummy w-full">
+    <>
+      <DropIndicatorGroup />
       <div className="flex h-[40px]">
         <div className="sticky left-0 z-[9] flex w-[200px] items-center">
           <GroupNameDummy group={dummyGroup} />
@@ -33,6 +35,6 @@ export default function GroupItemDummy() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }

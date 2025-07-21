@@ -1,22 +1,18 @@
 "use client";
 
-import React, { Fragment, use, useEffect, useRef } from "react";
+import React, { use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
-import GroupItem from "./GroupItem";
-import Ungroup from "./Ungroup";
-import { useGroupStore } from "@/app/stores/GroupStore";
-import GroupItemDummy from "./GroupItemDummy";
 import CreateDropdown from "../CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import YearItem from "./HeaderItems/YearItem";
-import { Element, Link } from "@/app/components/Scroll";
-import LeftButton from "./ButtonSide/LeftButton";
-import RightButton from "./ButtonSide/RightButton";
-import BottomButton from "./ButtonSide/BottomButton";
-import TopButton from "./ButtonSide/TopButton";
+import { Link } from "@/app/components/Scroll";
+import LeftButton from "./SideButtons/LeftButton";
+import RightButton from "./SideButtons/RightButton";
+import BottomButton from "./SideButtons/BottomButton";
+import TopButton from "./SideButtons/TopButton";
+import CalendarBody from "./BodyItems/CalendarBody";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -25,13 +21,11 @@ export default function CalendarDay() {
   }
   const { totalYears } = appContext;
 
-  const viewportRef = useRef<HTMLDivElement>(null);
-
-  const groups = useGroupStore((s) => s.groups);
-
   const currentDate = new Date();
   const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 0);
+
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("CalendarDay rendered");
@@ -68,8 +62,7 @@ export default function CalendarDay() {
         ref={viewportRef}
         className="calendar-viewport no-scrollbar relative top-0 flex-1 overflow-x-auto overflow-y-scroll"
       >
-        {/* <DraggableScroll> */}
-        {/* Header */}
+        {/* Header Calendar */}
         <div className="calendar-header sticky top-0 z-10 flex w-fit">
           <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
           <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
@@ -86,45 +79,17 @@ export default function CalendarDay() {
 
         {/* Top Scroll */}
         <div className="sticky left-0 top-[148px] z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
-          <div className="sticky left-0 flex w-[200px] justify-center">
-            <TopButton viewportRef={viewportRef} />
-          </div>
+          <TopButton viewportRef={viewportRef} />
         </div>
 
-        {/* Body */}
-        <div className="flex w-fit flex-col gap-2">
-          <Ungroup />
-
-          <Element id="create-group">
-            <DropIndicatorGroup />
-            <GroupItemDummy />
-          </Element>
-
-          {groups?.map((group) => (
-            <Fragment key={group.id}>
-              <DropIndicatorGroup beforeId={group.id} />
-              <GroupItem group={group} />
-            </Fragment>
-          ))}
-          {groups && groups.length > 0 && (
-            <DropIndicatorGroup afterId={groups[groups.length - 1].id} />
-          )}
-        </div>
+        {/* Body Calendar */}
+        <CalendarBody />
 
         {/* Bottom Scroll */}
         <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
-          <div className="sticky left-0 flex w-[200px] justify-center">
-            <BottomButton viewportRef={viewportRef} />
-          </div>
+          <BottomButton viewportRef={viewportRef} />
         </div>
-        {/* </DraggableScroll> */}
       </DraggableScroll>
     </div>
   );
 }
-
-/* Shadows */
-//<div className="shadow-background-top absolute left-0 top-[143px] z-10 h-[10px] w-full"></div>
-//<div className="shadow-background-bottom absolute bottom-0 left-0 z-10 h-[10px] w-full"></div>
-//<div className="shadow-background-left absolute left-[200px] top-0 z-10 h-full w-[10px]"></div>
-//<div className="shadow-background-right absolute right-0 top-0 z-10 h-full w-[10px]"></div>

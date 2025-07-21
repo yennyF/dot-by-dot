@@ -1,17 +1,17 @@
 "use client";
 
-import { Fragment, use, useEffect } from "react";
-import { AppContext } from "../../AppContext";
+import { Fragment, memo, use, useEffect } from "react";
+import { AppContext } from "../../../AppContext";
 import TaskTrack from "./TaskTrack";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
-import DropIndicatorTask from "./Draggable/DropIndicatorTask";
+import DropIndicatorTask from "../Draggable/DropIndicatorTask";
 import TaskName from "./TaskName";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import GroupTrack from "./GroupTrack";
 import TaskNameDummy from "./TaskNameDummy";
 
-export default function GroupItem({ group }: { group: Group }) {
+function GroupItem({ group }: { group: Group }) {
   const appContext = use(AppContext);
   if (!appContext) {
     throw new Error("CalendarList must be used within a AppProvider");
@@ -90,3 +90,6 @@ export default function GroupItem({ group }: { group: Group }) {
     </div>
   );
 }
+
+const MemoizedGroupItem = memo(GroupItem);
+export default MemoizedGroupItem;

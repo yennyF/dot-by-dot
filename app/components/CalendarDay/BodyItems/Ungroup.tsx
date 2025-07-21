@@ -1,10 +1,10 @@
 "use client";
 
 import { Fragment, use, useEffect } from "react";
-import { AppContext } from "../../AppContext";
+import { AppContext } from "../../../AppContext";
 import TaskName from "./TaskName";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
-import DropIndicatorTask from "./Draggable/DropIndicatorTask";
+import DropIndicatorTask from "../Draggable/DropIndicatorTask";
 import TaskTrack from "./TaskTrack";
 import { Element } from "@/app/components/Scroll";
 import TaskNameDummy from "./TaskNameDummy";

@@ -1,6 +1,6 @@
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { Group } from "@/app/repositories/types";
-import GroupCreatePopover from "../GroupCreatePopover";
+import GroupCreatePopover from "../../GroupCreatePopover";
 
 interface GroupNameDummyProps {
   group: Group;
