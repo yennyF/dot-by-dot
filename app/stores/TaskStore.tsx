@@ -4,6 +4,7 @@ import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
 import { useTrackStore } from "./TrackStore";
 import { LexoRank } from "lexorank";
+import { forEach } from "lodash";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -36,11 +37,17 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     tasksByGroup: undefined,
 
     loadTasks: async () => {
-      const tasksByGroup: Record<string, Task[]> = {};
+      const tasksByGroup: Record<string, Task[]> = {
+        [UNGROUPED_KEY]: [],
+      };
+
+      await db.groups.each((group) => {
+        tasksByGroup[group.id] = [];
+      });
 
       await db.tasks.orderBy("order").each((task) => {
         const key = task.groupId ?? UNGROUPED_KEY;
-        (tasksByGroup[key] ??= []).push(task);
+        tasksByGroup[key].push(task);
       });
 
       set(() => ({ tasksByGroup }));
