@@ -10,14 +10,11 @@ import {
   eachDayOfInterval,
   startOfWeek,
   endOfWeek,
-  isToday,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { useTrackStore } from "../stores/TrackStore";
-import { midnightUTCstring } from "../repositories/types";
+import DayItem from "./DayItem";
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
-const MAX_TASK_SIZE = 10;
 
 export default function CalendarMonth() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -94,34 +91,6 @@ export default function CalendarMonth() {
           <DayItem key={date.toLocaleDateString()} date={date} />
         ))}
       </div>
-    </div>
-  );
-}
-
-interface DayItemProps {
-  date: Date;
-}
-
-function DayItem({ date }: DayItemProps) {
-  const totalChecked = useTrackStore(
-    (s) => s.tasksByDate?.[midnightUTCstring(date)]?.size ?? 0
-  );
-
-  const percentage = Math.min(totalChecked, MAX_TASK_SIZE) / MAX_TASK_SIZE;
-
-  // useEffect(() => {
-  //   console.log("DayItem", date.toLocaleDateString());
-  // });
-
-  return (
-    <div
-      className={`calendar-day relative grid h-8 w-8 place-items-center rounded-full text-xs text-black ${isToday(date) ? "outline" : ""}`}
-    >
-      <div
-        className={`absolute -z-10 h-full w-full rounded-full bg-[var(--accent)] transition-opacity duration-100`}
-        style={{ opacity: percentage }}
-      ></div>
-      {format(date, "d")}
     </div>
   );
 }

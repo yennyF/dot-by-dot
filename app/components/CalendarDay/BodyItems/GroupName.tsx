@@ -1,6 +1,6 @@
 import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
-import GroupDeleteDialog from "../../GroupDeleteDialog";
-import GroupRenamePopover from "../../GroupRenamePopover";
+import GroupDeleteDialog from "../GroupDeleteDialog";
+import GroupRenamePopover from "../GroupRenamePopover";
 import { Group } from "@/app/repositories/types";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";

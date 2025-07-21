@@ -3,7 +3,7 @@
 import { Cross1Icon, CalendarIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
-import CalendarMonth from "./CalendarMonth";
+import CalendarMonth from "./CalendarMonth/CalendarMonth";
 
 export default function Sidebar() {
   const [openSidebar, setOpenSidebar] = useState(true);

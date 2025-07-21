@@ -2,33 +2,33 @@
 
 import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
-import { Task } from "../repositories/types";
-import { useTaskStore } from "../stores/TaskStore";
+import { Group } from "../../repositories/types";
+import { useGroupStore } from "../../stores/GroupStore";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
-interface TaskDeleteDialogProps {
+interface GroupDeleteDialogProps {
   children: React.ReactNode;
-  task: Task;
-  onOpenChange: (open: boolean) => void;
+  group: Group;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function TaskDeleteDialog({
+export default function GroupDeleteDialog({
   children,
-  task,
+  group,
   onOpenChange,
-}: TaskDeleteDialogProps) {
-  const deleteTask = useTaskStore((s) => s.deleteTask);
+}: GroupDeleteDialogProps) {
+  const deleteGroup = useGroupStore((s) => s.deleteGroup);
 
   const [open, setOpen] = useState(false);
 
   const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
   useEffect(() => {
-    onOpenChange(open);
-  }, [open, onOpenChange]);
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   const handleDeleteConfirm = async () => {
-    deleteTask(task.id);
+    await deleteGroup(group.id);
   };
 
   return (
@@ -40,7 +40,7 @@ export default function TaskDeleteDialog({
             <Dialog.Content className="dialog-content">
               <div className="flex justify-between">
                 <Dialog.Title className="dialog-title">
-                  Delete your task
+                  Delete your group
                 </Dialog.Title>
                 <Dialog.Close asChild>
                   <button className="button-icon-sheer shrink-0">
@@ -49,13 +49,14 @@ export default function TaskDeleteDialog({
                 </Dialog.Close>
               </div>
               <Dialog.Description className="dialog-description">
-                This will remove all track that was associated with this task.
+                This will remove all content that was associated with this
+                group.
               </Dialog.Description>
               <br />
-              <div className="flex">
+              <div className="flex gap-3">
                 <Checkbox.Root
                   id="c1"
-                  className="group flex size-[18px] flex-shrink-0 appearance-none items-center justify-center rounded bg-white outline-none outline-1 outline-offset-0 outline-[var(--gray)]"
+                  className="flex size-[18px] flex-shrink-0 appearance-none items-center justify-center rounded bg-white outline-none outline-1 outline-offset-0 outline-[var(--gray)]"
                   onCheckedChange={setChecked}
                 >
                   <Checkbox.Indicator>
@@ -69,7 +70,7 @@ export default function TaskDeleteDialog({
                   htmlFor="c1"
                   className="warning-sm pl-[15px] hover:cursor-pointer"
                 >
-                  I confirm that I want to delete this task and all associated
+                  I confirm that I want to delete this group and all associated
                   content
                 </label>
               </div>

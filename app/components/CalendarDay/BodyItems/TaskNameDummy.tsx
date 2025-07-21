@@ -3,7 +3,7 @@
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
-import TaskCreatePopover from "../../TaskCreatePopover";
+import TaskCreatePopover from "../TaskCreatePopover";
 
 interface DummyTaskNameProps {
   task: Task;

@@ -2,8 +2,8 @@
 
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { Group } from "../repositories/types";
-import { useGroupStore } from "../stores/GroupStore";
+import { Group } from "../../repositories/types";
+import { useGroupStore } from "../../stores/GroupStore";
 
 interface GroupRenamePopoverProps {
   children: React.ReactNode;
