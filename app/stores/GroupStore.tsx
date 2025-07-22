@@ -5,6 +5,13 @@ import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./TaskStore";
 import { useTrackStore } from "./TrackStore";
 import { LexoRank } from "lexorank";
+import {
+  notifyCreateError,
+  notifyDeleteError,
+  notifyLoadError,
+  notifyMoveError,
+  notifyUpdateError,
+} from "../components/Notification";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -27,8 +34,13 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
     groups: undefined,
 
     loadGroups: async () => {
-      const groups = await db.groups.orderBy("order").toArray();
-      set(() => ({ groups }));
+      try {
+        const groups = await db.groups.orderBy("order").toArray();
+        set(() => ({ groups }));
+      } catch (error) {
+        console.error("Error loading groups:", error);
+        notifyLoadError();
+      }
     },
     addGroup: async (props: Pick<Group, "id" | "name">) => {
       try {
@@ -59,6 +71,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         await db.groups.add(group);
       } catch (error) {
         console.error("Error adding group:", error);
+        notifyCreateError();
       }
     },
     updateGroup: async (id: string, props: Pick<Group, "name">) => {
@@ -75,6 +88,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         await db.groups.update(id, props);
       } catch (error) {
         console.error("Error updating group:", error);
+        notifyUpdateError();
       }
     },
     moveGroupBefore: async (id: string, beforeId: string) => {
@@ -112,7 +126,8 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         if (!order) throw Error();
         await db.tasks.update(id, { order });
       } catch (error) {
-        console.error("Error moving task:", error);
+        console.error("Error moving group:", error);
+        notifyMoveError();
       }
     },
     moveGroupAfter: async (id: string, afterId: string | null) => {
@@ -163,7 +178,8 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         if (!order) throw Error();
         await db.tasks.update(id, { order });
       } catch (error) {
-        console.error("Error moving task:", error);
+        console.error("Error moving group:", error);
+        notifyMoveError();
       }
     },
     deleteGroup: async (id: string) => {
@@ -207,6 +223,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         });
       } catch (error) {
         console.error("Error deleting group:", error);
+        notifyDeleteError();
       }
     },
     setDummyGroup: (group: Group | undefined) =>

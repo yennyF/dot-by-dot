@@ -20,6 +20,10 @@ html, body {
   --gray-9: #696B75;
   --green: #58c078;
   --green-5: rgba(88, 192, 120, 0.2);
+
+  --toastify-color-light: var(--background); 
+  --toastify-color-progress-light: var(--accent);
+  --toastify-font-family:@apply font-mono
 }
 
 @media (prefers-color-scheme: dark) {

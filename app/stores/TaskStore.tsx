@@ -4,7 +4,13 @@ import { db } from "../repositories/db";
 import { immer } from "zustand/middleware/immer";
 import { useTrackStore } from "./TrackStore";
 import { LexoRank } from "lexorank";
-import { forEach } from "lodash";
+import {
+  notifyCreateError,
+  notifyDeleteError,
+  notifyLoadError,
+  notifyMoveError,
+  notifyUpdateError,
+} from "../components/Notification";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -16,7 +22,7 @@ type State = {
 type Action = {
   loadTasks: () => Promise<void>;
   addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
-  updateTask: (id: string, task: Pick<Task, "name" | "groupId">) => void;
+  updateTask: (id: string, task: Pick<Task, "name">) => void;
   moveTaskBefore: (
     id: string,
     beforeId: string,
@@ -37,20 +43,25 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     tasksByGroup: undefined,
 
     loadTasks: async () => {
-      const tasksByGroup: Record<string, Task[]> = {
-        [UNGROUPED_KEY]: [],
-      };
+      try {
+        const tasksByGroup: Record<string, Task[]> = {
+          [UNGROUPED_KEY]: [],
+        };
 
-      await db.groups.each((group) => {
-        tasksByGroup[group.id] = [];
-      });
+        await db.groups.each((group) => {
+          tasksByGroup[group.id] = [];
+        });
 
-      await db.tasks.orderBy("order").each((task) => {
-        const key = task.groupId ?? UNGROUPED_KEY;
-        tasksByGroup[key].push(task);
-      });
+        await db.tasks.orderBy("order").each((task) => {
+          const key = task.groupId ?? UNGROUPED_KEY;
+          tasksByGroup[key].push(task);
+        });
 
-      set(() => ({ tasksByGroup }));
+        set(() => ({ tasksByGroup }));
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+        notifyLoadError();
+      }
     },
     addTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
       try {
@@ -75,6 +86,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.add(task);
       } catch (error) {
         console.error("Error adding task:", error);
+        notifyCreateError();
       }
     },
     updateTask: async (id: string, props: Pick<Task, "name">) => {
@@ -92,6 +104,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error updating task:", error);
+        notifyUpdateError();
       }
     },
     moveTaskBefore: async (
@@ -142,6 +155,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error moving task:", error);
+        notifyMoveError();
       }
     },
     moveTaskAfter: async (
@@ -205,7 +219,8 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         if (!props) throw Error();
         await db.tasks.update(id, props);
       } catch (error) {
-        console.error("Error moving task to another group:", error);
+        console.error("Error moving task:", error);
+        notifyMoveError();
       }
     },
     deleteTask: async (id: string) => {
@@ -231,6 +246,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         await db.tasks.delete(id);
       } catch (error) {
         console.error("Error deleting task:", error);
+        notifyDeleteError();
       }
     },
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),

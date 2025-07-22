@@ -7,6 +7,7 @@ import Sidebar from "./components/Sidebar";
 import { useTaskStore } from "./stores/TaskStore";
 import { useTrackStore } from "./stores/TrackStore";
 import { useGroupStore } from "./stores/GroupStore";
+import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   return (
@@ -38,6 +39,7 @@ function Content() {
     <div className="relative flex">
       <Sidebar />
       <CalendarDay />
+      <ToastContainer autoClose={false} draggable={false} />
     </div>
   );
 }
