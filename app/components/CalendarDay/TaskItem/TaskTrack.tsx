@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { addDays } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
@@ -43,10 +42,6 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
     const el = document.querySelector(`.app-TaskName[data-id="${task.id}"]`);
     el?.classList.remove("highlight");
   };
-
-  // useEffect(() => {
-  //   console.log("TaskTrack rendered", task.name);
-  // });
 
   return (
     <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">

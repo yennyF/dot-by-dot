@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, Dialog } from "radix-ui";
+import { AlertDialog, Checkbox } from "radix-ui";
 import { useEffect, useState } from "react";
 import { Task } from "../../../repositories/types";
 import { useTaskStore } from "../../../stores/TaskStore";
@@ -32,25 +32,26 @@ export default function TaskDeleteDialog({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger asChild>{children}</AlertDialog.Trigger>
       {open && (
-        <Dialog.Portal>
-          <Dialog.Overlay className="overlay">
-            <Dialog.Content className="dialog-content">
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="overlay">
+            <AlertDialog.Content className="dialog-content">
               <div className="flex justify-between">
-                <Dialog.Title className="dialog-title">
-                  Delete your task
-                </Dialog.Title>
-                <Dialog.Close asChild>
+                <AlertDialog.Title className="dialog-title">
+                  Are you absolutely sure?
+                </AlertDialog.Title>
+                <AlertDialog.Cancel asChild>
                   <button className="button-icon-sheer shrink-0">
                     <Cross1Icon />
                   </button>
-                </Dialog.Close>
+                </AlertDialog.Cancel>
               </div>
-              <Dialog.Description className="dialog-description">
-                This will remove all track that was associated with this task.
-              </Dialog.Description>
+              <AlertDialog.Description className="dialog-description">
+                This action cannot be undone. This will permanently delete your
+                task and all track associated.
+              </AlertDialog.Description>
               <br />
               <div className="flex">
                 <Checkbox.Root
@@ -69,13 +70,12 @@ export default function TaskDeleteDialog({
                   htmlFor="c1"
                   className="warning-sm pl-[15px] hover:cursor-pointer"
                 >
-                  I confirm that I want to delete this task and all associated
-                  content
+                  I confirm that I want to delete this task
                 </label>
               </div>
 
               <div className="dialog-bottom">
-                <Dialog.Close asChild>
+                <AlertDialog.Cancel asChild>
                   <button
                     className="button-accept"
                     onClick={handleDeleteConfirm}
@@ -83,12 +83,12 @@ export default function TaskDeleteDialog({
                   >
                     Delete
                   </button>
-                </Dialog.Close>
+                </AlertDialog.Cancel>
               </div>
-            </Dialog.Content>
-          </Dialog.Overlay>
-        </Dialog.Portal>
+            </AlertDialog.Content>
+          </AlertDialog.Overlay>
+        </AlertDialog.Portal>
       )}
-    </Dialog.Root>
+    </AlertDialog.Root>
   );
 }
