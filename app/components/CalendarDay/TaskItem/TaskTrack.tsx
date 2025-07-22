@@ -1,6 +1,6 @@
 "use client";
 
-import { addDays } from "date-fns";
+import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
@@ -44,7 +44,12 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   };
 
   return (
-    <div className="app-TaskTrack relative flex h-10 w-[50px] items-center justify-center">
+    <div
+      className={clsx(
+        "app-TaskTrack relative flex h-10 w-[50px] items-center justify-center",
+        isToday(date) && "isToday"
+      )}
+    >
       {isPrevActive && isActive && (
         <div
           className={clsx(

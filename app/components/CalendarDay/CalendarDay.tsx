@@ -3,7 +3,12 @@
 import { use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
-import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
+import {
+  LockClosedIcon,
+  LockOpen1Icon,
+  PlusIcon,
+  TriangleDownIcon,
+} from "@radix-ui/react-icons";
 import CreateDropdown from "./CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import YearItem from "./YearItem/YearItem";
@@ -14,6 +19,8 @@ import BottomButton from "./SideButtons/BottomButton";
 import TopButton from "./SideButtons/TopButton";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
+import { useTrackStore } from "@/app/stores/TrackStore";
+import clsx from "clsx";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -26,6 +33,9 @@ export default function CalendarDay() {
   const minDate = startOfMonth(subMonths(currentDate, 3));
   const maxDate = addDays(currentDate, 0);
 
+  const lock = useTrackStore((s) => s.lock);
+  const setLock = useTrackStore((s) => s.setLock);
+
   const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,13 +46,18 @@ export default function CalendarDay() {
     <div className="app-CalendarDay mx-[50px] flex h-[100vh] flex-1 flex-col overflow-hidden">
       {/* Controls */}
       <div className="flex items-center justify-between gap-2 py-[10px]">
-        <CreateDropdown>
-          <button className="button-accent-outline">
-            <PlusIcon />
-            Create
-            <TriangleDownIcon />
+        <div className="flex items-center gap-2">
+          <CreateDropdown>
+            <button className="button-accent-outline">
+              <PlusIcon />
+              Create
+              <TriangleDownIcon />
+            </button>
+          </CreateDropdown>
+          <button className="button-icon-sheer" onClick={() => setLock(!lock)}>
+            {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
           </button>
-        </CreateDropdown>
+        </div>
         <div className="flex items-center gap-8">
           <div className="flex gap-1">
             <LeftButton viewportRef={viewportRef} />
@@ -61,7 +76,10 @@ export default function CalendarDay() {
       {/* Calendar */}
       <DraggableScroll
         ref={viewportRef}
-        className="calendar-viewport no-scrollbar relative top-0 flex-1 overflow-x-auto overflow-y-scroll"
+        className={clsx(
+          "calendar-viewport no-scrollbar relative top-0 flex-1 overflow-x-auto overflow-y-scroll",
+          lock && "lock"
+        )}
       >
         {/* Header Calendar */}
         <div className="calendar-header sticky top-0 z-10 flex w-fit">

@@ -55,6 +55,15 @@ input {
   @apply text-sm text-red-500;
 }
 
+.lock  {
+  .app-TaskTrack:not(.isToday) {
+    pointer-events: none;
+  }
+  .app-GroupTrack:not(.isToday) {
+    pointer-events: none;
+  }
+}
+
 [draggable="true"] {
   /* To prevent user selecting inside the drag source */
   user-select: none;

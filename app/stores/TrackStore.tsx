@@ -9,6 +9,8 @@ import { db } from "../repositories/db";
 type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
+  lock: boolean;
+  setLock: (lock: boolean) => void;
 };
 
 type Action = {
@@ -21,6 +23,7 @@ type Action = {
 
 export const useTrackStore = create<State & Action>((set) => ({
   tasksByDate: undefined,
+  lock: true,
 
   loadTracks: async () => {
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
@@ -106,4 +109,5 @@ export const useTrackStore = create<State & Action>((set) => ({
       console.error("Error checking tasks:", error);
     }
   },
+  setLock: (lock: boolean) => set(() => ({ lock })),
 }));
