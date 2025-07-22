@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useEffect, useRef } from "react";
-import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
 import {
   LockClosedIcon,
@@ -25,13 +24,9 @@ import clsx from "clsx";
 export default function CalendarDay() {
   const appContext = use(AppContext);
   if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
+    throw new Error("CalendarDay must be used within a AppProvider");
   }
   const { totalYears } = appContext;
-
-  const currentDate = new Date();
-  const minDate = startOfMonth(subMonths(currentDate, 3));
-  const maxDate = addDays(currentDate, 0);
 
   const lock = useTrackStore((s) => s.lock);
   const setLock = useTrackStore((s) => s.setLock);
@@ -65,7 +60,7 @@ export default function CalendarDay() {
           </div>
           <Link
             to="element-today"
-            options={{ block: "end", behavior: "smooth", inline: "center" }}
+            options={{ block: "end", behavior: "smooth", inline: "end" }}
             autoScroll={true}
           >
             <button className="button-outline">Today</button>
@@ -86,12 +81,7 @@ export default function CalendarDay() {
           <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
           <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
             {totalYears.map((date) => (
-              <YearItem
-                key={date.getFullYear()}
-                date={date}
-                minDate={minDate}
-                maxDate={maxDate}
-              />
+              <YearItem key={date.getFullYear()} date={date} />
             ))}
           </div>
         </div>

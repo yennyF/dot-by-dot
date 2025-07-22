@@ -3,14 +3,20 @@
 import { format, isBefore, endOfYear, isAfter, startOfYear } from "date-fns";
 import { eachMonthOfInterval } from "date-fns/fp";
 import MonthItem from "./MonthItem";
+import { use } from "react";
+import { AppContext } from "@/app/AppContext";
 
 interface YearItemProps {
   date: Date;
-  minDate: Date;
-  maxDate: Date;
 }
 
-export default function YearItem({ date, minDate, maxDate }: YearItemProps) {
+export default function YearItem({ date }: YearItemProps) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("YearItem must be used within a AppProvider");
+  }
+  const { minDate, maxDate } = appContext;
+
   const totalMonths = eachMonthOfInterval({
     start: isAfter(startOfYear(date), minDate) ? startOfYear(date) : minDate,
     end: isBefore(endOfYear(date), maxDate) ? endOfYear(date) : maxDate,
@@ -23,12 +29,7 @@ export default function YearItem({ date, minDate, maxDate }: YearItemProps) {
       </div>
       <div className="months mt-3 flex">
         {totalMonths.map((date) => (
-          <MonthItem
-            key={date.getMonth()}
-            date={date}
-            minDate={minDate}
-            maxDate={maxDate}
-          />
+          <MonthItem key={date.getMonth()} date={date} />
         ))}
       </div>
     </div>

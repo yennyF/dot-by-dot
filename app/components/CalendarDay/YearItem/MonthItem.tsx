@@ -9,14 +9,20 @@ import {
   isAfter,
 } from "date-fns";
 import DayItem from "./DayItem";
+import { AppContext } from "@/app/AppContext";
+import { use } from "react";
 
 interface MonthItemProps {
   date: Date;
-  minDate: Date;
-  maxDate: Date;
 }
 
-export default function MonthItem({ date, minDate, maxDate }: MonthItemProps) {
+export default function MonthItem({ date }: MonthItemProps) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("MonthItem must be used within a AppProvider");
+  }
+  const { minDate, maxDate } = appContext;
+
   const totalDays = eachDayOfInterval({
     start: isAfter(startOfMonth(date), minDate) ? startOfMonth(date) : minDate,
     end: isBefore(endOfMonth(date), maxDate) ? endOfMonth(date) : maxDate,
