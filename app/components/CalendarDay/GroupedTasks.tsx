@@ -11,11 +11,11 @@ export default function GroupedTasks() {
   const groups = useGroupStore((s) => s.groups);
 
   useEffect(() => {
-    console.log("CalendarBody rendered");
+    console.log("GroupedTasks rendered");
   });
 
   return (
-    <>
+    <div className="app-GroupedTasks flex w-fit flex-col gap-2">
       <LinkReceptor id="create-group"></LinkReceptor>
       {dummyGroup && (
         <>
@@ -35,6 +35,6 @@ export default function GroupedTasks() {
           <DropIndicatorGroup />
         </>
       )}
-    </>
+    </div>
   );
 }

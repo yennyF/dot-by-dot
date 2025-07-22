@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { subMonths, addDays, startOfMonth } from "date-fns";
 import { AppContext } from "../../AppContext";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
@@ -12,8 +12,6 @@ import LeftButton from "./SideButtons/LeftButton";
 import RightButton from "./SideButtons/RightButton";
 import BottomButton from "./SideButtons/BottomButton";
 import TopButton from "./SideButtons/TopButton";
-import CalendarBody from "./GroupedTasks";
-import Ungroup from "./UngroupedTasks";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
 
@@ -81,18 +79,16 @@ export default function CalendarDay() {
         </div>
 
         {/* Top Scroll */}
-        <div className="sticky left-0 top-[148px] z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
+        <div className="sticky left-0 top-[142px] z-10 flex flex-1 justify-center bg-[var(--background)] py-1">
           <TopButton viewportRef={viewportRef} />
         </div>
 
         {/* Body Calendar */}
-        <div className="flex w-fit flex-col gap-2">
-          <UngroupedTasks />
-          <GroupedTasks />
-        </div>
+        <UngroupedTasks />
+        <GroupedTasks />
 
         {/* Bottom Scroll */}
-        <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-2">
+        <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-1">
           <BottomButton viewportRef={viewportRef} />
         </div>
       </DraggableScroll>

@@ -13,13 +13,11 @@ export default function UngroupedTasks() {
   const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
 
   useEffect(() => {
-    console.log("Ungroup rendered");
+    console.log("UngroupedTasks rendered");
   });
 
-  if (!tasks) return;
-
   return (
-    <div className="app-Ungroup flex w-full flex-col">
+    <div className="app-UngroupedTasks flex w-fit flex-col">
       <LinkReceptor id="create-task" />
       {dummyTask && (
         <>
@@ -28,7 +26,7 @@ export default function UngroupedTasks() {
         </>
       )}
 
-      {tasks.map((task) => (
+      {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicatorTask groupId={null} beforeId={task.id} />
           <TaskItem task={task} />
