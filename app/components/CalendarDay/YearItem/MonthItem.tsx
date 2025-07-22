@@ -4,12 +4,10 @@ import {
   format,
   eachDayOfInterval,
   endOfMonth,
-  isToday,
   startOfMonth,
   isBefore,
   isAfter,
 } from "date-fns";
-import { LinkReceptor } from "../../Scroll";
 import DayItem from "./DayItem";
 
 interface MonthItemProps {
@@ -30,20 +28,9 @@ export default function MonthItem({ date, minDate, maxDate }: MonthItemProps) {
         {format(date, "MMMM")}
       </div>
       <div className="days mt-4 flex">
-        {totalDays.map((date) => {
-          const isTodayDate = isToday(date);
-          return isTodayDate ? (
-            <LinkReceptor key={date.toLocaleDateString()} id="element-today">
-              <DayItem date={date} isTodayDate={isTodayDate} />
-            </LinkReceptor>
-          ) : (
-            <DayItem
-              key={date.toLocaleDateString()}
-              date={date}
-              isTodayDate={isTodayDate}
-            />
-          );
-        })}
+        {totalDays.map((date) => (
+          <DayItem key={date.toLocaleDateString()} date={date} />
+        ))}
       </div>
     </div>
   );

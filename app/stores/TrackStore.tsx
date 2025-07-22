@@ -5,6 +5,12 @@ import {
   midnightUTC,
 } from "../repositories/types";
 import { db } from "../repositories/db";
+import { debounce } from "lodash";
+
+function autoLock() {
+  useTrackStore.getState().setLock(true);
+}
+export const debouncedAutoLock = debounce(autoLock, 10000);
 
 type State = {
   // Store date strings for reliable value-based Set comparison
@@ -109,5 +115,8 @@ export const useTrackStore = create<State & Action>((set) => ({
       console.error("Error checking tasks:", error);
     }
   },
-  setLock: (lock: boolean) => set(() => ({ lock })),
+  setLock: (lock: boolean) => {
+    set(() => ({ lock }));
+    debouncedAutoLock();
+  },
 }));

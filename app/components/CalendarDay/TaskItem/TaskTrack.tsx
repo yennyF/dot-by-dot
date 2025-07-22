@@ -14,6 +14,7 @@ interface TaskTrackProps {
 export default function TaskTrack({ date, task }: TaskTrackProps) {
   const addTrack = useTrackStore((s) => s.addTrack);
   const deleteTrack = useTrackStore((s) => s.deleteTrack);
+  const setLock = useTrackStore((s) => s.setLock);
 
   const isActive = useTrackStore((s) =>
     s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id)
@@ -25,11 +26,16 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
     s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id)
   );
 
+  const isTodayDate = isToday(date);
+
   const handleClick = () => {
     if (isActive) {
       deleteTrack(date, task.id);
     } else {
       addTrack(date, task.id);
+    }
+    if (!isTodayDate) {
+      setLock(false);
     }
   };
 
@@ -47,7 +53,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
     <div
       className={clsx(
         "app-TaskTrack relative flex h-10 w-[50px] items-center justify-center",
-        isToday(date) && "isToday"
+        isTodayDate && "isToday"
       )}
     >
       {isPrevActive && isActive && (

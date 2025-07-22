@@ -1,14 +1,16 @@
 "use client";
 
-import { format, isWeekend } from "date-fns";
+import { format, isToday, isWeekend } from "date-fns";
+import { LinkReceptor } from "../../Scroll";
 
 interface DayItemProps {
   date: Date;
-  isTodayDate: boolean;
 }
 
-export default function DayItem({ date, isTodayDate }: DayItemProps) {
-  return (
+export default function DayItem({ date }: DayItemProps) {
+  const isTodayDate = isToday(date);
+
+  const children = (
     <div
       className={`day-item flex w-[50px] flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
     >
@@ -19,5 +21,13 @@ export default function DayItem({ date, isTodayDate }: DayItemProps) {
         {format(date, "dd")}
       </div>
     </div>
+  );
+
+  return isTodayDate ? (
+    <LinkReceptor key={date.toLocaleDateString()} id="element-today">
+      {children}
+    </LinkReceptor>
+  ) : (
+    children
   );
 }

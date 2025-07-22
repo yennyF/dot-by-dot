@@ -46,7 +46,7 @@ export default function CalendarDay() {
     <div className="app-CalendarDay mx-[50px] flex h-[100vh] flex-1 flex-col overflow-hidden">
       {/* Controls */}
       <div className="flex items-center justify-between gap-2 py-[10px]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <CreateDropdown>
             <button className="button-accent-outline">
               <PlusIcon />
