@@ -17,7 +17,7 @@ export default function Sidebar() {
       transition={{ duration: 0.2 }}
     >
       <div
-        className="button-icon-accent absolute right-0 top-2 z-10 h-[35px] w-[40px] translate-x-full rounded-none rounded-br-full rounded-tr-full"
+        className="button-icon-accent absolute right-0 top-2 z-40 h-[35px] w-[40px] translate-x-full rounded-none rounded-br-full rounded-tr-full"
         onClick={() => setOpenSidebar((prev) => !prev)}
       >
         {openSidebar ? <Cross1Icon /> : <CalendarIcon />}

@@ -14,6 +14,7 @@ interface AppContextProps {
   toggleTheme: () => void;
   minDate: Date;
   maxDate: Date;
+  decreaseMinDate: () => void;
   totalYears: Date[];
   totalDays: Date[];
 }
@@ -24,8 +25,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
 
   const currentDate = new Date();
-  const minDate = startOfMonth(subMonths(currentDate, 1));
-  const maxDate = addDays(currentDate, 7);
+  const [minDate, setMinDate] = useState<Date>(
+    startOfMonth(subMonths(currentDate, 1))
+  );
+  const [maxDate] = useState<Date>(addDays(currentDate, 7));
 
   const totalYears = eachYearOfInterval({
     start: minDate,
@@ -40,11 +43,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+  const decreaseMinDate = () => {
+    setMinDate((prev) => subMonths(prev, 1));
+  };
+
   const value = {
     theme,
     toggleTheme,
     minDate,
     maxDate,
+    decreaseMinDate,
     totalYears,
     totalDays,
   };

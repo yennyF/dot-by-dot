@@ -4,14 +4,14 @@ import { RefObject, useEffect, useState } from "react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 export default function ButtonBottom({
-  viewportRef,
+  scrollRef,
 }: {
-  viewportRef: RefObject<HTMLDivElement | null>;
+  scrollRef: RefObject<HTMLDivElement | null>;
 }) {
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false);
 
   useEffect(() => {
-    const container = viewportRef.current;
+    const container = scrollRef.current;
     if (!container) return;
 
     const handleScroll = () => {
@@ -22,10 +22,10 @@ export default function ButtonBottom({
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [viewportRef]);
+  }, [scrollRef]);
 
   const scrollToBottom = () => {
-    const el = viewportRef.current;
+    const el = scrollRef.current;
     if (!el) return;
 
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });

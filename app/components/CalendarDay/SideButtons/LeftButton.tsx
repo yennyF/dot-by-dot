@@ -4,14 +4,14 @@ import { RefObject, useEffect, useState } from "react";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 
 export default function LeftButton({
-  viewportRef,
+  scrollRef,
 }: {
-  viewportRef: RefObject<HTMLDivElement | null>;
+  scrollRef: RefObject<HTMLDivElement | null>;
 }) {
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
 
   useEffect(() => {
-    const container = viewportRef.current;
+    const container = scrollRef.current;
     if (!container) return;
 
     const handleScroll = () => {
@@ -22,10 +22,10 @@ export default function LeftButton({
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [viewportRef]);
+  }, [scrollRef]);
 
   const scrollToLeft = () => {
-    viewportRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+    scrollRef.current?.scrollTo({ left: 0, behavior: "smooth" });
   };
 
   useEffect(() => {

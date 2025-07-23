@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef } from "react";
+import { RefObject, use, useEffect, useRef } from "react";
 import { AppContext } from "../../AppContext";
 import {
   LockClosedIcon,
@@ -29,77 +29,116 @@ export default function CalendarDay() {
   const { totalYears } = appContext;
 
   const lock = useTrackStore((s) => s.lock);
-  const setLock = useTrackStore((s) => s.setLock);
 
-  const viewportRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("CalendarDay rendered");
   });
 
   return (
-    <div className="app-CalendarDay mx-[50px] flex h-[100vh] flex-1 flex-col overflow-hidden">
-      {/* Controls */}
-      <div className="flex items-center justify-between gap-2 py-[10px]">
-        <div className="flex items-center gap-4">
-          <CreateDropdown>
-            <button className="button-accent-outline">
-              <PlusIcon />
-              Create
-              <TriangleDownIcon />
-            </button>
-          </CreateDropdown>
-          <button className="button-icon-sheer" onClick={() => setLock(!lock)}>
-            {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
-          </button>
-        </div>
-        <div className="flex items-center gap-8">
-          <div className="flex gap-1">
-            <LeftButton viewportRef={viewportRef} />
-            <RightButton viewportRef={viewportRef} />
+    <div
+      ref={scrollRef}
+      className="app-CalendarDay h-[100vh] flex-1 overflow-scroll"
+    >
+      <Header scrollRef={scrollRef} />
+
+      <div className={clsx("calendar flex w-fit", lock && "lock")}>
+        {/* Fake left padding */}
+        <div className="sticky left-0 top-0 z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
+
+        <div>
+          {/* Calendar header */}
+          <div className="calendar-header sticky top-[80px] z-10 flex w-fit">
+            <div className="sticky left-[50px] z-10 flex w-[200px] items-end bg-[var(--background)]" />
+            <div className="sticky left-[250px] flex w-fit bg-[var(--background)]">
+              {totalYears.map((date) => (
+                <YearItem key={date.getFullYear()} date={date} />
+              ))}
+            </div>
           </div>
-          <Link
-            to="element-today"
-            options={{ block: "end", behavior: "smooth", inline: "end" }}
-            autoScroll={true}
-          >
-            <button className="button-outline">Today</button>
-          </Link>
+
+          {/* Calendar body */}
+          <DraggableScroll scrollRef={scrollRef}>
+            <UngroupedTasks />
+            <GroupedTasks />
+          </DraggableScroll>
         </div>
+
+        {/* Fake right padding */}
+        <div className="sticky right-0 top-0 z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
       </div>
+    </div>
+  );
+}
 
-      {/* Calendar */}
-      <DraggableScroll
-        ref={viewportRef}
-        className={clsx(
-          "calendar-viewport no-scrollbar relative top-0 flex-1 overflow-x-auto overflow-y-scroll",
-          lock && "lock"
-        )}
-      >
-        {/* Header Calendar */}
-        <div className="calendar-header sticky top-0 z-10 flex w-fit">
-          <div className="sticky left-0 z-10 flex w-[200px] items-end bg-[var(--background)]" />
-          <div className="sticky left-[200px] flex w-fit bg-[var(--background)]">
-            {totalYears.map((date) => (
-              <YearItem key={date.getFullYear()} date={date} />
-            ))}
-          </div>
+function Header({
+  scrollRef,
+}: {
+  scrollRef: RefObject<HTMLDivElement | null>;
+}) {
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("CalendarDay must be used within a AppProvider");
+  }
+  const { decreaseMinDate } = appContext;
+
+  const lock = useTrackStore((s) => s.lock);
+  const setLock = useTrackStore((s) => s.setLock);
+
+  useEffect(() => {
+    console.log("Controls rendered");
+  });
+
+  return (
+    <div className="sticky left-0 top-0 z-30 flex h-[80px] items-center justify-between gap-2 bg-[var(--background)] px-[20px]">
+      <div className="flex items-center gap-4">
+        <CreateDropdown>
+          <button className="button-accent-outline">
+            <PlusIcon />
+            Create
+            <TriangleDownIcon />
+          </button>
+        </CreateDropdown>
+        <button className="button-icon-sheer" onClick={() => setLock(!lock)}>
+          {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
+        </button>
+      </div>
+      <div className="flex items-center gap-8">
+        <div className="flex gap-1">
+          <button
+            className="button-accent-outline"
+            onClick={() => {
+              const el = scrollRef.current;
+              if (!el) return;
+
+              const previousScrollLeft = el.scrollLeft;
+              const previousScrollWidth = el.scrollWidth;
+
+              decreaseMinDate();
+              requestAnimationFrame(() => {
+                const newScrollWidth = el.scrollWidth;
+                const addedWidth = newScrollWidth - previousScrollWidth;
+                el.scrollLeft = previousScrollLeft + addedWidth;
+                // el.scrollTo({ left: 0, behavior: "smooth" });
+              });
+            }}
+          >
+            Load more prev
+          </button>
+          <TopButton scrollRef={scrollRef} />
+          <BottomButton scrollRef={scrollRef} />
+          <LeftButton scrollRef={scrollRef} />
+          <RightButton scrollRef={scrollRef} />
         </div>
-
-        {/* Top Scroll */}
-        <div className="sticky left-0 top-[142px] z-10 flex flex-1 justify-center bg-[var(--background)] py-1">
-          <TopButton viewportRef={viewportRef} />
-        </div>
-
-        {/* Body Calendar */}
-        <UngroupedTasks />
-        <GroupedTasks />
-
-        {/* Bottom Scroll */}
-        <div className="sticky bottom-0 left-0 z-10 flex flex-1 justify-center bg-[var(--background)] py-1">
-          <BottomButton viewportRef={viewportRef} />
-        </div>
-      </DraggableScroll>
+        <Link
+          to="element-today"
+          options={{ block: "end", behavior: "smooth", inline: "end" }}
+          autoScroll={true}
+        >
+          <button className="button-outline">Today</button>
+        </Link>
+      </div>
     </div>
   );
 }

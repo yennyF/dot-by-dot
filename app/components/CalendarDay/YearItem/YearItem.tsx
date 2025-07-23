@@ -24,7 +24,7 @@ export default function YearItem({ date }: YearItemProps) {
 
   return (
     <div className="year-item w-fit">
-      <div className="sticky left-[200px] w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold">
+      <div className="sticky left-[250px] w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold">
         {format(date, "yyyy")}
       </div>
       <div className="months mt-3 flex">

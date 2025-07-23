@@ -28,6 +28,10 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
 
   const isTodayDate = isToday(date);
 
+  // useEffect(() => {
+  //   console.log("TaskTrack re-rendered");
+  // });
+
   const handleClick = () => {
     if (isActive) {
       deleteTrack(date, task.id);

@@ -35,7 +35,7 @@ export default function GroupName({ group, isDummy }: GroupNameProps) {
   return (
     <div
       className={clsx(
-        "app-GroupName group sticky left-0 z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupName group sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       draggable={draggable}

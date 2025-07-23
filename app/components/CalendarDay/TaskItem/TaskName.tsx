@@ -33,7 +33,7 @@ export default function TaskName({ task, isDummy }: TaskNameProps) {
   return (
     <div
       className={clsx(
-        "app-TaskName group sticky left-0 z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
+        "app-TaskName group sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
         draggable && "draggable cursor-grab active:cursor-grabbing",
         task.groupId && "border-l-2"
       )}

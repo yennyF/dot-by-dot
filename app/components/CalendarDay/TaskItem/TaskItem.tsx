@@ -1,10 +1,10 @@
 "use client";
 
 import { memo, use, useEffect } from "react";
-import { AppContext } from "../../../AppContext";
 import TaskName from "./TaskName";
 import { Task } from "@/app/repositories/types";
 import TaskTrack from "./TaskTrack";
+import { AppContext } from "@/app/AppContext";
 
 interface TaskItemProps {
   task: Task;

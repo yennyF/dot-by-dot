@@ -6,14 +6,12 @@ import { useRef, DragEvent, ReactNode, RefObject } from "react";
 
 interface DraggableScrollProps {
   children: ReactNode;
-  className: string;
-  ref: RefObject<HTMLDivElement | null>;
+  scrollRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function DraggableScroll({
   children,
-  className,
-  ref,
+  scrollRef,
 }: DraggableScrollProps) {
   const dataSort = useRef<"task" | "group">(null);
 
@@ -24,26 +22,25 @@ export default function DraggableScroll({
   const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
 
   const scrollVertically = (e: DragEvent) => {
-    const el = ref.current;
-    if (!el) return;
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
 
     const scrollSpeed = 5;
-    // TODO handle custom threshold setup
-    const threshold = { top: 150, bottom: 50 };
+    const threshold = { top: 250, bottom: 50 };
 
-    const { top, bottom } = el.getBoundingClientRect();
+    const { top, bottom } = scrollEl.getBoundingClientRect();
     const y = e.clientY;
     const direction =
       y - top < threshold.top ? -1 : bottom - y < threshold.bottom ? 1 : 0;
 
-    if (direction !== 0) el.scrollTop += direction * scrollSpeed;
+    if (direction !== 0) scrollEl.scrollTop += direction * scrollSpeed;
   };
 
   const getIndicators = () => {
     if (!dataSort.current) return [];
 
     return Array.from(
-      ref.current?.querySelectorAll(
+      scrollRef.current?.querySelectorAll(
         `[data-sort=${dataSort.current}].drop-indicator`
       ) ?? []
     ) as HTMLElement[];
@@ -122,15 +119,12 @@ export default function DraggableScroll({
     e.preventDefault();
     highlightIndicator(e);
   };
-
   const handleDragLeave = () => {
     clearHighlights();
   };
 
   return (
     <div
-      ref={ref}
-      className={className}
       onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
