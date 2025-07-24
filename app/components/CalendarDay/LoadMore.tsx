@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { subMonths } from "date-fns";
-import clsx from "clsx";
+import LoadingIcon from "../LoadingIcon";
 
 const threshold = 100;
 
@@ -81,14 +81,9 @@ export default function LoadMore({
   };
 
   return (
-    <div
-      className={clsx(
-        "app-LoadMore sticky top-[calc((100vh*0.5)+80px+(23*0.5px))] z-[10] h-0",
-        isLoading && "opacity-30"
-      )}
-    >
+    <div className="app-LoadMore sticky left-0 top-[calc(100vh*0.5+80px)] z-[10] h-0">
       <AnimatePresence>
-        {isAtLeft && (
+        {isAtLeft && !isLoading && (
           <motion.button
             className="button-icon-inverted sticky left-[280px]"
             disabled={isLoading}
@@ -114,6 +109,11 @@ export default function LoadMore({
           </motion.button>
         )}
       </AnimatePresence>
+      {isLoading && (
+        <div className="fixed bottom-[50px] left-1/2 translate-x-[-50%]">
+          <LoadingIcon />
+        </div>
+      )}
     </div>
   );
 }

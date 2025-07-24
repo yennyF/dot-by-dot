@@ -2,6 +2,7 @@
 
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
+import clsx from "clsx";
 import { useRef, DragEvent, ReactNode, RefObject } from "react";
 
 interface DraggableScrollProps {
@@ -127,7 +128,7 @@ export default function DraggableScroll({
 
   return (
     <div
-      className={className}
+      className={clsx("app-DraggableScroll", className)}
       onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

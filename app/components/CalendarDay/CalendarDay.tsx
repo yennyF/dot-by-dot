@@ -40,6 +40,8 @@ export default function CalendarDay() {
     >
       <Header scrollRef={scrollRef} />
 
+      <LoadMore scrollRef={scrollRef} />
+
       <div className={clsx("calendar flex w-fit", lock && "lock")}>
         {/* Fake left padding */}
         <div className="sticky left-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
@@ -57,7 +59,6 @@ export default function CalendarDay() {
 
           {/* Calendar body */}
           <DraggableScroll scrollRef={scrollRef}>
-            <LoadMore scrollRef={scrollRef} />
             <UngroupedTasks />
             <GroupedTasks />
           </DraggableScroll>
