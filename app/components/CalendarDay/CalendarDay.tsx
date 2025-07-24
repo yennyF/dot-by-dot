@@ -105,7 +105,7 @@ function Header({
         </div> */}
         <Link
           to="element-today"
-          options={{ block: "end", behavior: "smooth", inline: "end" }}
+          options={{ block: "end", behavior: "smooth", inline: "start" }}
           autoScroll={true}
         >
           <button className="button-outline">Today</button>

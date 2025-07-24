@@ -1,7 +1,6 @@
 import React, { createContext, useState, ReactNode } from "react";
 import {
   subMonths,
-  addDays,
   eachYearOfInterval,
   eachDayOfInterval,
   subDays,
@@ -26,7 +25,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const currentDate = new Date();
   const [minDate, setMinDate] = useState<Date>(subDays(currentDate, 30));
-  const [maxDate] = useState<Date>(addDays(currentDate, 7));
+  const [maxDate] = useState<Date>(currentDate);
 
   const totalYears = eachYearOfInterval({
     start: minDate,
