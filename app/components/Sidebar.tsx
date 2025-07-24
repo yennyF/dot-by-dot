@@ -6,7 +6,7 @@ import { useState } from "react";
 import CalendarMonth from "./CalendarMonth/CalendarMonth";
 
 export default function Sidebar() {
-  const [openSidebar, setOpenSidebar] = useState(true);
+  const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
     <motion.div

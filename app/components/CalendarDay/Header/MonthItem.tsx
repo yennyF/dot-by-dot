@@ -9,23 +9,21 @@ import {
   isAfter,
 } from "date-fns";
 import DayItem from "./DayItem";
-import { AppContext } from "@/app/AppContext";
-import { use } from "react";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 interface MonthItemProps {
   date: Date;
 }
 
 export default function MonthItem({ date }: MonthItemProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("MonthItem must be used within a AppProvider");
-  }
-  const { minDate, maxDate } = appContext;
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalDays = eachDayOfInterval({
-    start: isAfter(startOfMonth(date), minDate) ? startOfMonth(date) : minDate,
-    end: isBefore(endOfMonth(date), maxDate) ? endOfMonth(date) : maxDate,
+    start: isAfter(startOfMonth(date), startDate)
+      ? startOfMonth(date)
+      : startDate,
+    end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
   });
 
   return (

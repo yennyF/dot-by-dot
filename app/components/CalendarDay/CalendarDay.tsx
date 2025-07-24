@@ -1,7 +1,6 @@
 "use client";
 
-import { RefObject, use, useEffect, useRef } from "react";
-import { AppContext } from "../../AppContext";
+import { RefObject, useEffect, useRef } from "react";
 import {
   LockClosedIcon,
   LockOpen1Icon,
@@ -10,21 +9,17 @@ import {
 } from "@radix-ui/react-icons";
 import CreateDropdown from "./CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import YearItem from "./YearItem/YearItem";
 import { Link } from "@/app/components/Scroll";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import clsx from "clsx";
 import LoadMore from "./LoadMore";
+import Header from "./Header/Header";
+import LeftButton from "./SideButtons/LeftButton";
+import RightButton from "./SideButtons/RightButton";
 
 export default function CalendarDay() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarDay must be used within a AppProvider");
-  }
-  const { totalYears } = appContext;
-
   const lock = useTrackStore((s) => s.lock);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -38,7 +33,7 @@ export default function CalendarDay() {
       ref={scrollRef}
       className="app-CalendarDay relative h-[100vh] flex-1 overflow-scroll"
     >
-      <Header scrollRef={scrollRef} />
+      <TopHeader scrollRef={scrollRef} />
 
       <LoadMore scrollRef={scrollRef} />
 
@@ -47,17 +42,7 @@ export default function CalendarDay() {
         <div className="sticky left-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
 
         <div>
-          {/* Calendar header */}
-          <div className="calendar-header sticky top-[80px] z-10 flex w-fit">
-            <div className="sticky left-[50px] z-10 flex w-[200px] items-end bg-[var(--background)]" />
-            <div className="sticky left-[250px] flex w-fit bg-[var(--background)]">
-              {totalYears.map((date) => (
-                <YearItem key={date.getFullYear()} date={date} />
-              ))}
-            </div>
-          </div>
-
-          {/* Calendar body */}
+          <Header />
           <DraggableScroll scrollRef={scrollRef}>
             <UngroupedTasks />
             <GroupedTasks />
@@ -71,7 +56,7 @@ export default function CalendarDay() {
   );
 }
 
-function Header({
+function TopHeader({
   scrollRef,
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
@@ -98,12 +83,12 @@ function Header({
         </button>
       </div>
       <div className="flex items-center gap-8">
-        {/* <div className="flex gap-1">
-          <TopButton scrollRef={scrollRef} />
-          <BottomButton scrollRef={scrollRef} />
+        <div className="flex gap-1">
+          {/* <TopButton scrollRef={scrollRef} /> */}
+          {/* <BottomButton scrollRef={scrollRef} /> */}
           <LeftButton scrollRef={scrollRef} />
           <RightButton scrollRef={scrollRef} />
-        </div> */}
+        </div>
         <Link
           to="element-today"
           options={{ block: "end", behavior: "smooth", inline: "start" }}

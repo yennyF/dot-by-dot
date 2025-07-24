@@ -1,10 +1,10 @@
 "use client";
 
-import { memo, use, useEffect } from "react";
+import { memo, useEffect } from "react";
 import TaskName from "./TaskName";
 import { Task } from "@/app/repositories/types";
 import TaskTrack from "./TaskTrack";
-import { AppContext } from "@/app/AppContext";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 interface TaskItemProps {
   task: Task;
@@ -12,11 +12,7 @@ interface TaskItemProps {
 }
 
 function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("TaskItem must be used within a AppProvider");
-  }
-  const { totalDays } = appContext;
+  const totalDays = useTrackStore((s) => s.totalDays);
 
   useEffect(() => {
     console.log("TaskItem rendered", task.name);

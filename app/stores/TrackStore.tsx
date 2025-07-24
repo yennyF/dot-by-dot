@@ -12,6 +12,7 @@ import {
   notifyDeleteError,
   notifyLoadError,
 } from "../components/Notification";
+import { eachDayOfInterval, subDays } from "date-fns";
 
 function autoLock() {
   useTrackStore.getState().setLock(true);
@@ -21,13 +22,20 @@ export const debouncedAutoLock = debounce(autoLock, 10000);
 type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
+
   lock: boolean;
   setLock: (lock: boolean) => void;
+
+  startDate: Date;
+  endDate: Date;
+  totalDays: Date[];
 };
 
 type Action = {
-  initTracks: (start: Date, end: Date) => Promise<void>;
-  loadMoreTracks: (start: Date, end: Date) => Promise<void>;
+  initTracks: (startDate?: Date, endDate?: Date) => Promise<void>;
+
+  loadMorePrevTracks: (startDate: Date) => Promise<void>;
+
   addTrack: (date: Date, taskId: string) => void;
   addTracks: (date: Date, taskIds: string[]) => void;
   deleteTrack: (date: Date, taskId: string) => void;
@@ -37,41 +45,58 @@ type Action = {
 export const useTrackStore = create<State & Action>((set, get) => ({
   tasksByDate: undefined,
   lock: true,
+  startDate: new Date(),
+  endDate: new Date(),
+  totalDays: [],
 
-  initTracks: async (start: Date, end: Date) => {
-    start = midnightUTC(start);
-    end = midnightUTC(end);
+  initTracks: async (startDate?: Date, endDate?: Date) => {
+    endDate ??= new Date();
+    startDate ??= subDays(endDate, 30);
+
+    const totalDays = eachDayOfInterval({
+      start: startDate,
+      end: endDate,
+    });
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
       await db.tracks
         .where("date")
-        .between(start, end, true, true)
+        .between(midnightUTC(startDate), midnightUTC(endDate), true, true)
         .each((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
-      set(() => ({ tasksByDate }));
+
+      set(() => ({ tasksByDate, startDate, endDate, totalDays }));
     } catch (error) {
       console.error("Error initialing tasks:", error);
       notifyLoadError();
     }
   },
-  loadMoreTracks: async (start: Date, end: Date) => {
-    start = midnightUTC(start);
-    end = midnightUTC(end);
+  loadMorePrevTracks: async (startDate: Date) => {
+    const totalDays = eachDayOfInterval({
+      start: startDate,
+      end: get().endDate,
+    });
     const tasksByDate = { ...get().tasksByDate };
 
     try {
       await db.tracks
         .where("date")
-        .between(start, end, true, false)
+        .between(
+          midnightUTC(startDate),
+          midnightUTC(get().endDate),
+          true,
+          false
+        )
         .each((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
       console.log(await timeoutPromise(5000));
-      set(() => ({ tasksByDate }));
+
+      set(() => ({ tasksByDate, startDate, totalDays }));
     } catch (error) {
       console.error("Error loading more tasks:", error);
       notifyLoadError();

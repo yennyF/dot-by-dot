@@ -1,13 +1,13 @@
 "use client";
 
-import { Fragment, memo, use, useEffect } from "react";
-import { AppContext } from "../../../AppContext";
+import { Fragment, memo, useEffect } from "react";
 import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
 import DropIndicatorTask from "../Draggable/DropIndicatorTask";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import TaskItem from "../TaskItem/TaskItem";
 import GroupTrack from "./GroupTrack";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 interface GroupItemWrapperProps {
   group: Group;
@@ -15,11 +15,7 @@ interface GroupItemWrapperProps {
 }
 
 function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarList must be used within a AppProvider");
-  }
-  const { totalDays } = appContext;
+  const totalDays = useTrackStore((s) => s.totalDays);
 
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null

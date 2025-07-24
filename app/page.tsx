@@ -18,12 +18,6 @@ export default function Home() {
 }
 
 function Content() {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("page must be used within a AppProvider");
-  }
-  const { minDate, maxDate } = appContext;
-
   const initTasks = useTaskStore((s) => s.initTasks);
   const initGroups = useGroupStore((s) => s.initGroups);
   const initTracks = useTrackStore((s) => s.initTracks);
@@ -32,11 +26,7 @@ function Content() {
 
   useEffect(() => {
     (async () => {
-      await Promise.all([
-        initGroups(),
-        initTasks(),
-        initTracks(minDate, maxDate),
-      ]);
+      await Promise.all([initGroups(), initTasks(), initTracks()]);
       setIsLoading(false);
     })();
   }, [initGroups, initTasks, initTracks]);

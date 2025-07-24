@@ -1,12 +1,11 @@
 "use client";
 
-import { RefObject, use, useEffect, useState } from "react";
-import { AppContext } from "../../AppContext";
+import { RefObject, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { subMonths } from "date-fns";
-import LoadingIcon from "../LoadingIcon";
+import LoadingIcon from "../Loading/LoadingIcon";
 
 const threshold = 100;
 
@@ -15,13 +14,8 @@ export default function LoadMore({
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarDay must be used within a AppProvider");
-  }
-  const { decreaseMinDate, minDate } = appContext;
-
-  const loadMoreTracks = useTrackStore((s) => s.loadMoreTracks);
+  const startDate = useTrackStore((s) => s.startDate);
+  const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
 
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -73,9 +67,8 @@ export default function LoadMore({
     // const previousScrollLeft = el.scrollLeft;
     // const previousScrollWidth = el.scrollWidth;
 
-    const newMinDate = subMonths(minDate, 1);
-    await loadMoreTracks(newMinDate, minDate);
-    decreaseMinDate();
+    const newStartDate = subMonths(startDate, 1);
+    await loadMorePrevTracks(newStartDate);
 
     setIsLoading(false);
   };
@@ -110,7 +103,7 @@ export default function LoadMore({
         )}
       </AnimatePresence>
       {isLoading && (
-        <div className="fixed bottom-[50px] left-1/2 translate-x-[-50%]">
+        <div className="fixed bottom-[50px] left-1/2 translate-x-[-50%] p-2">
           <LoadingIcon />
         </div>
       )}

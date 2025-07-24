@@ -3,23 +3,21 @@
 import { format, isBefore, endOfYear, isAfter, startOfYear } from "date-fns";
 import { eachMonthOfInterval } from "date-fns/fp";
 import MonthItem from "./MonthItem";
-import { use } from "react";
-import { AppContext } from "@/app/AppContext";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 interface YearItemProps {
   date: Date;
 }
 
 export default function YearItem({ date }: YearItemProps) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("YearItem must be used within a AppProvider");
-  }
-  const { minDate, maxDate } = appContext;
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalMonths = eachMonthOfInterval({
-    start: isAfter(startOfYear(date), minDate) ? startOfYear(date) : minDate,
-    end: isBefore(endOfYear(date), maxDate) ? endOfYear(date) : maxDate,
+    start: isAfter(startOfYear(date), startDate)
+      ? startOfYear(date)
+      : startDate,
+    end: isBefore(endOfYear(date), endDate) ? endOfYear(date) : endDate,
   });
 
   return (
