@@ -19,7 +19,7 @@ type State = {
 };
 
 type Action = {
-  loadGroups: () => Promise<void>;
+  initGroups: () => Promise<void>;
   addGroup: (props: Pick<Group, "id" | "name">) => void;
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
   deleteGroup: (id: string) => void;
@@ -33,12 +33,12 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
     dummyGroup: undefined,
     groups: undefined,
 
-    loadGroups: async () => {
+    initGroups: async () => {
       try {
         const groups = await db.groups.orderBy("order").toArray();
         set(() => ({ groups }));
       } catch (error) {
-        console.error("Error loading groups:", error);
+        console.error("Error initialing groups:", error);
         notifyLoadError();
       }
     },

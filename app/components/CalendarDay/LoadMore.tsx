@@ -4,6 +4,9 @@ import { RefObject, use, useEffect, useState } from "react";
 import { AppContext } from "../../AppContext";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
+import { useTrackStore } from "@/app/stores/TrackStore";
+import { subMonths } from "date-fns";
+import clsx from "clsx";
 
 const threshold = 100;
 
@@ -16,9 +19,12 @@ export default function LoadMore({
   if (!appContext) {
     throw new Error("CalendarDay must be used within a AppProvider");
   }
-  const { decreaseMinDate } = appContext;
+  const { decreaseMinDate, minDate } = appContext;
+
+  const loadMoreTracks = useTrackStore((s) => s.loadMoreTracks);
 
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -41,32 +47,51 @@ export default function LoadMore({
     setIsAtLeft(isAtLeft);
   }, [scrollRef]);
 
-  const handleClick = () => {
+  // useEffect(() => {
+  //   const el = scrollRef.current;
+  //   if (!el) return;
+
+  //   if (!isLoading) {
+  //     requestAnimationFrame(() => {
+  //       const newScrollWidth = el.scrollWidth;
+  //       const addedWidth = newScrollWidth - previousScrollWidth;
+  //       el.scrollLeft = previousScrollLeft + addedWidth;
+  //       // el.scrollTo({
+  //       //   left: previousScrollLeft + addedWidth,
+  //       //   behavior: "smooth",
+  //       // });
+  //     });
+  //   }
+  // }, [isLoading]);
+
+  const handleClick = async () => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const previousScrollLeft = el.scrollLeft;
-    const previousScrollWidth = el.scrollWidth;
+    setIsLoading(true);
 
+    // const previousScrollLeft = el.scrollLeft;
+    // const previousScrollWidth = el.scrollWidth;
+
+    const newMinDate = subMonths(minDate, 1);
+    await loadMoreTracks(newMinDate, minDate);
     decreaseMinDate();
 
-    requestAnimationFrame(() => {
-      const newScrollWidth = el.scrollWidth;
-      const addedWidth = newScrollWidth - previousScrollWidth;
-      el.scrollLeft = previousScrollLeft + addedWidth;
-      // el.scrollTo({
-      //   left: previousScrollLeft + addedWidth,
-      //   behavior: "smooth",
-      // });
-    });
+    setIsLoading(false);
   };
 
   return (
-    <div className="sticky top-[calc((100vh*0.5)+80px+(23*0.5px))] z-[10] h-0">
+    <div
+      className={clsx(
+        "app-LoadMore sticky top-[calc((100vh*0.5)+80px+(23*0.5px))] z-[10] h-0",
+        isLoading && "opacity-30"
+      )}
+    >
       <AnimatePresence>
         {isAtLeft && (
           <motion.button
             className="button-icon-inverted sticky left-[280px]"
+            disabled={isLoading}
             onClick={handleClick}
             initial={{ opacity: 0, x: 0 }}
             animate={{

@@ -20,7 +20,7 @@ type State = {
 };
 
 type Action = {
-  loadTasks: () => Promise<void>;
+  initTasks: () => Promise<void>;
   addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
   updateTask: (id: string, task: Pick<Task, "name">) => void;
   moveTaskBefore: (
@@ -42,7 +42,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     dummyTask: undefined,
     tasksByGroup: undefined,
 
-    loadTasks: async () => {
+    initTasks: async () => {
       try {
         const tasksByGroup: Record<string, Task[]> = {
           [UNGROUPED_KEY]: [],
@@ -59,7 +59,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
         set(() => ({ tasksByGroup }));
       } catch (error) {
-        console.error("Error loading tasks:", error);
+        console.error("Error initialing tasks:", error);
         notifyLoadError();
       }
     },

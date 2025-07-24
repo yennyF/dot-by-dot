@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AppProvider } from "./AppContext";
+import { use, useEffect, useState } from "react";
+import { AppContext, AppProvider } from "./AppContext";
 import CalendarDay from "./components/CalendarDay/CalendarDay";
 import Sidebar from "./components/Sidebar";
 import { useTaskStore } from "./stores/TaskStore";
@@ -18,18 +18,28 @@ export default function Home() {
 }
 
 function Content() {
-  const loadTasks = useTaskStore((s) => s.loadTasks);
-  const loadGroups = useGroupStore((s) => s.loadGroups);
-  const loadTracks = useTrackStore((s) => s.loadTracks);
+  const appContext = use(AppContext);
+  if (!appContext) {
+    throw new Error("page must be used within a AppProvider");
+  }
+  const { minDate, maxDate } = appContext;
+
+  const initTasks = useTaskStore((s) => s.initTasks);
+  const initGroups = useGroupStore((s) => s.initGroups);
+  const initTracks = useTrackStore((s) => s.initTracks);
 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      await Promise.all([loadGroups(), loadTasks(), loadTracks()]);
+      await Promise.all([
+        initGroups(),
+        initTasks(),
+        initTracks(minDate, maxDate),
+      ]);
       setIsLoading(false);
     })();
-  }, [loadGroups, loadTasks, loadTracks]);
+  }, [initGroups, initTasks, initTracks]);
 
   if (isLoading) {
     return <Loading />;

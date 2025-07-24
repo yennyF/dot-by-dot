@@ -27,3 +27,11 @@ export function midnightUTC(date: Date): Date {
 export function midnightUTCstring(date: Date): string {
   return midnightUTC(date).toLocaleDateString();
 }
+
+export const timeoutPromise = (duration: number) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("Data loaded successfully");
+    }, duration);
+  });
+};
