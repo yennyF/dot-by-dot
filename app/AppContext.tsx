@@ -1,10 +1,10 @@
 import React, { createContext, useState, ReactNode } from "react";
 import {
-  startOfMonth,
   subMonths,
   addDays,
   eachYearOfInterval,
   eachDayOfInterval,
+  subDays,
 } from "date-fns";
 
 type ThemeType = "light" | "dark";
@@ -25,9 +25,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
 
   const currentDate = new Date();
-  const [minDate, setMinDate] = useState<Date>(
-    startOfMonth(subMonths(currentDate, 1))
-  );
+  const [minDate, setMinDate] = useState<Date>(subDays(currentDate, 30));
   const [maxDate] = useState<Date>(addDays(currentDate, 7));
 
   const totalYears = eachYearOfInterval({

@@ -12,14 +12,11 @@ import CreateDropdown from "./CreateDropdown";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import YearItem from "./YearItem/YearItem";
 import { Link } from "@/app/components/Scroll";
-import LeftButton from "./SideButtons/LeftButton";
-import RightButton from "./SideButtons/RightButton";
-import BottomButton from "./SideButtons/BottomButton";
-import TopButton from "./SideButtons/TopButton";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import clsx from "clsx";
+import LoadMore from "./LoadMore";
 
 export default function CalendarDay() {
   const appContext = use(AppContext);
@@ -39,13 +36,13 @@ export default function CalendarDay() {
   return (
     <div
       ref={scrollRef}
-      className="app-CalendarDay h-[100vh] flex-1 overflow-scroll"
+      className="app-CalendarDay relative h-[100vh] flex-1 overflow-scroll"
     >
       <Header scrollRef={scrollRef} />
 
       <div className={clsx("calendar flex w-fit", lock && "lock")}>
         {/* Fake left padding */}
-        <div className="sticky left-0 top-0 z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
+        <div className="sticky left-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
 
         <div>
           {/* Calendar header */}
@@ -60,13 +57,14 @@ export default function CalendarDay() {
 
           {/* Calendar body */}
           <DraggableScroll scrollRef={scrollRef}>
+            <LoadMore scrollRef={scrollRef} />
             <UngroupedTasks />
             <GroupedTasks />
           </DraggableScroll>
         </div>
 
         {/* Fake right padding */}
-        <div className="sticky right-0 top-0 z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
+        <div className="sticky right-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
       </div>
     </div>
   );
@@ -77,12 +75,6 @@ function Header({
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const appContext = use(AppContext);
-  if (!appContext) {
-    throw new Error("CalendarDay must be used within a AppProvider");
-  }
-  const { decreaseMinDate } = appContext;
-
   const lock = useTrackStore((s) => s.lock);
   const setLock = useTrackStore((s) => s.setLock);
 
@@ -105,32 +97,12 @@ function Header({
         </button>
       </div>
       <div className="flex items-center gap-8">
-        <div className="flex gap-1">
-          <button
-            className="button-accent-outline"
-            onClick={() => {
-              const el = scrollRef.current;
-              if (!el) return;
-
-              const previousScrollLeft = el.scrollLeft;
-              const previousScrollWidth = el.scrollWidth;
-
-              decreaseMinDate();
-              requestAnimationFrame(() => {
-                const newScrollWidth = el.scrollWidth;
-                const addedWidth = newScrollWidth - previousScrollWidth;
-                el.scrollLeft = previousScrollLeft + addedWidth;
-                // el.scrollTo({ left: 0, behavior: "smooth" });
-              });
-            }}
-          >
-            Load more prev
-          </button>
+        {/* <div className="flex gap-1">
           <TopButton scrollRef={scrollRef} />
           <BottomButton scrollRef={scrollRef} />
           <LeftButton scrollRef={scrollRef} />
           <RightButton scrollRef={scrollRef} />
-        </div>
+        </div> */}
         <Link
           to="element-today"
           options={{ block: "end", behavior: "smooth", inline: "end" }}

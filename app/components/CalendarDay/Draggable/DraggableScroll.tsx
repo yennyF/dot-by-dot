@@ -7,11 +7,13 @@ import { useRef, DragEvent, ReactNode, RefObject } from "react";
 interface DraggableScrollProps {
   children: ReactNode;
   scrollRef: RefObject<HTMLDivElement | null>;
+  className?: string;
 }
 
 export default function DraggableScroll({
   children,
   scrollRef,
+  className,
 }: DraggableScrollProps) {
   const dataSort = useRef<"task" | "group">(null);
 
@@ -125,6 +127,7 @@ export default function DraggableScroll({
 
   return (
     <div
+      className={className}
       onDragStart={handleDragStart}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

@@ -253,6 +253,18 @@ input {
       }
     }
   }
+
+  .button-icon-inverted {
+    @apply button-icon bg-[var(--inverted)] hover:bg-[var(--black)];
+
+    svg {
+      @apply text-[var(--white)]
+    }
+
+    &:hover svg {
+      @apply text-[var(--white)];
+    }
+  }
 }
 
 @keyframes fadeIn {
