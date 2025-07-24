@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, AlertDialog } from "radix-ui";
+import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { Group } from "../../../repositories/types";
 import { useGroupStore } from "../../../stores/GroupStore";
@@ -32,26 +32,26 @@ export default function GroupDeleteDialog({
   };
 
   return (
-    <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Trigger asChild>{children}</AlertDialog.Trigger>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       {open && (
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay className="overlay">
-            <AlertDialog.Content className="dialog-content">
+        <Dialog.Portal>
+          <Dialog.Overlay className="overlay">
+            <Dialog.Content className="dialog-content">
               <div className="flex justify-between">
-                <AlertDialog.Title className="dialog-title">
+                <Dialog.Title className="dialog-title">
                   Are you absolutely sure?
-                </AlertDialog.Title>
-                <AlertDialog.Cancel asChild>
+                </Dialog.Title>
+                <Dialog.Close asChild>
                   <button className="button-icon-sheer shrink-0">
                     <Cross1Icon />
                   </button>
-                </AlertDialog.Cancel>
+                </Dialog.Close>
               </div>
-              <AlertDialog.Description className="dialog-description">
+              <Dialog.Description className="dialog-description">
                 This action cannot be undone. This will permanently delete your
                 group and all track associated.
-              </AlertDialog.Description>
+              </Dialog.Description>
               <br />
               <div className="flex gap-3">
                 <Checkbox.Root
@@ -76,7 +76,7 @@ export default function GroupDeleteDialog({
               </div>
 
               <div className="dialog-bottom">
-                <AlertDialog.Cancel asChild>
+                <Dialog.Close asChild>
                   <button
                     className="button-accept"
                     onClick={handleDeleteConfirm}
@@ -84,12 +84,12 @@ export default function GroupDeleteDialog({
                   >
                     Delete
                   </button>
-                </AlertDialog.Cancel>
+                </Dialog.Close>
               </div>
-            </AlertDialog.Content>
-          </AlertDialog.Overlay>
-        </AlertDialog.Portal>
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
       )}
-    </AlertDialog.Root>
+    </Dialog.Root>
   );
 }

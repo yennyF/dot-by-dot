@@ -1,13 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useState } from "react";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
 
-export default function ButtonBottom({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
+export default function UseScrollToBottom(
+  scrollRef: RefObject<HTMLDivElement | null>
+) {
   const [isAtBottom, setIsAtBottom] = useState<boolean>(false);
 
   useEffect(() => {
@@ -31,17 +28,5 @@ export default function ButtonBottom({
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    console.log("ButtonBottom rendered");
-  });
-
-  return (
-    <button
-      className="button-icon-sheer"
-      disabled={isAtBottom}
-      onClick={scrollToBottom}
-    >
-      <ChevronDownIcon />
-    </button>
-  );
+  return { isAtBottom, scrollToBottom };
 }

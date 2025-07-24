@@ -2,6 +2,7 @@
 
 import { RefObject, useEffect, useRef } from "react";
 import {
+  ChevronRightIcon,
   LockClosedIcon,
   LockOpen1Icon,
   PlusIcon,
@@ -16,8 +17,7 @@ import { useTrackStore } from "@/app/stores/TrackStore";
 import clsx from "clsx";
 import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
-import LeftButton from "./SideButtons/LeftButton";
-import RightButton from "./SideButtons/RightButton";
+import LeftButton from "./LeftButton";
 
 export default function CalendarDay() {
   const lock = useTrackStore((s) => s.lock);
@@ -39,7 +39,7 @@ export default function CalendarDay() {
 
       <div className={clsx("calendar flex w-fit", lock && "lock")}>
         {/* Fake left padding */}
-        <div className="sticky left-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
+        <div className="sticky left-0 top-[70px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
 
         <div>
           <Header />
@@ -50,7 +50,7 @@ export default function CalendarDay() {
         </div>
 
         {/* Fake right padding */}
-        <div className="sticky right-0 top-[80px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
+        <div className="sticky right-0 top-[70px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
       </div>
     </div>
   );
@@ -69,7 +69,7 @@ function TopHeader({
   });
 
   return (
-    <div className="sticky left-0 top-0 z-30 flex h-[80px] items-center justify-between gap-2 bg-[var(--background)] px-[20px]">
+    <div className="sticky left-0 top-0 z-30 flex h-[70px] items-center justify-between gap-2 bg-[var(--background)] px-[20px]">
       <div className="flex items-center gap-4">
         <CreateDropdown>
           <button className="button-accent-outline">
@@ -82,19 +82,17 @@ function TopHeader({
           {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
         </button>
       </div>
-      <div className="flex items-center gap-8">
-        <div className="flex gap-1">
-          {/* <TopButton scrollRef={scrollRef} /> */}
-          {/* <BottomButton scrollRef={scrollRef} /> */}
-          <LeftButton scrollRef={scrollRef} />
-          <RightButton scrollRef={scrollRef} />
-        </div>
+      <div className="flex items-center gap-2">
+        <LeftButton scrollRef={scrollRef} />
         <Link
           to="element-today"
           options={{ block: "end", behavior: "smooth", inline: "start" }}
           autoScroll={true}
         >
-          <button className="button-outline">Today</button>
+          <button className="button-outline">
+            Today
+            <ChevronRightIcon />
+          </button>
         </Link>
       </div>
     </div>

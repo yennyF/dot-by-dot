@@ -3,7 +3,6 @@ import {
   midnightUTCstring,
   LocaleDateString,
   midnightUTC,
-  timeoutPromise,
 } from "../repositories/types";
 import { db } from "../repositories/db";
 import { debounce } from "lodash";
@@ -94,7 +93,8 @@ export const useTrackStore = create<State & Action>((set, get) => ({
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
-      console.log(await timeoutPromise(5000));
+
+      // console.log(await timeoutPromise(5000));
 
       set(() => ({ tasksByDate, startDate, totalDays }));
     } catch (error) {

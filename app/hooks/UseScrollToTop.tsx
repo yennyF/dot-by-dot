@@ -1,13 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useState } from "react";
-import { ChevronUpIcon } from "@radix-ui/react-icons";
 
-export default function TopButton({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
+export default function UseScrollToTop(
+  scrollRef: RefObject<HTMLDivElement | null>
+) {
   const [isAtTop, setIsAtTop] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,17 +25,5 @@ export default function TopButton({
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    console.log("TopButton rendered");
-  });
-
-  return (
-    <button
-      className="button-icon-sheer"
-      disabled={isAtTop}
-      onClick={scrollToTop}
-    >
-      <ChevronUpIcon />
-    </button>
-  );
+  return { isAtTop, scrollToTop };
 }

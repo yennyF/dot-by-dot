@@ -208,6 +208,10 @@ input {
 
   .button-outline {
     @apply button-text border-2 border-[var(--black)] bg-[var(--background)] text-[var(--black)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
+
+    svg {
+      @apply h-[20px] w-[20px] shrink-0 m-[2px];
+    }
   }
 
   .button-accept {

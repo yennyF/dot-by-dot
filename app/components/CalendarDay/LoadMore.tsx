@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useTrackStore } from "@/app/stores/TrackStore";
@@ -20,6 +20,9 @@ export default function LoadMore({
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const prevScrollLeft = useRef<number>(0);
+  const prevScrollWidth = useRef<number>(0);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -27,6 +30,8 @@ export default function LoadMore({
     const handleScroll = () => {
       const isAtLeft = el.scrollLeft <= threshold;
       setIsAtLeft(isAtLeft);
+
+      prevScrollLeft.current = el.scrollLeft;
     };
 
     el.addEventListener("scroll", handleScroll);
@@ -41,40 +46,30 @@ export default function LoadMore({
     setIsAtLeft(isAtLeft);
   }, [scrollRef]);
 
-  // useEffect(() => {
-  //   const el = scrollRef.current;
-  //   if (!el) return;
-
-  //   if (!isLoading) {
-  //     requestAnimationFrame(() => {
-  //       const newScrollWidth = el.scrollWidth;
-  //       const addedWidth = newScrollWidth - previousScrollWidth;
-  //       el.scrollLeft = previousScrollLeft + addedWidth;
-  //       // el.scrollTo({
-  //       //   left: previousScrollLeft + addedWidth,
-  //       //   behavior: "smooth",
-  //       // });
-  //     });
-  //   }
-  // }, [isLoading]);
-
   const handleClick = async () => {
     const el = scrollRef.current;
     if (!el) return;
 
     setIsLoading(true);
 
-    // const previousScrollLeft = el.scrollLeft;
-    // const previousScrollWidth = el.scrollWidth;
+    prevScrollWidth.current = el.scrollWidth;
+    prevScrollLeft.current = el.scrollLeft;
 
     const newStartDate = subMonths(startDate, 1);
     await loadMorePrevTracks(newStartDate);
+
+    requestAnimationFrame(() => {
+      const newScrollWidth = el.scrollWidth;
+      const addedWidth = newScrollWidth - prevScrollWidth.current;
+      el.scrollLeft = prevScrollLeft.current + addedWidth;
+      // el.scrollTo({ left: 0, behavior: "smooth" });
+    });
 
     setIsLoading(false);
   };
 
   return (
-    <div className="app-LoadMore sticky left-0 top-[calc(100vh*0.5+80px)] z-[10] h-0">
+    <div className="app-LoadMore sticky left-0 top-[calc(100vh*0.5+70px)] z-[10] h-0">
       <AnimatePresence>
         {isAtLeft && !isLoading && (
           <motion.button

@@ -1,13 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useState } from "react";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
 
-export default function LeftButton({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
+export default function UseScrollToLeft(
+  scrollRef: RefObject<HTMLDivElement | null>
+) {
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
 
   useEffect(() => {
@@ -25,20 +22,10 @@ export default function LeftButton({
   }, [scrollRef]);
 
   const scrollToLeft = () => {
-    scrollRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ left: 0, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    console.log("LeftButton rendered");
-  });
-
-  return (
-    <button
-      className="button-icon-sheer"
-      disabled={isAtLeft}
-      onClick={scrollToLeft}
-    >
-      <ChevronLeftIcon />
-    </button>
-  );
+  return { isAtLeft, scrollToLeft };
 }

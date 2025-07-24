@@ -1,13 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useState } from "react";
-import { ChevronRightIcon } from "@radix-ui/react-icons";
 
-export default function RightButton({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
+export default function UseScrollToRight(
+  scrollRef: RefObject<HTMLDivElement | null>
+) {
   const [isAtRight, setIsAtRight] = useState<boolean>(false);
 
   useEffect(() => {
@@ -30,17 +27,5 @@ export default function RightButton({
     el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    console.log("RightButton rendered");
-  });
-
-  return (
-    <button
-      className="button-icon-sheer"
-      disabled={isAtRight}
-      onClick={scrollToRight}
-    >
-      <ChevronRightIcon />
-    </button>
-  );
+  return { isAtRight, scrollToRight };
 }
