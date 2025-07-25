@@ -17,7 +17,6 @@ interface TaskTrackProps {
 export default function TaskTrack({ date, task }: TaskTrackProps) {
   const addTrack = useTrackStore((s) => s.addTrack);
   const deleteTrack = useTrackStore((s) => s.deleteTrack);
-  const setLock = useTrackStore((s) => s.setLock);
 
   const isActive =
     useTrackStore((s) =>
@@ -47,18 +46,15 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
         : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
   );
 
-  // useEffect(() => {
-  //   console.log("TaskTrack re-rendered");
-  // });
+  useEffect(() => {
+    console.log("TaskTrack re-rendered");
+  });
 
   const handleClick = () => {
     if (isActive) {
       deleteTrack(date, task.id);
     } else {
       addTrack(date, task.id);
-    }
-    if (!isTodayDate) {
-      setLock(false);
     }
   };
 

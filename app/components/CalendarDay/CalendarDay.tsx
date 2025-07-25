@@ -3,8 +3,6 @@
 import { RefObject, useEffect, useRef } from "react";
 import {
   ChevronRightIcon,
-  LockClosedIcon,
-  LockOpen1Icon,
   PlusIcon,
   TriangleDownIcon,
 } from "@radix-ui/react-icons";
@@ -13,15 +11,11 @@ import DraggableScroll from "./Draggable/DraggableScroll";
 import { Link } from "@/app/components/Scroll";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
-import { useTrackStore } from "@/app/stores/TrackStore";
-import clsx from "clsx";
 import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
 import LeftButton from "./LeftButton";
 
 export default function CalendarDay() {
-  const lock = useTrackStore((s) => s.lock);
-
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +31,7 @@ export default function CalendarDay() {
 
       <LoadMore scrollRef={scrollRef} />
 
-      <div className={clsx("calendar flex w-fit", lock && "lock")}>
+      <div className="calendar flex w-fit">
         {/* Fake left padding */}
         <div className="sticky left-0 top-[70px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
 
@@ -61,9 +55,6 @@ function TopHeader({
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const lock = useTrackStore((s) => s.lock);
-  const setLock = useTrackStore((s) => s.setLock);
-
   useEffect(() => {
     console.log("Controls rendered");
   });
@@ -78,9 +69,6 @@ function TopHeader({
             <TriangleDownIcon />
           </button>
         </CreateDropdown>
-        <button className="button-icon-sheer" onClick={() => setLock(!lock)}>
-          {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
-        </button>
       </div>
       <div className="flex items-center gap-2">
         <LeftButton scrollRef={scrollRef} />

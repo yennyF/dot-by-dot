@@ -14,7 +14,6 @@ interface GroupTrackProps {
 export default function GroupTrack({ date, tasks }: GroupTrackProps) {
   const addTracks = useTrackStore((s) => s.addTracks);
   const deleteTracks = useTrackStore((s) => s.deleteTracks);
-  const setLock = useTrackStore((s) => s.setLock);
 
   const taskIdSet = new Set(tasks.map((t) => t.id));
 
@@ -43,9 +42,6 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
       deleteTracks(date, taskIds);
     } else {
       addTracks(date, taskIds);
-    }
-    if (!isTodayDate) {
-      setLock(false);
     }
   };
 

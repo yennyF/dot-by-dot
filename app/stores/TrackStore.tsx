@@ -5,7 +5,7 @@ import {
   midnightUTC,
 } from "../repositories/types";
 import { db } from "../repositories/db";
-import { debounce } from "lodash";
+// import { debounce } from "lodash";
 import {
   notifyCreateError,
   notifyDeleteError,
@@ -13,27 +13,26 @@ import {
 } from "../components/Notification";
 import { eachDayOfInterval, subDays } from "date-fns";
 
-function autoLock() {
-  useTrackStore.getState().setLock(true);
-}
-export const debouncedAutoLock = debounce(autoLock, 10000);
+// function autoLock() {
+//   useTrackStore.getState().setLock(true);
+// }
+// export const debouncedAutoLock = debounce(autoLock, 10000);
 
 type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
 
-  lock: boolean;
-  setLock: (lock: boolean) => void;
-
   startDate: Date;
   endDate: Date;
   totalDays: Date[];
+
+  // lock: boolean;
+  // setLock: (lock: boolean) => void;
 };
 
 type Action = {
   initTracks: (startDate?: Date, endDate?: Date) => Promise<void>;
   loadMorePrevTracks: (startDate: Date) => Promise<void>;
-
   addTrack: (date: Date, taskId: string) => void;
   addTracks: (date: Date, taskIds: string[]) => void;
   deleteTrack: (date: Date, taskId: string) => void;
@@ -42,7 +41,6 @@ type Action = {
 
 export const useTrackStore = create<State & Action>((set, get) => ({
   tasksByDate: undefined,
-  lock: true,
   startDate: new Date(),
   endDate: new Date(),
   totalDays: [],
@@ -176,8 +174,10 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyDeleteError();
     }
   },
-  setLock: (lock: boolean) => {
-    set(() => ({ lock }));
-    debouncedAutoLock();
-  },
+
+  // lock: true,
+  // setLock: (lock: boolean) => {
+  //   set(() => ({ lock }));
+  //   debouncedAutoLock();
+  // },
 }));
