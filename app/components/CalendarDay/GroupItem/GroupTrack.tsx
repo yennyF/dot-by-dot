@@ -5,6 +5,9 @@ import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
+import { useState } from "react";
+import CircularProgressBar from "../../CircularProgressBar";
+import HoldButton from "../TaskItem/HoldButton";
 
 interface GroupTrackProps {
   date: Date;
@@ -36,6 +39,13 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
 
   const isTodayDate = isToday(date);
 
+  const dotClassName = clsx(
+    "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
+    isActive
+      ? "bg-[var(--green)]"
+      : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
+  );
+
   const handleClick = () => {
     const taskIds = Array.from(taskIdSet);
     if (isActive) {
@@ -58,17 +68,49 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
       {isNextActive && isActive && (
         <div className="absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in bg-[var(--green-5)] opacity-0" />
       )}
-      <button
-        className={clsx(
-          "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
-          isActive
-            ? "bg-[var(--green)]"
-            : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
-        )}
-        onClick={handleClick}
-      >
-        {isActive && <CheckIcon className="text-white" />}
-      </button>
+
+      {isTodayDate ? (
+        <button className={dotClassName} onClick={handleClick}>
+          {isActive && <CheckIcon className="text-white" />}
+        </button>
+      ) : (
+        <LockContent
+          isActive={isActive}
+          className={dotClassName}
+          onFinalize={() => {
+            setTimeout(() => {
+              handleClick();
+            }, 200); // Hack to match progress bar animation with the callback
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function LockContent({
+  isActive,
+  ...props
+}: {
+  isActive: boolean;
+  className: string;
+  onFinalize: () => void;
+}) {
+  const [progress, setProgress] = useState(0);
+
+  return (
+    <>
+      <div className="absolute">
+        <CircularProgressBar
+          barColor={isActive ? "var(--green-5)" : "var(--green)"}
+          size={22}
+          strokeWidth={5}
+          progress={progress}
+        />
+      </div>
+      <HoldButton {...props} onUpdate={setProgress}>
+        {isActive && <CheckIcon className="text-white" />}
+      </HoldButton>
+    </>
   );
 }
