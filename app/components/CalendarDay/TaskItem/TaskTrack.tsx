@@ -5,6 +5,9 @@ import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
+import HoldButton from "./HoldButton";
+import CircularProgressBar from "../../CircularProgressBar";
+import { useEffect, useState } from "react";
 
 interface TaskTrackProps {
   date: Date;
@@ -16,17 +19,33 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   const deleteTrack = useTrackStore((s) => s.deleteTrack);
   const setLock = useTrackStore((s) => s.setLock);
 
-  const isActive = useTrackStore((s) =>
-    s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id)
-  );
-  const isPrevActive = useTrackStore((s) =>
-    s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id)
-  );
-  const isNextActive = useTrackStore((s) =>
-    s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id)
-  );
+  const isActive =
+    useTrackStore((s) =>
+      s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id)
+    ) ?? false;
+  const isPrevActive =
+    useTrackStore((s) =>
+      s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id)
+    ) ?? false;
+  const isNextActive =
+    useTrackStore((s) =>
+      s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id)
+    ) ?? false;
 
   const isTodayDate = isToday(date);
+
+  const dotClassName = clsx(
+    "h-4 w-4 transform rounded-full transition-transform duration-100",
+    "hover:scale-110",
+    "active:scale-90",
+    isActive
+      ? task.groupId
+        ? "bg-[var(--accent)]"
+        : "bg-[var(--green)]"
+      : task.groupId
+        ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+        : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
+  );
 
   // useEffect(() => {
   //   console.log("TaskTrack re-rendered");
@@ -68,6 +87,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
           )}
         />
       )}
+
       {isNextActive && isActive && (
         <div
           className={clsx(
@@ -76,23 +96,61 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
           )}
         />
       )}
-      <button
-        className={clsx(
-          "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
-          isActive
-            ? task.groupId
-              ? "bg-[var(--accent)]"
-              : "bg-[var(--green)]"
-            : task.groupId
-              ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-              : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
-        )}
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {isActive && !task.groupId && <CheckIcon className="text-white" />}
-      </button>
+
+      {isTodayDate ? (
+        <button
+          onClick={handleClick}
+          className={dotClassName}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {isActive && !task.groupId && <CheckIcon className="text-white" />}
+        </button>
+      ) : (
+        <LockContent
+          task={task}
+          isActive={isActive}
+          className={dotClassName}
+          onFinalize={() => {
+            setTimeout(() => {
+              handleClick();
+            }, 200); // Hack to match progress bar animation with the callback
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
+      )}
     </div>
+  );
+}
+
+function LockContent({
+  task,
+  isActive,
+  ...props
+}: {
+  task: Task;
+  isActive: boolean;
+  className: string;
+  onFinalize: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
+  const [progress, setProgress] = useState(0);
+
+  return (
+    <>
+      <div className="absolute">
+        <CircularProgressBar
+          barColor={isActive ? "var(--accent-5)" : "var(--accent)"}
+          size={22}
+          strokeWidth={5}
+          progress={progress}
+        />
+      </div>
+      <HoldButton {...props} onUpdate={setProgress}>
+        {isActive && !task.groupId && <CheckIcon className="text-white" />}
+      </HoldButton>
+    </>
   );
 }

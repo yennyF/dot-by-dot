@@ -32,7 +32,6 @@ type State = {
 
 type Action = {
   initTracks: (startDate?: Date, endDate?: Date) => Promise<void>;
-
   loadMorePrevTracks: (startDate: Date) => Promise<void>;
 
   addTrack: (date: Date, taskId: string) => void;
@@ -50,7 +49,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
   initTracks: async (startDate?: Date, endDate?: Date) => {
     endDate ??= new Date();
-    startDate ??= subDays(endDate, 30);
+    startDate ??= subDays(endDate, 60);
 
     const totalDays = eachDayOfInterval({
       start: startDate,
