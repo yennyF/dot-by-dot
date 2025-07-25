@@ -14,9 +14,9 @@ interface TaskItemProps {
 function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   const totalDays = useTrackStore((s) => s.totalDays);
 
-  useEffect(() => {
-    console.log("TaskItem rendered", task.name);
-  });
+  // useEffect(() => {
+  //   console.log("TaskItem rendered", task.name);
+  // });
 
   return (
     <>

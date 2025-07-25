@@ -7,7 +7,7 @@ import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import HoldButton from "./HoldButton";
 import CircularProgressBar from "../../CircularProgressBar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface TaskTrackProps {
   date: Date;
@@ -46,9 +46,9 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
         : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
   );
 
-  useEffect(() => {
-    console.log("TaskTrack re-rendered");
-  });
+  // useEffect(() => {
+  //   console.log("TaskTrack re-rendered");
+  // });
 
   const handleClick = () => {
     if (isActive) {
@@ -138,7 +138,15 @@ function LockContent({
     <>
       <div className="absolute">
         <CircularProgressBar
-          barColor={isActive ? "var(--accent-5)" : "var(--accent)"}
+          barColor={
+            isActive
+              ? task.groupId
+                ? "var(--accent-5)"
+                : "var(--green-5)"
+              : task.groupId
+                ? "var(--accent)"
+                : "var(--green)"
+          }
           size={22}
           strokeWidth={5}
           progress={progress}

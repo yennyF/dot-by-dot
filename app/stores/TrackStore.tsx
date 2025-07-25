@@ -5,7 +5,6 @@ import {
   midnightUTC,
 } from "../repositories/types";
 import { db } from "../repositories/db";
-// import { debounce } from "lodash";
 import {
   notifyCreateError,
   notifyDeleteError,
@@ -91,7 +90,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
 
-      // console.log(await timeoutPromise(5000));
+      // console.log(await timeoutPromise(2000));
 
       set(() => ({ tasksByDate, startDate, totalDays }));
     } catch (error) {
