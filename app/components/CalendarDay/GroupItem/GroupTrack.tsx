@@ -2,7 +2,7 @@
 
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
-import { CheckIcon } from "@radix-ui/react-icons";
+import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useState } from "react";
@@ -76,12 +76,8 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
       ) : (
         <LockContent
           isActive={isActive}
-          className={dotClassName}
-          onFinalize={() => {
-            setTimeout(() => {
-              handleClick();
-            }, 200); // Hack to match progress bar animation with the callback
-          }}
+          dotClassName={dotClassName}
+          onFinalize={handleClick}
         />
       )}
     </div>
@@ -90,17 +86,20 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
 
 function LockContent({
   isActive,
+  dotClassName,
+  onFinalize,
   ...props
 }: {
   isActive: boolean;
-  className: string;
+  dotClassName: string;
   onFinalize: () => void;
 }) {
   const [progress, setProgress] = useState(0);
+  const [removeLock, setRemoveLock] = useState(false);
 
   return (
     <>
-      <div className="absolute">
+      <div className="progress-wrapper absolute">
         <CircularProgressBar
           barColor={isActive ? "var(--green-5)" : "var(--green)"}
           size={22}
@@ -108,9 +107,30 @@ function LockContent({
           progress={progress}
         />
       </div>
-      <HoldButton {...props} onUpdate={setProgress}>
-        {isActive && <CheckIcon className="text-white" />}
-      </HoldButton>
+
+      <div className="group relative flex justify-center">
+        <LockClosedIcon
+          className={clsx(
+            "absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity",
+            removeLock ? "opacity-0" : "group-hover:opacity-100"
+          )}
+        />
+
+        <HoldButton
+          {...props}
+          className={dotClassName}
+          onMouseUp={() => setRemoveLock(false)}
+          onUpdate={setProgress}
+          onFinalize={() => {
+            setTimeout(() => {
+              onFinalize();
+              setRemoveLock(true);
+            }, 200); // Hack to match progress bar animation with the callback
+          }}
+        >
+          {isActive && <CheckIcon className="text-white" />}
+        </HoldButton>
+      </div>
     </>
   );
 }
