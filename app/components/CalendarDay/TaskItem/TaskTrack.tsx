@@ -4,7 +4,11 @@ import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
-import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import {
+  CheckIcon,
+  LockClosedIcon,
+  LockOpen1Icon,
+} from "@radix-ui/react-icons";
 import HoldButton from "./HoldButton";
 import CircularProgressBar from "../../CircularProgressBar";
 import { useState } from "react";
@@ -131,7 +135,7 @@ function LockContent({
   onMouseLeave: () => void;
 }) {
   const [progress, setProgress] = useState(0);
-  const [removeLock, setRemoveLock] = useState(false);
+  const [unlock, setUnlock] = useState(false);
 
   return (
     <>
@@ -153,22 +157,21 @@ function LockContent({
       </div>
 
       <div className="group relative flex justify-center">
-        <LockClosedIcon
-          className={clsx(
-            "absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity",
-            removeLock ? "opacity-0" : "group-hover:opacity-100"
-          )}
-        />
+        {unlock ? (
+          <LockOpen1Icon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
+        ) : (
+          <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
+        )}
 
         <HoldButton
           {...props}
           className={dotClassName}
-          onMouseUp={() => setRemoveLock(false)}
+          onMouseUp={() => setUnlock(false)}
           onUpdate={setProgress}
           onFinalize={() => {
             setTimeout(() => {
               onFinalize();
-              setRemoveLock(true);
+              setUnlock(true);
             }, 200); // Hack to match progress bar animation with the callback
           }}
         >
