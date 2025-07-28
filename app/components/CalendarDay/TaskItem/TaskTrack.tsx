@@ -4,13 +4,7 @@ import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
-import {
-  CheckIcon,
-  LockClosedIcon,
-  LockOpen1Icon,
-} from "@radix-ui/react-icons";
-import HoldButton from "./HoldButton";
-import CircularProgressBar from "../../CircularProgressBar";
+import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
 interface TaskTrackProps {
@@ -99,8 +93,8 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
 
       {isTodayDate ? (
         <button
-          onClick={handleClick}
           className={dotClassName}
+          onClick={handleClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -110,8 +104,8 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
         <LockContent
           task={task}
           isActive={isActive}
-          dotClassName={dotClassName}
-          onFinalize={handleClick}
+          className={dotClassName}
+          onClick={handleClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         />
@@ -123,61 +117,37 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
 function LockContent({
   task,
   isActive,
-  dotClassName,
-  onFinalize,
+  onClick,
   ...props
 }: {
   task: Task;
   isActive: boolean;
-  dotClassName: string;
-  onFinalize: () => void;
+  className: string;
+  onClick: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
-  const [progress, setProgress] = useState(0);
-  const [unlock, setUnlock] = useState(false);
+  const [unlock, setUnlock] = useState<boolean>();
 
   return (
-    <>
-      <div className="progress-wrapper absolute">
-        <CircularProgressBar
-          barColor={
-            isActive
-              ? task.groupId
-                ? "var(--accent-5)"
-                : "var(--green-5)"
-              : task.groupId
-                ? "var(--accent)"
-                : "var(--green)"
-          }
-          size={22}
-          strokeWidth={5}
-          progress={progress}
-        />
-      </div>
-
-      <div className="group relative flex justify-center">
-        {unlock ? (
-          <LockOpen1Icon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
-        ) : (
-          <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
-        )}
-
-        <HoldButton
-          {...props}
-          className={dotClassName}
-          onMouseUp={() => setUnlock(false)}
-          onUpdate={setProgress}
-          onFinalize={() => {
-            setTimeout(() => {
-              onFinalize();
-              setUnlock(true);
-            }, 200); // Hack to match progress bar animation with the callback
-          }}
-        >
-          {isActive && !task.groupId && <CheckIcon className="text-white" />}
-        </HoldButton>
-      </div>
-    </>
+    <div className="group relative flex justify-center">
+      {unlock === false && (
+        <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
+      )}
+      <button
+        {...props}
+        onClick={() => {
+          if (unlock) onClick();
+        }}
+        onMouseOver={() => {
+          setUnlock(useTrackStore.getState().unlock);
+        }}
+        onMouseLeave={() => {
+          setUnlock(undefined);
+        }}
+      >
+        {isActive && !task.groupId && <CheckIcon className="text-white" />}
+      </button>
+    </div>
   );
 }

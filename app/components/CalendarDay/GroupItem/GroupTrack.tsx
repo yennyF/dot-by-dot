@@ -2,16 +2,10 @@
 
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { midnightUTCstring, Task } from "@/app/repositories/types";
-import {
-  CheckIcon,
-  LockClosedIcon,
-  LockOpen1Icon,
-} from "@radix-ui/react-icons";
+import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useState } from "react";
-import CircularProgressBar from "../../CircularProgressBar";
-import HoldButton from "../TaskItem/HoldButton";
 
 interface GroupTrackProps {
   date: Date;
@@ -80,8 +74,8 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
       ) : (
         <LockContent
           isActive={isActive}
-          dotClassName={dotClassName}
-          onFinalize={handleClick}
+          className={dotClassName}
+          onClick={handleClick}
         />
       )}
     </div>
@@ -90,50 +84,34 @@ export default function GroupTrack({ date, tasks }: GroupTrackProps) {
 
 function LockContent({
   isActive,
-  dotClassName,
-  onFinalize,
+  onClick,
   ...props
 }: {
   isActive: boolean;
-  dotClassName: string;
-  onFinalize: () => void;
+  className: string;
+  onClick: () => void;
 }) {
-  const [progress, setProgress] = useState(0);
-  const [unlock, setUnlock] = useState(false);
+  const [unlock, setUnlock] = useState<boolean>();
 
   return (
-    <>
-      <div className="progress-wrapper absolute">
-        <CircularProgressBar
-          barColor={isActive ? "var(--green-5)" : "var(--green)"}
-          size={22}
-          strokeWidth={5}
-          progress={progress}
-        />
-      </div>
-
-      <div className="group relative flex justify-center">
-        {unlock ? (
-          <LockOpen1Icon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
-        ) : (
-          <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
-        )}
-
-        <HoldButton
-          {...props}
-          className={dotClassName}
-          onMouseUp={() => setUnlock(false)}
-          onUpdate={setProgress}
-          onFinalize={() => {
-            setTimeout(() => {
-              onFinalize();
-              setUnlock(true);
-            }, 200); // Hack to match progress bar animation with the callback
-          }}
-        >
-          {isActive && <CheckIcon className="text-white" />}
-        </HoldButton>
-      </div>
-    </>
+    <div className="group relative flex justify-center">
+      {!unlock && (
+        <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
+      )}
+      <button
+        {...props}
+        onClick={() => {
+          if (unlock) onClick();
+        }}
+        onMouseOver={() => {
+          setUnlock(useTrackStore.getState().unlock);
+        }}
+        onMouseLeave={() => {
+          setUnlock(undefined);
+        }}
+      >
+        {isActive && <CheckIcon className="text-white" />}
+      </button>
+    </div>
   );
 }

@@ -12,21 +12,16 @@ import {
 } from "../components/Notification";
 import { eachDayOfInterval, subDays } from "date-fns";
 
-// function autoLock() {
-//   useTrackStore.getState().setLock(true);
-// }
-// export const debouncedAutoLock = debounce(autoLock, 10000);
-
 type State = {
+  unlock: boolean;
+  setUnlock: (unlock: boolean) => void;
+
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
 
   startDate: Date;
   endDate: Date;
   totalDays: Date[];
-
-  // lock: boolean;
-  // setLock: (lock: boolean) => void;
 };
 
 type Action = {
@@ -39,6 +34,11 @@ type Action = {
 };
 
 export const useTrackStore = create<State & Action>((set, get) => ({
+  unlock: false,
+  setUnlock: (unlock: boolean) => {
+    set(() => ({ unlock }));
+  },
+
   tasksByDate: undefined,
   startDate: new Date(),
   endDate: new Date(),
@@ -173,10 +173,4 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyDeleteError();
     }
   },
-
-  // lock: true,
-  // setLock: (lock: boolean) => {
-  //   set(() => ({ lock }));
-  //   debouncedAutoLock();
-  // },
 }));
