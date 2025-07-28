@@ -10,12 +10,10 @@ import {
   eachDayOfInterval,
   startOfWeek,
   endOfWeek,
-  isAfter,
   isSameMonth,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import DayItem from "./DayItem";
-import { isEqual } from "lodash";
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -55,7 +53,7 @@ export default function CalendarMonth() {
 
   return (
     <div>
-      <div className="flex h-20 w-full items-center justify-between gap-5">
+      <div className="flex w-full items-center justify-between gap-5">
         <h2 className="text-sm font-bold">
           {format(currentDate, "MMMM yyyy")}
         </h2>
@@ -77,7 +75,7 @@ export default function CalendarMonth() {
       </div>
 
       <div
-        className="grid grid-cols-7 gap-2 text-neutral-400"
+        className="mt-5 grid grid-cols-7 gap-2 text-neutral-400"
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
         {DAY_LABELS.map((day, index) => (

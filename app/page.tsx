@@ -37,8 +37,8 @@ function Content() {
 
   return (
     <div className="relative flex">
-      <Sidebar />
       <CalendarDay />
+      <Sidebar />
       <ToastContainer autoClose={false} draggable={false} />
     </div>
   );
