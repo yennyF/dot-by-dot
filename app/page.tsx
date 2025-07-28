@@ -8,6 +8,7 @@ import { useTaskStore } from "./stores/TaskStore";
 import { useTrackStore } from "./stores/TrackStore";
 import { useGroupStore } from "./stores/GroupStore";
 import { ToastContainer } from "react-toastify";
+import LoadingIcon from "./components/Loading/LoadingIcon";
 
 export default function Home() {
   return (
@@ -47,6 +48,7 @@ function Content() {
 function Loading() {
   return (
     <div className="flex h-screen items-center justify-center">
+      <LoadingIcon />
       <div className="animate-pulse">Loading...</div>
     </div>
   );

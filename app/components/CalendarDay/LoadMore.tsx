@@ -97,11 +97,16 @@ export default function LoadMore({
           </motion.button>
         )}
       </AnimatePresence>
-      {isLoading && (
-        <div className="fixed bottom-[50px] left-1/2 translate-x-[-50%] p-2">
-          <LoadingIcon />
-        </div>
-      )}
+      {isLoading && <Loading />}
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="fixed bottom-[50px] left-1/2 flex translate-x-[-50%] items-center p-2">
+      <LoadingIcon />
+      Loading more…
     </div>
   );
 }
