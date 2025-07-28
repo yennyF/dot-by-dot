@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { AppContext, AppProvider } from "./AppContext";
+import { useEffect, useState } from "react";
+import { AppProvider } from "./AppContext";
 import CalendarDay from "./components/CalendarDay/CalendarDay";
 import Sidebar from "./components/Sidebar";
 import { useTaskStore } from "./stores/TaskStore";

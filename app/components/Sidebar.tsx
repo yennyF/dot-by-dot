@@ -4,13 +4,17 @@ import { Cross1Icon, CalendarIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import CalendarMonth from "./CalendarMonth/CalendarMonth";
+import { useGroupStore } from "../stores/GroupStore";
+import { useTrackStore } from "../stores/TrackStore";
+import { UNGROUPED_KEY } from "../stores/TaskStore";
 
 export default function Sidebar() {
-  const [openSidebar, setOpenSidebar] = useState(false);
+  const [openSidebar, setOpenSidebar] = useState(true);
+  const groups = useGroupStore((s) => s.groups);
 
   return (
     <motion.div
-      className="sidebar relative w-[320px] shrink-0"
+      className="sidebar relative w-[320px] shrink-0 border-r-[1px] border-[var(--gray)]"
       animate={{
         width: openSidebar ? "320px" : 0,
       }}
@@ -32,9 +36,46 @@ export default function Sidebar() {
             exit={{ x: -320 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="fixed h-screen w-[320px] border-r-[1px] border-[var(--gray)]">
-              <div className="mt-[10px] flex w-full flex-col items-center justify-center">
-                <CalendarMonth />
+            <div className="fixed h-screen w-[320px] overflow-scroll p-5">
+              <h2 className="text-xl">Month stats</h2>
+              <div className="flex flex-col gap-20">
+                <div className="flex w-full items-center justify-center">
+                  <CalendarMonth />
+                </div>
+                <div className="flex flex-col gap-2">
+                  {groups?.map((g) => (
+                    <div key={g.name} className="flex items-center gap-2">
+                      <span className="w-[120px] shrink-0 text-nowrap">
+                        {g.name}
+                      </span>
+                      <div className="h-4 flex-1 rounded-full bg-[var(--accent)]">
+                        <div className="h-4 flex-1 rounded-full bg-[var(--accent)]"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col items-start gap-2">
+                  <div className="flex items-end justify-center">
+                    <span className="text-3xl">17%</span>
+                    <span className="text-xs">habit rate</span>
+                    <div className="text-xs"></div>
+                  </div>
+                  <div className="flex items-end justify-center">
+                    <span className="text-3xl">17</span>
+                    <span className="text-xs">days total done of 20</span>
+                    <div className="text-xs"></div>
+                  </div>
+                  <div className="flex items-end justify-center">
+                    <span className="text-3xl">17</span>
+                    <span className="text-xs">days current strike</span>
+                    <div className="text-xs"></div>
+                  </div>
+                  <div className="flex items-end justify-center">
+                    <span className="text-3xl">17</span>
+                    <span className="text-xs">days best strike</span>
+                    <div className="text-xs"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

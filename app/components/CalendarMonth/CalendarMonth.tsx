@@ -10,9 +10,12 @@ import {
   eachDayOfInterval,
   startOfWeek,
   endOfWeek,
+  isAfter,
+  isSameMonth,
 } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import DayItem from "./DayItem";
+import { isEqual } from "lodash";
 
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -63,7 +66,11 @@ export default function CalendarMonth() {
           <button className="button-icon-sheer" onClick={previousMonth}>
             <ChevronLeftIcon />
           </button>
-          <button className="button-icon-sheer" onClick={nextMonth}>
+          <button
+            className="button-icon-sheer"
+            onClick={nextMonth}
+            disabled={isSameMonth(currentDate, new Date())}
+          >
             <ChevronRightIcon />
           </button>
         </div>
