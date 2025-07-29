@@ -20,26 +20,15 @@ export default function DropIndicatorTask({
     <div
       ref={ref}
       className={clsx(
-        "app-DropIndicatorTask drop-indicator sticky left-[50px] flex w-[200px] items-center opacity-0",
-        groupId ? "pl-[15px]" : "pl-0"
+        "app-DropIndicatorTask drop-indicator sticky left-[80px] flex w-[160px] items-center opacity-0"
       )}
       data-sort="task"
       data-group-id={groupId}
       data-before-id={beforeId}
       data-after-id={afterId}
     >
-      <div
-        className={clsx(
-          "h-2 w-2 rounded-full",
-          groupId ? "bg-[var(--accent)]" : "bg-[var(--green)]"
-        )}
-      ></div>
-      <div
-        className={clsx(
-          "h-0.5 flex-1",
-          groupId ? "bg-[var(--accent)]" : "bg-[var(--green)]"
-        )}
-      />
+      <div className="h-2 w-2 rounded-full bg-[var(--gray)]" />
+      <div className="h-0.5 flex-1 bg-[var(--gray)]" />
     </div>
   );
 }

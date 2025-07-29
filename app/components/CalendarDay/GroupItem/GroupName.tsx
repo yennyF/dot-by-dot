@@ -3,7 +3,6 @@ import {
   DotFilledIcon,
   Pencil1Icon,
   PlusIcon,
-  Share1Icon,
   TrashIcon,
 } from "@radix-ui/react-icons";
 import GroupDeleteDialog from "./GroupDeleteDialog";
@@ -22,19 +21,16 @@ interface GroupNameProps {
 
 export default function GroupName({ group, isDummy }: GroupNameProps) {
   const [forceShow, setForceShow] = useState(false);
-  const [dragging, setDragging] = useState(false);
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const handleDragStart = (e: DragEvent) => {
     e.dataTransfer.setData("sort", "group");
     e.dataTransfer.setData("groupId", group.id);
-    setDragging(true);
   };
 
   const handleDragEnd = (e: DragEvent) => {
     e.preventDefault();
-    setDragging(false);
   };
 
   const draggable = isDummy ? false : true;
@@ -57,48 +53,46 @@ export default function GroupName({ group, isDummy }: GroupNameProps) {
           {group.name}
         </div>
       </div>
-      {!dragging && (
-        <div
-          className={clsx(
-            "action-buttons gap-1",
-            forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
-          )}
-        >
-          {isDummy ? (
-            <GroupCreatePopover>
+      <div
+        className={clsx(
+          "action-buttons gap-1",
+          forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
+        )}
+      >
+        {isDummy ? (
+          <GroupCreatePopover>
+            <button className="button-icon-sheer">
+              <Pencil1Icon />
+            </button>
+          </GroupCreatePopover>
+        ) : (
+          <>
+            <button
+              className="button-icon-sheer"
+              onClick={() => {
+                setDummyTask({
+                  id: uuidv4(),
+                  name: "(No name)",
+                  groupId: group.id,
+                  order: "",
+                });
+              }}
+            >
+              <PlusIcon />
+            </button>
+            <GroupRenamePopover group={group} onOpenChange={setForceShow}>
               <button className="button-icon-sheer">
                 <Pencil1Icon />
               </button>
-            </GroupCreatePopover>
-          ) : (
-            <>
-              <button
-                className="button-icon-sheer"
-                onClick={() => {
-                  setDummyTask({
-                    id: uuidv4(),
-                    name: "(No name)",
-                    groupId: group.id,
-                    order: "",
-                  });
-                }}
-              >
-                <PlusIcon />
+            </GroupRenamePopover>
+            <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
+              <button className="button-icon-sheer">
+                <TrashIcon />
               </button>
-              <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-                <button className="button-icon-sheer">
-                  <Pencil1Icon />
-                </button>
-              </GroupRenamePopover>
-              <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-                <button className="button-icon-sheer">
-                  <TrashIcon />
-                </button>
-              </GroupDeleteDialog>
-            </>
-          )}
-        </div>
-      )}
+            </GroupDeleteDialog>
+          </>
+        )}
+      </div>
     </div>
   );
 }
