@@ -28,7 +28,7 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
 
   return (
     <div className="app-GroupItem w-full">
-      <div className="flex h-[40px]">
+      <div className="group/item flex h-[40px]">
         <GroupName group={group} isDummy={isDummy} />
         <div className="sticky left-[200px] flex">
           {totalDays.map((date) => (

@@ -1,4 +1,11 @@
-import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  CubeIcon,
+  DotFilledIcon,
+  Pencil1Icon,
+  PlusIcon,
+  Share1Icon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import GroupDeleteDialog from "./GroupDeleteDialog";
 import GroupRenamePopover from "./GroupRenamePopover";
 import { Group } from "@/app/repositories/types";
@@ -35,7 +42,7 @@ export default function GroupName({ group, isDummy }: GroupNameProps) {
   return (
     <div
       className={clsx(
-        "app-GroupName group sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupName group/name sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       draggable={draggable}
@@ -43,14 +50,18 @@ export default function GroupName({ group, isDummy }: GroupNameProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
-        {group.name}
+      <div className="flex items-center gap-2 overflow-hidden">
+        <DotFilledIcon className="h-[12px] w-[12px] shrink-0 opacity-0 group-hover/item:opacity-100" />
+        <CubeIcon className="h-[12px] w-[12px] shrink-0" />
+        <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
+          {group.name}
+        </div>
       </div>
       {!dragging && (
         <div
           className={clsx(
             "action-buttons gap-1",
-            forceShow || isDummy ? "flex" : "hidden group-hover:flex"
+            forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
           )}
         >
           {isDummy ? (

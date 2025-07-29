@@ -20,7 +20,7 @@ export default function DropIndicatorTask({
     <div
       ref={ref}
       className={clsx(
-        "app-DropIndicatorTask drop-indicator sticky left-[25px] flex w-[200px] items-center opacity-0",
+        "app-DropIndicatorTask drop-indicator sticky left-[50px] flex w-[200px] items-center opacity-0",
         groupId ? "pl-[15px]" : "pl-0"
       )}
       data-sort="task"
