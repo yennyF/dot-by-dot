@@ -18,12 +18,12 @@ export default function Sidebar() {
       }}
       transition={{ duration: 0.2 }}
     >
-      <div
+      {/* <div
         className="button-icon-sheer fixed right-[20px] top-[10px] z-40 h-[30px] w-[30px]"
         onClick={() => setOpenSidebar((prev) => !prev)}
       >
         {openSidebar ? <Cross1Icon /> : <CalendarIcon />}
-      </div>
+      </div> */}
 
       <AnimatePresence>
         {openSidebar && (

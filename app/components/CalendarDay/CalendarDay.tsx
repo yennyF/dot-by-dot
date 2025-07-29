@@ -18,7 +18,7 @@ export default function CalendarDay() {
   return (
     <div
       ref={scrollRef}
-      className="app-CalendarDay no-scrollbar relative h-[100vh] flex-1 overflow-scroll"
+      className="app-CalendarDay relative h-[100vh] flex-1 overflow-scroll"
     >
       <TopHeader scrollRef={scrollRef} />
 
