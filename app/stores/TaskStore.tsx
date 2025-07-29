@@ -20,6 +20,7 @@ type State = {
 };
 
 type Action = {
+  setDummyTask: (task: Task | undefined) => void;
   initTasks: () => Promise<void>;
   addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
   updateTask: (id: string, task: Pick<Task, "name">) => void;
@@ -34,13 +35,15 @@ type Action = {
     groupId: string | null
   ) => void;
   deleteTask: (id: string) => void;
-  setDummyTask: (task: Task | undefined) => void;
 };
 
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
   immer((set) => ({
     dummyTask: undefined,
+    hilightedTask: null,
     tasksByGroup: undefined,
+
+    setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
 
     initTasks: async () => {
       try {
@@ -249,7 +252,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         notifyDeleteError();
       }
     },
-    setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
   }))
 );
 

@@ -20,7 +20,7 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
 
   return (
     <>
-      <div className="flex h-[40px] items-center">
+      <div className="group/item flex h-[40px] items-center">
         <TaskName task={task} isDummy={isDummy} />
         <div className="sticky left-[200px] flex">
           {totalDays.map((date) => (

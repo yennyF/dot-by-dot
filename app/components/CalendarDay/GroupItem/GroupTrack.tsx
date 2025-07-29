@@ -103,7 +103,7 @@ function LockContent({
         onClick={() => {
           if (unlock) onClick();
         }}
-        onMouseOver={() => {
+        onMouseEnter={() => {
           setUnlock(useTrackStore.getState().unlock);
         }}
         onMouseLeave={() => {

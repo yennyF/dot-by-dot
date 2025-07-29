@@ -14,17 +14,15 @@ import { eachDayOfInterval, subDays } from "date-fns";
 
 type State = {
   unlock: boolean;
-  setUnlock: (unlock: boolean) => void;
-
-  // Store date strings for reliable value-based Set comparison
-  tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
-
   startDate: Date;
   endDate: Date;
   totalDays: Date[];
+  // Store date strings for reliable value-based Set comparison
+  tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
 };
 
 type Action = {
+  setUnlock: (unlock: boolean) => void;
   initTracks: (startDate?: Date, endDate?: Date) => Promise<void>;
   loadMorePrevTracks: (startDate: Date) => Promise<void>;
   addTrack: (date: Date, taskId: string) => void;

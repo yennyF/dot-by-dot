@@ -1,12 +1,13 @@
 "use client";
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { DragEvent, useState } from "react";
+import { DragEvent, useEffect, useState } from "react";
 import TaskDeleteDialog from "./TaskDeleteDialog";
 import TaskRenamePopover from "./TaskRenamePopover";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
 import TaskCreatePopover from "./TaskCreatePopover";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 interface TaskNameProps {
   task: Task;
@@ -16,6 +17,10 @@ interface TaskNameProps {
 export default function TaskName({ task, isDummy }: TaskNameProps) {
   const [forceShow, setForceShow] = useState(false);
   const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    console.log("TaskName rendered", task.name);
+  });
 
   const handleDragStart = (e: DragEvent) => {
     e.dataTransfer.setData("sort", "task");
@@ -33,9 +38,10 @@ export default function TaskName({ task, isDummy }: TaskNameProps) {
   return (
     <div
       className={clsx(
-        "app-TaskName group sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
+        "app-TaskName group/name sticky left-[50px] z-[9] flex h-[40px] w-[200px] items-center justify-between gap-1 bg-[var(--background)] hover:font-bold [&.highlight]:font-bold",
         draggable && "draggable cursor-grab active:cursor-grabbing",
-        task.groupId && "border-l-2"
+        task.groupId && "border-l-2",
+        "group-hover/item:font-bold"
       )}
       draggable={draggable}
       data-id={task.id}
@@ -54,7 +60,7 @@ export default function TaskName({ task, isDummy }: TaskNameProps) {
         <div
           className={clsx(
             "action-buttons gap-1",
-            forceShow || isDummy ? "flex" : "hidden group-hover:flex"
+            forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
           )}
         >
           {isDummy ? (

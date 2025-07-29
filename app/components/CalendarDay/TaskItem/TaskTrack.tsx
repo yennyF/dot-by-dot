@@ -56,16 +56,6 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
     }
   };
 
-  const handleMouseEnter = () => {
-    const el = document.querySelector(`.app-TaskName[data-id="${task.id}"]`);
-    el?.classList.add("highlight");
-  };
-
-  const handleMouseLeave = () => {
-    const el = document.querySelector(`.app-TaskName[data-id="${task.id}"]`);
-    el?.classList.remove("highlight");
-  };
-
   return (
     <div
       className={clsx(
@@ -92,12 +82,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
       )}
 
       {isTodayDate ? (
-        <button
-          className={dotClassName}
-          onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
+        <button className={dotClassName} onClick={handleClick}>
           {isActive && !task.groupId && <CheckIcon className="text-white" />}
         </button>
       ) : (
@@ -106,8 +91,6 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
           isActive={isActive}
           className={dotClassName}
           onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         />
       )}
     </div>
@@ -124,8 +107,6 @@ function LockContent({
   isActive: boolean;
   className: string;
   onClick: () => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
 }) {
   const [unlock, setUnlock] = useState<boolean>();
 
@@ -139,7 +120,7 @@ function LockContent({
         onClick={() => {
           if (unlock) onClick();
         }}
-        onMouseOver={() => {
+        onMouseEnter={() => {
           setUnlock(useTrackStore.getState().unlock);
         }}
         onMouseLeave={() => {
