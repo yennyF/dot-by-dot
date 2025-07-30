@@ -15,7 +15,10 @@ export default function Header() {
 
   return (
     <div className="calendar-header sticky top-[70px] z-10 flex w-fit">
-      <div className="sticky left-[50px] z-10 flex w-[200px] items-end bg-[var(--background)]" />
+      <div
+        className="sticky left-[50px] z-10 flex items-end bg-[var(--background)]"
+        style={{ width: "var(--width-name)" }}
+      />
       <div className="sticky left-[250px] flex w-fit bg-[var(--background)]">
         {totalYears.map((date) => (
           <YearItem key={date.getFullYear()} date={date} />

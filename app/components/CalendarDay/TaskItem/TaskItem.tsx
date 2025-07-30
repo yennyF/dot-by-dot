@@ -21,7 +21,7 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   return (
     <div className="group/item flex h-[40px] items-center">
       <TaskName task={task} isDummy={isDummy} />
-      <div className="sticky left-[200px] flex">
+      <div className="sticky flex" style={{ left: "var(--width-name)" }}>
         {totalDays.map((date) => (
           <TaskTrack key={date.toLocaleDateString()} date={date} task={task} />
         ))}

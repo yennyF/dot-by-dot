@@ -1,9 +1,5 @@
 import { create } from "zustand";
-import {
-  midnightUTCstring,
-  LocaleDateString,
-  midnightUTC,
-} from "../repositories/types";
+import { LocaleDateString } from "../repositories/types";
 import { db } from "../repositories/db";
 import {
   notifyCreateError,
@@ -11,6 +7,7 @@ import {
   notifyLoadError,
 } from "../components/Notification";
 import { eachDayOfInterval, subDays } from "date-fns";
+import { midnightUTC, midnightUTCstring } from "../util";
 
 type State = {
   unlock: boolean;
@@ -23,8 +20,8 @@ type State = {
 
 type Action = {
   setUnlock: (unlock: boolean) => void;
-  initTracks: (startDate?: Date, endDate?: Date) => Promise<void>;
-  loadMorePrevTracks: (startDate: Date) => Promise<void>;
+  initTracks: () => Promise<void>;
+  loadMorePrevTracks: () => Promise<void>;
   addTrack: (date: Date, taskId: string) => void;
   addTracks: (date: Date, taskIds: string[]) => void;
   deleteTrack: (date: Date, taskId: string) => void;
@@ -42,9 +39,9 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   endDate: new Date(),
   totalDays: [],
 
-  initTracks: async (startDate?: Date, endDate?: Date) => {
-    endDate ??= new Date();
-    startDate ??= subDays(endDate, 60);
+  initTracks: async () => {
+    const endDate = new Date();
+    const startDate = subDays(endDate, 60);
 
     const totalDays = eachDayOfInterval({
       start: startDate,
@@ -67,7 +64,8 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyLoadError();
     }
   },
-  loadMorePrevTracks: async (startDate: Date) => {
+  loadMorePrevTracks: async () => {
+    const startDate = subDays(get().startDate, 30);
     const totalDays = eachDayOfInterval({
       start: startDate,
       end: get().endDate,

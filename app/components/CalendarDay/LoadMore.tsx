@@ -4,7 +4,6 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { subMonths } from "date-fns";
 import LoadingIcon from "../Loading/LoadingIcon";
 
 const threshold = 100;
@@ -14,7 +13,6 @@ export default function LoadMore({
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const startDate = useTrackStore((s) => s.startDate);
   const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
 
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
@@ -55,8 +53,7 @@ export default function LoadMore({
     prevScrollWidth.current = el.scrollWidth;
     prevScrollLeft.current = el.scrollLeft;
 
-    const newStartDate = subMonths(startDate, 1);
-    await loadMorePrevTracks(newStartDate);
+    await loadMorePrevTracks();
 
     requestAnimationFrame(() => {
       const newScrollWidth = el.scrollWidth;

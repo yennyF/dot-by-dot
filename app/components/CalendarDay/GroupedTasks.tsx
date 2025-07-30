@@ -24,7 +24,7 @@ export default function GroupedTasks() {
         </>
       )}
 
-      {groups && groups.length && (
+      {groups && groups.length > 0 && (
         <>
           {groups.map((group) => (
             <Fragment key={group.id}>

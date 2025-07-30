@@ -3,9 +3,10 @@
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { midnightUTCstring, Task } from "@/app/repositories/types";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { Task } from "@/app/repositories/types";
+import { midnightUTCstring } from "@/app/util";
 
 interface TaskTrackProps {
   date: Date;

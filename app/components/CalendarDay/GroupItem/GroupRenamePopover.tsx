@@ -98,7 +98,7 @@ function Content({ setOpen, group }: ContentProps) {
           onClick={handleSaveClick}
           disabled={name.length === 0 || name === group.name}
         >
-          Rename
+          Save
         </button>
       </div>
       <Popover.Arrow className="arrow" />

@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      width: {
+        name: "var(--width-name)",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

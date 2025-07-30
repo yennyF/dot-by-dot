@@ -3,6 +3,7 @@
 import { RefObject, useEffect, useRef } from "react";
 import {
   ChevronRightIcon,
+  GearIcon,
   LockClosedIcon,
   LockOpen1Icon,
   PlusIcon,
@@ -13,6 +14,7 @@ import { Link } from "@/app/components/Scroll";
 import LeftButton from "./LeftButton";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { Switch } from "radix-ui";
+import SettingsDialog from "./SettingsDialog";
 
 export default function TopHeader({
   scrollRef,
@@ -34,6 +36,11 @@ export default function TopHeader({
           </button>
         </CreateDropdown>
         <SwitchLock />
+        <SettingsDialog>
+          <button className="button-icon-sheer h-[28px] w-[28px]">
+            <GearIcon />
+          </button>
+        </SettingsDialog>
       </div>
       <div className="flex items-center gap-2">
         <LeftButton scrollRef={scrollRef} />

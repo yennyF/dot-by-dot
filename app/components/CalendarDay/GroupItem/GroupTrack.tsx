@@ -1,11 +1,12 @@
 "use client";
 
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { midnightUTCstring, Task } from "@/app/repositories/types";
+import { Task } from "@/app/repositories/types";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useState } from "react";
+import { midnightUTCstring } from "@/app/util";
 
 interface GroupTrackProps {
   date: Date;

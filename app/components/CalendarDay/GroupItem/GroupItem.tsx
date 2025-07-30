@@ -30,7 +30,7 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
     <div className="app-GroupItem w-full">
       <div className="group/item flex h-[40px]">
         <GroupName group={group} isDummy={isDummy} />
-        <div className="sticky left-[200px] flex">
+        <div className="sticky flex" style={{ left: "var(--width-name)" }}>
           {totalDays.map((date) => (
             <GroupTrack
               key={date.toLocaleDateString()}

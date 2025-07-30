@@ -21,6 +21,8 @@ html, body {
   --green: #58c078;
   --green-5: rgba(88, 192, 120, 0.2);
 
+  --width-name: 300px;
+
   --toastify-color-light: var(--background); 
   --toastify-color-progress-light: var(--accent);
   --toastify-font-family:@apply font-mono
@@ -89,6 +91,7 @@ input {
 }
 
 .dialog-content {
+  outline: 0;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -120,6 +123,7 @@ input {
 }
 
 .popover-content {
+  outline: 0;
   padding: 25px;
   background: var(--background);
   box-shadow:

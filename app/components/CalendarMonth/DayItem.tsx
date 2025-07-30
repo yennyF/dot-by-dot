@@ -2,7 +2,7 @@
 
 import { format, isToday } from "date-fns";
 import { useTrackStore } from "../../stores/TrackStore";
-import { midnightUTCstring } from "../../repositories/types";
+import { midnightUTCstring } from "@/app/util";
 
 const MAX_TASK_SIZE = 10;
 
