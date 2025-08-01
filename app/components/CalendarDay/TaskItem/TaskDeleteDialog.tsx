@@ -63,23 +63,22 @@ function Content({ task }: { task: Task }) {
         all track associated.
       </Dialog.Description>
       <br />
-      <div className="flex">
-        <Checkbox.Root
-          id="c1"
-          className="group flex size-[18px] flex-shrink-0 appearance-none items-center justify-center rounded bg-white outline-none outline-1 outline-offset-0 outline-[var(--gray)]"
-          onCheckedChange={setChecked}
-        >
-          <Checkbox.Indicator>
-            <CheckIcon />
-          </Checkbox.Indicator>
-          {!checked && (
-            <CheckIcon className="hidden text-[var(--gray)] group-hover:block" />
-          )}
-        </Checkbox.Root>
-        <label
-          htmlFor="c1"
-          className="warning-sm pl-[15px] hover:cursor-pointer"
-        >
+      <div className="checkbox">
+        <div className="flex h-[20px] items-center">
+          <Checkbox.Root
+            id="c1"
+            className="checkbox-box group/checkbox"
+            onCheckedChange={setChecked}
+          >
+            <Checkbox.Indicator>
+              <CheckIcon />
+            </Checkbox.Indicator>
+            {!checked && (
+              <CheckIcon className="checkbox-indicator-hover group-hover/checkbox:block" />
+            )}
+          </Checkbox.Root>
+        </div>
+        <label htmlFor="c1" className="checkbox-label warning-sm">
           I confirm that I want to delete this task
         </label>
       </div>

@@ -47,9 +47,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
     initTasks: async () => {
       try {
-        const tasksByGroup: Record<string, Task[]> = {
-          [UNGROUPED_KEY]: [],
-        };
+        const tasksByGroup: Record<string, Task[]> = {};
 
         await db.groups.each((group) => {
           tasksByGroup[group.id] = [];
@@ -57,7 +55,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
         await db.tasks.orderBy("order").each((task) => {
           const key = task.groupId ?? UNGROUPED_KEY;
-          tasksByGroup[key].push(task);
+          (tasksByGroup[key] ??= []).push(task);
         });
 
         set(() => ({ tasksByGroup }));

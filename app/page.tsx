@@ -9,6 +9,7 @@ import { useTrackStore } from "./stores/TrackStore";
 import { useGroupStore } from "./stores/GroupStore";
 import { ToastContainer } from "react-toastify";
 import LoadingIcon from "./components/Loading/LoadingIcon";
+import EmptyPage from "./EmptyPage";
 
 export default function Home() {
   return (
@@ -23,6 +24,15 @@ function Content() {
   const initGroups = useGroupStore((s) => s.initGroups);
   const initTracks = useTrackStore((s) => s.initTracks);
 
+  const suggestCreation = useTaskStore(
+    (s) =>
+      s.tasksByGroup !== undefined && Object.keys(s.tasksByGroup).length === 0
+  );
+
+  useEffect(() => {
+    console.log("Page rendered");
+  });
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +46,9 @@ function Content() {
     return <Loading />;
   }
 
-  return (
+  return suggestCreation ? (
+    <EmptyPage />
+  ) : (
     <div className="relative flex">
       <CalendarDay />
       {/* <Sidebar /> */}

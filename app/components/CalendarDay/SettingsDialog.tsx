@@ -1,15 +1,9 @@
 "use client";
 
-import { db } from "@/app/repositories/db";
-import { useGroupStore } from "@/app/stores/GroupStore";
-import { useTaskStore } from "@/app/stores/TaskStore";
-import { useTrackStore } from "@/app/stores/TrackStore";
 import { Dialog } from "radix-ui";
-import { ReactNode, use, useState } from "react";
-import { Id, toast } from "react-toastify";
-import LoadingIcon from "../Loading/LoadingIcon";
-import { notifyLoadError } from "../Notification";
-import { genGroupsAndTasks, genTracks } from "@/app/repositories/types";
+import { ReactNode, useState } from "react";
+import { useClearHistory } from "@/app/hooks/useClearHistory";
+import { useDemo } from "@/app/hooks/useDemo";
 
 interface SettingsDialogProps {
   children: React.ReactNode;
@@ -33,86 +27,8 @@ export default function SettingsDialog({ children }: SettingsDialogProps) {
 }
 
 function Content() {
-  const initTasks = useTaskStore((s) => s.initTasks);
-  const initGroups = useGroupStore((s) => s.initGroups);
-  const initTracks = useTrackStore((s) => s.initTracks);
-
-  const [demoId, setDemoId] = useState<Id | null>(null);
-  const [clearId, setClearId] = useState<Id | null>(null);
-
-  async function demo() {
-    const id = toast(
-      <div className="flex items-center">
-        <LoadingIcon />
-        Loading…
-      </div>,
-      {
-        autoClose: false,
-        position: "bottom-center",
-        closeButton: false,
-      }
-    );
-    if (demoId) toast.dismiss(demoId);
-    setDemoId(id);
-
-    try {
-      // Clean tables
-      await db.open();
-      await db.tables.forEach((table) => table.clear());
-
-      // Fill tables
-      const [groups, tasks] = genGroupsAndTasks();
-      const tracks = genTracks(
-        useTrackStore.getState().startDate,
-        useTrackStore.getState().endDate,
-        tasks
-      );
-      await db.groups.bulkAdd(groups);
-      await db.tasks.bulkAdd(tasks);
-      await db.tracks.bulkAdd(tracks);
-
-      // Load states
-      await Promise.all([initGroups(), initTasks(), initTracks()]);
-
-      toast.dismiss(id);
-    } catch (error) {
-      console.error(error);
-      toast.dismiss(id);
-      notifyLoadError();
-    }
-
-    setDemoId(null);
-  }
-
-  async function clearHistory() {
-    const id = toast(
-      <div className="flex items-center">
-        <LoadingIcon />
-        Loading…
-      </div>,
-      {
-        autoClose: false,
-        position: "bottom-center",
-        closeButton: false,
-      }
-    );
-    if (clearId) toast.dismiss(clearId);
-    setClearId(id);
-
-    try {
-      // Clean tables
-      await db.open();
-      await db.tables.forEach((table) => table.clear());
-
-      // Load states
-      await Promise.all([initGroups(), initTasks(), initTracks()]);
-    } catch (error) {
-      console.error(error);
-    }
-
-    toast.dismiss(id);
-    setClearId(null);
-  }
+  const { clearHistory, isLoading: isHistoryLoading } = useClearHistory();
+  const { runDemo, isLoading: isDemoLoading } = useDemo();
 
   return (
     <Dialog.Content className="dialog-content z-20 flex w-[350px] flex-col gap-3 overflow-scroll">
@@ -129,7 +45,7 @@ function Content() {
           </span>
           <button
             className="button-outline mt-2"
-            disabled={clearId !== null}
+            disabled={isHistoryLoading}
             onClick={clearHistory}
           >
             Clear
@@ -146,8 +62,8 @@ function Content() {
             </span>
             <button
               className="button-outline mt-2"
-              disabled={demoId !== null}
-              onClick={demo}
+              disabled={isDemoLoading}
+              onClick={runDemo}
             >
               Demo
             </button>
