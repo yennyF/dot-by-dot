@@ -3,15 +3,15 @@
 import { RefObject, useEffect } from "react";
 import {
   ChevronRightIcon,
-  GearIcon,
+  HamburgerMenuIcon,
   PlusIcon,
   TriangleDownIcon,
 } from "@radix-ui/react-icons";
 import CreateDropdown from "./CreateDropdown";
 import { Link } from "@/app/components/Scroll";
 import LeftButton from "./LeftButton";
-import SettingsDialog from "../SettingsDialog";
 import SwitchLock from "./SwitchLock";
+import MenuDropdown from "../../MenuDropdown";
 
 export default function TopHeader({
   scrollRef,
@@ -25,11 +25,12 @@ export default function TopHeader({
   return (
     <div className="sticky left-0 top-0 z-30 flex h-[70px] items-center justify-between gap-2 bg-[var(--background)] px-[20px]">
       <div className="flex items-center gap-4">
-        <SettingsDialog>
+        <MenuDropdown>
           <button className="button-icon-sheer h-[28px] w-[28px]">
-            <GearIcon />
+            <HamburgerMenuIcon />
           </button>
-        </SettingsDialog>
+        </MenuDropdown>
+        <SwitchLock />
         <CreateDropdown>
           <button className="button-accent-outline">
             <PlusIcon />
@@ -37,7 +38,6 @@ export default function TopHeader({
             <TriangleDownIcon />
           </button>
         </CreateDropdown>
-        <SwitchLock />
       </div>
       <div className="flex items-center gap-2">
         <LeftButton scrollRef={scrollRef} />

@@ -34,7 +34,6 @@ export default function SwitchLock() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* <label>Lock</label> */}
       <Switch.Root
         className="relative h-[25px] w-[42px] cursor-pointer rounded-full bg-[var(--black)] outline-none data-[state=checked]:bg-[var(--accent)]"
         onCheckedChange={handleCheckedChange}
