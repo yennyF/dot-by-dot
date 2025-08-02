@@ -1,9 +1,11 @@
 "use client";
 
 import { Dialog } from "radix-ui";
-import { ReactNode, useState } from "react";
-import { useClearHistory } from "@/app/hooks/useClearHistory";
-import { useDemo } from "@/app/hooks/useDemo";
+import { ReactNode, useRef, useState } from "react";
+import { notifyLoadError, notifyLoading } from "../Notification";
+import { Id, toast } from "react-toastify";
+import { db } from "@/app/repositories/db";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 interface SettingsDialogProps {
   children: React.ReactNode;
@@ -27,8 +29,50 @@ export default function SettingsDialog({ children }: SettingsDialogProps) {
 }
 
 function Content() {
-  const { clearHistory, isLoading: isHistoryLoading } = useClearHistory();
-  const { runDemo, isLoading: isDemoLoading } = useDemo();
+  const initTracks = useTrackStore((s) => s.initTracks);
+
+  const toastId = useRef<Id>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  async function clearHistory() {
+    setIsLoading(true);
+
+    if (toastId.current) toast.dismiss(toastId.current);
+    toastId.current = notifyLoading();
+
+    try {
+      await db.tracks.clear();
+      initTracks();
+    } catch (error) {
+      console.error(error);
+      notifyLoadError();
+    }
+
+    toast.dismiss(toastId.current);
+    setIsLoading(false);
+  }
+
+  async function deleteDB() {
+    setIsLoading(true);
+
+    if (toastId.current) toast.dismiss(toastId.current);
+    toastId.current = notifyLoading();
+
+    try {
+      // await db.close();
+      // await db.delete();
+      // destroyGroups();
+      // destroyTasks();
+      // destroyTracks();
+      db.tables.forEach((table) => table.clear());
+    } catch (error) {
+      console.error(error);
+      notifyLoadError();
+    }
+
+    toast.dismiss(toastId.current);
+    setIsLoading(false);
+  }
 
   return (
     <Dialog.Content className="dialog-content z-20 flex w-[350px] flex-col gap-3 overflow-scroll">
@@ -37,15 +81,18 @@ function Content() {
       <div className="flex flex-col gap-10">
         <div>
           <Subhead>
-            <h2 className="font-bold text-red-600">Clear history</h2>
+            <h2 className="font-bold">Clear history</h2>
           </Subhead>
           <span className="block">
+            This will remove all your progress — like streaks and completions —
+            but keep your habits.
+            <br />
             Once you delete your history, there is no going back. Please be
             certain.
           </span>
           <button
             className="button-outline mt-2"
-            disabled={isHistoryLoading}
+            disabled={isLoading}
             onClick={clearHistory}
           >
             Clear
@@ -53,19 +100,22 @@ function Content() {
         </div>
         <div>
           <Subhead>
-            <h2 className="font-bold">Demo</h2>
+            <h2 className="font-bold">Reset account</h2>
           </Subhead>
           <div>
             <span className="mt-2 block">
-              Fill with random data for demo purposes. This action will replace
-              your all your current data.
+              This will fully reset your account: it will delete all your
+              habits, groups, and tracking history — like starting fresh.
+              <br />
+              Once you delete your history, there is no going back. Please be
+              certain.
             </span>
             <button
               className="button-outline mt-2"
-              disabled={isDemoLoading}
-              onClick={runDemo}
+              disabled={isLoading}
+              onClick={deleteDB}
             >
-              Demo
+              Delete
             </button>
           </div>
         </div>

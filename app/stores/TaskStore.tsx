@@ -21,6 +21,7 @@ type State = {
 
 type Action = {
   setDummyTask: (task: Task | undefined) => void;
+  destroyTasks: () => void;
   initTasks: () => Promise<void>;
   addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
   updateTask: (id: string, task: Pick<Task, "name">) => void;
@@ -45,6 +46,13 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
 
+    destroyTasks: async () => {
+      set(() => ({
+        dummyTask: undefined,
+        hilightedTask: null,
+        tasksByGroup: undefined,
+      }));
+    },
     initTasks: async () => {
       try {
         const tasksByGroup: Record<string, Task[]> = {};

@@ -20,6 +20,7 @@ type State = {
 
 type Action = {
   setUnlock: (unlock: boolean) => void;
+  destroyTracks: () => void;
   initTracks: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
   addTrack: (date: Date, taskId: string) => void;
@@ -39,6 +40,13 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   endDate: new Date(),
   totalDays: [],
 
+  destroyTracks: async () => {
+    set(() => ({
+      unlock: false,
+      asksByDate: undefined,
+      totalDays: [],
+    }));
+  },
   initTracks: async () => {
     const endDate = new Date();
     const startDate = subDays(endDate, 60);

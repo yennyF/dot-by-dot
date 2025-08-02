@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import LoadingIcon from "./Loading/LoadingIcon";
 
 const autoClose = 5000;
 
@@ -16,3 +17,16 @@ export const notifyMoveError = () =>
 
 export const notifyDeleteError = () =>
   toast(<div>Error deleting</div>, { autoClose });
+
+export const notifyLoading = () =>
+  toast(
+    <div className="flex items-center">
+      <LoadingIcon />
+      Loading…
+    </div>,
+    {
+      autoClose: false,
+      position: "bottom-center",
+      closeButton: false,
+    }
+  );

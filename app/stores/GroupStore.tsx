@@ -20,6 +20,7 @@ type State = {
 
 type Action = {
   initGroups: () => Promise<void>;
+  destroyGroups: () => void;
   addGroup: (props: Pick<Group, "id" | "name">) => void;
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
   deleteGroup: (id: string) => void;
@@ -33,6 +34,9 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
     dummyGroup: undefined,
     groups: undefined,
 
+    destroyGroups: async () => {
+      set(() => ({ dummyGroup: undefined, groups: undefined }));
+    },
     initGroups: async () => {
       try {
         const groups = await db.groups.orderBy("order").toArray();

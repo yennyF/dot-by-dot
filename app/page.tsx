@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AppProvider } from "./AppContext";
-import CalendarDay from "./components/CalendarDay/CalendarDay";
-import Sidebar from "./components/Sidebar";
-import { useTaskStore } from "./stores/TaskStore";
-import { useTrackStore } from "./stores/TrackStore";
-import { useGroupStore } from "./stores/GroupStore";
-import { ToastContainer } from "react-toastify";
 import LoadingIcon from "./components/Loading/LoadingIcon";
-import EmptyPage from "./EmptyPage";
+import Start from "./components/Start";
+import { db } from "./repositories/db";
+import Home from "./components/Home";
+import { useLiveQuery } from "dexie-react-hooks";
 
-export default function Home() {
+export default function Page() {
   return (
     <AppProvider>
       <Content />
@@ -20,41 +17,21 @@ export default function Home() {
 }
 
 function Content() {
-  const initTasks = useTaskStore((s) => s.initTasks);
-  const initGroups = useGroupStore((s) => s.initGroups);
-  const initTracks = useTrackStore((s) => s.initTracks);
-
-  const suggestCreation = useTaskStore(
-    (s) =>
-      s.tasksByGroup !== undefined && Object.keys(s.tasksByGroup).length === 0
-  );
+  const count = useLiveQuery(() => db.tasks.count(), []);
 
   useEffect(() => {
     console.log("Page rendered");
   });
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      await Promise.all([initGroups(), initTasks(), initTracks()]);
-      setIsLoading(false);
-    })();
-  }, [initGroups, initTasks, initTracks]);
-
-  if (isLoading) {
+  if (count === undefined) {
     return <Loading />;
   }
 
-  return suggestCreation ? (
-    <EmptyPage />
-  ) : (
-    <div className="relative flex">
-      <CalendarDay />
-      {/* <Sidebar /> */}
-      <ToastContainer autoClose={false} draggable={false} />
-    </div>
-  );
+  if (count === 0) {
+    return <Start />;
+  }
+
+  return <Home />;
 }
 
 function Loading() {

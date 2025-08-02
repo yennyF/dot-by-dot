@@ -1,28 +1,30 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
-import { genGroupedTasks, genUngroupedTasks, useDemo } from "./hooks/useDemo";
+import {
+  genGroupedTasks,
+  genTracks,
+  genUngroupedTasks,
+} from "../repositories/data";
 import { ReactNode, useRef, useState } from "react";
-import { Group, Task } from "./repositories/types";
-import { db } from "./repositories/db";
-import { useTaskStore } from "./stores/TaskStore";
-import { useGroupStore } from "./stores/GroupStore";
-import { useTrackStore } from "./stores/TrackStore";
+import { Group, Task } from "../repositories/types";
+import { db } from "../repositories/db";
 import { Checkbox } from "radix-ui";
+import { notifyLoadError, notifyLoading } from "./Notification";
+import { Id, toast } from "react-toastify";
+import { useTrackStore } from "../stores/TrackStore";
 
-export default function EmptyPage() {
-  const { runDemo, isLoading: isDemoLoading } = useDemo();
-
-  const initTasks = useTaskStore((s) => s.initTasks);
-  const initGroups = useGroupStore((s) => s.initGroups);
-  const initTracks = useTrackStore((s) => s.initTracks);
-
+export default function Start() {
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
 
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
-  const handleClick = (task: Task) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const toastId = useRef<Id>(null);
+
+  const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
       const newTaskSet = new Set(prev);
       if (prev.has(task)) {
@@ -35,6 +37,11 @@ export default function EmptyPage() {
   };
 
   async function start() {
+    setIsLoading(true);
+
+    if (toastId.current) toast.dismiss(toastId.current);
+    toastId.current = notifyLoading();
+
     const groupsSelected = new Set<Group>();
     tasksSelected.forEach((task) => {
       const groupId = task.groupId;
@@ -48,21 +55,50 @@ export default function EmptyPage() {
     });
 
     try {
-      // Clean tables
-      await db.open();
       await db.tables.forEach((table) => table.clear());
-
-      // Fill tables
-      const tasks: Task[] = Array.from(tasksSelected);
-      const groups: Group[] = Array.from(groupsSelected);
-      await db.groups.bulkAdd(groups);
-      await db.tasks.bulkAdd(tasks);
-
-      // Load states
-      await Promise.all([initGroups(), initTasks(), initTracks()]);
+      await db.groups.bulkAdd(Array.from(groupsSelected));
+      await db.tasks.bulkAdd(Array.from(tasksSelected));
     } catch (error) {
       console.error(error);
+      notifyLoadError();
     }
+
+    toast.dismiss(toastId.current);
+    setIsLoading(false);
+  }
+
+  async function runDemo() {
+    setIsLoading(true);
+
+    if (toastId.current) toast.dismiss(toastId.current);
+    toastId.current = notifyLoading();
+
+    try {
+      const groups: Group[] = [];
+      const tasks: Task[] = genUngroupedTasks();
+
+      genGroupedTasks().forEach(([group, _tasks]) => {
+        groups.push(group);
+        tasks.push(..._tasks);
+      });
+
+      const tracks = genTracks(
+        useTrackStore.getState().startDate,
+        useTrackStore.getState().endDate,
+        tasks
+      );
+
+      await db.tables.forEach((table) => table.clear());
+      await db.groups.bulkAdd(groups);
+      await db.tasks.bulkAdd(tasks);
+      await db.tracks.bulkAdd(tracks);
+    } catch (error) {
+      console.error(error);
+      notifyLoadError();
+    }
+
+    toast.dismiss(toastId.current);
+    setIsLoading(true);
   }
 
   return (
@@ -81,7 +117,7 @@ export default function EmptyPage() {
               key={task.id}
               task={task}
               selected={tasksSelected.has(task)}
-              onClick={() => handleClick(task)}
+              onCheckedChange={() => handleCheckedChange(task)}
             />
           ))}
         </div>
@@ -100,7 +136,7 @@ export default function EmptyPage() {
                     key={task.id}
                     task={task}
                     selected={tasksSelected.has(task) || false}
-                    onClick={() => handleClick(task)}
+                    onCheckedChange={() => handleCheckedChange(task)}
                   />
                 ))}
               </div>
@@ -111,7 +147,7 @@ export default function EmptyPage() {
         <div className="mt-[50px] flex justify-center">
           <button
             className="button-accent mt-2 flex items-center gap-2"
-            disabled={tasksSelected.size < 3}
+            disabled={isLoading || tasksSelected.size < 3}
             onClick={start}
           >
             <span>Let&apos;s begin </span>
@@ -130,7 +166,7 @@ export default function EmptyPage() {
           <div className="mt-[30px] flex justify-center">
             <button
               className="button-outline mt-2"
-              disabled={isDemoLoading}
+              disabled={isLoading}
               onClick={runDemo}
             >
               Run demo
@@ -157,11 +193,11 @@ function GroupItem({ group, children }: { group: Group; children: ReactNode }) {
 function TaskItem({
   task,
   selected,
-  onClick,
+  onCheckedChange,
 }: {
   task: Task;
   selected: boolean;
-  onClick: () => void;
+  onCheckedChange: () => void;
 }) {
   return (
     <div className="checkbox">
@@ -169,7 +205,7 @@ function TaskItem({
         <Checkbox.Root
           id={task.id}
           className="checkbox-box group/checkbox"
-          onCheckedChange={onClick}
+          onCheckedChange={onCheckedChange}
         >
           <Checkbox.Indicator>
             <CheckIcon />
