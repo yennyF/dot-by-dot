@@ -19,25 +19,15 @@ export default function CalendarDay({ ref }: CalendarDayProps) {
   return (
     <div
       ref={ref}
-      className="app-CalendarDay relative h-[100vh] flex-1 overflow-scroll"
+      className="app-CalendarDay no-scrollbar relative mx-[40px] h-[100vh] w-[calc(100vw-80px)] flex-1 overflow-scroll"
     >
       <LoadMore scrollRef={ref} />
 
-      <div className="calendar flex w-fit">
-        {/* Fake left padding */}
-        <div className="sticky left-0 top-[70px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
-
-        <div>
-          <Header />
-          <DraggableScroll scrollRef={ref} className="mt-[70px]">
-            <UngroupedTasks />
-            <GroupedTasks />
-          </DraggableScroll>
-        </div>
-
-        {/* Fake right padding */}
-        <div className="sticky right-0 top-[70px] z-20 w-[50px] shrink-0 bg-[var(--background)]"></div>
-      </div>
+      <Header />
+      <DraggableScroll scrollRef={ref} className="mt-[70px]">
+        <UngroupedTasks />
+        <GroupedTasks />
+      </DraggableScroll>
     </div>
   );
 }
