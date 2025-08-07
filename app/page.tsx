@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import { AppProvider } from "./AppContext";
-import Start from "./home/Start";
 import { db } from "./repositories/db";
 import Home from "./home/Home";
 import { useLiveQuery } from "dexie-react-hooks";
 import Loading from "./components/Loading/Loading";
+import Start from "./start/page";
 
 export default function Page() {
   return (

@@ -18,8 +18,11 @@ import {
 import { Id, toast } from "react-toastify";
 import { useTrackStore } from "../stores/TrackStore";
 import AppHeader from "../components/AppHeader/AppHeader";
+import { useRouter } from "next/navigation";
 
 export default function Start() {
+  const router = useRouter();
+
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
 
@@ -65,6 +68,7 @@ export default function Start() {
       await db.tasks.bulkAdd(Array.from(tasksSelected));
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
+      router.replace("/");
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId.current);
@@ -101,6 +105,7 @@ export default function Start() {
       await db.tracks.bulkAdd(tracks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
+      router.replace("/");
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId.current);

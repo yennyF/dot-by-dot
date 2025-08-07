@@ -29,6 +29,8 @@ export default function Home() {
 function Content() {
   const calendarRef = useRef<HTMLDivElement>(null);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const initTasks = useTaskStore((s) => s.initTasks);
   const initGroups = useGroupStore((s) => s.initGroups);
   const initTracks = useTrackStore((s) => s.initTracks);
@@ -37,15 +39,14 @@ function Content() {
     console.log("Home rendered");
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-
   useEffect(() => {
     setIsLoading(true);
     (async () => {
       await Promise.all([initGroups(), initTasks(), initTracks()]);
       setIsLoading(false);
     })();
-  }, [initGroups, initTasks, initTracks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     return <Loading />;
