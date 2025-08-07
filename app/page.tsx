@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import { AppProvider } from "./AppContext";
-import LoadingIcon from "./components/Loading/LoadingIcon";
 import Start from "./home/Start";
 import { db } from "./repositories/db";
 import Home from "./home/Home";
 import { useLiveQuery } from "dexie-react-hooks";
+import Loading from "./components/Loading/Loading";
 
 export default function Page() {
   return (
@@ -32,13 +32,4 @@ function Content() {
   }
 
   return <Home />;
-}
-
-function Loading() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <LoadingIcon />
-      <div className="animate-pulse">Loading...</div>
-    </div>
-  );
 }

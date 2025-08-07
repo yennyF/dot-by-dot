@@ -18,6 +18,7 @@ import AppHeader from "../components/AppHeader/AppHeader";
 import CreateDropdown from "./CalendarDay/TopHeader/CreateDropdown";
 import LeftButton from "./CalendarDay/TopHeader/LeftButton";
 import SwitchLock from "./CalendarDay/TopHeader/SwitchLock";
+import Loading from "../components/Loading/Loading";
 
 export default function Home() {
   return (
@@ -87,14 +88,5 @@ function Content() {
       <CalendarDay ref={calendarRef} />
       <ToastContainer autoClose={false} draggable={false} />
     </>
-  );
-}
-
-function Loading() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <LoadingIcon />
-      <div className="animate-pulse">Loading...</div>
-    </div>
   );
 }

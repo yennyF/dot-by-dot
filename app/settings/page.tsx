@@ -32,14 +32,14 @@ export default function Settings() {
     setIsLoading(false);
   }
 
-  async function deleteDB() {
+  async function reset() {
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
     try {
-      db.tables.forEach((table) => table.clear());
+      await db.tables.forEach((table) => table.clear());
       router.push("/");
     } catch (error) {
       console.error(error);
@@ -91,7 +91,7 @@ export default function Settings() {
                 <button
                   className="button-outline mt-[15px]"
                   disabled={isLoading}
-                  onClick={deleteDB}
+                  onClick={reset}
                 >
                   Reset account
                 </button>

@@ -1,21 +1,11 @@
 "use client";
 
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect } from "react";
 import DraggableScroll from "./Draggable/DraggableScroll";
 import UngroupedTasks from "./UngroupedTasks";
 import GroupedTasks from "./GroupedTasks";
 import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
-import {
-  PlusIcon,
-  TriangleDownIcon,
-  ChevronRightIcon,
-} from "@radix-ui/react-icons";
-import AppHeader from "../../components/AppHeader/AppHeader";
-import CreateDropdown from "./TopHeader/CreateDropdown";
-import LeftButton from "./TopHeader/LeftButton";
-import SwitchLock from "./TopHeader/SwitchLock";
-import { Link } from "../../components/Scroll";
 
 interface CalendarDayProps {
   ref: RefObject<HTMLDivElement | null>;
