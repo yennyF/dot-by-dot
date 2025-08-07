@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ToastContainer } from "react-toastify";
 import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
-import LoadingIcon from "../components/Loading/LoadingIcon";
 import { useGroupStore } from "../stores/GroupStore";
 import { useTaskStore } from "../stores/TaskStore";
 import { useTrackStore } from "../stores/TrackStore";
@@ -86,7 +84,6 @@ function Content() {
         </div>
       </AppHeader>
       <CalendarDay ref={calendarRef} />
-      <ToastContainer autoClose={false} draggable={false} />
     </>
   );
 }

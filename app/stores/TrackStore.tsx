@@ -8,6 +8,8 @@ import {
 } from "../components/Notification";
 import { eachDayOfInterval, subDays } from "date-fns";
 import { midnightUTC, midnightUTCstring } from "../util";
+import { useTaskStore } from "./TaskStore";
+import { useGroupStore } from "./GroupStore";
 
 type State = {
   unlock: boolean;
@@ -21,6 +23,8 @@ type State = {
 type Action = {
   setUnlock: (unlock: boolean) => void;
   destroyTracks: () => void;
+  clearHistory: () => Promise<void>;
+  reset: () => Promise<void>;
   initTracks: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
   addTrack: (date: Date, taskId: string) => void;
@@ -47,6 +51,27 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       totalDays: [],
     }));
   },
+  clearHistory: async () => {
+    try {
+      get().destroyTracks();
+      await db.tracks.clear();
+    } catch (error) {
+      console.error("Error cleaning history:", error);
+      notifyDeleteError();
+    }
+  },
+  reset: async () => {
+    try {
+      await db.tables.forEach((table) => table.clear());
+
+      get().destroyTracks();
+      useTaskStore.getState().destroyTasks();
+      useGroupStore.getState().destroyGroups();
+    } catch (error) {
+      console.error("Error reseting:", error);
+      notifyDeleteError();
+    }
+  },
   initTracks: async () => {
     const endDate = new Date();
     const startDate = subDays(endDate, 60);
@@ -68,7 +93,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
       set(() => ({ tasksByDate, startDate, endDate, totalDays }));
     } catch (error) {
-      console.error("Error initialing tasks:", error);
+      console.error("Error initialing tracks:", error);
       notifyLoadError();
     }
   },
@@ -98,7 +123,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
       set(() => ({ tasksByDate, startDate, totalDays }));
     } catch (error) {
-      console.error("Error loading more tasks:", error);
+      console.error("Error loading more tracks:", error);
       notifyLoadError();
     }
   },
@@ -133,7 +158,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       date = midnightUTC(date);
       await db.tracks.bulkAdd(taskIds.map((taskId) => ({ taskId, date })));
     } catch (error) {
-      console.error("Error checking tasks:", error);
+      console.error("Error checking tracks:", error);
       notifyCreateError();
     }
   },
@@ -173,7 +198,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     try {
       await db.tracks.bulkDelete(taskIds.map((taskId) => [taskId, date]));
     } catch (error) {
-      console.error("Error checking tasks:", error);
+      console.error("Error checking tracks:", error);
       notifyDeleteError();
     }
   },
