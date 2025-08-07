@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { Switch } from "radix-ui";
@@ -9,27 +8,8 @@ export default function SwitchLock() {
   const unlock = useTrackStore((s) => s.unlock);
   const setUnlock = useTrackStore((s) => s.setUnlock);
 
-  const timeoutId = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutId.current) {
-        clearTimeout(timeoutId.current);
-      }
-    };
-  }, []);
-
   const handleCheckedChange = (checked: boolean) => {
     setUnlock(checked);
-
-    if (checked) {
-      if (timeoutId.current) {
-        clearTimeout(timeoutId.current);
-      }
-      timeoutId.current = setTimeout(() => {
-        setUnlock(false);
-      }, 10000); // Auto-unlock after 10 seconds
-    }
   };
 
   return (
