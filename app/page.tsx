@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { AppProvider } from "./AppContext";
 import LoadingIcon from "./components/Loading/LoadingIcon";
-import Start from "./components/Start";
+import Start from "./home/Start";
 import { db } from "./repositories/db";
-import Home from "./components/Home";
+import Home from "./home/Home";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export default function Page() {

@@ -4,7 +4,7 @@ import { Fragment, useEffect } from "react";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "./Draggable/DropIndicatorTask";
 import TaskItem from "./TaskItem/TaskItem";
-import { LinkReceptor } from "../Scroll";
+import { LinkReceptor } from "../../components/Scroll";
 
 export default function UngroupedTasks() {
   const dummyTask = useTaskStore((s) =>

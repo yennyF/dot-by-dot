@@ -10,7 +10,7 @@ import { ReactNode, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
 import { db } from "../repositories/db";
 import { Checkbox } from "radix-ui";
-import { notifyLoadError, notifyLoading } from "./Notification";
+import { notifyLoadError, notifyLoading } from "../components/Notification";
 import { Id, toast } from "react-toastify";
 import { useTrackStore } from "../stores/TrackStore";
 

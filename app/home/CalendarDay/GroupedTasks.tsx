@@ -4,7 +4,7 @@ import React, { Fragment, useEffect } from "react";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import GroupItem from "./GroupItem/GroupItem";
-import { LinkReceptor } from "../Scroll";
+import { LinkReceptor } from "../../components/Scroll";
 
 export default function GroupedTasks() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);

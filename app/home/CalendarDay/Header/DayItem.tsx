@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isToday, isWeekend } from "date-fns";
-import { LinkReceptor } from "../../Scroll";
+import { LinkReceptor } from "../../../components/Scroll";
 
 interface DayItemProps {
   date: Date;

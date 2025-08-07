@@ -5,6 +5,7 @@ import { Id, toast } from "react-toastify";
 import { notifyLoading, notifyLoadError } from "../components/Notification";
 import { db } from "../repositories/db";
 import { useRouter } from "next/navigation";
+import AppHeader from "../components/AppHeader/AppHeader";
 
 export default function Settings() {
   const toastId = useRef<Id>(null);
@@ -50,53 +51,56 @@ export default function Settings() {
   }
 
   return (
-    <div className="flex w-screen justify-center">
-      <div className="mb-[200px] max-w-[800px]">
-        <h1 className="mt-[100px] text-4xl font-bold">Settings</h1>
+    <>
+      <AppHeader></AppHeader>
+      <div className="flex w-screen justify-center">
+        <div className="mb-[200px] max-w-[800px]">
+          <h1 className="mt-[100px] text-4xl font-bold">Settings</h1>
 
-        <div className="mt-[80px] flex flex-col gap-[60px]">
-          <div>
-            <Subhead>
-              <h2 className="text-xl font-bold">Clear history</h2>
-            </Subhead>
-            <span className="block">
-              This will remove all your progress — like streaks and completions
-              — but keep your habits.
-              {/* Once you delete your history, there is no going back. Please be
-              certain. */}
-            </span>
-            <button
-              className="button-outline mt-[15px]"
-              disabled={isLoading}
-              onClick={clearHistory}
-            >
-              Clear history
-            </button>
-          </div>
-
-          <div>
-            <Subhead>
-              <h2 className="text-xl font-bold">Reset account</h2>
-            </Subhead>
+          <div className="mt-[80px] flex flex-col gap-[60px]">
             <div>
-              <span className="mt-2 block">
-                This will fully reset your account: it will delete all your
-                habits, groups, and tracking history — like starting fresh.
+              <Subhead>
+                <h2 className="text-xl font-bold">Clear history</h2>
+              </Subhead>
+              <span className="block">
+                This will remove all your progress — like streaks and
+                completions — but keep your habits.
                 {/* Once you delete your history, there is no going back. Please be
-                certain. */}
+              certain. */}
               </span>
               <button
                 className="button-outline mt-[15px]"
                 disabled={isLoading}
-                onClick={deleteDB}
+                onClick={clearHistory}
               >
-                Reset account
+                Clear history
               </button>
+            </div>
+
+            <div>
+              <Subhead>
+                <h2 className="text-xl font-bold">Reset account</h2>
+              </Subhead>
+              <div>
+                <span className="mt-2 block">
+                  This will fully reset your account: it will delete all your
+                  habits, groups, and tracking history — like starting fresh.
+                  {/* Once you delete your history, there is no going back. Please be
+                certain. */}
+                </span>
+                <button
+                  className="button-outline mt-[15px]"
+                  disabled={isLoading}
+                  onClick={deleteDB}
+                >
+                  Reset account
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

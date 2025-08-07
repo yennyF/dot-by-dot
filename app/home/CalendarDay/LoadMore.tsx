@@ -4,7 +4,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import LoadingIcon from "../Loading/LoadingIcon";
+import LoadingIcon from "../../components/Loading/LoadingIcon";
 
 const threshold = 100;
 
