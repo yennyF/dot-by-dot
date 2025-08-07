@@ -17,6 +17,7 @@ import CreateDropdown from "./CalendarDay/TopHeader/CreateDropdown";
 import LeftButton from "./CalendarDay/TopHeader/LeftButton";
 import SwitchLock from "./CalendarDay/TopHeader/SwitchLock";
 import Loading from "../components/Loading/Loading";
+import { Tooltip } from "radix-ui";
 
 export default function Home() {
   return (
@@ -56,8 +57,28 @@ function Content() {
     <>
       <AppHeader>
         <div className="flex flex-1 justify-between">
-          <div className="flex gap-2">
-            <SwitchLock />
+          <div className="flex items-center gap-2">
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  {/* why <span>? Switch.Root from @radix-ui/react-switch does not forward refs by default in a way compatible with Tooltip.Trigger asChild. This is likely why the tooltip isn’t showing or behaving correctly. */}
+                  <span>
+                    <SwitchLock />
+                  </span>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    className="tooltip-content z-40"
+                    side="bottom"
+                    sideOffset={5}
+                  >
+                    Lock/unlock track
+                    <Tooltip.Arrow className="tooltip-arrow" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+
             <CreateDropdown>
               <button className="button-accent-outline">
                 <PlusIcon />

@@ -33,20 +33,18 @@ export default function SwitchLock() {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Switch.Root
-        className="relative h-[25px] w-[42px] cursor-pointer rounded-full bg-[var(--black)] outline-none data-[state=checked]:bg-[var(--accent)]"
-        onCheckedChange={handleCheckedChange}
-        checked={unlock}
-      >
-        <Switch.Thumb className="flex size-[21px] translate-x-0.5 items-center justify-center rounded-full bg-[var(--background)] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]">
-          {unlock ? (
-            <LockOpen1Icon className="w-[12px] text-[var(--accent)]" />
-          ) : (
-            <LockClosedIcon className="w-[12px] text-[var(--black)]" />
-          )}
-        </Switch.Thumb>
-      </Switch.Root>
-    </div>
+    <Switch.Root
+      className="relative h-[25px] w-[42px] cursor-pointer rounded-full bg-[var(--black)] outline-none data-[state=checked]:bg-[var(--accent)]"
+      onCheckedChange={handleCheckedChange}
+      checked={unlock}
+    >
+      <Switch.Thumb className="flex size-[21px] translate-x-0.5 items-center justify-center rounded-full bg-[var(--background)] transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]">
+        {unlock ? (
+          <LockOpen1Icon className="w-[12px] text-[var(--accent)]" />
+        ) : (
+          <LockClosedIcon className="w-[12px] text-[var(--black)]" />
+        )}
+      </Switch.Thumb>
+    </Switch.Root>
   );
 }
