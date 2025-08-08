@@ -231,7 +231,11 @@ input {
   }
 
   .button-text {
-    @apply button gap-2 px-5 py-2;
+    @apply button gap-2 px-6 py-2;
+
+    &.button-sm {
+      @apply gap-1 px-3 h-[32px] text-sm border-[1px];
+    }
   }
 
   .button-icon {
@@ -249,9 +253,9 @@ input {
   .button-outline {
     @apply button-text border-2 border-[var(--black)] bg-[var(--background)] text-[var(--black)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
 
-    svg {
-      @apply h-[20px] w-[20px] shrink-0 m-[2px];
-    }
+    // svg {
+    //   @apply h-[20px] w-[20px] shrink-0 m-[2px];
+    // }
   }
 
   .button-accept {

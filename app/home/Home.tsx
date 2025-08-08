@@ -13,9 +13,9 @@ import {
   ChevronRightIcon,
 } from "@radix-ui/react-icons";
 import AppHeader from "../components/AppHeader/AppHeader";
-import CreateDropdown from "./CalendarDay/TopHeader/CreateDropdown";
-import LeftButton from "./CalendarDay/TopHeader/LeftButton";
-import SwitchLock from "./CalendarDay/TopHeader/SwitchLock";
+import CreateDropdown from "./TopHeader/CreateDropdown";
+import LeftButton from "./TopHeader/LeftButton";
+import LockButton from "./TopHeader/LockButton";
 import Loading from "../components/Loading/Loading";
 import { Tooltip } from "radix-ui";
 
@@ -58,34 +58,30 @@ function Content() {
       <AppHeader>
         <div className="flex flex-1 justify-between">
           <div className="flex items-center gap-2">
+            <LockButton />
+
             <Tooltip.Provider>
               <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  {/* why <span>? Switch.Root from @radix-ui/react-switch does not forward refs by default in a way compatible with Tooltip.Trigger asChild. This is likely why the tooltip isn’t showing or behaving correctly. */}
-                  <span>
-                    <SwitchLock />
-                  </span>
-                </Tooltip.Trigger>
+                <CreateDropdown>
+                  <Tooltip.Trigger asChild>
+                    <button className="button-accent button-sm">
+                      <PlusIcon />
+                      <TriangleDownIcon />
+                    </button>
+                  </Tooltip.Trigger>
+                </CreateDropdown>
                 <Tooltip.Portal>
                   <Tooltip.Content
                     className="tooltip-content z-40"
                     side="bottom"
                     sideOffset={5}
                   >
-                    Lock/unlock track
+                    Create
                     <Tooltip.Arrow className="tooltip-arrow" />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
             </Tooltip.Provider>
-
-            <CreateDropdown>
-              <button className="button-accent-outline">
-                <PlusIcon />
-                Create
-                <TriangleDownIcon />
-              </button>
-            </CreateDropdown>
           </div>
 
           <div className="">
@@ -96,7 +92,7 @@ function Content() {
                 options={{ block: "end", behavior: "smooth", inline: "start" }}
                 autoScroll={true}
               >
-                <button className="button-outline">
+                <button className="button-outline button-sm">
                   Today
                   <ChevronRightIcon />
                 </button>
