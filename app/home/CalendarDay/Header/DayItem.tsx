@@ -16,7 +16,7 @@ export default function DayItem({ date }: DayItemProps) {
     >
       <div className="text-center text-xs">{format(date, "EEE")}</div>
       <div
-        className={`mt-1 flex h-[34px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
+        className={`flex h-[34px] w-[35px] items-center justify-center font-bold ${isTodayDate && "rounded-full bg-[var(--accent)] text-white"}`}
       >
         {format(date, "dd")}
       </div>

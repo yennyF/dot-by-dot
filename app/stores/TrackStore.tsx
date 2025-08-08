@@ -6,7 +6,7 @@ import {
   notifyDeleteError,
   notifyLoadError,
 } from "../components/Notification";
-import { eachDayOfInterval, subDays } from "date-fns";
+import { startOfMonth, subDays, subMonths } from "date-fns";
 import { midnightUTC, midnightUTCstring } from "../util";
 import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
@@ -15,7 +15,6 @@ type State = {
   unlock: boolean;
   startDate: Date;
   endDate: Date;
-  totalDays: Date[];
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
 };
@@ -42,13 +41,11 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   tasksByDate: undefined,
   startDate: new Date(),
   endDate: new Date(),
-  totalDays: [],
 
   destroyTracks: async () => {
     set(() => ({
       unlock: false,
       asksByDate: undefined,
-      totalDays: [],
     }));
   },
   clearHistory: async () => {
@@ -74,12 +71,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
   initTracks: async () => {
     const endDate = new Date();
-    const startDate = subDays(endDate, 60);
-
-    const totalDays = eachDayOfInterval({
-      start: startDate,
-      end: endDate,
-    });
+    const startDate = subMonths(startOfMonth(endDate), 3);
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
@@ -91,7 +83,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
 
-      set(() => ({ tasksByDate, startDate, endDate, totalDays }));
+      set(() => ({ tasksByDate, startDate, endDate }));
     } catch (error) {
       console.error("Error initialing tracks:", error);
       notifyLoadError();
@@ -99,10 +91,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
   loadMorePrevTracks: async () => {
     const startDate = subDays(get().startDate, 30);
-    const totalDays = eachDayOfInterval({
-      start: startDate,
-      end: get().endDate,
-    });
     const tasksByDate = { ...get().tasksByDate };
 
     try {
@@ -121,7 +109,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
       // console.log(await timeoutPromise(2000));
 
-      set(() => ({ tasksByDate, startDate, totalDays }));
+      set(() => ({ tasksByDate, startDate }));
     } catch (error) {
       console.error("Error loading more tracks:", error);
       notifyLoadError();

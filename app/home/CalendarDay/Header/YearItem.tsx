@@ -23,12 +23,12 @@ export default function YearItem({ date }: YearItemProps) {
   return (
     <div className="year-item w-fit">
       <div
-        className="sticky w-fit bg-[var(--background)] pl-3 pr-3 text-2xl font-bold"
+        className="sticky w-fit bg-[var(--background)] px-3 font-bold"
         style={{ left: "var(--width-name)" }}
       >
         {format(date, "yyyy")}
       </div>
-      <div className="months mt-3 flex">
+      <div className="months mt-1 flex">
         {totalMonths.map((date) => (
           <MonthItem key={date.getMonth()} date={date} />
         ))}

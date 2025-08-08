@@ -2,12 +2,23 @@
 
 import { Fragment, memo, useEffect } from "react";
 import GroupName from "./GroupName";
-import { Group } from "@/app/repositories/types";
+import { Group, Task } from "@/app/repositories/types";
 import DropIndicatorTask from "../Draggable/DropIndicatorTask";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import TaskItem from "../TaskItem/TaskItem";
 import GroupTrack from "./GroupTrack";
 import { useTrackStore } from "@/app/stores/TrackStore";
+import {
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+  endOfMonth,
+  endOfYear,
+  isAfter,
+  isBefore,
+  startOfMonth,
+  startOfYear,
+} from "date-fns";
 
 interface GroupItemWrapperProps {
   group: Group;
@@ -15,7 +26,13 @@ interface GroupItemWrapperProps {
 }
 
 function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
-  const totalDays = useTrackStore((s) => s.totalDays);
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
+
+  const totalYears = eachYearOfInterval({
+    start: startDate,
+    end: endDate,
+  });
 
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === group.id ? s.dummyTask : null
@@ -30,9 +47,9 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
     <div className="app-GroupItem w-full">
       <div className="group/item flex h-[40px]">
         <GroupName group={group} isDummy={isDummy} />
-        <div className="sticky flex" style={{ left: "var(--width-name)" }}>
-          {totalDays.map((date) => (
-            <GroupTrack
+        <div className="sticky flex">
+          {totalYears.map((date) => (
+            <YearGroupItem
               key={date.toLocaleDateString()}
               date={date}
               tasks={tasks || []}
@@ -58,6 +75,54 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
         </Fragment>
       ))}
       <DropIndicatorTask groupId={group.id} />
+    </div>
+  );
+}
+
+function YearGroupItem({ date, tasks }: { date: Date; tasks: Task[] }) {
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
+
+  const totalMonths = eachMonthOfInterval({
+    start: isAfter(startOfYear(date), startDate)
+      ? startOfYear(date)
+      : startDate,
+    end: isBefore(endOfYear(date), endDate) ? endOfYear(date) : endDate,
+  });
+
+  return (
+    <div className="year-item flex">
+      {totalMonths.map((date) => (
+        <MonthGroupItem
+          key={date.toLocaleDateString()}
+          date={date}
+          tasks={tasks}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MonthGroupItem({ date, tasks }: { date: Date; tasks: Task[] }) {
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
+
+  const totalDays = eachDayOfInterval({
+    start: isAfter(startOfMonth(date), startDate)
+      ? startOfMonth(date)
+      : startDate,
+    end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
+  });
+
+  return (
+    <div className="month-item flex">
+      {totalDays.map((date) => (
+        <GroupTrack
+          key={date.toLocaleDateString()}
+          date={date}
+          tasks={tasks || []}
+        />
+      ))}
     </div>
   );
 }

@@ -19,10 +19,7 @@ export default function Header() {
         className="sticky left-0 z-20 flex shrink-0 bg-[var(--background)]"
         style={{ width: "var(--width-name)" }}
       />
-      <div
-        className="sticky flex bg-[var(--background)]"
-        style={{ left: "var(--width-name)" }}
-      >
+      <div className="sticky flex bg-[var(--background)]">
         {totalYears.map((date) => (
           <YearItem key={date.getFullYear()} date={date} />
         ))}
