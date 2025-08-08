@@ -10,6 +10,10 @@ export default {
     extend: {
       width: {
         name: "var(--width-name)",
+        day: "var(--width-day)",
+      },
+      height: {
+        row: "var(--height-row)",
       },
       colors: {
         background: "var(--background)",

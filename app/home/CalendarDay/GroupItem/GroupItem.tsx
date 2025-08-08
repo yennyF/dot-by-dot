@@ -38,7 +38,7 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
 
   return (
     <div className="app-GroupItem w-full">
-      <div className="group/item flex h-[40px]">
+      <div className="group/item h-row flex">
         <GroupName group={group} isDummy={isDummy} />
         <div className="sticky flex">
           {totalYears.map((date) => (

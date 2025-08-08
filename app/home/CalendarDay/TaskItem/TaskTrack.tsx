@@ -43,7 +43,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   return (
     <div
       className={clsx(
-        "app-TaskTrack w-day relative flex h-10 items-center justify-center",
+        "app-TaskTrack w-day relative flex items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

@@ -52,7 +52,7 @@ export default function GroupTrack({ date, group }: GroupTrackProps) {
   return (
     <div
       className={clsx(
-        "app-GroupTrack relative flex h-10 w-[50px] items-center justify-center",
+        "app-GroupTrack w-day relative flex items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

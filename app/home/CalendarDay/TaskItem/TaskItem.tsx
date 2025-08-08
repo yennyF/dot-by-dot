@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import TaskName from "./TaskName";
 import { Task } from "@/app/repositories/types";
 import TaskTrack from "./TaskTrack";
@@ -36,7 +36,7 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   // });
 
   return (
-    <div className="group/item flex h-[40px] items-center">
+    <div className="group/item h-row flex items-center">
       <TaskName task={task} isDummy={isDummy} />
       <div className="sticky flex w-fit">
         {totalYears.map((date) => (
