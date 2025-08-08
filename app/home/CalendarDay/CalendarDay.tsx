@@ -2,10 +2,11 @@
 
 import { RefObject, useEffect } from "react";
 import DraggableScroll from "./Draggable/DraggableScroll";
-import UngroupedTasks from "./UngroupedTasks";
-import GroupedTasks from "./GroupedTasks";
+import GroupList from "./GroupList";
 import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
+import { LinkReceptor } from "@/app/components/Scroll";
+import TaskList from "./TaskList";
 
 interface CalendarDayProps {
   ref: RefObject<HTMLDivElement | null>;
@@ -22,11 +23,13 @@ export default function CalendarDay({ ref }: CalendarDayProps) {
       className="app-CalendarDay no-scrollbar relative mx-[40px] h-[100vh] w-[calc(100vw-80px)] flex-1 overflow-scroll"
     >
       <LoadMore scrollRef={ref} />
-
       <Header />
       <DraggableScroll scrollRef={ref} className="mt-[70px]">
-        <UngroupedTasks />
-        <GroupedTasks />
+        <div className="ungrouped-items flex w-fit flex-col">
+          <LinkReceptor id="create-task" />
+          <TaskList groupId={null} />
+        </div>
+        <GroupList />
       </DraggableScroll>
     </div>
   );

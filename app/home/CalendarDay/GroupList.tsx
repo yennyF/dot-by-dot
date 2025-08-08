@@ -1,21 +1,17 @@
 "use client";
 
-import React, { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "./Draggable/DropIndicatorGroup";
 import GroupItem from "./GroupItem/GroupItem";
 import { LinkReceptor } from "../../components/Scroll";
 
-export default function GroupedTasks() {
+export default function GroupList() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
-  useEffect(() => {
-    console.log("GroupedTasks rendered");
-  });
-
   return (
-    <div className="app-GroupedTasks flex w-fit flex-col gap-2">
+    <div className="app-GroupList grouped-items flex w-fit flex-col gap-2">
       <LinkReceptor id="create-group"></LinkReceptor>
       {dummyGroup && (
         <>

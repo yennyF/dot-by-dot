@@ -1,22 +1,24 @@
 "use client";
 
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Task } from "@/app/repositories/types";
+import { Group, Task } from "@/app/repositories/types";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useState } from "react";
 import { midnightUTCstring } from "@/app/util";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 interface GroupTrackProps {
   date: Date;
-  tasks: Task[];
+  group: Group;
 }
 
-export default function GroupTrack({ date, tasks }: GroupTrackProps) {
+export default function GroupTrack({ date, group }: GroupTrackProps) {
   const addTracks = useTrackStore((s) => s.addTracks);
   const deleteTracks = useTrackStore((s) => s.deleteTracks);
 
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
   const taskIdSet = new Set(tasks.map((t) => t.id));
 
   const todayKey = midnightUTCstring(date);
