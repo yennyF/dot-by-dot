@@ -32,23 +32,6 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
 
   const isTodayDate = isToday(date);
 
-  const dotClassName = clsx(
-    "h-4 w-4 transform rounded-full transition-transform duration-100",
-    "hover:scale-110",
-    "active:scale-90",
-    isActive
-      ? task.groupId
-        ? "bg-[var(--accent)]"
-        : "bg-[var(--green)]"
-      : task.groupId
-        ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-        : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
-  );
-
-  // useEffect(() => {
-  //   console.log("TaskTrack re-rendered");
-  // });
-
   const handleClick = () => {
     if (isActive) {
       deleteTrack(date, task.id);
@@ -60,7 +43,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   return (
     <div
       className={clsx(
-        "app-TaskTrack relative flex h-10 w-[50px] items-center justify-center",
+        "app-TaskTrack w-day relative flex h-10 items-center justify-center",
         isTodayDate && "isToday"
       )}
     >
@@ -83,32 +66,42 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
       )}
 
       {isTodayDate ? (
-        <button className={dotClassName} onClick={handleClick}>
-          {isActive && !task.groupId && <CheckIcon className="text-white" />}
-        </button>
+        <Dot task={task} isActive={isActive} onClick={handleClick} />
       ) : (
-        <LockContent
-          task={task}
-          isActive={isActive}
-          className={dotClassName}
-          onClick={handleClick}
-        />
+        <LockDot task={task} isActive={isActive} onClick={handleClick} />
       )}
     </div>
   );
 }
 
-function LockContent({
-  task,
-  isActive,
-  onClick,
-  ...props
-}: {
-  task: Task;
+interface DotProps extends React.ComponentProps<"button"> {
   isActive: boolean;
-  className: string;
-  onClick: () => void;
-}) {
+  task: Task;
+}
+
+function Dot({ isActive, task, ...props }: DotProps) {
+  return (
+    <button
+      {...props}
+      className={clsx(
+        "h-4 w-4 transform rounded-full transition-transform duration-100",
+        "hover:scale-110",
+        "active:scale-90",
+        isActive
+          ? task.groupId
+            ? "bg-[var(--accent)]"
+            : "bg-[var(--green)]"
+          : task.groupId
+            ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+            : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
+      )}
+    >
+      {isActive && <CheckIcon className="text-white" />}
+    </button>
+  );
+}
+
+function LockDot({ task, isActive, onClick, ...props }: DotProps) {
   const [unlock, setUnlock] = useState<boolean>();
 
   return (
@@ -116,10 +109,12 @@ function LockContent({
       {unlock === false && (
         <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
       )}
-      <button
+      <Dot
         {...props}
-        onClick={() => {
-          if (unlock) onClick();
+        task={task}
+        isActive={isActive}
+        onClick={(e) => {
+          if (unlock) onClick?.(e);
         }}
         onMouseEnter={() => {
           setUnlock(useTrackStore.getState().unlock);
@@ -127,9 +122,7 @@ function LockContent({
         onMouseLeave={() => {
           setUnlock(undefined);
         }}
-      >
-        {isActive && !task.groupId && <CheckIcon className="text-white" />}
-      </button>
+      />
     </div>
   );
 }
