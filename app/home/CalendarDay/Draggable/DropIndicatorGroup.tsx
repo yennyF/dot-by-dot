@@ -16,7 +16,7 @@ export default function DropIndicatorGroup({
   return (
     <div
       ref={ref}
-      className="app-DropIndicatorGroup drop-indicator sticky left-[60px] flex w-[160px] items-center opacity-0"
+      className="app-DropIndicatorGroup drop-indicator sticky left-[30px] flex w-[280px] items-center opacity-0"
       data-sort="group"
       data-before-id={beforeId}
       data-after-id={afterId}
