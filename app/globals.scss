@@ -200,22 +200,6 @@ input {
   }
 }
 
-.shadow-background-bottom {
-  background: linear-gradient(to bottom, transparent, var(--background));
-}
-
-.shadow-background-top {
-  background: linear-gradient(to top, transparent, var(--background));
-}
-
-.shadow-background-right {
-  background: linear-gradient(to right, transparent, var(--background));
-}
-
-.shadow-background-left {
-  background: linear-gradient(to left, transparent, var(--background));
-}
-
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

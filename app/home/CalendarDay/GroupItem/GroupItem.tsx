@@ -17,6 +17,7 @@ import {
   startOfYear,
 } from "date-fns";
 import TaskList from "../TaskList";
+import { ShadowLeft, ShadowRight } from "../shadows";
 
 interface GroupItemWrapperProps {
   group: Group;
@@ -40,6 +41,7 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
     <div className="app-GroupItem w-full">
       <div className="group/item h-row flex">
         <GroupName group={group} isDummy={isDummy} />
+        <ShadowLeft className="h-full" />
         <div className="sticky flex">
           {totalYears.map((date) => (
             <YearGroupItem
@@ -49,8 +51,8 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
             />
           ))}
         </div>
+        <ShadowRight className="h-full" />
       </div>
-
       <TaskList groupId={group.id} />
     </div>
   );

@@ -15,6 +15,9 @@ export default {
       height: {
         row: "var(--height-row)",
       },
+      spacing: {
+        name: "var(--width-name)",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

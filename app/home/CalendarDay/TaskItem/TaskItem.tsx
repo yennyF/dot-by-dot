@@ -16,6 +16,7 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
+import { ShadowLeft, ShadowRight } from "../shadows";
 
 interface TaskItemProps {
   task: Task;
@@ -38,6 +39,7 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   return (
     <div className="group/item h-row flex items-center">
       <TaskName task={task} isDummy={isDummy} />
+      <ShadowLeft className="h-full" />
       <div className="sticky flex w-fit">
         {totalYears.map((date) => (
           <YearTaskItem
@@ -47,6 +49,7 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
           />
         ))}
       </div>
+      <ShadowRight className="h-full" />
     </div>
   );
 }
