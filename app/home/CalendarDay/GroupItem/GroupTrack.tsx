@@ -1,7 +1,7 @@
 "use client";
 
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Group, Task } from "@/app/repositories/types";
+import { Group } from "@/app/repositories/types";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
@@ -40,13 +40,6 @@ export default function GroupTrack({ date, group }: GroupTrackProps) {
 
   const isTodayDate = isToday(date);
 
-  const dotClassName = clsx(
-    "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
-    isActive
-      ? "bg-[var(--green)]"
-      : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
-  );
-
   const handleClick = () => {
     const taskIds = Array.from(taskIdSet);
     if (isActive) {
@@ -71,29 +64,35 @@ export default function GroupTrack({ date, group }: GroupTrackProps) {
       )}
 
       {isTodayDate ? (
-        <button className={dotClassName} onClick={handleClick}>
-          {isActive && <CheckIcon className="text-white" />}
-        </button>
+        <Dot isActive={isActive} onClick={handleClick} />
       ) : (
-        <LockContent
-          isActive={isActive}
-          className={dotClassName}
-          onClick={handleClick}
-        />
+        <LockDot isActive={isActive} onClick={handleClick} />
       )}
     </div>
   );
 }
 
-function LockContent({
-  isActive,
-  onClick,
-  ...props
-}: {
+interface DotProps extends React.ComponentProps<"button"> {
   isActive: boolean;
-  className: string;
-  onClick: () => void;
-}) {
+}
+
+function Dot({ isActive, ...props }: DotProps) {
+  return (
+    <button
+      {...props}
+      className={clsx(
+        "h-4 w-4 transform rounded-full transition-transform duration-100 hover:scale-110 active:scale-90",
+        isActive
+          ? "bg-[var(--green)]"
+          : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
+      )}
+    >
+      {isActive && <CheckIcon className="text-white" />}
+    </button>
+  );
+}
+
+function LockDot({ onClick, ...props }: DotProps) {
   const [unlock, setUnlock] = useState<boolean>();
 
   return (
@@ -101,10 +100,10 @@ function LockContent({
       {!unlock && (
         <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
       )}
-      <button
+      <Dot
         {...props}
-        onClick={() => {
-          if (unlock) onClick();
+        onClick={(e) => {
+          if (unlock) onClick?.(e);
         }}
         onMouseEnter={() => {
           setUnlock(useTrackStore.getState().unlock);
@@ -112,9 +111,7 @@ function LockContent({
         onMouseLeave={() => {
           setUnlock(undefined);
         }}
-      >
-        {isActive && <CheckIcon className="text-white" />}
-      </button>
+      />
     </div>
   );
 }
