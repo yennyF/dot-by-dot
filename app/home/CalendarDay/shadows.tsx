@@ -39,11 +39,18 @@ export function ShadowTop({ className }: ShadowProps) {
 
 export function ShadowBottom({ className }: ShadowProps) {
   return (
-    <div
-      className={clsx(
-        "shadow-bottom sticky bottom-0 left-0 z-10 h-[15px] w-full bg-gradient-to-b from-transparent to-[var(--background)]",
-        className
-      )}
-    />
+    <>
+      {/* <div className="sticky left-0 flex w-full justify-center">
+        <button className="button-icon-sheer">
+          <ChevronUpIcon />
+        </button>
+      </div> */}
+      <div
+        className={clsx(
+          "shadow-bottom sticky bottom-0 left-0 z-10 h-[15px] w-full bg-gradient-to-b from-transparent to-[var(--background)]",
+          className
+        )}
+      />
+    </>
   );
 }
