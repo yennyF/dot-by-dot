@@ -1,6 +1,6 @@
 "use client";
 
-import { DotFilledIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useEffect, useState } from "react";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
@@ -45,7 +45,6 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
     >
       <div className="flex items-center gap-2 overflow-hidden">
         <div className="h-[12px] w-[12px] shrink-0" />
-        <DotFilledIcon className="h-[12px] w-[12px] shrink-0 text-[var(--black)] opacity-0 group-hover/item:opacity-100" />
         <div className="overflow-hidden text-ellipsis text-nowrap text-[var(--gray-9)]">
           {task.name}
         </div>

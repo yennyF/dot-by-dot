@@ -1,6 +1,5 @@
 import {
   CubeIcon,
-  DotFilledIcon,
   Pencil1Icon,
   PlusIcon,
   TrashIcon,
@@ -48,7 +47,6 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
       onDragEnd={handleDragEnd}
     >
       <div className="flex items-center gap-2 overflow-hidden">
-        <DotFilledIcon className="h-[12px] w-[12px] shrink-0 opacity-0 group-hover/item:opacity-100" />
         <CubeIcon className="h-[12px] w-[12px] shrink-0" />
         <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
           {group.name}
