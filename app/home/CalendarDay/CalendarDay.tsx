@@ -1,13 +1,11 @@
 "use client";
 
 import { RefObject, useEffect } from "react";
-import DraggableScroll from "./Draggable/DraggableScroll";
-import GroupList from "./GroupList";
 import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
-import { LinkReceptor } from "@/app/components/Scroll";
-import TaskList from "./TaskList";
-import { ShadowBottom } from "./shadows";
+import { ShadowBottom, ShadowLeft, ShadowRight } from "./shadows";
+import HeaderSide from "./HeaderSide/HeaderSide";
+import Body from "./Body/Body";
 
 interface CalendarDayProps {
   ref: RefObject<HTMLDivElement | null>;
@@ -25,13 +23,12 @@ export default function CalendarDay({ ref }: CalendarDayProps) {
     >
       <LoadMore scrollRef={ref} />
       <Header />
-      <DraggableScroll scrollRef={ref}>
-        <div className="ungrouped-items flex w-fit flex-col">
-          <LinkReceptor id="create-task" />
-          <TaskList groupId={null} />
-        </div>
-        <GroupList />
-      </DraggableScroll>
+      <div className="flex w-fit">
+        <HeaderSide ref={ref} />
+        <ShadowLeft />
+        <Body />
+        <ShadowRight />
+      </div>
       <ShadowBottom />
     </div>
   );

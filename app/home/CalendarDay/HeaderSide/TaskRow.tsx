@@ -2,22 +2,22 @@
 
 import { DotFilledIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, useEffect, useState } from "react";
-import TaskDeleteDialog from "./TaskDeleteDialog";
-import TaskRenamePopover from "./TaskRenamePopover";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
-import TaskCreatePopover from "./TaskCreatePopover";
+import TaskCreatePopover from "./task/TaskCreatePopover";
+import TaskDeleteDialog from "./task/TaskDeleteDialog";
+import TaskRenamePopover from "./task/TaskRenamePopover";
 
-interface TaskNameProps {
+interface TaskRowProps {
   task: Task;
   isDummy?: boolean;
 }
 
-export default function TaskName({ task, isDummy }: TaskNameProps) {
+export default function TaskRow({ task, isDummy }: TaskRowProps) {
   const [forceShow, setForceShow] = useState(false);
 
   useEffect(() => {
-    console.log("TaskName rendered", task.name);
+    console.log("TaskRow rendered", task.name);
   });
 
   const handleDragStart = (e: DragEvent) => {
@@ -34,7 +34,7 @@ export default function TaskName({ task, isDummy }: TaskNameProps) {
   return (
     <div
       className={clsx(
-        "app-TaskName group/name sticky left-0 z-[9] flex items-center justify-between gap-1 bg-[var(--background)]",
+        "app-TaskRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       style={{ width: "var(--width-name)" }}

@@ -1,72 +1,63 @@
 "use client";
 
+import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { Task } from "../../../repositories/types";
-import { UNGROUPED_KEY, useTaskStore } from "../../../stores/TaskStore";
 
-interface TaskRenamePopoverProps {
+interface TaskCreatePopoverProps {
   children: React.ReactNode;
-  task: Task;
-  onOpenChange: (open: boolean) => void;
 }
 
-export default function TaskRenamePopover({
+export default function TaskCreatePopover({
   children,
-  task,
-  onOpenChange,
-}: TaskRenamePopoverProps) {
-  const [open, setOpen] = useState(false);
+}: TaskCreatePopoverProps) {
+  const [open, setOpen] = useState(true);
+
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   useEffect(() => {
-    onOpenChange(open);
-  }, [open, onOpenChange]);
+    if (!open) {
+      setDummyTask(undefined);
+    }
+  }, [open, setDummyTask]);
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root open={open} onOpenChange={setOpen} modal>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content setOpen={setOpen} task={task} />
+          <Content setOpen={setOpen} />
         </Popover.Portal>
       )}
     </Popover.Root>
   );
 }
 
-interface ContentProps {
-  setOpen: (open: boolean) => void;
-  task: Task;
-}
-
-function Content({ setOpen, task }: ContentProps) {
+function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
+  const dummyTask = useTaskStore((s) => s.dummyTask);
   const tasks = useTaskStore(
-    (s) => s.tasksByGroup?.[task.groupId ?? UNGROUPED_KEY]
+    (s) => s.tasksByGroup?.[dummyTask?.groupId ?? UNGROUPED_KEY]
   );
-  const updateTask = useTaskStore((s) => s.updateTask);
+  const addTask = useTaskStore((s) => s.addTask);
 
-  const [name, setName] = useState(task.name);
+  const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
 
   useEffect(() => {
-    if (!tasks) return;
-    if (
-      tasks.some(
-        (t) => t.id !== task.id && t.groupId === task.groupId && t.name === name
-      )
-    ) {
+    if (tasks?.some((h) => h.name === name)) {
       setIsDuplicated(true);
     } else {
       setIsDuplicated(false);
     }
-  }, [task, name, tasks]);
+  }, [name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handleSaveClick = async () => {
-    updateTask(task.id, { name, groupId: task.groupId });
+  const handleSaveClick = () => {
+    if (!dummyTask) return;
+    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
     setOpen(false);
   };
 
@@ -83,17 +74,17 @@ function Content({ setOpen, task }: ContentProps) {
       align="center"
       onKeyDown={handleKeyDown}
     >
-      <p>Rename the task</p>
+      <p>Enter a new name</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={name}
           onChange={handleNameChange}
-          placeholder={task.name}
+          placeholder="New task"
         ></input>
         <div className="warning-xs">
           {isDuplicated
-            ? task.groupId !== undefined
+            ? dummyTask?.groupId !== undefined
               ? "There is a task with the same name in this group"
               : "There is a task with the same name"
             : ""}
@@ -101,15 +92,15 @@ function Content({ setOpen, task }: ContentProps) {
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>
-          <div className="button-cancel">Cancel</div>
+          <div className="button-cancel">Discard</div>
         </Popover.Close>
-        <button
-          className="button-accept"
+        <Popover.Close
+          className="button-accept flex-none"
           onClick={handleSaveClick}
-          disabled={name.length === 0 || name === task.name}
+          disabled={name.length === 0}
         >
-          Save
-        </button>
+          Add
+        </Popover.Close>
       </div>
       <Popover.Arrow className="arrow" />
     </Popover.Content>

@@ -9,12 +9,12 @@ import { useState } from "react";
 import { midnightUTCstring } from "@/app/util";
 import { useTaskStore } from "@/app/stores/TaskStore";
 
-interface GroupTrackProps {
+interface GroupRowItemProps {
   date: Date;
   group: Group;
 }
 
-export default function GroupTrack({ date, group }: GroupTrackProps) {
+export default function GroupRowItem({ date, group }: GroupRowItemProps) {
   const addTracks = useTrackStore((s) => s.addTracks);
   const deleteTracks = useTrackStore((s) => s.deleteTracks);
 
@@ -52,7 +52,7 @@ export default function GroupTrack({ date, group }: GroupTrackProps) {
   return (
     <div
       className={clsx(
-        "app-GroupTrack w-day relative flex items-center justify-center",
+        "app-GroupRowItem w-day relative flex items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

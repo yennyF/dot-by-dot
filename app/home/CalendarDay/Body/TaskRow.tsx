@@ -1,9 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import TaskName from "./TaskName";
 import { Task } from "@/app/repositories/types";
-import TaskTrack from "./TaskTrack";
+import TaskRowItem from "./TaskRowItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import {
   eachDayOfInterval,
@@ -16,14 +15,13 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
-import { ShadowLeft, ShadowRight } from "../shadows";
 
-interface TaskItemProps {
+interface TaskRowProps {
   task: Task;
   isDummy?: boolean;
 }
 
-function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
+function TaskRowWrapper({ task }: TaskRowProps) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -32,29 +30,16 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
     end: endDate,
   });
 
-  // useEffect(() => {
-  //   console.log("TaskItem rendered", task.name);
-  // });
-
   return (
-    <div className="group/item h-row flex items-center">
-      <TaskName task={task} isDummy={isDummy} />
-      <ShadowLeft className="h-full" />
-      <div className="sticky flex w-fit">
-        {totalYears.map((date) => (
-          <YearTaskItem
-            key={date.toLocaleDateString()}
-            date={date}
-            task={task}
-          />
-        ))}
-      </div>
-      <ShadowRight className="h-full" />
+    <div className="h-row flex w-fit">
+      {totalYears.map((date) => (
+        <YearItem key={date.toLocaleDateString()} date={date} task={task} />
+      ))}
     </div>
   );
 }
 
-function YearTaskItem({ date, task }: { date: Date; task: Task }) {
+function YearItem({ date, task }: { date: Date; task: Task }) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -68,17 +53,13 @@ function YearTaskItem({ date, task }: { date: Date; task: Task }) {
   return (
     <div className="year-item flex">
       {totalMonths.map((date) => (
-        <MonthTaskItem
-          key={date.toLocaleDateString()}
-          date={date}
-          task={task}
-        />
+        <MonthItem key={date.toLocaleDateString()} date={date} task={task} />
       ))}
     </div>
   );
 }
 
-function MonthTaskItem({ date, task }: { date: Date; task: Task }) {
+function MonthItem({ date, task }: { date: Date; task: Task }) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -92,11 +73,11 @@ function MonthTaskItem({ date, task }: { date: Date; task: Task }) {
   return (
     <div className="month-item flex">
       {totalDays.map((date) => (
-        <TaskTrack key={date.toLocaleDateString()} date={date} task={task} />
+        <TaskRowItem key={date.toLocaleDateString()} date={date} task={task} />
       ))}
     </div>
   );
 }
 
-const TaskItem = memo(TaskItemWrapper);
-export default TaskItem;
+const TaskRow = memo(TaskRowWrapper);
+export default TaskRow;

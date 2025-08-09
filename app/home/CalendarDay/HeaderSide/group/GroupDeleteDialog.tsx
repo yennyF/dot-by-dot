@@ -1,27 +1,27 @@
 "use client";
 
-import { Dialog, Checkbox } from "radix-ui";
+import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
-import { Task } from "../../../repositories/types";
-import { useTaskStore } from "../../../stores/TaskStore";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Group } from "@/app/repositories/types";
+import { useGroupStore } from "@/app/stores/GroupStore";
 
-interface TaskDeleteDialogProps {
+interface GroupDeleteDialogProps {
   children: React.ReactNode;
-  task: Task;
-  onOpenChange: (open: boolean) => void;
+  group: Group;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function TaskDeleteDialog({
+export default function GroupDeleteDialog({
   children,
-  task,
+  group,
   onOpenChange,
-}: TaskDeleteDialogProps) {
+}: GroupDeleteDialogProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    onOpenChange(open);
-  }, [open, onOpenChange]);
+    onOpenChange?.(open);
+  }, [onOpenChange, open]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -29,7 +29,7 @@ export default function TaskDeleteDialog({
       {open && (
         <Dialog.Portal>
           <Dialog.Overlay className="overlay">
-            <Content task={task} />
+            <Content group={group} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}
@@ -37,13 +37,13 @@ export default function TaskDeleteDialog({
   );
 }
 
-function Content({ task }: { task: Task }) {
-  const deleteTask = useTaskStore((s) => s.deleteTask);
+function Content({ group }: { group: Group }) {
+  const deleteGroup = useGroupStore((s) => s.deleteGroup);
 
   const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
   const handleDeleteConfirm = async () => {
-    deleteTask(task.id);
+    await deleteGroup(group.id);
   };
 
   return (
@@ -59,8 +59,8 @@ function Content({ task }: { task: Task }) {
         </Dialog.Close>
       </div>
       <Dialog.Description className="dialog-description">
-        This action cannot be undone. This will permanently delete your task and
-        all track associated.
+        This action cannot be undone. This will permanently delete your group
+        and all track associated.
       </Dialog.Description>
       <br />
       <div className="checkbox">
@@ -79,7 +79,7 @@ function Content({ task }: { task: Task }) {
           </Checkbox.Root>
         </div>
         <label htmlFor="c1" className="checkbox-label warning-sm">
-          I confirm that I want to delete this task
+          I confirm that I want to delete this group
         </label>
       </div>
 

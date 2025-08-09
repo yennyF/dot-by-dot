@@ -5,21 +5,21 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import GroupDeleteDialog from "./GroupDeleteDialog";
-import GroupRenamePopover from "./GroupRenamePopover";
 import { Group } from "@/app/repositories/types";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useState, DragEvent } from "react";
 import clsx from "clsx";
-import GroupCreatePopover from "./GroupCreatePopover";
+import GroupCreatePopover from "./group/GroupCreatePopover";
+import GroupDeleteDialog from "./group/GroupDeleteDialog";
+import GroupRenamePopover from "./group/GroupRenamePopover";
 
-interface GroupNameProps {
+interface GroupRowProps {
   group: Group;
   isDummy?: boolean;
 }
 
-export default function GroupName({ group, isDummy }: GroupNameProps) {
+export default function GroupRow({ group, isDummy }: GroupRowProps) {
   const [forceShow, setForceShow] = useState(false);
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
@@ -38,7 +38,7 @@ export default function GroupName({ group, isDummy }: GroupNameProps) {
   return (
     <div
       className={clsx(
-        "app-GroupName group/name sticky left-0 z-[9] flex items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       style={{ width: "var(--width-name)" }}

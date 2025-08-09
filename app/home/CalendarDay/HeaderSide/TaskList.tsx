@@ -1,7 +1,9 @@
-import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
+"use client";
+
 import { Fragment } from "react";
-import DropIndicatorTask from "./Draggable/DropIndicatorTask";
-import TaskItem from "./TaskItem/TaskItem";
+import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
+import DropIndicatorTask from "../Draggable/DropIndicatorTask";
+import TaskRow from "./TaskRow";
 
 interface TaskListProps {
   groupId: string | null;
@@ -18,14 +20,14 @@ export default function TaskList({ groupId }: TaskListProps) {
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
   return (
-    <>
+    <div>
       {dummyTask && (
         <>
           <DropIndicatorTask
             groupId={groupId ?? null}
             beforeId={dummyTask.id}
           />
-          <TaskItem task={dummyTask} isDummy={true} />
+          <TaskRow task={dummyTask} isDummy={true} />
         </>
       )}
 
@@ -35,10 +37,10 @@ export default function TaskList({ groupId }: TaskListProps) {
             groupId={task.groupId ?? null}
             beforeId={task.id}
           />
-          <TaskItem task={task} />
+          <TaskRow task={task} />
         </Fragment>
       ))}
       <DropIndicatorTask groupId={groupId ?? null} />
-    </>
+    </div>
   );
 }

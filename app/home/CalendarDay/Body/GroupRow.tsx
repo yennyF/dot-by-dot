@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, useEffect } from "react";
-import GroupName from "./GroupName";
 import { Group } from "@/app/repositories/types";
-import GroupTrack from "./GroupTrack";
+import GroupRowItem from "./GroupRowItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import {
   eachDayOfInterval,
@@ -16,15 +15,12 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
-import TaskList from "../TaskList";
-import { ShadowLeft, ShadowRight } from "../shadows";
 
-interface GroupItemWrapperProps {
+interface GroupRowWrapperProps {
   group: Group;
-  isDummy?: boolean;
 }
 
-function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
+function GroupRowWrapper({ group }: GroupRowWrapperProps) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -34,31 +30,23 @@ function GroupItemWrapper({ group, isDummy }: GroupItemWrapperProps) {
   });
 
   useEffect(() => {
-    console.log("GroupItem rendered", group.name);
+    console.log("GroupRow rendered", group.name);
   });
 
   return (
-    <div className="app-GroupItem w-full">
-      <div className="group/item h-row flex">
-        <GroupName group={group} isDummy={isDummy} />
-        <ShadowLeft className="h-full" />
-        <div className="sticky flex">
-          {totalYears.map((date) => (
-            <YearGroupItem
-              key={date.toLocaleDateString()}
-              date={date}
-              group={group}
-            />
-          ))}
-        </div>
-        <ShadowRight className="h-full" />
-      </div>
-      <TaskList groupId={group.id} />
+    <div className="h-row flex">
+      {totalYears.map((date) => (
+        <YearGroupRow
+          key={date.toLocaleDateString()}
+          date={date}
+          group={group}
+        />
+      ))}
     </div>
   );
 }
 
-function YearGroupItem({ date, group }: { date: Date; group: Group }) {
+function YearGroupRow({ date, group }: { date: Date; group: Group }) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -72,7 +60,7 @@ function YearGroupItem({ date, group }: { date: Date; group: Group }) {
   return (
     <div className="year-item flex">
       {totalMonths.map((date) => (
-        <MonthGroupItem
+        <MonthGroupRow
           key={date.toLocaleDateString()}
           date={date}
           group={group}
@@ -82,7 +70,7 @@ function YearGroupItem({ date, group }: { date: Date; group: Group }) {
   );
 }
 
-function MonthGroupItem({ date, group }: { date: Date; group: Group }) {
+function MonthGroupRow({ date, group }: { date: Date; group: Group }) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
 
@@ -96,11 +84,15 @@ function MonthGroupItem({ date, group }: { date: Date; group: Group }) {
   return (
     <div className="month-item flex">
       {totalDays.map((date) => (
-        <GroupTrack key={date.toLocaleDateString()} date={date} group={group} />
+        <GroupRowItem
+          key={date.toLocaleDateString()}
+          date={date}
+          group={group}
+        />
       ))}
     </div>
   );
 }
 
-const GroupItem = memo(GroupItemWrapper);
-export default GroupItem;
+const GroupRow = memo(GroupRowWrapper);
+export default GroupRow;

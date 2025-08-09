@@ -8,12 +8,12 @@ import { useState } from "react";
 import { Task } from "@/app/repositories/types";
 import { midnightUTCstring } from "@/app/util";
 
-interface TaskTrackProps {
+interface TaskRowItemProps {
   date: Date;
   task: Task;
 }
 
-export default function TaskTrack({ date, task }: TaskTrackProps) {
+export default function TaskRowItem({ date, task }: TaskRowItemProps) {
   const addTrack = useTrackStore((s) => s.addTrack);
   const deleteTrack = useTrackStore((s) => s.deleteTrack);
 
@@ -43,7 +43,7 @@ export default function TaskTrack({ date, task }: TaskTrackProps) {
   return (
     <div
       className={clsx(
-        "app-TaskTrack w-day relative flex items-center justify-center",
+        "app-TaskRowItem w-day relative flex items-center justify-center",
         isTodayDate && "isToday"
       )}
     >
