@@ -1,17 +1,27 @@
 import clsx from "clsx";
+import { RefObject } from "react";
+import LoadMore from "./LoadMore";
 
 interface ShadowProps {
   className?: string;
+  scrollRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function ShadowLeft({ className }: ShadowProps) {
+export function ShadowLeft({ className, scrollRef }: ShadowProps) {
   return (
-    <div
-      className={clsx(
-        "shadow-left left-name sticky z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)]",
-        className
+    <>
+      <div
+        className={clsx(
+          "shadow-left left-name sticky z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)]",
+          className
+        )}
+      />
+      {scrollRef ? (
+        <LoadMore scrollRef={scrollRef} />
+      ) : (
+        <div className="w-[30px]" />
       )}
-    />
+    </>
   );
 }
 

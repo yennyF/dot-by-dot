@@ -1,7 +1,6 @@
 "use client";
 
 import { RefObject, useEffect } from "react";
-import LoadMore from "./LoadMore";
 import Header from "./Header/Header";
 import { ShadowBottom, ShadowLeft, ShadowRight } from "./shadows";
 import HeaderSide from "./HeaderSide/HeaderSide";
@@ -21,11 +20,11 @@ export default function CalendarDay({ ref }: CalendarDayProps) {
       ref={ref}
       className="app-CalendarDay no-scrollbar relative mx-[40px] mb-[30px] mt-[70px] max-h-[calc(100vh-70px-30px)] w-[calc(100vw-80px)] flex-1 overflow-scroll"
     >
-      <LoadMore scrollRef={ref} />
+      {/* <LoadMore scrollRef={ref} /> */}
       <Header />
       <div className="flex w-fit">
         <HeaderSide ref={ref} />
-        <ShadowLeft />
+        <ShadowLeft scrollRef={ref} />
         <Body />
         <ShadowRight />
       </div>

@@ -5,11 +5,13 @@ import {
   notifyCreateError,
   notifyDeleteError,
   notifyLoadError,
+  notifyLoading,
 } from "../components/Notification";
-import { startOfMonth, subDays, subMonths } from "date-fns";
+import { startOfMonth, subMonths } from "date-fns";
 import { midnightUTC, midnightUTCstring } from "../util";
 import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
+import { toast } from "react-toastify";
 
 type State = {
   unlock: boolean;
@@ -90,8 +92,9 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     }
   },
   loadMorePrevTracks: async () => {
-    const startDate = subDays(get().startDate, 30);
+    const startDate = subMonths(get().startDate, 1);
     const tasksByDate = { ...get().tasksByDate };
+    const tastId = notifyLoading();
 
     try {
       await db.tracks
@@ -110,8 +113,11 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       // console.log(await timeoutPromise(2000));
 
       set(() => ({ tasksByDate, startDate }));
+
+      toast.dismiss(tastId);
     } catch (error) {
       console.error("Error loading more tracks:", error);
+      toast.dismiss(tastId);
       notifyLoadError();
     }
   },
