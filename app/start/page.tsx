@@ -8,7 +8,6 @@ import {
 } from "../repositories/data";
 import { ReactNode, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
-import { db } from "../repositories/db";
 import { Checkbox } from "radix-ui";
 import {
   notifyLoadError,
@@ -25,6 +24,8 @@ export default function Start() {
 
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
+
+  const start = useTrackStore((s) => s.start);
 
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
@@ -44,33 +45,33 @@ export default function Start() {
     });
   };
 
-  async function start() {
+  async function handleClickStart() {
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
-    const groupsSelected = new Set<Group>();
-    tasksSelected.forEach((task) => {
-      const groupId = task.groupId;
-      if (groupId) {
-        const group = groupedTasks.current.find(
-          ([group]) => group.id === groupId
-        )?.[0];
-
-        if (group) groupsSelected.add(group);
-      }
-    });
-
     try {
-      await db.tables.forEach((table) => table.clear());
-      await db.groups.bulkAdd(Array.from(groupsSelected));
-      await db.tasks.bulkAdd(Array.from(tasksSelected));
+      const groupsSelected = new Set<Group>();
+      tasksSelected.forEach((task) => {
+        const groupId = task.groupId;
+        if (groupId) {
+          const group = groupedTasks.current.find(
+            ([group]) => group.id === groupId
+          )?.[0];
+
+          if (group) groupsSelected.add(group);
+        }
+      });
+
+      const tasks = Array.from(tasksSelected);
+      const groups = Array.from(groupsSelected);
+
+      await start(groups, tasks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
       router.replace("/");
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
@@ -78,7 +79,7 @@ export default function Start() {
     setIsLoading(false);
   }
 
-  async function runDemo() {
+  async function handleClickRunDemo() {
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
@@ -87,7 +88,6 @@ export default function Start() {
     try {
       const groups: Group[] = [];
       const tasks: Task[] = genUngroupedTasks();
-
       genGroupedTasks().forEach(([group, _tasks]) => {
         groups.push(group);
         tasks.push(..._tasks);
@@ -99,20 +99,16 @@ export default function Start() {
         tasks
       );
 
-      await db.tables.forEach((table) => table.clear());
-      await db.groups.bulkAdd(groups);
-      await db.tasks.bulkAdd(tasks);
-      await db.tracks.bulkAdd(tracks);
+      await start(groups, tasks, tracks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
       router.replace("/");
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
 
-    setIsLoading(true);
+    setIsLoading(false);
   }
 
   return (
@@ -164,7 +160,7 @@ export default function Start() {
             <button
               className="button-accent mt-2 flex items-center gap-2"
               disabled={isLoading || tasksSelected.size < 3}
-              onClick={start}
+              onClick={handleClickStart}
             >
               <span>Let&apos;s begin </span>
               <ArrowRightIcon />
@@ -183,7 +179,7 @@ export default function Start() {
               <button
                 className="button-outline mt-2"
                 disabled={isLoading}
-                onClick={runDemo}
+                onClick={handleClickRunDemo}
               >
                 Run demo
               </button>

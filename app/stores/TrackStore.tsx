@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { LocaleDateString } from "../repositories/types";
+import { Group, LocaleDateString, Task, Track } from "../repositories/types";
 import { db } from "../repositories/db";
 import {
   notifyCreateError,
@@ -26,6 +26,7 @@ type Action = {
   destroyTracks: () => void;
   clearHistory: () => Promise<void>;
   reset: () => Promise<void>;
+  start: (groups: Group[], tasks: Task[], tracks?: Track[]) => Promise<void>;
   initTracks: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
   addTrack: (date: Date, taskId: string) => void;
@@ -50,6 +51,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       asksByDate: undefined,
     }));
   },
+
   clearHistory: async () => {
     try {
       get().destroyTracks();
@@ -71,6 +73,18 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyDeleteError();
     }
   },
+  start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
+    try {
+      await db.tables.forEach((table) => table.clear());
+      await db.groups.bulkAdd(Array.from(groups));
+      await db.tasks.bulkAdd(Array.from(tasks));
+      if (tracks) await db.tracks.bulkAdd(tracks);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
   initTracks: async () => {
     const endDate = new Date();
     const startDate = subMonths(startOfMonth(endDate), 3);
