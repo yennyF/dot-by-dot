@@ -24,8 +24,17 @@ export default function UseScrollToRight(
   const scrollToRight = () => {
     const el = scrollRef.current;
     if (!el) return;
+
     el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
   };
 
-  return { isAtRight, scrollToRight };
+  const scrollToRightBy = (offset: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const { scrollLeft } = el;
+    el.scrollTo({ left: scrollLeft + offset, behavior: "smooth" });
+  };
+
+  return { isAtRight, scrollToRight, scrollToRightBy };
 }

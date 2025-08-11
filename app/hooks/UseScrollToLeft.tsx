@@ -8,17 +8,17 @@ export default function UseScrollToLeft(
   const [isAtLeft, setIsAtLeft] = useState<boolean>(false);
 
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+    const el = scrollRef.current;
+    if (!el) return;
 
     const handleScroll = () => {
-      const { scrollLeft } = container;
+      const { scrollLeft } = el;
       const isAtLeft = scrollLeft === 0;
       setIsAtLeft(isAtLeft);
     };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
   }, [scrollRef]);
 
   const scrollToLeft = () => {
@@ -27,5 +27,13 @@ export default function UseScrollToLeft(
     el.scrollTo({ left: 0, behavior: "smooth" });
   };
 
-  return { isAtLeft, scrollToLeft };
+  const scrollToLeftBy = (offset: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const { scrollLeft } = el;
+    el.scrollTo({ left: scrollLeft - offset, behavior: "smooth" });
+  };
+
+  return { isAtLeft, scrollToLeft, scrollToLeftBy };
 }

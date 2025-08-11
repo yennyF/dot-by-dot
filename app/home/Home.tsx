@@ -4,19 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { useTrackStore } from "../stores/TrackStore";
-import { Link } from "../components/Scroll";
-import {
-  PlusIcon,
-  TriangleDownIcon,
-  ChevronRightIcon,
-} from "@radix-ui/react-icons";
+import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import AppHeader from "../components/AppHeader/AppHeader";
-import CreateDropdown from "./TopHeader/CreateDropdown";
-import LeftButton from "./TopHeader/LeftButton";
-import LockButton from "./TopHeader/LockButton";
+import CreateDropdown from "./Header/CreateDropdown";
+import LeftButton from "./Header/LeftButton";
+import LockButton from "./Header/LockButton";
 import Loading from "../components/Loading/Loading";
 import AppTooltip from "../components/AppTooltip";
 import { notifyLoadError } from "../components/Notification";
+import TodayButton from "./Header/TodayButton";
+import RightButton from "./Header/RightButton";
 
 export default function Home() {
   return (
@@ -47,6 +44,7 @@ function Content() {
       }
       setIsLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
@@ -72,26 +70,10 @@ function Content() {
             </CreateDropdown>
           </div>
 
-          <div className="">
-            <div className="flex items-center gap-2">
-              <LeftButton scrollRef={calendarRef} />
-              <Link
-                to="element-today"
-                options={{ block: "end", behavior: "smooth", inline: "start" }}
-                autoScroll={true}
-              >
-                <AppTooltip
-                  content="Go to recent"
-                  contentClassName="z-40"
-                  asChild
-                >
-                  <button className="button-outline button-sm">
-                    Today
-                    <ChevronRightIcon />
-                  </button>
-                </AppTooltip>
-              </Link>
-            </div>
+          <div className="flex items-center gap-2">
+            <LeftButton scrollRef={calendarRef} />
+            <RightButton scrollRef={calendarRef} />
+            <TodayButton />
           </div>
         </div>
       </AppHeader>

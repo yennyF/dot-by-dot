@@ -2,21 +2,18 @@
 
 import { RefObject, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { useTrackStore } from "@/app/stores/TrackStore";
 import AppTooltip from "@/app/components/AppTooltip";
+import { useLoadMore } from "@/app/hooks/useLoadMore";
 
 export default function LoadMore({
   scrollRef,
 }: {
   scrollRef: RefObject<HTMLDivElement | null>;
 }) {
-  const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
+  const { loadMore } = useLoadMore(scrollRef);
 
   const [height, setHeight] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // const prevScrollLeft = useRef<number>(0);
-  // const prevScrollWidth = useRef<number>(0);
 
   useEffect(() => {
     if (!scrollRef.current) return;
@@ -32,26 +29,12 @@ export default function LoadMore({
     resizeObserver.observe(scrollRef.current);
 
     return () => resizeObserver.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClick = async () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
     setIsLoading(true);
-
-    // prevScrollWidth.current = el.scrollWidth;
-    // prevScrollLeft.current = el.scrollLeft;
-
-    await loadMorePrevTracks();
-
-    requestAnimationFrame(() => {
-      // const newScrollWidth = el.scrollWidth;
-      // const addedWidth = newScrollWidth - prevScrollWidth.current;
-      // el.scrollLeft = prevScrollLeft.current + addedWidth;
-      el.scrollTo({ left: 0, behavior: "smooth" });
-    });
-
+    await loadMore();
     setIsLoading(false);
   };
 
