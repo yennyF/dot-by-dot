@@ -17,7 +17,7 @@ import CreateDropdown from "./TopHeader/CreateDropdown";
 import LeftButton from "./TopHeader/LeftButton";
 import LockButton from "./TopHeader/LockButton";
 import Loading from "../components/Loading/Loading";
-import { Tooltip } from "radix-ui";
+import AppTooltip from "../components/AppTooltip";
 
 export default function Home() {
   return (
@@ -60,28 +60,16 @@ function Content() {
           <div className="flex items-center gap-2">
             <LockButton />
 
-            <Tooltip.Provider>
-              <Tooltip.Root>
-                <CreateDropdown>
-                  <Tooltip.Trigger asChild>
-                    <button className="button-accent button-sm">
-                      <PlusIcon />
-                      <TriangleDownIcon />
-                    </button>
-                  </Tooltip.Trigger>
-                </CreateDropdown>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    className="tooltip-content z-40"
-                    side="bottom"
-                    sideOffset={5}
-                  >
-                    Create
-                    <Tooltip.Arrow className="tooltip-arrow" />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-            </Tooltip.Provider>
+            <CreateDropdown>
+              <span>
+                <AppTooltip content="New" contentClassName="z-40" asChild>
+                  <button className="button-accent button-sm">
+                    <PlusIcon />
+                    <TriangleDownIcon />
+                  </button>
+                </AppTooltip>
+              </span>
+            </CreateDropdown>
           </div>
 
           <div className="">
@@ -92,10 +80,16 @@ function Content() {
                 options={{ block: "end", behavior: "smooth", inline: "start" }}
                 autoScroll={true}
               >
-                <button className="button-outline button-sm">
-                  Today
-                  <ChevronRightIcon />
-                </button>
+                <AppTooltip
+                  content="Go to recent"
+                  contentClassName="z-40"
+                  asChild
+                >
+                  <button className="button-outline button-sm">
+                    Today
+                    <ChevronRightIcon />
+                  </button>
+                </AppTooltip>
               </Link>
             </div>
           </div>

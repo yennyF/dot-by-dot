@@ -2,7 +2,7 @@
 
 import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Tooltip } from "radix-ui";
+import AppTooltip from "@/app/components/AppTooltip";
 
 export default function LockButton() {
   const unlock = useTrackStore((s) => s.unlock);
@@ -13,27 +13,17 @@ export default function LockButton() {
   };
 
   return (
-    <Tooltip.Provider>
-      <Tooltip.Root>
-        <Tooltip.Trigger asChild>
-          <button
-            className="button-outline button-sm"
-            onClick={handleCheckedChange}
-          >
-            {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
-          </button>
-        </Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Content
-            className="tooltip-content z-40"
-            side="bottom"
-            sideOffset={5}
-          >
-            {unlock ? "Lock track" : "Unlock track"}
-            <Tooltip.Arrow className="tooltip-arrow" />
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
-    </Tooltip.Provider>
+    <AppTooltip
+      content={unlock ? "Lock track" : "Unlock track"}
+      contentClassName="z-40"
+      asChild
+    >
+      <button
+        className="button-outline button-sm"
+        onClick={handleCheckedChange}
+      >
+        {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
+      </button>
+    </AppTooltip>
   );
 }

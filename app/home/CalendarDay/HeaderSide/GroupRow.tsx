@@ -12,6 +12,7 @@ import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";
 import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
+import AppTooltip from "@/app/components/AppTooltip";
 
 interface GroupRowProps {
   group: Group;
@@ -30,6 +31,15 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
 
   const handleDragEnd = (e: DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleClickNew = () => {
+    setDummyTask({
+      id: uuidv4(),
+      name: "(No name)",
+      groupId: group.id,
+      order: "",
+    });
   };
 
   const draggable = isDummy ? false : true;
@@ -66,28 +76,30 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
           </GroupCreatePopover>
         ) : (
           <>
-            <button
-              className="button-icon-sheer"
-              onClick={() => {
-                setDummyTask({
-                  id: uuidv4(),
-                  name: "(No name)",
-                  groupId: group.id,
-                  order: "",
-                });
-              }}
-            >
-              <PlusIcon />
-            </button>
+            <AppTooltip content="New task" contentClassName="z-10" asChild>
+              <button className="button-icon-sheer" onClick={handleClickNew}>
+                <PlusIcon />
+              </button>
+            </AppTooltip>
+
             <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-              <button className="button-icon-sheer">
-                <Pencil1Icon />
-              </button>
+              <span>
+                <AppTooltip content="Rename" contentClassName="z-10" asChild>
+                  <button className="button-icon-sheer">
+                    <Pencil1Icon />
+                  </button>
+                </AppTooltip>
+              </span>
             </GroupRenamePopover>
+
             <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-              <button className="button-icon-sheer">
-                <TrashIcon />
-              </button>
+              <span>
+                <AppTooltip content="Delete" contentClassName="z-10" asChild>
+                  <button className="button-icon-sheer">
+                    <TrashIcon />
+                  </button>
+                </AppTooltip>
+              </span>
             </GroupDeleteDialog>
           </>
         )}

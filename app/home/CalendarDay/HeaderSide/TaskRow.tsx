@@ -7,6 +7,7 @@ import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
+import AppTooltip from "@/app/components/AppTooltip";
 
 interface TaskRowProps {
   task: Task;
@@ -58,21 +59,34 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
       >
         {isDummy ? (
           <TaskCreatePopover>
-            <button className="button-icon-sheer">
-              <Pencil1Icon />
-            </button>
+            <span>
+              <AppTooltip content="Rename" contentClassName="z-10" asChild>
+                <button className="button-icon-sheer">
+                  <Pencil1Icon />
+                </button>
+              </AppTooltip>
+            </span>
           </TaskCreatePopover>
         ) : (
           <>
             <TaskRenamePopover task={task} onOpenChange={setForceShow}>
-              <button className="button-icon-sheer">
-                <Pencil1Icon />
-              </button>
+              <span>
+                <AppTooltip content="Rename" contentClassName="z-10" asChild>
+                  <button className="button-icon-sheer">
+                    <Pencil1Icon />
+                  </button>
+                </AppTooltip>
+              </span>
             </TaskRenamePopover>
+
             <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
-              <button className="button-icon-sheer">
-                <TrashIcon />
-              </button>
+              <span>
+                <AppTooltip content="Delete" contentClassName="z-10" asChild>
+                  <button className="button-icon-sheer">
+                    <TrashIcon />
+                  </button>
+                </AppTooltip>
+              </span>
             </TaskDeleteDialog>
           </>
         )}

@@ -3,7 +3,7 @@
 import { RefObject, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { Tooltip } from "radix-ui";
+import AppTooltip from "@/app/components/AppTooltip";
 
 export default function LoadMore({
   scrollRef,
@@ -62,29 +62,15 @@ export default function LoadMore({
       className="sticky top-[calc(110px+15px)] flex w-[30px] shrink-0 items-center justify-center"
       style={{ height: height - 110 - 15 - 15 + "px" }}
     >
-      <Tooltip.Provider>
-        <Tooltip.Root>
-          <Tooltip.Trigger asChild>
-            <button
-              className="button-icon-sheer animate-bounce"
-              onClick={handleClick}
-              disabled={isLoading}
-            >
-              <ArrowLeftIcon />
-            </button>
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content
-              className="tooltip-content z-10"
-              side="bottom"
-              sideOffset={5}
-            >
-              Load more
-              <Tooltip.Arrow className="tooltip-arrow" />
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip.Root>
-      </Tooltip.Provider>
+      <AppTooltip content="Load more" contentClassName="z-10" asChild>
+        <button
+          className="button-icon-sheer"
+          onClick={handleClick}
+          disabled={isLoading}
+        >
+          <ArrowLeftIcon />
+        </button>
+      </AppTooltip>
     </div>
   );
 }

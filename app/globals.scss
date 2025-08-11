@@ -164,16 +164,17 @@ input {
   @apply 
   select-none 
   rounded 
-  bg-[var(--background)] 
-  px-[15px] py-2.5 
-  text-[15px] 
+  bg-[var(--gray)] 
+  px-[10px] py-2
+  text-xs 
+  text-black
   leading-none 
-  shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] 
+  // shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] 
   will-change-[transform,opacity];
 }
 
 .tooltip-arrow {
-  @apply fill-[var(--background)] 
+  @apply fill-[var(--gray)] 
 }
 
 .checkbox {
