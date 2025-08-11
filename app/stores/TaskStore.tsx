@@ -7,7 +7,6 @@ import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
   notifyDeleteError,
-  notifyLoadError,
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
@@ -69,7 +68,7 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
         set(() => ({ tasksByGroup }));
       } catch (error) {
         console.error("Error initialing tasks:", error);
-        notifyLoadError();
+        throw error;
       }
     },
     addTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {

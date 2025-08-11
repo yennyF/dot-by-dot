@@ -6,8 +6,8 @@ import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { Id, toast } from "react-toastify";
 import {
   notifyLoading,
-  notifyLoadError,
   notifySuccessful,
+  notifyDeleteError,
 } from "../components/Notification";
 import { useTrackStore } from "../stores/TrackStore";
 
@@ -54,7 +54,7 @@ function Content() {
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId.current);
-      notifyLoadError();
+      notifyDeleteError();
     }
   }
 

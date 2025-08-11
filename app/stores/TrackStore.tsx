@@ -23,16 +23,20 @@ type State = {
 
 type Action = {
   setUnlock: (unlock: boolean) => void;
+
   destroyTracks: () => void;
-  clearHistory: () => Promise<void>;
-  reset: () => Promise<void>;
-  start: (groups: Group[], tasks: Task[], tracks?: Track[]) => Promise<void>;
   initTracks: () => Promise<void>;
+  init: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
+
   addTrack: (date: Date, taskId: string) => void;
   addTracks: (date: Date, taskIds: string[]) => void;
   deleteTrack: (date: Date, taskId: string) => void;
   deleteTracks: (date: Date, taskIds: string[]) => void;
+
+  clearHistory: () => Promise<void>;
+  reset: () => Promise<void>;
+  start: (groups: Group[], tasks: Task[], tracks?: Track[]) => Promise<void>;
 };
 
 export const useTrackStore = create<State & Action>((set, get) => ({
@@ -51,40 +55,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       asksByDate: undefined,
     }));
   },
-
-  clearHistory: async () => {
-    try {
-      get().destroyTracks();
-      await db.tracks.clear();
-    } catch (error) {
-      console.error("Error cleaning history:", error);
-      notifyDeleteError();
-    }
-  },
-  reset: async () => {
-    try {
-      await db.tables.forEach((table) => table.clear());
-
-      get().destroyTracks();
-      useTaskStore.getState().destroyTasks();
-      useGroupStore.getState().destroyGroups();
-    } catch (error) {
-      console.error("Error reseting:", error);
-      notifyDeleteError();
-    }
-  },
-  start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
-    try {
-      await db.tables.forEach((table) => table.clear());
-      await db.groups.bulkAdd(Array.from(groups));
-      await db.tasks.bulkAdd(Array.from(tasks));
-      if (tracks) await db.tracks.bulkAdd(tracks);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  },
-
   initTracks: async () => {
     const endDate = new Date();
     const startDate = subMonths(startOfMonth(endDate), 3);
@@ -102,7 +72,19 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       set(() => ({ tasksByDate, startDate, endDate }));
     } catch (error) {
       console.error("Error initialing tracks:", error);
-      notifyLoadError();
+      throw error;
+    }
+  },
+  init: async () => {
+    try {
+      await Promise.all([
+        useGroupStore.getState().initGroups(),
+        useTaskStore.getState().initTasks(),
+        get().initTracks(),
+      ]);
+    } catch (error) {
+      console.log("Error initializing", error);
+      throw error;
     }
   },
   loadMorePrevTracks: async () => {
@@ -135,6 +117,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyLoadError();
     }
   },
+
   addTrack: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
     date = midnightUTC(date);
@@ -208,6 +191,39 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     } catch (error) {
       console.error("Error checking tracks:", error);
       notifyDeleteError();
+    }
+  },
+
+  clearHistory: async () => {
+    try {
+      get().destroyTracks();
+      await db.tracks.clear();
+    } catch (error) {
+      console.error("Error cleaning history:", error);
+      throw error;
+    }
+  },
+  reset: async () => {
+    try {
+      await db.tables.forEach((table) => table.clear());
+
+      get().destroyTracks();
+      useTaskStore.getState().destroyTasks();
+      useGroupStore.getState().destroyGroups();
+    } catch (error) {
+      console.error("Error reseting:", error);
+      notifyDeleteError();
+    }
+  },
+  start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
+    try {
+      await db.tables.forEach((table) => table.clear());
+      await db.groups.bulkAdd(Array.from(groups));
+      await db.tasks.bulkAdd(Array.from(tasks));
+      if (tracks) await db.tracks.bulkAdd(tracks);
+    } catch (error) {
+      console.error("Error starting:", error);
+      throw error;
     }
   },
 }));

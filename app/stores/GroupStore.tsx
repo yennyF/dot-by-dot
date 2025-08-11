@@ -8,7 +8,6 @@ import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
   notifyDeleteError,
-  notifyLoadError,
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
@@ -43,7 +42,7 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         set(() => ({ groups }));
       } catch (error) {
         console.error("Error initialing groups:", error);
-        notifyLoadError();
+        throw error;
       }
     },
     addGroup: async (props: Pick<Group, "id" | "name">) => {

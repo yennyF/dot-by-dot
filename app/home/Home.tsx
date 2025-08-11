@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
-import { useGroupStore } from "../stores/GroupStore";
-import { useTaskStore } from "../stores/TaskStore";
 import { useTrackStore } from "../stores/TrackStore";
 import { Link } from "../components/Scroll";
 import {
@@ -18,6 +16,7 @@ import LeftButton from "./TopHeader/LeftButton";
 import LockButton from "./TopHeader/LockButton";
 import Loading from "../components/Loading/Loading";
 import AppTooltip from "../components/AppTooltip";
+import { notifyLoadError } from "../components/Notification";
 
 export default function Home() {
   return (
@@ -32,9 +31,7 @@ function Content() {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const initTasks = useTaskStore((s) => s.initTasks);
-  const initGroups = useGroupStore((s) => s.initGroups);
-  const initTracks = useTrackStore((s) => s.initTracks);
+  const init = useTrackStore((s) => s.init);
 
   useEffect(() => {
     console.log("Home rendered");
@@ -43,10 +40,13 @@ function Content() {
   useEffect(() => {
     setIsLoading(true);
     (async () => {
-      await Promise.all([initGroups(), initTasks(), initTracks()]);
+      try {
+        await init();
+      } catch {
+        notifyLoadError();
+      }
       setIsLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
