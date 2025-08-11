@@ -6,7 +6,7 @@ import MenuDropdown from "./MenuDropdown";
 
 export default function AppHeader({ children }: { children?: ReactNode }) {
   useEffect(() => {
-    console.log("Controls rendered");
+    console.log("AppHeader rendered");
   });
 
   return (

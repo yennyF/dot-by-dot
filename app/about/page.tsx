@@ -14,10 +14,16 @@ export default function About() {
             what matters and check it off.
           </p>
 
-          <h2 className="mt-[60px] text-xl font-semibold">More on the way</h2>
-          <p className="mt-[30px]">
+          <h2 className="mt-[60px] text-lg font-semibold">More on the way</h2>
+          <p className="mt-[10px]">
             I’m still building and experimenting, so expect new features soon —
             like stats, progress tracking, and more ways to view your habits.
+          </p>
+
+          <h3 className="mt-[60px] text-lg font-semibold">Data storage</h3>
+          <p className="mt-[10px]">
+            For now, all data is stored locally in your browser, so it’s only
+            accessible from the same browser and device you’ve been using.
           </p>
 
           {/* <p className="mt-[30px]">
@@ -25,8 +31,8 @@ export default function About() {
             without touching my real tasks!
           </p> */}
 
-          <p className="mt-[30px]">
-            This app is open source — peek at the code here:{" "}
+          <p className="mt-[60px]">
+            It’s open source — peek at the code here:{" "}
             <a
               href="https://github.com/yennyF/ticked"
               target="_blank"
