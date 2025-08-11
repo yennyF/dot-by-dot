@@ -168,7 +168,7 @@ export default function Start() {
           </div>
 
           <div>
-            <h3 className="mt-[100px] text-2xl">Want a quick preview?</h3>
+            <h2 className="mt-[100px] text-2xl">Want a quick preview?</h2>
 
             <p className="mt-[30px]">
               Fill your app with sample data to explore the app. You can reset
