@@ -79,7 +79,7 @@ export default function Start() {
     setIsLoading(false);
   }
 
-  async function handleClickRunDemo() {
+  async function handleClickExplore() {
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
@@ -156,7 +156,7 @@ export default function Start() {
             ))}
           </div>
 
-          <div className="mt-[50px] flex justify-center">
+          <div className="mt-[40px] flex justify-center">
             <button
               className="button-accent mt-2 flex items-center gap-2"
               disabled={isLoading || tasksSelected.size < 3}
@@ -171,17 +171,17 @@ export default function Start() {
             <h3 className="mt-[100px] text-2xl">Want a quick preview?</h3>
 
             <p className="mt-[30px]">
-              Try the demo mode to explore the app. You can reset your tasks
-              anytime in Settings.
+              Fill your app with sample data to explore the app. You can reset
+              your tasks anytime from Settings.
             </p>
 
             <div className="mt-[30px] flex justify-center">
               <button
                 className="button-outline mt-2"
                 disabled={isLoading}
-                onClick={handleClickRunDemo}
+                onClick={handleClickExplore}
               >
-                Run demo
+                Explore
               </button>
             </div>
           </div>
