@@ -70,15 +70,16 @@ export default function HorizontalDragScroll({
         return;
       }
 
-      isMovedRef.current = true;
+      if (!isMovedRef.current) {
+        isMovedRef.current = true;
+        // Capture pointer to continue receiving events even if cursor leaves
+        el.setPointerCapture(e.pointerId);
+        el.style.userSelect = "none"; // Prevent text selection
+        el.style.cursor = "grabbing";
+      }
 
       const dx = e.clientX - startXRef.current;
       el.scrollLeft = scrollLeftRef.current - dx;
-
-      // Capture pointer to continue receiving events even if cursor leaves
-      el.setPointerCapture(e.pointerId);
-      el.style.userSelect = "none"; // Prevent text selection
-      el.style.cursor = "grabbing";
     };
 
     const onPointerUpOrCancel = (e: PointerEvent) => {

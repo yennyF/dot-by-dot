@@ -15,6 +15,7 @@ interface TaskRowProps {
 }
 
 export default function TaskRow({ task, isDummy }: TaskRowProps) {
+  const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 
   useEffect(() => {
@@ -29,8 +30,6 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
   const handleDragEnd = (e: DragEvent) => {
     e.preventDefault();
   };
-
-  const draggable = isDummy ? false : true;
 
   return (
     <div

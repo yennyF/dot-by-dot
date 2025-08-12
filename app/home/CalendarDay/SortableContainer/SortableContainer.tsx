@@ -4,17 +4,17 @@ import { useGroupStore } from "@/app/stores/GroupStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useRef, DragEvent, ReactNode, RefObject } from "react";
 
-interface DraggableScrollProps {
+interface SortableContainerProps {
   children: ReactNode;
   scrollRef: RefObject<HTMLDivElement | null>;
   className?: string;
 }
 
-export default function DraggableScroll({
+export default function SortableContainer({
   children,
   scrollRef,
   className,
-}: DraggableScrollProps) {
+}: SortableContainerProps) {
   const dataSort = useRef<"task" | "group">(null);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
@@ -22,21 +22,6 @@ export default function DraggableScroll({
 
   const moveGroupBefore = useGroupStore((s) => s.moveGroupBefore);
   const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
-
-  const scrollVertically = (e: DragEvent) => {
-    const scrollEl = scrollRef.current;
-    if (!scrollEl) return;
-
-    const scrollSpeed = 5;
-    const threshold = { top: 250, bottom: 50 };
-
-    const { top, bottom } = scrollEl.getBoundingClientRect();
-    const y = e.clientY;
-    const direction =
-      y - top < threshold.top ? -1 : bottom - y < threshold.bottom ? 1 : 0;
-
-    if (direction !== 0) scrollEl.scrollTop += direction * scrollSpeed;
-  };
 
   const getIndicators = () => {
     if (!dataSort.current) return [];
@@ -117,22 +102,43 @@ export default function DraggableScroll({
     }
   };
 
+  const handleDragEnd = () => {
+    // isDraggingRef.current = false;
+  };
+
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     highlightIndicator(e);
   };
+
   const handleDragLeave = () => {
     clearHighlights();
   };
 
+  const handlePointerMove = (e: DragEvent) => {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
+
+    const scrollSpeed = 5;
+    const threshold = { top: 160, bottom: 50 };
+
+    const { top, bottom } = scrollEl.getBoundingClientRect();
+    const y = e.clientY;
+    const direction =
+      y - top < threshold.top ? -1 : bottom - y < threshold.bottom ? 1 : 0;
+
+    if (direction !== 0) scrollEl.scrollTop += direction * scrollSpeed;
+  };
+
   return (
     <div
-      className={`app-DraggableScroll ${className}`}
+      className={`app-SortableContainer ${className}`}
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      onDrag={scrollVertically}
+      onDrag={handlePointerMove}
     >
       {children}
     </div>

@@ -1,10 +1,10 @@
 "use client";
 
 import { Fragment, RefObject, useEffect } from "react";
-import DraggableScroll from "../Draggable/DraggableScroll";
+import SortableContainer from "../SortableContainer/SortableContainer";
 import { LinkReceptor } from "@/app/components/Scroll";
 import { useGroupStore } from "@/app/stores/GroupStore";
-import DropIndicatorGroup from "../Draggable/DropIndicatorGroup";
+import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
 
@@ -21,7 +21,7 @@ export default function HeaderSide({ ref }: CalendarDayProps) {
   });
 
   return (
-    <DraggableScroll
+    <SortableContainer
       scrollRef={ref}
       className="sticky left-0 z-10 flex w-name shrink-0 flex-col gap-2 bg-[var(--background)]"
     >
@@ -46,6 +46,6 @@ export default function HeaderSide({ ref }: CalendarDayProps) {
         </Fragment>
       ))}
       <DropIndicatorGroup />
-    </DraggableScroll>
+    </SortableContainer>
   );
 }

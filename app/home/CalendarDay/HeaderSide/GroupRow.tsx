@@ -20,6 +20,8 @@ interface GroupRowProps {
 }
 
 export default function GroupRow({ group, isDummy }: GroupRowProps) {
+  const draggable = isDummy ? false : true;
+
   const [forceShow, setForceShow] = useState(false);
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
@@ -41,8 +43,6 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
       order: "",
     });
   };
-
-  const draggable = isDummy ? false : true;
 
   return (
     <div

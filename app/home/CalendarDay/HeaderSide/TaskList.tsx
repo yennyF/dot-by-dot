@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
-import DropIndicatorTask from "../Draggable/DropIndicatorTask";
+import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
 
 interface TaskListProps {
