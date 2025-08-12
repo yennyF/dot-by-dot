@@ -33,11 +33,7 @@ export default function LeftButton({
       contentClassName="z-40"
       asChild
     >
-      <button
-        className="button-outline button-sm"
-        disabled={offset === 0}
-        onClick={handleClick}
-      >
+      <button className="button-outline button-sm" onClick={handleClick}>
         <ChevronLeftIcon /> {isAtLeft ? "More" : ""}
       </button>
     </AppTooltip>
