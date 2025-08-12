@@ -260,11 +260,21 @@ input {
       @apply text-[var(--white)];
     }
 
-    &[data-state="open"] {
+    &[data-state="open"]{
       @apply bg-[var(--black)];
 
       svg {
         @apply text-[var(--white)];
+      }
+    }
+
+    span[data-state="open"] {
+      .button-icon-sheer {
+        @apply bg-[var(--black)];
+  
+        svg {
+          @apply text-[var(--white)];
+        }
       }
     }
   }

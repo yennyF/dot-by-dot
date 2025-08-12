@@ -58,13 +58,9 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
       >
         {isDummy ? (
           <TaskCreatePopover>
-            <span>
-              <AppTooltip content="Rename" contentClassName="z-10" asChild>
-                <button className="button-icon-sheer">
-                  <Pencil1Icon />
-                </button>
-              </AppTooltip>
-            </span>
+            <button className="button-icon-sheer">
+              <Pencil1Icon />
+            </button>
           </TaskCreatePopover>
         ) : (
           <>
