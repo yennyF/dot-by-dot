@@ -15,14 +15,13 @@ export default function LeftButton({
 
   const { loadMore } = useLoadMore(scrollRef);
 
-  const offset = scrollRef.current?.clientWidth
-    ? (scrollRef.current?.clientWidth - 300) * 0.5
-    : 0;
-
   const handleClick = async () => {
     if (isAtLeft) {
       await loadMore();
     } else {
+      const offset = scrollRef.current?.clientWidth
+        ? (scrollRef.current?.clientWidth - 300) * 0.5
+        : 0;
       scrollToLeftBy(offset);
     }
   };

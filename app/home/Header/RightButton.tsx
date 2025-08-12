@@ -12,11 +12,10 @@ export default function RightButton({
 }) {
   const { isAtRight, scrollToRightBy } = UseScrollToRight(scrollRef);
 
-  const offset = scrollRef.current?.clientWidth
-    ? (scrollRef.current?.clientWidth - 300) * 0.5
-    : 0;
-
   const handleClick = async () => {
+    const offset = scrollRef.current?.clientWidth
+      ? (scrollRef.current?.clientWidth - 300) * 0.5
+      : 0;
     scrollToRightBy(offset);
   };
 
