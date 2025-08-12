@@ -21,7 +21,7 @@ export default function CalendarDay({ ref }: CalendarDayProps) {
       className="app-CalendarDay no-scrollbar relative mx-[40px] mb-[30px] mt-[70px] max-h-[calc(100vh-70px-30px)] w-[calc(100vw-80px)] flex-1 overflow-scroll"
     >
       <Header />
-      <div className="flex w-fit">
+      <div className="sticky left-0 flex w-fit">
         <HeaderSide ref={ref} />
         <ShadowLeft scrollRef={ref} />
         <Body />

@@ -23,31 +23,29 @@ export default function HeaderSide({ ref }: CalendarDayProps) {
   return (
     <DraggableScroll
       scrollRef={ref}
-      className="sticky left-0 z-10 w-name shrink-0 bg-[var(--background)]"
+      className="sticky left-0 z-10 flex w-name shrink-0 flex-col gap-2 bg-[var(--background)]"
     >
-      <div className="flex flex-col gap-2">
-        <div>
-          <LinkReceptor id="create-task" />
-          <TaskList groupId={null} />
-          <LinkReceptor id="create-group"></LinkReceptor>
-        </div>
-        {dummyGroup && (
-          <>
-            <DropIndicatorGroup />
-            <GroupRow group={dummyGroup} isDummy={true} />
-          </>
-        )}
-        {groups?.map((group) => (
-          <Fragment key={group.id}>
-            <DropIndicatorGroup beforeId={group.id} />
-            <div>
-              <GroupRow group={group} />
-              <TaskList groupId={group.id} />
-            </div>
-          </Fragment>
-        ))}
-        <DropIndicatorGroup />
+      <div>
+        <LinkReceptor id="create-task" />
+        <TaskList groupId={null} />
+        <LinkReceptor id="create-group"></LinkReceptor>
       </div>
+      {dummyGroup && (
+        <>
+          <DropIndicatorGroup />
+          <GroupRow group={dummyGroup} isDummy={true} />
+        </>
+      )}
+      {groups?.map((group) => (
+        <Fragment key={group.id}>
+          <DropIndicatorGroup beforeId={group.id} />
+          <div>
+            <GroupRow group={group} />
+            <TaskList groupId={group.id} />
+          </div>
+        </Fragment>
+      ))}
+      <DropIndicatorGroup />
     </DraggableScroll>
   );
 }
