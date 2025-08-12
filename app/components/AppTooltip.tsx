@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { Tooltip } from "radix-ui";
 import { ReactNode } from "react";
 
@@ -21,7 +20,7 @@ export default function AppTooltip({
         <Tooltip.Trigger asChild={asChild}>{children}</Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content
-            className={clsx("tooltip-content", contentClassName)}
+            className={`tooltip-content ${contentClassName}`}
             side="bottom"
             sideOffset={5}
           >

@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { RefObject } from "react";
 import LoadMore from "./LoadMore";
 
@@ -11,10 +10,7 @@ export function ShadowLeft({ className, scrollRef }: ShadowProps) {
   return (
     <>
       <div
-        className={clsx(
-          "shadow-left left-name sticky z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)]",
-          className
-        )}
+        className={`"shadow-left left-name sticky z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)] ${className}`}
       />
       {scrollRef ? (
         <LoadMore scrollRef={scrollRef} />
@@ -28,10 +24,7 @@ export function ShadowLeft({ className, scrollRef }: ShadowProps) {
 export function ShadowRight({ className }: ShadowProps) {
   return (
     <div
-      className={clsx(
-        "shadow-right sticky right-0 w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)]",
-        className
-      )}
+      className={`shadow-right sticky right-0 w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)] ${className}`}
     />
   );
 }
@@ -39,10 +32,7 @@ export function ShadowRight({ className }: ShadowProps) {
 export function ShadowTop({ className }: ShadowProps) {
   return (
     <div
-      className={clsx(
-        "shadow-top h-[15px] w-full bg-gradient-to-t from-transparent to-[var(--background)]",
-        className
-      )}
+      className={`shadow-top h-[15px] w-full bg-gradient-to-t from-transparent to-[var(--background)] ${className}`}
     ></div>
   );
 }
@@ -56,10 +46,7 @@ export function ShadowBottom({ className }: ShadowProps) {
         </button>
       </div> */}
       <div
-        className={clsx(
-          "shadow-bottom sticky bottom-0 left-0 z-10 h-[15px] w-full bg-gradient-to-b from-transparent to-[var(--background)]",
-          className
-        )}
+        className={`shadow-bottom sticky bottom-0 left-0 z-10 h-[15px] w-full bg-gradient-to-b from-transparent to-[var(--background)] ${className}`}
       />
     </>
   );
