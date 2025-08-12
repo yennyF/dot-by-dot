@@ -38,7 +38,6 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
         "app-TaskRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
-      style={{ width: "var(--width-name)" }}
       draggable={draggable}
       data-id={task.id}
       onDragStart={handleDragStart}

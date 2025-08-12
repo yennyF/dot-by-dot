@@ -50,7 +50,6 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
         "app-GroupRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
-      style={{ width: "var(--width-name)" }}
       draggable={draggable}
       data-id={group.id}
       onDragStart={handleDragStart}
