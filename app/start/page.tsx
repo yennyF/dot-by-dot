@@ -18,6 +18,7 @@ import { Id, toast } from "react-toastify";
 import { useTrackStore } from "../stores/TrackStore";
 import AppHeader from "../components/AppHeader/AppHeader";
 import { useRouter } from "next/navigation";
+import { useAppStore } from "../stores/AppStore";
 
 export default function Start() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function Start() {
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
 
-  const start = useTrackStore((s) => s.start);
+  const start = useAppStore((s) => s.start);
 
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 

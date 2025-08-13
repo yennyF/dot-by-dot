@@ -14,6 +14,7 @@ import AppTooltip from "../components/AppTooltip";
 import { notifyLoadError } from "../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
+import { useAppStore } from "../stores/AppStore";
 
 export default function Home() {
   return (
@@ -28,7 +29,7 @@ function Content() {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const init = useTrackStore((s) => s.init);
+  const init = useAppStore((s) => s.init);
 
   useEffect(() => {
     console.log("Home rendered");

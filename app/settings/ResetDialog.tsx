@@ -10,6 +10,7 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { useTrackStore } from "../stores/TrackStore";
+import { useAppStore } from "../stores/AppStore";
 
 interface ResetDialogProps {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ function Content() {
 
   const toastId = useRef<Id>(null);
 
-  const reset = useTrackStore((s) => s.reset);
+  const reset = useAppStore((s) => s.reset);
 
   async function onClickHandle() {
     if (toastId.current) toast.dismiss(toastId.current);
