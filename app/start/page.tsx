@@ -27,6 +27,7 @@ export default function Start() {
   const groupedTasks = useRef(genGroupedTasks());
 
   const start = useAppStore((s) => s.start);
+  const startMock = useAppStore((s) => s.startMock);
 
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
@@ -87,20 +88,7 @@ export default function Start() {
     toastId.current = notifyLoading();
 
     try {
-      const groups: Group[] = [];
-      const tasks: Task[] = genUngroupedTasks();
-      genGroupedTasks().forEach(([group, _tasks]) => {
-        groups.push(group);
-        tasks.push(..._tasks);
-      });
-
-      const tracks = genTracks(
-        useTrackStore.getState().startDate,
-        useTrackStore.getState().endDate,
-        tasks
-      );
-
-      await start(groups, tasks, tracks);
+      await startMock();
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
       router.replace("/");

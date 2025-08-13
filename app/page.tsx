@@ -2,11 +2,12 @@
 
 import { useEffect } from "react";
 import { AppProvider } from "./AppContext";
-import { db } from "./repositories/db";
+import { getDatabase } from "./repositories/db";
 import Home from "./home/Home";
 import { useLiveQuery } from "dexie-react-hooks";
 import Loading from "./components/Loading/Loading";
 import Start from "./start/page";
+import { useAppStore } from "./stores/AppStore";
 
 export default function Page() {
   return (
@@ -17,7 +18,12 @@ export default function Page() {
 }
 
 function Content() {
-  const count = useLiveQuery(() => db.tasks.count(), []);
+  const testMode = useAppStore((s) => s.testMode);
+
+  const count = useLiveQuery(() => {
+    const db = getDatabase();
+    return db.tasks.count();
+  }, [testMode]);
 
   useEffect(() => {
     console.log("Page rendered");

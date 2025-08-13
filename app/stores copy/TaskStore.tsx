@@ -40,6 +40,7 @@ type Action = {
 export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
   immer((set) => ({
     dummyTask: undefined,
+    hilightedTask: null,
     tasksByGroup: undefined,
 
     setDummyTask: (task: Task | undefined) => set(() => ({ dummyTask: task })),
@@ -47,14 +48,15 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     destroyTasks: async () => {
       set(() => ({
         dummyTask: undefined,
+        hilightedTask: null,
         tasksByGroup: undefined,
       }));
     },
     initTasks: async () => {
       try {
         const tasksByGroup: Record<string, Task[]> = {};
-        const db = getDatabase();
 
+        const db = getDatabase();
         await db.groups.each((group) => {
           tasksByGroup[group.id] = [];
         });

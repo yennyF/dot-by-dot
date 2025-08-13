@@ -8,7 +8,7 @@ import Body from "./Body/Body";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 
 interface CalendarDayProps {
-  ref: RefObject<HTMLDivElement>;
+  ref: RefObject<HTMLDivElement | null>;
 }
 
 export default function CalendarDay({ ref }: CalendarDayProps) {

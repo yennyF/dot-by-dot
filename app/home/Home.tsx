@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
-import { useTrackStore } from "../stores/TrackStore";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import AppHeader from "../components/AppHeader/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
