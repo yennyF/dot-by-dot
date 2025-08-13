@@ -3,8 +3,12 @@
 import { RefObject } from "react";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import UseScrollToLeft from "@/app/hooks/UseScrollToLeft";
-import AppTooltip from "@/app/components/AppTooltip";
 import { useLoadMore } from "@/app/hooks/useLoadMore";
+import {
+  AppTooltip,
+  AppTrigger,
+  AppContent,
+} from "@/app/components/AppTooltip";
 
 export default function LeftButton({
   scrollRef,
@@ -27,14 +31,15 @@ export default function LeftButton({
   };
 
   return (
-    <AppTooltip
-      content={isAtLeft ? "Load more" : "Go previous"}
-      contentClassName="z-40"
-      asChild
-    >
-      <button className="button-outline button-sm" onClick={handleClick}>
-        <ChevronLeftIcon /> {isAtLeft ? "More" : ""}
-      </button>
+    <AppTooltip>
+      <AppTrigger asChild>
+        <button className="button-outline button-sm" onClick={handleClick}>
+          <ChevronLeftIcon /> {isAtLeft ? "More" : ""}
+        </button>
+      </AppTrigger>
+      <AppContent className="z-40">
+        {isAtLeft ? "Load more" : "Go previous"}
+      </AppContent>
     </AppTooltip>
   );
 }

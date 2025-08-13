@@ -178,7 +178,7 @@ input {
 }
 
 .checkbox {
-  @apply flex gap-3;
+  @apply flex;
 
   .checkbox-box {
     @apply flex size-[14px] flex-shrink-0 appearance-none items-center justify-center rounded-sm outline-none outline-1 outline-offset-0 outline-[var(--black)];
@@ -197,7 +197,7 @@ input {
   }
 
   .checkbox-label {
-    @apply hover:cursor-pointer;
+    @apply hover:cursor-pointer pl-3;
   }
 }
 

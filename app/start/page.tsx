@@ -1,11 +1,7 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
-import {
-  genGroupedTasks,
-  genTracks,
-  genUngroupedTasks,
-} from "../repositories/data";
+import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
 import { ReactNode, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
 import { Checkbox } from "radix-ui";
@@ -15,24 +11,23 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import { useTrackStore } from "../stores/TrackStore";
 import AppHeader from "../components/AppHeader/AppHeader";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
+import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
 
 export default function Start() {
   const router = useRouter();
 
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
+  const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
+  const testMode = useAppStore((s) => s.testMode);
   const start = useAppStore((s) => s.start);
   const startMock = useAppStore((s) => s.startMock);
 
-  const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const toastId = useRef<Id>(null);
 
   const handleCheckedChange = (task: Task) => {
@@ -81,7 +76,7 @@ export default function Start() {
     setIsLoading(false);
   }
 
-  async function handleClickExplore() {
+  async function handleClickStartMock() {
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
@@ -104,10 +99,10 @@ export default function Start() {
     <>
       <AppHeader />
       <div className="flex w-screen justify-center">
-        <div className="mb-[200px] max-w-[800px]">
+        <div className="mb-[100px] max-w-[800px]">
           <h1 className="mt-[100px] text-4xl font-bold">Getting started</h1>
 
-          <p className="mt-[50px]">
+          <p className="mt-[50px] leading-relaxed">
             Let’s set up your first tasks or habits. Select at least 3 to begin
             — you can update or reorganize them anytime.
           </p>
@@ -123,7 +118,7 @@ export default function Start() {
             ))}
           </div>
 
-          <p className="mt-[30px]">
+          <p className="mt-[30px] leading-relaxed">
             Use groups to stay organized. You can create a group and add tasks
             inside it — like folders for your habits.
           </p>
@@ -145,7 +140,7 @@ export default function Start() {
             ))}
           </div>
 
-          <div className="mt-[40px] flex justify-center">
+          <div className="mt-[40px] flex flex-col items-center justify-center">
             <button
               className="button-accent mt-2 flex items-center gap-2"
               disabled={isLoading || tasksSelected.size < 3}
@@ -154,25 +149,29 @@ export default function Start() {
               <span>Let&apos;s begin </span>
               <ArrowRightIcon />
             </button>
-          </div>
 
-          <div>
-            <h2 className="mt-[100px] text-2xl">Want a quick preview?</h2>
+            {testMode && (
+              <AppTooltip>
+                <AppTrigger asChild>
+                  <button
+                    className="mt-5 text-xs hover:text-[var(--accent)] hover:underline"
+                    disabled={isLoading}
+                    onClick={handleClickStartMock}
+                  >
+                    Skip for a quick setup
+                  </button>
+                </AppTrigger>
+                <AppContent className="p-2">
+                  <h2 className="text-sm font-bold">Want a quick preview?</h2>
 
-            <p className="mt-[30px]">
-              Fill your app with sample data to explore the app. You can reset
-              your tasks anytime from Settings.
-            </p>
-
-            <div className="mt-[30px] flex justify-center">
-              <button
-                className="button-outline mt-2"
-                disabled={isLoading}
-                onClick={handleClickExplore}
-              >
-                Explore
-              </button>
-            </div>
+                  <p className="mt-[20px] leading-relaxed">
+                    Fill your app with sample data to explore the app.
+                    <br />
+                    You can reset your data anytime from Settings.
+                  </p>
+                </AppContent>
+              </AppTooltip>
+            )}
           </div>
         </div>
       </div>
@@ -185,7 +184,7 @@ function GroupItem({ group, children }: { group: Group; children: ReactNode }) {
     <div className="w-[350px]">
       <div className="mb-2 flex items-center gap-2">
         <CubeIcon className="h-[12px] w-[12px] shrink-0" />
-        <h3 className="font-bold">{group.name}</h3>
+        <h3 className="text-sm font-bold">{group.name}</h3>
       </div>
       {children}
     </div>

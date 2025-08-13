@@ -12,7 +12,11 @@ import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";
 import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
-import AppTooltip from "@/app/components/AppTooltip";
+import {
+  AppTooltip,
+  AppTrigger,
+  AppContent,
+} from "@/app/components/AppTooltip";
 
 interface GroupRowProps {
   group: Group;
@@ -47,7 +51,7 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       draggable={draggable}
@@ -57,7 +61,7 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
     >
       <div className="flex items-center gap-2 overflow-hidden">
         <CubeIcon className="h-[12px] w-[12px] shrink-0" />
-        <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
+        <div className="overflow-hidden text-ellipsis text-nowrap text-sm font-bold">
           {group.name}
         </div>
       </div>
@@ -75,28 +79,37 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
           </GroupCreatePopover>
         ) : (
           <>
-            <AppTooltip content="New task" contentClassName="z-10" asChild>
-              <button className="button-icon-sheer" onClick={handleClickNew}>
-                <PlusIcon />
-              </button>
+            <AppTooltip>
+              <AppTrigger asChild>
+                <button className="button-icon-sheer" onClick={handleClickNew}>
+                  <PlusIcon />
+                </button>
+              </AppTrigger>
+              <AppContent className="z-10">New task</AppContent>
             </AppTooltip>
 
             <GroupRenamePopover group={group} onOpenChange={setForceShow}>
               <span>
-                <AppTooltip content="Rename" contentClassName="z-10" asChild>
-                  <button className="button-icon-sheer">
-                    <Pencil1Icon />
-                  </button>
+                <AppTooltip>
+                  <AppTrigger asChild>
+                    <button className="button-icon-sheer">
+                      <Pencil1Icon />
+                    </button>
+                  </AppTrigger>
+                  <AppContent className="z-10">Rename</AppContent>
                 </AppTooltip>
               </span>
             </GroupRenamePopover>
 
             <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
               <span>
-                <AppTooltip content="Delete" contentClassName="z-10" asChild>
-                  <button className="button-icon-sheer">
-                    <TrashIcon />
-                  </button>
+                <AppTooltip>
+                  <AppTrigger asChild>
+                    <button className="button-icon-sheer">
+                      <TrashIcon />
+                    </button>
+                  </AppTrigger>
+                  <AppContent className="z-10">Delete</AppContent>
                 </AppTooltip>
               </span>
             </GroupDeleteDialog>

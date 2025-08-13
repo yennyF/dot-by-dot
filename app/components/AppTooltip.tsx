@@ -1,34 +1,37 @@
 import { Tooltip } from "radix-ui";
-import { ReactNode } from "react";
 
-interface AppTooltipProps {
-  children: ReactNode;
-  asChild?: boolean;
-  content: ReactNode;
-  contentClassName?: string;
-}
-
-export default function AppTooltip({
-  children,
-  asChild,
-  content,
-  contentClassName,
-}: AppTooltipProps) {
+function AppTooltip({ children }: Tooltip.TooltipProps) {
   return (
     <Tooltip.Provider>
-      <Tooltip.Root>
-        <Tooltip.Trigger asChild={asChild}>{children}</Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Content
-            className={`tooltip-content ${contentClassName}`}
-            side="bottom"
-            sideOffset={5}
-          >
-            {content}
-            <Tooltip.Arrow className="tooltip-arrow" />
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+      <Tooltip.Root>{children}</Tooltip.Root>
     </Tooltip.Provider>
   );
 }
+
+function AppTrigger({ children, ...props }: Tooltip.TooltipTriggerProps) {
+  return <Tooltip.Trigger {...props}>{children}</Tooltip.Trigger>;
+}
+
+function AppContent({
+  children,
+  className,
+  side,
+  sideOffset,
+  ...props
+}: Tooltip.TooltipContentProps) {
+  return (
+    <Tooltip.Portal>
+      <Tooltip.Content
+        {...props}
+        className={`tooltip-content ${className}`}
+        side={side ?? "bottom"}
+        sideOffset={sideOffset ?? 5}
+      >
+        {children}
+        <Tooltip.Arrow className="tooltip-arrow" />
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  );
+}
+
+export { AppTooltip, AppTrigger, AppContent };

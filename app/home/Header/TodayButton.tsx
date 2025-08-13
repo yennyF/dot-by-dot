@@ -1,4 +1,8 @@
-import AppTooltip from "@/app/components/AppTooltip";
+import {
+  AppTooltip,
+  AppTrigger,
+  AppContent,
+} from "@/app/components/AppTooltip";
 import { Link } from "@/app/components/Scroll";
 
 export default function TodayButton() {
@@ -17,13 +21,16 @@ export default function TodayButton() {
       options={{ block: "end", behavior: "smooth", inline: "start" }}
       autoScroll={true}
     >
-      <AppTooltip content="Go to recent" contentClassName="z-40" asChild>
-        <button
-          className="button-outline button-sm"
-          // disabled={isVisible}
-        >
-          Today
-        </button>
+      <AppTooltip>
+        <AppTrigger asChild>
+          <button
+            className="button-outline button-sm"
+            // disabled={isVisible}
+          >
+            Today
+          </button>
+        </AppTrigger>
+        <AppContent className="z-40">Go to recent</AppContent>
       </AppTooltip>
     </Link>
   );

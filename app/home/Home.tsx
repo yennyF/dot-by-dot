@@ -9,11 +9,11 @@ import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
 import LockButton from "./Header/LockButton";
 import Loading from "../components/Loading/Loading";
-import AppTooltip from "../components/AppTooltip";
 import { notifyLoadError } from "../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
 import { useAppStore } from "../stores/AppStore";
+import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 
 export default function Home() {
   return (
@@ -29,6 +29,7 @@ function Content() {
   const [isLoading, setIsLoading] = useState(true);
 
   const init = useAppStore((s) => s.init);
+  const testMode = useAppStore((s) => s.testMode);
 
   useEffect(() => {
     console.log("Home rendered");
@@ -45,11 +46,7 @@ function Content() {
       setIsLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (isLoading) {
-    return <Loading />;
-  }
+  }, [testMode]);
 
   return (
     <>
@@ -60,11 +57,14 @@ function Content() {
 
             <CreateDropdown>
               <span>
-                <AppTooltip content="New" contentClassName="z-40" asChild>
-                  <button className="button-accent button-sm">
-                    <PlusIcon />
-                    <TriangleDownIcon />
-                  </button>
+                <AppTooltip>
+                  <AppTrigger asChild>
+                    <button className="button-accent button-sm">
+                      <PlusIcon />
+                      <TriangleDownIcon />
+                    </button>
+                  </AppTrigger>
+                  <AppContent className="z-40">New</AppContent>
                 </AppTooltip>
               </span>
             </CreateDropdown>
@@ -77,7 +77,7 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      <CalendarDay ref={calendarRef} />
+      {isLoading ? <Loading /> : <CalendarDay ref={calendarRef} />}
     </>
   );
 }

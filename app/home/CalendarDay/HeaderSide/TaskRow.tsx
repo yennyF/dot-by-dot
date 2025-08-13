@@ -7,7 +7,11 @@ import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
-import AppTooltip from "@/app/components/AppTooltip";
+import {
+  AppContent,
+  AppTooltip,
+  AppTrigger,
+} from "@/app/components/AppTooltip";
 
 interface TaskRowProps {
   task: Task;
@@ -34,7 +38,7 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
   return (
     <div
       className={clsx(
-        "app-TaskRow group/name h-row sticky left-0 flex items-center justify-between gap-1 bg-[var(--background)]",
+        "app-TaskRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
         draggable && "draggable cursor-grab active:cursor-grabbing"
       )}
       draggable={draggable}
@@ -65,20 +69,26 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
           <>
             <TaskRenamePopover task={task} onOpenChange={setForceShow}>
               <span>
-                <AppTooltip content="Rename" contentClassName="z-10" asChild>
-                  <button className="button-icon-sheer">
-                    <Pencil1Icon />
-                  </button>
+                <AppTooltip>
+                  <AppTrigger asChild>
+                    <button className="button-icon-sheer">
+                      <Pencil1Icon />
+                    </button>
+                  </AppTrigger>
+                  <AppContent className="z-10">Rename</AppContent>
                 </AppTooltip>
               </span>
             </TaskRenamePopover>
 
             <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
               <span>
-                <AppTooltip content="Delete" contentClassName="z-10" asChild>
-                  <button className="button-icon-sheer">
-                    <TrashIcon />
-                  </button>
+                <AppTooltip>
+                  <AppTrigger asChild>
+                    <button className="button-icon-sheer">
+                      <TrashIcon />
+                    </button>
+                  </AppTrigger>
+                  <AppContent className="z-10">Delete</AppContent>
                 </AppTooltip>
               </span>
             </TaskDeleteDialog>

@@ -2,8 +2,12 @@
 
 import { RefObject, useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import AppTooltip from "@/app/components/AppTooltip";
 import { useLoadMore } from "@/app/hooks/useLoadMore";
+import {
+  AppTooltip,
+  AppTrigger,
+  AppContent,
+} from "@/app/components/AppTooltip";
 
 export default function LoadMore({
   scrollRef,
@@ -45,14 +49,17 @@ export default function LoadMore({
       className="sticky top-[calc(110px+15px)] flex w-[30px] shrink-0 items-center justify-center"
       style={{ height: height - 110 - 15 - 15 + "px" }}
     >
-      <AppTooltip content="Load more" contentClassName="z-10" asChild>
-        <button
-          className="button-icon-sheer"
-          onClick={handleClick}
-          disabled={isLoading}
-        >
-          <ArrowLeftIcon />
-        </button>
+      <AppTooltip>
+        <AppTrigger asChild>
+          <button
+            className="button-icon-sheer"
+            onClick={handleClick}
+            disabled={isLoading}
+          >
+            <ArrowLeftIcon />
+          </button>
+        </AppTrigger>
+        <AppContent className="z-10">Load more</AppContent>
       </AppTooltip>
     </div>
   );
