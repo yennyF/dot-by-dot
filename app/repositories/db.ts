@@ -13,7 +13,7 @@ const schema = {
   tracks: "[taskId+date], taskId, date",
 };
 
-const dbName = process.env.NEXT_PUBLIC_DB_NAME || "DataDB";
+const dbName = process.env.NEXT_PUBLIC_DB_NAME || "ProdDB";
 
 export const db = new Dexie(dbName) as DataDBType;
 
