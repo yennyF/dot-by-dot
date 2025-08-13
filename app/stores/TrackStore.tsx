@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { LocaleDateString } from "../repositories/types";
-import { getDatabase } from "../repositories/db";
+import { db } from "../repositories/db";
 import {
   notifyCreateError,
   notifyDeleteError,
@@ -54,7 +54,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
-      const db = getDatabase();
       await db.tracks
         .where("date")
         .between(midnightUTC(startDate), midnightUTC(endDate), true, true)
@@ -75,7 +74,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tastId = notifyLoading();
 
     try {
-      const db = getDatabase();
       await db.tracks
         .where("date")
         .between(
@@ -103,7 +101,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   clearHistory: async () => {
     try {
       get().destroyTracks();
-      const db = getDatabase();
       await db.tracks.clear();
     } catch (error) {
       console.error("Error cleaning history:", error);
@@ -123,7 +120,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.add({ taskId, date });
     } catch (error) {
       console.error("Error checking task:", error);
@@ -141,7 +137,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
     try {
       date = midnightUTC(date);
-      const db = getDatabase();
       await db.tracks.bulkAdd(taskIds.map((taskId) => ({ taskId, date })));
     } catch (error) {
       console.error("Error checking tracks:", error);
@@ -162,7 +157,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.delete([taskId, date]);
     } catch (error) {
       console.error("Error checking task:", error);
@@ -183,7 +177,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.bulkDelete(taskIds.map((taskId) => [taskId, date]));
     } catch (error) {
       console.error("Error checking tracks:", error);

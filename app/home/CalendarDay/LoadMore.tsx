@@ -59,7 +59,7 @@ export default function LoadMore({
             <ArrowLeftIcon />
           </button>
         </AppTrigger>
-        <AppContent className="z-10">Load more</AppContent>
+        <AppContent>Load more</AppContent>
       </AppTooltip>
     </div>
   );

@@ -23,7 +23,7 @@ function AppContent({
     <Tooltip.Portal>
       <Tooltip.Content
         {...props}
-        className={`tooltip-content ${className}`}
+        className={`tooltip-content z-50 ${className}`}
         side={side ?? "bottom"}
         sideOffset={sideOffset ?? 5}
       >

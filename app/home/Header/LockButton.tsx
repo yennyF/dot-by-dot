@@ -26,9 +26,7 @@ export default function LockButton() {
           {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
         </button>
       </AppTrigger>
-      <AppContent className="z-40">
-        {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
-      </AppContent>
+      <AppContent>{unlock ? <LockOpen1Icon /> : <LockClosedIcon />}</AppContent>
     </AppTooltip>
   );
 }

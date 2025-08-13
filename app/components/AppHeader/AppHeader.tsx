@@ -3,7 +3,6 @@
 import { ReactNode, useEffect } from "react";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import MenuDropdown from "./MenuDropdown";
-import SwitchMode from "./SwitchMode";
 
 export default function AppHeader({ children }: { children?: ReactNode }) {
   useEffect(() => {
@@ -17,7 +16,6 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
           <HamburgerMenuIcon />
         </button>
       </MenuDropdown>
-      <SwitchMode />
       {children}
     </header>
   );

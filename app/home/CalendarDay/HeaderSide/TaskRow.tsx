@@ -75,7 +75,7 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
                       <Pencil1Icon />
                     </button>
                   </AppTrigger>
-                  <AppContent className="z-10">Rename</AppContent>
+                  <AppContent>Rename</AppContent>
                 </AppTooltip>
               </span>
             </TaskRenamePopover>
@@ -88,7 +88,7 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
                       <TrashIcon />
                     </button>
                   </AppTrigger>
-                  <AppContent className="z-10">Delete</AppContent>
+                  <AppContent>Delete</AppContent>
                 </AppTooltip>
               </span>
             </TaskDeleteDialog>

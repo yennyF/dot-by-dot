@@ -30,7 +30,7 @@ export default function TodayButton() {
             Today
           </button>
         </AppTrigger>
-        <AppContent className="z-40">Go to recent</AppContent>
+        <AppContent>Go to recent</AppContent>
       </AppTooltip>
     </Link>
   );

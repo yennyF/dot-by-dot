@@ -26,11 +26,6 @@ export default function About() {
             accessible from the same browser and device you’ve been using.
           </p>
 
-          {/* <p className="mt-[30px]">
-            Fun fact: the “Load Sample Data” button exists so I can test the app
-            without touching my real tasks!
-          </p> */}
-
           <p className="mt-[60px]">
             It’s open source — peek at the code here:{" "}
             <a

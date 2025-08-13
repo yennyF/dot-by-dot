@@ -29,7 +29,6 @@ function Content() {
   const [isLoading, setIsLoading] = useState(true);
 
   const init = useAppStore((s) => s.init);
-  const testMode = useAppStore((s) => s.testMode);
 
   useEffect(() => {
     console.log("Home rendered");
@@ -46,7 +45,7 @@ function Content() {
       setIsLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [testMode]);
+  }, []);
 
   return (
     <>
@@ -64,7 +63,7 @@ function Content() {
                       <TriangleDownIcon />
                     </button>
                   </AppTrigger>
-                  <AppContent className="z-40">New</AppContent>
+                  <AppContent>New</AppContent>
                 </AppTooltip>
               </span>
             </CreateDropdown>

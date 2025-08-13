@@ -37,9 +37,7 @@ export default function LeftButton({
           <ChevronLeftIcon /> {isAtLeft ? "More" : ""}
         </button>
       </AppTrigger>
-      <AppContent className="z-40">
-        {isAtLeft ? "Load more" : "Go previous"}
-      </AppContent>
+      <AppContent>{isAtLeft ? "Load more" : "Go previous"}</AppContent>
     </AppTooltip>
   );
 }

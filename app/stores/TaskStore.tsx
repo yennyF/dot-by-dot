@@ -9,7 +9,7 @@ import {
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
-import { getDatabase } from "../repositories/db";
+import { db } from "../repositories/db";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -53,7 +53,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
     initTasks: async () => {
       try {
         const tasksByGroup: Record<string, Task[]> = {};
-        const db = getDatabase();
 
         await db.groups.each((group) => {
           tasksByGroup[group.id] = [];
@@ -91,7 +90,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!task) throw Error();
 
-        const db = getDatabase();
         await db.tasks.add(task);
       } catch (error) {
         console.error("Error adding task:", error);
@@ -110,7 +108,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           task.name = props.name;
         });
 
-        const db = getDatabase();
         await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error updating task:", error);
@@ -163,7 +160,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!props) throw Error();
 
-        const db = getDatabase();
         await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error moving task:", error);
@@ -230,7 +226,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!props) throw Error();
 
-        const db = getDatabase();
         await db.tasks.update(id, props);
       } catch (error) {
         console.error("Error moving task:", error);
@@ -257,7 +252,6 @@ export const useTaskStore = create<State & Action, [["zustand/immer", never]]>(
           tasksByGroup[loc.key].splice(loc.index, 1);
         });
 
-        const db = getDatabase();
         await db.tasks.delete(id);
       } catch (error) {
         console.error("Error deleting task:", error);

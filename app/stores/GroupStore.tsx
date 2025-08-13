@@ -10,7 +10,7 @@ import {
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
-import { getDatabase } from "../repositories/db";
+import { db } from "../repositories/db";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -38,7 +38,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
     },
     initGroups: async () => {
       try {
-        const db = getDatabase();
         const groups = await db.groups.orderBy("order").toArray();
         set(() => ({ groups }));
       } catch (error) {
@@ -73,7 +72,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!group) throw Error();
 
-        const db = getDatabase();
         await db.groups.add(group);
       } catch (error) {
         console.error("Error adding group:", error);
@@ -91,7 +89,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
           group.name = props.name;
         });
 
-        const db = getDatabase();
         await db.groups.update(id, props);
       } catch (error) {
         console.error("Error updating group:", error);
@@ -132,7 +129,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!order) throw Error();
 
-        const db = getDatabase();
         await db.tasks.update(id, { order });
       } catch (error) {
         console.error("Error moving group:", error);
@@ -186,7 +182,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
 
         if (!order) throw Error();
 
-        const db = getDatabase();
         await db.tasks.update(id, { order });
       } catch (error) {
         console.error("Error moving group:", error);
@@ -232,7 +227,6 @@ export const useGroupStore = create<State & Action, [["zustand/immer", never]]>(
         });
 
         // delete from db
-        const db = getDatabase();
         await db.transaction("rw", db.groups, db.tasks, db.tracks, async () => {
           const taskIds = await db.tasks
             .where("groupId")

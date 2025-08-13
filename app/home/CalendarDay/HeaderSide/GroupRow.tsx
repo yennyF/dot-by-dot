@@ -85,7 +85,7 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
                   <PlusIcon />
                 </button>
               </AppTrigger>
-              <AppContent className="z-10">New task</AppContent>
+              <AppContent>New task</AppContent>
             </AppTooltip>
 
             <GroupRenamePopover group={group} onOpenChange={setForceShow}>
@@ -96,7 +96,7 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
                       <Pencil1Icon />
                     </button>
                   </AppTrigger>
-                  <AppContent className="z-10">Rename</AppContent>
+                  <AppContent>Rename</AppContent>
                 </AppTooltip>
               </span>
             </GroupRenamePopover>
@@ -109,7 +109,7 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
                       <TrashIcon />
                     </button>
                   </AppTrigger>
-                  <AppContent className="z-10">Delete</AppContent>
+                  <AppContent>Delete</AppContent>
                 </AppTooltip>
               </span>
             </GroupDeleteDialog>

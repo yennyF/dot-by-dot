@@ -23,7 +23,6 @@ export default function Start() {
   const groupedTasks = useRef(genGroupedTasks());
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
-  const testMode = useAppStore((s) => s.testMode);
   const start = useAppStore((s) => s.start);
   const startMock = useAppStore((s) => s.startMock);
 
@@ -150,7 +149,7 @@ export default function Start() {
               <ArrowRightIcon />
             </button>
 
-            {testMode && (
+            {process.env.NODE_ENV === "development" && (
               <AppTooltip>
                 <AppTrigger asChild>
                   <button
@@ -161,10 +160,10 @@ export default function Start() {
                     Skip for a quick setup
                   </button>
                 </AppTrigger>
-                <AppContent className="p-2">
+                <AppContent className="p-2" side="right" sideOffset={10}>
                   <h2 className="text-sm font-bold">Want a quick preview?</h2>
 
-                  <p className="mt-[20px] leading-relaxed">
+                  <p className="mt-[10px] leading-relaxed">
                     Fill your app with sample data to explore the app.
                     <br />
                     You can reset your data anytime from Settings.

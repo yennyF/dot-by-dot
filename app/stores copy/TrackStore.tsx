@@ -11,7 +11,7 @@ import { midnightUTC, midnightUTCstring } from "../util";
 import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
 import { toast } from "react-toastify";
-import { getDatabase } from "../repositories/db";
+import { db } from "../repositories/db";
 
 type State = {
   unlock: boolean;
@@ -61,7 +61,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
-      const db = getDatabase();
       await db.tracks
         .where("date")
         .between(midnightUTC(startDate), midnightUTC(endDate), true, true)
@@ -94,7 +93,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tastId = notifyLoading();
 
     try {
-      const db = getDatabase();
       await db.tracks
         .where("date")
         .between(
@@ -132,7 +130,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.add({ taskId, date });
     } catch (error) {
       console.error("Error checking task:", error);
@@ -150,7 +147,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
     try {
       date = midnightUTC(date);
-      const db = getDatabase();
       await db.tracks.bulkAdd(taskIds.map((taskId) => ({ taskId, date })));
     } catch (error) {
       console.error("Error checking tracks:", error);
@@ -171,7 +167,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.delete([taskId, date]);
     } catch (error) {
       console.error("Error checking task:", error);
@@ -192,7 +187,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      const db = getDatabase();
       await db.tracks.bulkDelete(taskIds.map((taskId) => [taskId, date]));
     } catch (error) {
       console.error("Error checking tracks:", error);
@@ -203,7 +197,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   clearHistory: async () => {
     try {
       get().destroyTracks();
-      const db = getDatabase();
       await db.tracks.clear();
     } catch (error) {
       console.error("Error cleaning history:", error);
@@ -212,7 +205,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
   reset: async () => {
     try {
-      const db = getDatabase();
       await db.tables.forEach((table) => table.clear());
 
       get().destroyTracks();
@@ -225,7 +217,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
   start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
     try {
-      const db = getDatabase();
       await db.tables.forEach((table) => table.clear());
       await db.groups.bulkAdd(Array.from(groups));
       await db.tasks.bulkAdd(Array.from(tasks));
