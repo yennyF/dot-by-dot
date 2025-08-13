@@ -28,7 +28,7 @@ export default function MonthItem({ date }: MonthItemProps) {
 
   return (
     <div className="month-item w-fit">
-      <div className="left-name sticky w-fit bg-[var(--background)] px-[14px] font-bold">
+      <div className="sticky left-name w-fit bg-[var(--background)] px-[14px] font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="days mt-2 flex">

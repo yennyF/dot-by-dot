@@ -52,7 +52,7 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRowItem w-day relative flex items-center justify-center",
+        "app-GroupRowItem relative flex w-day items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

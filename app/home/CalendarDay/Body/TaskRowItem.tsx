@@ -43,7 +43,7 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
   return (
     <div
       className={clsx(
-        "app-TaskRowItem w-day relative flex items-center justify-center",
+        "app-TaskRowItem relative flex w-day items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

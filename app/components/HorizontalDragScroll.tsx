@@ -24,7 +24,7 @@ import React, {
 interface HorizontalDragScroll {
   children: ReactNode;
   className: string;
-  ref: RefObject<HTMLDivElement>;
+  ref: RefObject<HTMLDivElement | null>;
 }
 
 export default function HorizontalDragScroll({

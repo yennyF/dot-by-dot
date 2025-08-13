@@ -31,7 +31,7 @@ function TaskRowWrapper({ task }: TaskRowProps) {
   });
 
   return (
-    <div className="h-row flex w-fit">
+    <div className="flex h-row w-fit">
       {totalYears.map((date) => (
         <YearItem key={date.toLocaleDateString()} date={date} task={task} />
       ))}

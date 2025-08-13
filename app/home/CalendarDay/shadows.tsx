@@ -10,7 +10,7 @@ export function ShadowLeft({ className, scrollRef }: ShadowProps) {
   return (
     <>
       <div
-        className={`"shadow-left left-name sticky z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)] ${className}`}
+        className={`"shadow-left sticky left-name z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)] ${className}`}
       />
       {scrollRef ? (
         <LoadMore scrollRef={scrollRef} />

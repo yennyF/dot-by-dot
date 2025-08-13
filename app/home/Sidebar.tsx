@@ -1,14 +1,12 @@
 "use client";
 
-import { Cross1Icon, CalendarIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import CalendarMonth from "./CalendarMonth/CalendarMonth";
-import { useGroupStore } from "../stores/GroupStore";
 
 export default function Sidebar() {
-  const [openSidebar, setOpenSidebar] = useState(true);
-  const groups = useGroupStore((s) => s.groups);
+  const [openSidebar] = useState(true);
+  // const groups = useGroupStore((s) => s.groups);
 
   return (
     <motion.div

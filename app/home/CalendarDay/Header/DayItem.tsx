@@ -12,7 +12,7 @@ export default function DayItem({ date }: DayItemProps) {
 
   const children = (
     <div
-      className={`day-item w-day flex flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
+      className={`day-item flex w-day flex-col items-center ${isTodayDate && "text-[var(--accent)]"} ${isWeekend(date) && "text-[var(--inverted)]"}`}
     >
       <div className="text-center text-xs">{format(date, "EEE")}</div>
       <div

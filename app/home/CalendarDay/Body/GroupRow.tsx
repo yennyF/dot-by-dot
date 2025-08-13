@@ -34,7 +34,7 @@ function GroupRowWrapper({ group }: GroupRowWrapperProps) {
   });
 
   return (
-    <div className="h-row flex">
+    <div className="flex h-row">
       {totalYears.map((date) => (
         <YearGroupRow
           key={date.toLocaleDateString()}
