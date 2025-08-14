@@ -73,6 +73,15 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Set DB_NAME
+        run: |
+          if [ "${GITHUB_REF##*/}" = "main" ]; then
+            echo "Building for Production..."
+            echo "NEXT_PUBLIC_DB_NAME=ProdDB" >> .env.production
+          else
+            echo "Building for Development..."
+            echo "NEXT_PUBLIC_DB_NAME=DevDB" >> .env.development
+          fi
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
@@ -83,7 +92,7 @@ jobs:
   # Deployment job
   deploy:
     environment:
-      name: ${{ github.ref_name == 'main' && 'github-pages' || 'github-pages-dev' }}
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
