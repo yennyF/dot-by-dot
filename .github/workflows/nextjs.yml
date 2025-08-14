@@ -7,7 +7,7 @@ name: Deploy Next.js site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["main", "dev"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -73,6 +73,13 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Set DB_NAME
+        run: |
+          if [ "${GITHUB_REF##*/}" = "main" ]; then
+            echo "NEXT_PUBLIC_DB_NAME='ProdDB'" >> .env.development
+          else
+            echo "NEXT_PUBLIC_DB_NAME='DevDB'" >> .env.development
+          fi
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
@@ -91,3 +98,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # deploy dev branch to 'dev' folder, main to root
+          folder: ${{ github.ref == 'refs/heads/main' && '.' || 'dev' }}
