@@ -40,7 +40,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
   tasksByDate: undefined,
   startDate: new Date(),
-  endDate: new Date(),
+  endDate: subMonths(startOfMonth(new Date()), 3),
 
   destroyTracks: async () => {
     set(() => ({
@@ -49,8 +49,8 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     }));
   },
   initTracks: async () => {
-    const endDate = new Date();
-    const startDate = subMonths(startOfMonth(endDate), 3);
+    const startDate = get().startDate;
+    const endDate = get().endDate;
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
