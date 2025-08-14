@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   output: "export",
   // Optional: Change the output directory `out` -> `dist`
   // distDir: 'dist',
-  env: {
-    NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
-  },
 };
 
 export default nextConfig;
