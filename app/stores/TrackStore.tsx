@@ -39,8 +39,8 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
 
   tasksByDate: undefined,
-  startDate: new Date(),
-  endDate: subMonths(startOfMonth(new Date()), 3),
+  startDate: subMonths(startOfMonth(new Date()), 3),
+  endDate: new Date(),
 
   destroyTracks: async () => {
     set(() => ({
@@ -62,7 +62,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
 
-      set(() => ({ tasksByDate, startDate, endDate }));
+      set(() => ({ tasksByDate }));
     } catch (error) {
       console.error("Error initialing tracks:", error);
       throw error;
