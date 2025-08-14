@@ -76,7 +76,7 @@ jobs:
       - name: Set DB_NAME
         run: |
           if [ "${GITHUB_REF##*/}" = "main" ]; then
-            echo "NEXT_PUBLIC_DB_NAME='ProdDB'" >> .env.development
+            echo "NEXT_PUBLIC_DB_NAME='ProdDB'" >> .env.production
           else
             echo "NEXT_PUBLIC_DB_NAME='DevDB'" >> .env.development
           fi
