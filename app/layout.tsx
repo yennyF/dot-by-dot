@@ -31,7 +31,7 @@ export default function RootLayout({
       >
         {children}
         <ToastContainer autoClose={false} draggable={false} />
-        {process.env.NODE_ENV === "development" && <TestModeTag />}
+        {/* {process.env.NODE_ENV === "development" && <TestModeTag />} */}
       </body>
     </html>
   );

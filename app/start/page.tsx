@@ -149,28 +149,26 @@ export default function Start() {
               <ArrowRightIcon />
             </button>
 
-            {process.env.NODE_ENV === "development" && (
-              <AppTooltip>
-                <AppTrigger asChild>
-                  <button
-                    className="mt-5 text-xs hover:text-[var(--accent)] hover:underline"
-                    disabled={isLoading}
-                    onClick={handleClickStartMock}
-                  >
-                    Skip for a quick setup
-                  </button>
-                </AppTrigger>
-                <AppContent className="p-2" side="right" sideOffset={10}>
-                  <h2 className="text-sm font-bold">Want a quick preview?</h2>
+            <AppTooltip>
+              <AppTrigger asChild>
+                <button
+                  className="mt-5 text-xs hover:text-[var(--accent)] hover:underline"
+                  disabled={isLoading}
+                  onClick={handleClickStartMock}
+                >
+                  Skip for a quick setup
+                </button>
+              </AppTrigger>
+              <AppContent className="p-2" side="right" sideOffset={10}>
+                <h2 className="text-sm font-bold">Want a quick preview?</h2>
 
-                  <p className="mt-[10px] leading-relaxed">
-                    Fill your app with sample data to explore the app.
-                    <br />
-                    You can reset your data anytime from Settings.
-                  </p>
-                </AppContent>
-              </AppTooltip>
-            )}
+                <p className="mt-[10px] leading-relaxed">
+                  Fill your app with sample data to explore the app.
+                  <br />
+                  You can reset your data anytime from Settings.
+                </p>
+              </AppContent>
+            </AppTooltip>
           </div>
         </div>
       </div>
