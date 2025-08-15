@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
@@ -24,8 +24,6 @@ export default function Home() {
 }
 
 function Content() {
-  const calendarRef = useRef<HTMLDivElement>(null);
-
   const [isLoading, setIsLoading] = useState(true);
 
   const init = useAppStore((s) => s.init);
@@ -70,13 +68,13 @@ function Content() {
           </div>
 
           <div className="flex items-center gap-2">
-            <LeftButton scrollRef={calendarRef} />
-            <RightButton scrollRef={calendarRef} />
+            <LeftButton />
+            <RightButton />
             <TodayButton />
           </div>
         </div>
       </AppHeader>
-      {isLoading ? <Loading /> : <CalendarDay ref={calendarRef} />}
+      {isLoading ? <Loading /> : <CalendarDay />}
     </>
   );
 }

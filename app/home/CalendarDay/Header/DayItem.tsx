@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isToday, isWeekend } from "date-fns";
-import { useAppStore } from "@/app/stores/AppStore";
+import { scrollStore } from "@/app/stores/scrollStore";
 import { useEffect } from "react";
 
 interface DayItemProps {
@@ -11,7 +11,7 @@ interface DayItemProps {
 export default function DayItem({ date }: DayItemProps) {
   const isTodayDate = isToday(date);
 
-  const todayRef = useAppStore((s) => (isTodayDate ? s.todayRef : null));
+  const todayRef = scrollStore((s) => (isTodayDate ? s.todayRef : null));
 
   // Scroll to "today" the first it loads
   useEffect(() => {

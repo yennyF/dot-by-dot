@@ -1,26 +1,24 @@
 "use client";
 
-import { RefObject } from "react";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import UseScrollToRight from "@/app/hooks/UseScrollToRight";
 import {
   AppTooltip,
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
+import { scrollStore } from "@/app/stores/scrollStore";
 
-export default function RightButton({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
-  const { isAtRight, scrollToRightBy } = UseScrollToRight(scrollRef);
+export default function RightButton() {
+  const scrollRef = scrollStore((s) => s.calendarScrollRef);
+  const isAtRight = scrollStore((s) => s.isAtRight);
+  const scrollToRight = scrollStore((s) => s.scrollToRight);
 
   const handleClick = async () => {
-    const offset = scrollRef.current?.clientWidth
-      ? (scrollRef.current?.clientWidth - 300) * 0.5
-      : 0;
-    scrollToRightBy(offset);
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const offset = (el.clientWidth - 300) * 0.5;
+    scrollToRight(offset);
   };
 
   return (

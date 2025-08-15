@@ -1,18 +1,17 @@
 "use client";
 
-import { Fragment, RefObject, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
 import useOnScreen from "@/app/hooks/useOnScreen";
+import { scrollStore } from "@/app/stores/scrollStore";
 
-interface CalendarDayProps {
-  ref: RefObject<HTMLDivElement | null>;
-}
+export default function HeaderSide() {
+  const scrollRef = scrollStore((s) => s.calendarScrollRef);
 
-export default function HeaderSide({ ref }: CalendarDayProps) {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
@@ -27,7 +26,7 @@ export default function HeaderSide({ ref }: CalendarDayProps) {
 
   return (
     <SortableContainer
-      scrollRef={ref}
+      scrollRef={scrollRef}
       className="sticky left-0 z-10 w-name shrink-0 bg-[var(--background)]"
     >
       <TaskList groupId={null} />

@@ -20,6 +20,7 @@ import React, {
   ReactNode,
   RefObject,
 } from "react";
+import { scrollStore } from "../stores/scrollStore";
 
 interface HorizontalDragScroll {
   children: ReactNode;
@@ -32,7 +33,11 @@ export default function HorizontalDragScroll({
   className,
   ref,
 }: HorizontalDragScroll) {
+  const setIsAtLeft = scrollStore((s) => s.setIsAtLeft);
+  const setIsAtRight = scrollStore((s) => s.setIsAtRight);
+
   const localRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
   const isDraggingRef = useRef(false);
   const isMovedRef = useRef(false);
@@ -41,9 +46,10 @@ export default function HorizontalDragScroll({
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
 
-  useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
-
   useEffect(() => {
+    const el = localRef.current;
+    if (!el) return;
+
     const onPointerDown = (e: PointerEvent) => {
       // Only left mouse button or touch
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -95,21 +101,26 @@ export default function HorizontalDragScroll({
       el.style.cursor = "";
     };
 
-    const el = localRef.current;
-    if (!el) return;
+    const onScoll = () => {
+      setIsAtLeft();
+      setIsAtRight();
+    };
 
     // Slightly better performance for rapid events like pointermove or mousemove.
     el.addEventListener("pointerdown", onPointerDown);
     el.addEventListener("pointermove", onPointerMove);
     el.addEventListener("pointerup", onPointerUpOrCancel);
     el.addEventListener("pointercancel", onPointerUpOrCancel);
+    el.addEventListener("scroll", onScoll);
 
     return () => {
       el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUpOrCancel);
       el.removeEventListener("pointercancel", onPointerUpOrCancel);
+      el.removeEventListener("scroll", onScoll);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Prevent clicks firing when user dragged; we can intercept onClick on children if needed.

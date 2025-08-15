@@ -3,30 +3,27 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { useAppStore } from "@/app/stores/AppStore";
+import { scrollStore } from "@/app/stores/scrollStore";
 
 export default function TodayButton() {
-  const todayRef = useAppStore((s) => s.todayRef);
+  const todayRef = scrollStore((s) => s.todayRef);
+
+  const handleClick = () => {
+    todayRef.current?.scrollIntoView({
+      block: "end",
+      behavior: "smooth",
+      inline: "start",
+    });
+  };
 
   return (
     <AppTooltip>
       <AppTrigger asChild>
-        <button
-          className="button-outline button-sm"
-          onClick={() => {
-            if (todayRef) {
-              todayRef.current?.scrollIntoView({
-                block: "end",
-                behavior: "smooth",
-                inline: "start",
-              });
-            }
-          }}
-        >
+        <button className="button-outline button-sm" onClick={handleClick}>
           Today
         </button>
       </AppTrigger>
-      <AppContent>Go to recent</AppContent>
+      <AppContent align="end">Go to most recent</AppContent>
     </AppTooltip>
   );
 }

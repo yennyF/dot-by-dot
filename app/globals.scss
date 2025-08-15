@@ -254,28 +254,16 @@ input {
   }
 
   .button-icon-sheer {
-    @apply button-icon hover:bg-[var(--black)] ;
-
-    &:hover svg {
-      @apply text-[var(--white)];
-    }
+    @apply button-icon hover:bg-[var(--black)] hover:text-[var(--white)];
 
     &[data-state="open"]{
-      @apply bg-[var(--black)];
-
-      svg {
-        @apply text-[var(--white)];
-      }
+      @apply bg-[var(--black)] text-[var(--white)];
     }
+  }
 
-    span[data-state="open"] {
-      .button-icon-sheer {
-        @apply bg-[var(--black)];
-  
-        svg {
-          @apply text-[var(--white)];
-        }
-      }
+  [data-state="open"] {
+    .button-icon-sheer {
+      @apply bg-[var(--black)] text-[var(--white)];
     }
   }
 

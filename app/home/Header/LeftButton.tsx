@@ -1,21 +1,18 @@
 "use client";
 
-import { RefObject } from "react";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import UseScrollToLeft from "@/app/hooks/UseScrollToLeft";
 import { useLoadMore } from "@/app/hooks/useLoadMore";
 import {
   AppTooltip,
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
+import { scrollStore } from "@/app/stores/scrollStore";
 
-export default function LeftButton({
-  scrollRef,
-}: {
-  scrollRef: RefObject<HTMLDivElement | null>;
-}) {
-  const { isAtLeft, scrollToLeftBy } = UseScrollToLeft(scrollRef);
+export default function LeftButton() {
+  const scrollRef = scrollStore((s) => s.calendarScrollRef);
+  const isAtLeft = scrollStore((s) => s.isAtLeft);
+  const scrollToLeft = scrollStore((s) => s.scrollToLeft);
 
   const { loadMore } = useLoadMore(scrollRef);
 
@@ -23,10 +20,11 @@ export default function LeftButton({
     if (isAtLeft) {
       await loadMore();
     } else {
-      const offset = scrollRef.current?.clientWidth
-        ? (scrollRef.current?.clientWidth - 300) * 0.5
-        : 0;
-      scrollToLeftBy(offset);
+      const el = scrollRef.current;
+      if (!el) return;
+
+      const offset = (el.clientWidth - 300) * 0.5;
+      scrollToLeft(offset);
     }
   };
 

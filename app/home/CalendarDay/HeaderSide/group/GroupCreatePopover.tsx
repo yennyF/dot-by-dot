@@ -22,7 +22,7 @@ export default function GroupCreatePopover({
   }, [open, setDummyGroup]);
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen} modal>
+    <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
