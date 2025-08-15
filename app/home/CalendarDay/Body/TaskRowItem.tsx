@@ -7,7 +7,6 @@ import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Task } from "@/app/repositories/types";
 import { midnightUTCstring } from "@/app/util";
-import { useShallow } from "zustand/react/shallow";
 
 interface TaskRowItemProps {
   date: Date;
@@ -15,21 +14,22 @@ interface TaskRowItemProps {
 }
 
 export default function TaskRowItem({ date, task }: TaskRowItemProps) {
-  const { addTrack, deleteTrack, isActive, isPrevActive, isNextActive } =
-    useTrackStore(
-      useShallow((s) => ({
-        addTrack: s.addTrack,
-        deleteTrack: s.deleteTrack,
-        isActive:
-          s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id) ?? false,
-        isPrevActive:
-          s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id) ??
-          false,
-        isNextActive:
-          s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id) ??
-          false,
-      }))
-    );
+  const addTrack = useTrackStore((s) => s.addTrack);
+  const deleteTrack = useTrackStore((s) => s.deleteTrack);
+
+  const isActive = useTrackStore(
+    (s) => s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id) ?? false
+  );
+  const isPrevActive = useTrackStore(
+    (s) =>
+      s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id) ??
+      false
+  );
+  const isNextActive = useTrackStore(
+    (s) =>
+      s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id) ??
+      false
+  );
 
   const isTodayDate = isToday(date);
 

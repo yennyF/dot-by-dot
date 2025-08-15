@@ -4,19 +4,14 @@ import { format, isBefore, endOfYear, isAfter, startOfYear } from "date-fns";
 import { eachMonthOfInterval } from "date-fns/fp";
 import MonthItem from "./MonthItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { useShallow } from "zustand/react/shallow";
 
 interface YearItemProps {
   date: Date;
 }
 
 export default function YearItem({ date }: YearItemProps) {
-  const { startDate, endDate } = useTrackStore(
-    useShallow((s) => ({
-      startDate: s.startDate,
-      endDate: s.endDate,
-    }))
-  );
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalMonths = eachMonthOfInterval({
     start: isAfter(startOfYear(date), startDate)

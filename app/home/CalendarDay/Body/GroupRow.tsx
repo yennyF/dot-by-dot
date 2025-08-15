@@ -15,19 +15,14 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
-import { useShallow } from "zustand/react/shallow";
 
 interface GroupRowWrapperProps {
   group: Group;
 }
 
 function GroupRowWrapper({ group }: GroupRowWrapperProps) {
-  const { startDate, endDate } = useTrackStore(
-    useShallow((s) => ({
-      startDate: s.startDate,
-      endDate: s.endDate,
-    }))
-  );
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalYears = eachYearOfInterval({
     start: startDate,

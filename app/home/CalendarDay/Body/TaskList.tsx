@@ -2,7 +2,6 @@
 
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
 import TaskRow from "./TaskRow";
-import { useShallow } from "zustand/react/shallow";
 
 interface TaskListProps {
   groupId: string | null;
@@ -11,15 +10,12 @@ interface TaskListProps {
 export default function TaskList({ groupId }: TaskListProps) {
   const key = groupId ?? UNGROUPED_KEY;
 
-  const { dummyTask, tasks } = useTaskStore(
-    useShallow((s) => ({
-      dummyTask:
-        s.dummyTask && s.dummyTask.groupId === (groupId || undefined)
-          ? s.dummyTask
-          : null,
-      tasks: s.tasksByGroup?.[key],
-    }))
+  const dummyTask = useTaskStore((s) =>
+    s.dummyTask && s.dummyTask.groupId === (groupId || undefined)
+      ? s.dummyTask
+      : null
   );
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
   return (
     <div>

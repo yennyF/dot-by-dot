@@ -7,19 +7,14 @@ import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
-import { useShallow } from "zustand/react/shallow";
 
 interface CalendarDayProps {
   ref: RefObject<HTMLDivElement | null>;
 }
 
 export default function HeaderSide({ ref }: CalendarDayProps) {
-  const { dummyGroup, groups } = useGroupStore(
-    useShallow((s) => ({
-      dummyGroup: s.dummyGroup,
-      groups: s.groups,
-    }))
-  );
+  const dummyGroup = useGroupStore((s) => s.dummyGroup);
+  const groups = useGroupStore((s) => s.groups);
 
   return (
     <SortableContainer

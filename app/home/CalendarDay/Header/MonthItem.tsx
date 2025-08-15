@@ -10,19 +10,14 @@ import {
 } from "date-fns";
 import DayItem from "./DayItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { useShallow } from "zustand/react/shallow";
 
 interface MonthItemProps {
   date: Date;
 }
 
 export default function MonthItem({ date }: MonthItemProps) {
-  const { startDate, endDate } = useTrackStore(
-    useShallow((s) => ({
-      startDate: s.startDate,
-      endDate: s.endDate,
-    }))
-  );
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalDays = eachDayOfInterval({
     start: isAfter(startOfMonth(date), startDate)

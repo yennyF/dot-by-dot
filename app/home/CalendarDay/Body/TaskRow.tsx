@@ -15,7 +15,6 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
-import { useShallow } from "zustand/react/shallow";
 
 interface TaskRowProps {
   task: Task;
@@ -23,12 +22,8 @@ interface TaskRowProps {
 }
 
 function TaskRowWrapper({ task }: TaskRowProps) {
-  const { startDate, endDate } = useTrackStore(
-    useShallow((s) => ({
-      startDate: s.startDate,
-      endDate: s.endDate,
-    }))
-  );
+  const startDate = useTrackStore((s) => s.startDate);
+  const endDate = useTrackStore((s) => s.endDate);
 
   const totalYears = eachYearOfInterval({
     start: startDate,

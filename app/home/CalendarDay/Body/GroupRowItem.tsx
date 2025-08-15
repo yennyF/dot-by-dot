@@ -8,7 +8,6 @@ import clsx from "clsx";
 import { useState } from "react";
 import { midnightUTCstring } from "@/app/util";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import { useShallow } from "zustand/react/shallow";
 
 interface GroupRowItemProps {
   date: Date;
@@ -16,12 +15,8 @@ interface GroupRowItemProps {
 }
 
 export default function GroupRowItem({ date, group }: GroupRowItemProps) {
-  const { addTracks, deleteTracks } = useTrackStore(
-    useShallow((s) => ({
-      addTracks: s.addTracks,
-      deleteTracks: s.deleteTracks,
-    }))
-  );
+  const addTracks = useTrackStore((s) => s.addTracks);
+  const deleteTracks = useTrackStore((s) => s.deleteTracks);
 
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
   const taskIdSet = new Set(tasks.map((t) => t.id));
@@ -31,17 +26,17 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
   const nextKey = midnightUTCstring(addDays(date, 1));
 
   const isActive =
-    (useTrackStore(
-      (s) => s.tasksByDate?.[todayKey]?.intersection(taskIdSet).size
-    ) ?? 0) > 0;
+    useTrackStore(
+      (s) => s.tasksByDate?.[todayKey]?.intersection(taskIdSet).size ?? 0
+    ) > 0;
   const isPrevActive =
-    (useTrackStore(
-      (s) => s.tasksByDate?.[prevKey]?.intersection(taskIdSet).size
-    ) ?? 0) > 0;
+    useTrackStore(
+      (s) => s.tasksByDate?.[prevKey]?.intersection(taskIdSet).size ?? 0
+    ) > 0;
   const isNextActive =
-    (useTrackStore(
-      (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size
-    ) ?? 0) > 0;
+    useTrackStore(
+      (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size ?? 0
+    ) > 0;
 
   const isTodayDate = isToday(date);
 

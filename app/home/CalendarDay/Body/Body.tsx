@@ -3,15 +3,10 @@
 import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
-import { useShallow } from "zustand/react/shallow";
 
 export default function Body() {
-  const { dummyGroup, groups } = useGroupStore(
-    useShallow((s) => ({
-      dummyGroup: s.dummyGroup,
-      groups: s.groups,
-    }))
-  );
+  const dummyGroup = useGroupStore((s) => s.dummyGroup);
+  const groups = useGroupStore((s) => s.groups);
 
   return (
     <div className="flex shrink-0 flex-col gap-4">
