@@ -7,7 +7,7 @@ import {
 import { Group } from "@/app/repositories/types";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import { useState, DragEvent } from "react";
+import { useState, DragEvent, memo } from "react";
 import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";
 import GroupDeleteDialog from "./group/GroupDeleteDialog";
@@ -23,7 +23,7 @@ interface GroupRowProps {
   isDummy?: boolean;
 }
 
-export default function GroupRow({ group, isDummy }: GroupRowProps) {
+function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
   const draggable = isDummy ? false : true;
 
   const [forceShow, setForceShow] = useState(false);
@@ -119,3 +119,6 @@ export default function GroupRow({ group, isDummy }: GroupRowProps) {
     </div>
   );
 }
+
+const GroupRow = memo(GroupRowWrapper);
+export default GroupRow;

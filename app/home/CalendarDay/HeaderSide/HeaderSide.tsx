@@ -1,24 +1,25 @@
 "use client";
 
-import { Fragment, RefObject, useEffect } from "react";
+import { Fragment, RefObject } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
 import { LinkReceptor } from "@/app/components/Scroll";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
+import { useShallow } from "zustand/react/shallow";
 
 interface CalendarDayProps {
   ref: RefObject<HTMLDivElement | null>;
 }
 
 export default function HeaderSide({ ref }: CalendarDayProps) {
-  const dummyGroup = useGroupStore((s) => s.dummyGroup);
-  const groups = useGroupStore((s) => s.groups);
-
-  useEffect(() => {
-    console.log("HeaderSide rendered");
-  });
+  const { dummyGroup, groups } = useGroupStore(
+    useShallow((s) => ({
+      dummyGroup: s.dummyGroup,
+      groups: s.groups,
+    }))
+  );
 
   return (
     <SortableContainer

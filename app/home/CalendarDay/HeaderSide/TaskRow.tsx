@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { DragEvent, useEffect, useState } from "react";
+import { DragEvent, memo, useEffect, useState } from "react";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
@@ -18,7 +18,7 @@ interface TaskRowProps {
   isDummy?: boolean;
 }
 
-export default function TaskRow({ task, isDummy }: TaskRowProps) {
+function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
   const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 
@@ -98,3 +98,6 @@ export default function TaskRow({ task, isDummy }: TaskRowProps) {
     </div>
   );
 }
+
+const TaskRow = memo(TaskRowWrapper);
+export default TaskRow;

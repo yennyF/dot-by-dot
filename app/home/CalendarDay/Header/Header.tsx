@@ -4,10 +4,15 @@ import YearItem from "./YearItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { eachYearOfInterval } from "date-fns";
 import { ShadowLeft, ShadowRight, ShadowTop } from "../shadows";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Header() {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
+  const { startDate, endDate } = useTrackStore(
+    useShallow((s) => ({
+      startDate: s.startDate,
+      endDate: s.endDate,
+    }))
+  );
 
   const totalYears = eachYearOfInterval({
     start: startDate,
