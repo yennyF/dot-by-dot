@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { DragEvent, memo, useEffect, useState } from "react";
+import { DragEvent, memo, useState } from "react";
 import { Task } from "@/app/repositories/types";
 import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
@@ -21,10 +21,6 @@ interface TaskRowProps {
 function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
   const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
-
-  useEffect(() => {
-    console.log("TaskRow rendered", task.name);
-  });
 
   const handleDragStart = (e: DragEvent) => {
     e.dataTransfer.setData("sort", "task");

@@ -10,8 +10,11 @@ import {
   genTracks,
   genUngroupedTasks,
 } from "../repositories/data";
+import { createRef, RefObject } from "react";
 
-// type State = {};
+type State = {
+  todayRef: RefObject<HTMLDivElement | null>;
+};
 
 type Action = {
   init: () => Promise<void>;
@@ -20,7 +23,9 @@ type Action = {
   startMock: () => Promise<void>;
 };
 
-export const useAppStore = create<Action>((set, get) => ({
+export const useAppStore = create<Action & State>((set, get) => ({
+  todayRef: createRef<HTMLDivElement>(),
+
   init: async () => {
     try {
       await Promise.all([

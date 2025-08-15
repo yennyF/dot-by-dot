@@ -4,7 +4,6 @@ import { DropdownMenu } from "radix-ui";
 import { useGroupStore } from "../../stores/GroupStore";
 import { useTaskStore } from "../../stores/TaskStore";
 import { v4 as uuidv4 } from "uuid";
-import { Link } from "../../components/Scroll";
 
 export default function CreateDropdown({
   children,
@@ -29,9 +28,7 @@ export default function CreateDropdown({
               setDummyGroup({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
-            <Link to="create-group" options={{ block: "center" }}>
-              Group
-            </Link>
+            Group
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item"
@@ -39,9 +36,7 @@ export default function CreateDropdown({
               setDummyTask({ id: uuidv4(), name: "(No name)", order: "" });
             }}
           >
-            <Link to="create-task" options={{ block: "center" }}>
-              Task
-            </Link>
+            Task
           </DropdownMenu.Item>
           <DropdownMenu.Arrow className="arrow" />
         </DropdownMenu.Content>

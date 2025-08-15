@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
+import useOnScreen from "@/app/hooks/useOnScreen";
 
 interface TaskListProps {
   groupId: string | null;
@@ -19,8 +20,19 @@ export default function TaskList({ groupId }: TaskListProps) {
   );
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
+  const topRef = useRef<HTMLDivElement>(null);
+  const isTopRefVisible = useOnScreen(topRef);
+
+  useEffect(() => {
+    if (dummyTask && !isTopRefVisible) {
+      topRef.current?.scrollIntoView({ block: "center" });
+    }
+  }, [dummyTask, isTopRefVisible]);
+
   return (
     <div>
+      <div ref={topRef}></div>
+
       {dummyTask && (
         <>
           <DropIndicatorTask

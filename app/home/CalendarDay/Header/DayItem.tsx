@@ -1,7 +1,8 @@
 "use client";
 
 import { format, isToday, isWeekend } from "date-fns";
-import { LinkReceptor } from "../../../components/Scroll";
+import { useAppStore } from "@/app/stores/AppStore";
+import { useEffect } from "react";
 
 interface DayItemProps {
   date: Date;
@@ -9,6 +10,17 @@ interface DayItemProps {
 
 export default function DayItem({ date }: DayItemProps) {
   const isTodayDate = isToday(date);
+
+  const todayRef = useAppStore((s) => (isTodayDate ? s.todayRef : null));
+
+  // Scroll to "today" the first it loads
+  useEffect(() => {
+    todayRef?.current?.scrollIntoView({
+      block: "end",
+      behavior: "smooth",
+      inline: "start",
+    });
+  }, [todayRef]);
 
   const children = (
     <div
@@ -23,11 +35,5 @@ export default function DayItem({ date }: DayItemProps) {
     </div>
   );
 
-  return isTodayDate ? (
-    <LinkReceptor key={date.toLocaleDateString()} id="element-today">
-      {children}
-    </LinkReceptor>
-  ) : (
-    children
-  );
+  return isTodayDate ? <div ref={todayRef}>{children}</div> : children;
 }
