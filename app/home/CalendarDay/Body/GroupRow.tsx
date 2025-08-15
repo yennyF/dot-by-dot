@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Group } from "@/app/repositories/types";
 import GroupRowItem from "./GroupRowItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
@@ -15,22 +15,23 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
+import { useShallow } from "zustand/react/shallow";
 
 interface GroupRowWrapperProps {
   group: Group;
 }
 
 function GroupRowWrapper({ group }: GroupRowWrapperProps) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
+  const { startDate, endDate } = useTrackStore(
+    useShallow((s) => ({
+      startDate: s.startDate,
+      endDate: s.endDate,
+    }))
+  );
 
   const totalYears = eachYearOfInterval({
     start: startDate,
     end: endDate,
-  });
-
-  useEffect(() => {
-    console.log("GroupRow rendered", group.name);
   });
 
   return (

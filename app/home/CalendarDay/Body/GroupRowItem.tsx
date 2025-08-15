@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { midnightUTCstring } from "@/app/util";
 import { useTaskStore } from "@/app/stores/TaskStore";
+import { useShallow } from "zustand/react/shallow";
 
 interface GroupRowItemProps {
   date: Date;
@@ -15,8 +16,12 @@ interface GroupRowItemProps {
 }
 
 export default function GroupRowItem({ date, group }: GroupRowItemProps) {
-  const addTracks = useTrackStore((s) => s.addTracks);
-  const deleteTracks = useTrackStore((s) => s.deleteTracks);
+  const { addTracks, deleteTracks } = useTrackStore(
+    useShallow((s) => ({
+      addTracks: s.addTracks,
+      deleteTracks: s.deleteTracks,
+    }))
+  );
 
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
   const taskIdSet = new Set(tasks.map((t) => t.id));

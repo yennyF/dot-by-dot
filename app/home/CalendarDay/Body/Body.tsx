@@ -1,24 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import GroupRow from "./GroupRow";
 import TaskList from "./TaskList";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Body() {
-  const dummyGroup = useGroupStore((s) => s.dummyGroup);
-  const groups = useGroupStore((s) => s.groups);
-
-  useEffect(() => {
-    console.log("Body rendered");
-  });
+  const { dummyGroup, groups } = useGroupStore(
+    useShallow((s) => ({
+      dummyGroup: s.dummyGroup,
+      groups: s.groups,
+    }))
+  );
 
   return (
     <div className="flex shrink-0 flex-col gap-4">
       <TaskList groupId={null} />
-
-      {dummyGroup && <>{dummyGroup && <GroupRow group={dummyGroup} />}</>}
-
+      {dummyGroup && <GroupRow group={dummyGroup} />}
       {groups?.map((group) => (
         <div key={group.id}>
           <GroupRow group={group} />
