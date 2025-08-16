@@ -14,8 +14,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ticked",
+  title: "Dot by Dot",
   description: "A lightweight place to track tasks and habits",
+  icons: {
+    icon: [
+      // { url: "/favicon.ico", sizes: "any" }, // Fallback for browsers that don't support SVG
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

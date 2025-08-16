@@ -2,7 +2,7 @@
 
 import { useTrackStore } from "@/app/stores/TrackStore";
 import { Group } from "@/app/repositories/types";
-import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import { LockClosedIcon } from "@radix-ui/react-icons";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useState } from "react";
@@ -87,7 +87,7 @@ function Dot({ isActive, ...props }: DotProps) {
           : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
       )}
     >
-      {isActive && <CheckIcon className="text-white" />}
+      {/* {isActive && <CheckIcon className="text-white" />} */}
     </button>
   );
 }

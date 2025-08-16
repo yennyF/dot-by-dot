@@ -29,7 +29,7 @@ export default function About() {
           <p className="mt-[60px]">
             It’s open source — peek at the code here:{" "}
             <a
-              href="https://github.com/yennyF/ticked"
+              href="https://github.com/yennyF/dot-by-dot"
               target="_blank"
               rel="noopener noreferrer"
               className="underline"

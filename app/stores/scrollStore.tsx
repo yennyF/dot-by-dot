@@ -4,6 +4,7 @@ import { createRef, RefObject } from "react";
 type State = {
   todayRef: RefObject<HTMLDivElement | null>;
   calendarScrollRef: RefObject<HTMLDivElement | null>;
+  todayEl: HTMLDivElement | null;
   isAtLeft: boolean;
   isAtRight: boolean;
   isAtBottom: boolean;
@@ -11,6 +12,8 @@ type State = {
 };
 
 type Action = {
+  setTodayEl: (todayEl: HTMLDivElement) => void;
+
   setIsAtLeft: () => void;
   setIsAtRight: () => void;
   setIsAtBottom: () => void;
@@ -25,11 +28,14 @@ type Action = {
 export const scrollStore = create<Action & State>((set, get) => ({
   todayRef: createRef<HTMLDivElement>(),
   calendarScrollRef: createRef<HTMLDivElement>(),
+  todayEl: null,
 
   isAtLeft: false,
   isAtRight: false,
   isAtTop: false,
   isAtBottom: false,
+
+  setTodayEl: (todayEl) => set({ todayEl }),
 
   setIsAtLeft: () => {
     const el = get().calendarScrollRef.current;

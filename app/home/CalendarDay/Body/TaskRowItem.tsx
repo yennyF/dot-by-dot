@@ -3,7 +3,7 @@
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import { LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Task } from "@/app/repositories/types";
 import { midnightUTCstring } from "@/app/util";
@@ -97,7 +97,7 @@ function Dot({ isActive, task, ...props }: DotProps) {
             : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
       )}
     >
-      {isActive && <CheckIcon className="text-white" />}
+      {/* {isActive && <CheckIcon className="text-white" />} */}
     </button>
   );
 }
