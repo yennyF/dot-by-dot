@@ -36,25 +36,25 @@ export function genGroupedTasks(): [Group, Task[]][] {
     {
       name: "Emotional Health",
       tasks: [
-        { name: "Journal" },
-        { name: "Reflect on my day" },
-        { name: "Write 3 things I’m grateful for" },
+        { name: "Write in my journal" },
+        { name: "Draw or doodle something" },
+        { name: "List 3 things I’m grateful for" },
       ],
     },
     {
       name: "Connection",
       tasks: [
         { name: "Text my parents" },
-        { name: "Send a voicenote to a friend" },
-        { name: "Send a funny meme to a friend" },
+        { name: "Chat with a loved one" },
+        { name: "Share a funny meme with a friend" },
       ],
     },
     {
       name: "Home",
       tasks: [
         { name: "Water my plants" },
-        { name: "Tidy up one drawer" },
-        { name: "Clean up one room" },
+        { name: "Vacuum or sweep one room" },
+        { name: "Change bed linens and pillowcases" },
       ],
     },
   ];
