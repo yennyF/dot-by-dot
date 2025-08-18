@@ -9,7 +9,7 @@ export default function Body() {
   const groups = useGroupStore((s) => s.groups);
 
   return (
-    <div className="flex shrink-0 flex-col gap-4">
+    <div className="flex shrink-0 flex-col gap-10">
       <TaskList groupId={null} />
       {dummyGroup && <GroupRow group={dummyGroup} />}
       {groups?.map((group) => (

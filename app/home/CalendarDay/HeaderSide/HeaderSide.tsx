@@ -33,7 +33,7 @@ export default function HeaderSide() {
 
       <div ref={topRef} />
 
-      <div className="mt-2 flex flex-col gap-2">
+      <div className="mt-5 flex flex-col gap-5">
         {dummyGroup && (
           <>
             <DropIndicatorGroup />

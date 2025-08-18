@@ -33,7 +33,7 @@ type Action = {
 };
 
 export const useTrackStore = create<State & Action>((set, get) => ({
-  unlock: false,
+  unlock: true,
   setUnlock: (unlock: boolean) => {
     set(() => ({ unlock }));
   },

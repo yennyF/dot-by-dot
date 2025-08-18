@@ -51,8 +51,8 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
       {isPrevActive && isActive && (
         <div
           className={clsx(
-            "absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in opacity-0",
-            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--green-5)]"
+            "absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in",
+            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
           )}
         />
       )}
@@ -60,8 +60,8 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
       {isNextActive && isActive && (
         <div
           className={clsx(
-            "absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in opacity-0",
-            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--green-5)]"
+            "absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in",
+            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
           )}
         />
       )}
@@ -85,19 +85,19 @@ function Dot({ isActive, task, ...props }: DotProps) {
     <button
       {...props}
       className={clsx(
-        "h-4 w-4 transform rounded-full transition-transform duration-100",
+        "flex size-4 transform items-center justify-center rounded-full transition-transform duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
           ? task.groupId
             ? "bg-[var(--accent)]"
-            : "bg-[var(--green)]"
+            : "bg-[var(--accent)]"
           : task.groupId
             ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-            : "bg-[var(--gray)] hover:bg-[var(--green-5)]"
+            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
       )}
     >
-      {/* {isActive && <CheckIcon className="text-white" />} */}
+      {/* {isActive && !task.groupId && <CheckIcon className="size-3 text-white" />} */}
     </button>
   );
 }

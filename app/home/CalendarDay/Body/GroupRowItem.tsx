@@ -43,10 +43,10 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
       )}
     >
       {isPrevActive && isActive && (
-        <div className="absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in bg-[var(--green-5)] opacity-0" />
+        <div className="absolute left-0 right-[50%] z-[-1] h-[2px] animate-fade-in bg-[var(--accent-4)]" />
       )}
       {isNextActive && isActive && (
-        <div className="absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in bg-[var(--green-5)] opacity-0" />
+        <div className="absolute left-[50%] right-0 z-[-1] h-[2px] animate-fade-in bg-[var(--accent-4)]" />
       )}
 
       <Dot isActive={isActive} />
@@ -63,11 +63,11 @@ function Dot({ isActive, ...props }: DotProps) {
     <div
       {...props}
       className={clsx(
-        "h-4 w-4 transform rounded-full",
-        isActive ? "bg-[var(--green)]" : "bg-[var(--gray)]"
+        "flex transform items-center justify-center rounded-full",
+        isActive ? "size-4 bg-[var(--accent-4)]" : "size-1 bg-[var(--gray)]"
       )}
     >
-      {/* {isActive && <CheckIcon className="text-white" />} */}
+      {/* {isActive && <CheckIcon className="size-3 text-white" />} */}
     </div>
   );
 }
