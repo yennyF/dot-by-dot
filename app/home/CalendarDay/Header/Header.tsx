@@ -17,18 +17,16 @@ export default function Header() {
   return (
     <div className="calendar-header sticky top-0 z-20 w-fit">
       <div className="flex items-stretch">
-        <div className="sticky left-0 z-10 flex w-name shrink-0 bg-[var(--background)]" />
         <ShadowLeft />
-
         {/* Space to match body space */}
         <div className="w-[30px]" />
-
         <div className="sticky flex bg-[var(--background)]">
           {totalYears.map((date) => (
             <YearItem key={date.getFullYear()} date={date} />
           ))}
         </div>
         <ShadowRight />
+        <div className="sticky right-0 z-10 flex w-name shrink-0 bg-[var(--background)]" />
       </div>
       <ShadowTop />
     </div>

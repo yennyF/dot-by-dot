@@ -23,11 +23,11 @@ export default function CalendarDay() {
     >
       <Header />
       <div className="sticky left-0 flex w-fit">
-        <HeaderSide />
         <ShadowLeft />
         <LoadMore scrollRef={scrollRef} />
         <Body />
         <ShadowRight />
+        <HeaderSide />
       </div>
       <ShadowBottom />
     </HorizontalDragScroll>

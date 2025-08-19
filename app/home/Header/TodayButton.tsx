@@ -23,7 +23,7 @@ export default function TodayButton() {
           Today
         </button>
       </AppTrigger>
-      <AppContent align="end">Go to most recent</AppContent>
+      <AppContent align="start">Go to most recent</AppContent>
     </AppTooltip>
   );
 }

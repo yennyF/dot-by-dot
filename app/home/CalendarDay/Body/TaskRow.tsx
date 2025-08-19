@@ -43,11 +43,11 @@ function TaskRowWrapper({ task }: TaskRowProps) {
       {totalYears.map((date) => (
         <YearItem key={date.toLocaleDateString()} date={date} task={task} />
       ))}
-      {currentStreak > 0 && (
+      {/* {currentStreak > 0 && (
         <div className="flex h-row items-center text-nowrap px-2 text-xs">
           {currentStreak} day streak
         </div>
-      )}
+      )} */}
     </div>
   );
 }

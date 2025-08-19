@@ -5,7 +5,7 @@ interface ShadowProps {
 export function ShadowLeft({ className }: ShadowProps) {
   return (
     <div
-      className={`"shadow-left sticky left-name z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)] ${className}`}
+      className={`"shadow-left sticky left-0 z-10 w-[15px] shrink-0 bg-gradient-to-l from-transparent to-[var(--background)] ${className}`}
     />
   );
 }
@@ -13,7 +13,7 @@ export function ShadowLeft({ className }: ShadowProps) {
 export function ShadowRight({ className }: ShadowProps) {
   return (
     <div
-      className={`shadow-right sticky right-0 w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)] ${className}`}
+      className={`shadow-right sticky right-name w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)] ${className}`}
     />
   );
 }

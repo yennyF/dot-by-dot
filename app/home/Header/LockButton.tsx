@@ -26,7 +26,7 @@ export default function LockButton() {
           {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
         </button>
       </AppTrigger>
-      <AppContent>
+      <AppContent align="end">
         {unlock
           ? "Lock previous track from changes"
           : "Allow updates to previous track"}

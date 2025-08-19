@@ -20,7 +20,7 @@ export default function CreateDropdown({
         <DropdownMenu.Content
           className="dropdown-content z-30 w-[160px]"
           side="bottom"
-          align="start"
+          align="end"
         >
           <DropdownMenu.Item
             className="dropdown-item"
