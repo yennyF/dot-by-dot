@@ -7,17 +7,34 @@ import {
   notifyLoadError,
   notifyLoading,
 } from "../components/Notification";
-import { startOfMonth, subMonths } from "date-fns";
+import {
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+  endOfMonth,
+  endOfYear,
+  isAfter,
+  isBefore,
+  startOfMonth,
+  startOfYear,
+  subMonths,
+} from "date-fns";
 import { midnightUTC, midnightUTCstring } from "../util";
 import { toast } from "react-toastify";
+
+export type DayType = Date;
+export type MonthType = [Date, DayType[]];
+export type YearType = [Date, MonthType[]];
 
 type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
   unlock: boolean;
+  currentStreaks: Record<string, number>;
+
   startDate: Date;
   endDate: Date;
-  currentStreaks: Record<string, number>;
+  totalDate: YearType[];
 };
 
 type Action = {
@@ -45,6 +62,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   tasksByDate: undefined,
   startDate: subMonths(startOfMonth(new Date()), 3),
   endDate: new Date(),
+  totalDate: [],
 
   destroyTracks: async () => {
     set(() => ({
@@ -55,6 +73,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   initTracks: async () => {
     const startDate = get().startDate;
     const endDate = get().endDate;
+    const totalDate = getTotalDate(startDate, endDate);
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
@@ -66,7 +85,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
 
-      set(() => ({ tasksByDate }));
+      set(() => ({ tasksByDate, totalDate }));
     } catch (error) {
       console.error("Error initialing tracks:", error);
       throw error;
@@ -74,18 +93,15 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   },
   loadMorePrevTracks: async () => {
     const startDate = subMonths(get().startDate, 1);
+    const endDate = get().endDate;
+    const totalDate = getTotalDate(startDate, endDate);
     const tasksByDate = { ...get().tasksByDate };
     const tastId = notifyLoading();
 
     try {
       await db.tracks
         .where("date")
-        .between(
-          midnightUTC(startDate),
-          midnightUTC(get().endDate),
-          true,
-          false
-        )
+        .between(midnightUTC(startDate), midnightUTC(endDate), true, false)
         .each((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
@@ -93,7 +109,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
       // console.log(await timeoutPromise(2000));
 
-      set(() => ({ tasksByDate, startDate }));
+      set(() => ({ tasksByDate, startDate, totalDate }));
 
       toast.dismiss(tastId);
     } catch (error) {
@@ -227,3 +243,33 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     }
   },
 }));
+
+function getTotalDate(startDate: Date, endDate: Date) {
+  const totalYears = eachYearOfInterval({
+    start: startDate,
+    end: endDate,
+  });
+
+  const years: YearType[] = totalYears.map((date) => {
+    const totalMonths = eachMonthOfInterval({
+      start: isAfter(startOfYear(date), startDate)
+        ? startOfYear(date)
+        : startDate,
+      end: isBefore(endOfYear(date), endDate) ? endOfYear(date) : endDate,
+    });
+
+    const months: MonthType[] = totalMonths.map((date) => {
+      const totalDays = eachDayOfInterval({
+        start: isAfter(startOfMonth(date), startDate)
+          ? startOfMonth(date)
+          : startDate,
+        end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
+      });
+      return [date, totalDays];
+    });
+
+    return [date, months];
+  });
+
+  return years;
+}

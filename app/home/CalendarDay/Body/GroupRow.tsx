@@ -3,91 +3,39 @@
 import { memo } from "react";
 import { Group } from "@/app/repositories/types";
 import GroupRowItem from "./GroupRowItem";
-import { useTrackStore } from "@/app/stores/TrackStore";
-import {
-  eachDayOfInterval,
-  eachMonthOfInterval,
-  eachYearOfInterval,
-  endOfMonth,
-  endOfYear,
-  isAfter,
-  isBefore,
-  startOfMonth,
-  startOfYear,
-} from "date-fns";
+import { DayType, MonthType, useTrackStore } from "@/app/stores/TrackStore";
 
 interface GroupRowWrapperProps {
   group: Group;
 }
 
 function GroupRowWrapper({ group }: GroupRowWrapperProps) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalYears = eachYearOfInterval({
-    start: startDate,
-    end: endDate,
-  });
+  const years = useTrackStore((s) => s.totalDate);
 
   return (
-    <div className="flex h-row">
-      {totalYears.map((date) => (
-        <YearGroupRow
-          key={date.toLocaleDateString()}
-          date={date}
-          group={group}
-        />
+    <div className="app-GroupRow flex h-row">
+      {years.map(([, months], index) => (
+        <YearItem key={index} months={months} group={group} />
       ))}
-      {/* <div className="flex h-row items-center text-nowrap px-2 text-xs">
-        3 day streak
-      </div> */}
     </div>
   );
 }
 
-function YearGroupRow({ date, group }: { date: Date; group: Group }) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalMonths = eachMonthOfInterval({
-    start: isAfter(startOfYear(date), startDate)
-      ? startOfYear(date)
-      : startDate,
-    end: isBefore(endOfYear(date), endDate) ? endOfYear(date) : endDate,
-  });
-
+function YearItem({ months, group }: { months: MonthType[]; group: Group }) {
   return (
     <div className="year-item flex">
-      {totalMonths.map((date) => (
-        <MonthGroupRow
-          key={date.toLocaleDateString()}
-          date={date}
-          group={group}
-        />
+      {months.map(([, days], index) => (
+        <MonthItem key={index} days={days} group={group} />
       ))}
     </div>
   );
 }
 
-function MonthGroupRow({ date, group }: { date: Date; group: Group }) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalDays = eachDayOfInterval({
-    start: isAfter(startOfMonth(date), startDate)
-      ? startOfMonth(date)
-      : startDate,
-    end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
-  });
-
+function MonthItem({ days, group }: { days: DayType[]; group: Group }) {
   return (
     <div className="month-item flex">
-      {totalDays.map((date) => (
-        <GroupRowItem
-          key={date.toLocaleDateString()}
-          date={date}
-          group={group}
-        />
+      {days.map((date, index) => (
+        <GroupRowItem key={index} date={date} group={group} />
       ))}
     </div>
   );

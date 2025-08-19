@@ -3,18 +3,7 @@
 import { memo } from "react";
 import { Task } from "@/app/repositories/types";
 import TaskRowItem from "./TaskRowItem";
-import { useTrackStore } from "@/app/stores/TrackStore";
-import {
-  eachDayOfInterval,
-  eachMonthOfInterval,
-  eachYearOfInterval,
-  endOfMonth,
-  endOfYear,
-  isAfter,
-  isBefore,
-  startOfMonth,
-  startOfYear,
-} from "date-fns";
+import { MonthType, useTrackStore } from "@/app/stores/TrackStore";
 
 interface TaskRowProps {
   task: Task;
@@ -22,8 +11,8 @@ interface TaskRowProps {
 }
 
 function TaskRowWrapper({ task }: TaskRowProps) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
+  const years = useTrackStore((s) => s.totalDate);
+
   // const currentStreak = useTrackStore((s) => s.currentStreaks[task.id]);
   // const updateCurrentStreak = useTrackStore((s) => s.updateCurrentStreak);
 
@@ -33,15 +22,10 @@ function TaskRowWrapper({ task }: TaskRowProps) {
   //   })();
   // }, []);
 
-  const totalYears = eachYearOfInterval({
-    start: startDate,
-    end: endDate,
-  });
-
   return (
-    <div className="flex h-row w-fit">
-      {totalYears.map((date) => (
-        <YearItem key={date.toLocaleDateString()} date={date} task={task} />
+    <div className="app-TaskRow flex h-row w-fit">
+      {years.map(([, months], index) => (
+        <YearItem key={index} months={months} task={task} />
       ))}
       {/* {currentStreak > 0 && (
         <div className="flex h-row items-center text-nowrap px-2 text-xs">
@@ -52,41 +36,21 @@ function TaskRowWrapper({ task }: TaskRowProps) {
   );
 }
 
-function YearItem({ date, task }: { date: Date; task: Task }) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalMonths = eachMonthOfInterval({
-    start: isAfter(startOfYear(date), startDate)
-      ? startOfYear(date)
-      : startDate,
-    end: isBefore(endOfYear(date), endDate) ? endOfYear(date) : endDate,
-  });
-
+function YearItem({ months, task }: { months: MonthType[]; task: Task }) {
   return (
     <div className="year-item flex">
-      {totalMonths.map((date) => (
-        <MonthItem key={date.toLocaleDateString()} date={date} task={task} />
+      {months.map(([, days], index) => (
+        <MonthItem key={index} days={days} task={task} />
       ))}
     </div>
   );
 }
 
-function MonthItem({ date, task }: { date: Date; task: Task }) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalDays = eachDayOfInterval({
-    start: isAfter(startOfMonth(date), startDate)
-      ? startOfMonth(date)
-      : startDate,
-    end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
-  });
-
+function MonthItem({ days, task }: { days: Date[]; task: Task }) {
   return (
     <div className="month-item flex">
-      {totalDays.map((date) => (
-        <TaskRowItem key={date.toLocaleDateString()} date={date} task={task} />
+      {days.map((date, index) => (
+        <TaskRowItem key={index} date={date} task={task} />
       ))}
     </div>
   );

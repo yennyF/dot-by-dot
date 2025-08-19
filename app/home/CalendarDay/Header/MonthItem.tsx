@@ -1,39 +1,23 @@
 "use client";
 
-import {
-  format,
-  eachDayOfInterval,
-  endOfMonth,
-  startOfMonth,
-  isBefore,
-  isAfter,
-} from "date-fns";
+import { format } from "date-fns";
 import DayItem from "./DayItem";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { DayType } from "@/app/stores/TrackStore";
 
 interface MonthItemProps {
   date: Date;
+  days: DayType[];
 }
 
-export default function MonthItem({ date }: MonthItemProps) {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalDays = eachDayOfInterval({
-    start: isAfter(startOfMonth(date), startDate)
-      ? startOfMonth(date)
-      : startDate,
-    end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
-  });
-
+export default function MonthItem({ date, days }: MonthItemProps) {
   return (
     <div className="month-item w-fit">
       <div className="sticky left-0 w-fit bg-[var(--background)] px-3 font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="days mt-2 flex">
-        {totalDays.map((date) => (
-          <DayItem key={date.toLocaleDateString()} date={date} />
+        {days.map((date, index) => (
+          <DayItem key={index} date={date} />
         ))}
       </div>
     </div>

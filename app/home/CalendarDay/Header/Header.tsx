@@ -2,17 +2,10 @@
 
 import YearItem from "./YearItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { eachYearOfInterval } from "date-fns";
 import { ShadowLeft, ShadowRight, ShadowTop } from "../shadows";
 
 export default function Header() {
-  const startDate = useTrackStore((s) => s.startDate);
-  const endDate = useTrackStore((s) => s.endDate);
-
-  const totalYears = eachYearOfInterval({
-    start: startDate,
-    end: endDate,
-  });
+  const years = useTrackStore((s) => s.totalDate);
 
   return (
     <div className="calendar-header sticky top-0 z-20 w-fit">
@@ -21,8 +14,8 @@ export default function Header() {
         {/* Space to match body space */}
         <div className="w-[30px]" />
         <div className="sticky flex bg-[var(--background)]">
-          {totalYears.map((date) => (
-            <YearItem key={date.getFullYear()} date={date} />
+          {years.map(([date, months], index) => (
+            <YearItem key={index} date={date} months={months} />
           ))}
         </div>
         <ShadowRight />
