@@ -5,7 +5,7 @@
 html, body {
   overscroll-behavior-x: none; // block go back page behavior on Chrome
   // overscroll-behavior-y: none;
-  font-size: medium;
+  font-size: 14px;
 }
 :root {
   --background: #f1efe7;
@@ -23,8 +23,8 @@ html, body {
   --green-5: rgba(88, 192, 120, 0.2);
 
   --width-name: 300px;
-  --width-day: 48px;
-  --height-row: 45px;
+  --width-day: 36px;
+  --height-row: 36px;
 
   --toastify-color-light: var(--background); 
   --toastify-color-progress-light: var(--accent);

@@ -17,6 +17,7 @@ type State = {
   unlock: boolean;
   startDate: Date;
   endDate: Date;
+  currentStreaks: Record<string, number>;
 };
 
 type Action = {
@@ -25,6 +26,9 @@ type Action = {
   initTracks: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
   clearHistory: () => Promise<void>;
+
+  updateCurrentStreak: (taskId: string) => void;
+  getCurrentStreak: (taskId: string) => Promise<number>;
 
   addTrack: (date: Date, taskId: string) => void;
   addTracks: (date: Date, taskIds: string[]) => void;
@@ -108,6 +112,43 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     }
   },
 
+  currentStreaks: {},
+  updateCurrentStreak: async (taskId: string) => {
+    const streak = await get().getCurrentStreak(taskId);
+
+    set((s) => {
+      const newCurrentStreak = { ...s.currentStreaks };
+      newCurrentStreak[taskId] = streak;
+      return { currentStreaks: newCurrentStreak };
+    });
+  },
+  getCurrentStreak: async (taskId: string) => {
+    const today = midnightUTC(new Date());
+
+    const tracks = await db.tracks
+      .where("taskId")
+      .equals(taskId)
+      .and((track) => track.date <= today)
+      .reverse()
+      .sortBy("date"); // sort by date descending
+
+    let streak = 0;
+    const expectedDate = today;
+
+    for (const track of tracks) {
+      const trackDate = new Date(track.date);
+
+      if (trackDate.getTime() === expectedDate.getTime()) {
+        streak++;
+        expectedDate.setDate(expectedDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  },
+
   addTrack: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
     date = midnightUTC(date);
@@ -121,6 +162,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
     try {
       await db.tracks.add({ taskId, date });
+      get().updateCurrentStreak(taskId);
     } catch (error) {
       console.error("Error checking task:", error);
       notifyCreateError();
@@ -158,6 +200,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
     try {
       await db.tracks.delete([taskId, date]);
+      get().updateCurrentStreak(taskId);
     } catch (error) {
       console.error("Error checking task:", error);
       notifyDeleteError();

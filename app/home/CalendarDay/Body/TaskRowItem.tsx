@@ -51,7 +51,7 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
       {isPrevActive && isActive && (
         <div
           className={clsx(
-            "absolute left-0 right-[50%] z-[-1] h-4 animate-fade-in",
+            "absolute left-0 right-[50%] z-[-1] h-3.5 animate-fade-in",
             task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
           )}
         />
@@ -60,7 +60,7 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
       {isNextActive && isActive && (
         <div
           className={clsx(
-            "absolute left-[50%] right-0 z-[-1] h-4 animate-fade-in",
+            "absolute left-[50%] right-0 z-[-1] h-3.5 animate-fade-in",
             task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
           )}
         />
@@ -85,7 +85,7 @@ function Dot({ isActive, task, ...props }: DotProps) {
     <button
       {...props}
       className={clsx(
-        "flex size-4 transform items-center justify-center rounded-full transition-transform duration-100",
+        "flex size-3.5 transform items-center justify-center rounded-full transition-transform duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive

@@ -64,7 +64,7 @@ function Dot({ isActive, ...props }: DotProps) {
       {...props}
       className={clsx(
         "flex transform items-center justify-center rounded-full",
-        isActive ? "size-4 bg-[var(--accent-4)]" : "size-1 bg-[var(--gray)]"
+        isActive ? "size-3.5 bg-[var(--accent-4)]" : "size-1 bg-[var(--gray)]"
       )}
     >
       {/* {isActive && <CheckIcon className="size-3 text-white" />} */}

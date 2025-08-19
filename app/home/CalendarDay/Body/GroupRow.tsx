@@ -38,6 +38,9 @@ function GroupRowWrapper({ group }: GroupRowWrapperProps) {
           group={group}
         />
       ))}
+      {/* <div className="flex h-row items-center text-nowrap px-2 text-xs">
+        3 day streak
+      </div> */}
     </div>
   );
 }
