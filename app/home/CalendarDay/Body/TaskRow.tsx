@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { Task } from "@/app/repositories/types";
 import TaskRowItem from "./TaskRowItem";
 import { useTrackStore } from "@/app/stores/TrackStore";
@@ -24,14 +24,14 @@ interface TaskRowProps {
 function TaskRowWrapper({ task }: TaskRowProps) {
   const startDate = useTrackStore((s) => s.startDate);
   const endDate = useTrackStore((s) => s.endDate);
-  const currentStreak = useTrackStore((s) => s.currentStreaks[task.id]);
-  const updateCurrentStreak = useTrackStore((s) => s.updateCurrentStreak);
+  // const currentStreak = useTrackStore((s) => s.currentStreaks[task.id]);
+  // const updateCurrentStreak = useTrackStore((s) => s.updateCurrentStreak);
 
-  useEffect(() => {
-    (async () => {
-      await updateCurrentStreak(task.id);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await updateCurrentStreak(task.id);
+  //   })();
+  // }, []);
 
   const totalYears = eachYearOfInterval({
     start: startDate,
