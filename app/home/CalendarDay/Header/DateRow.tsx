@@ -22,7 +22,7 @@ interface YearItemProps {
 function YearItem({ date, months }: YearItemProps) {
   return (
     <div className="year-item w-fit">
-      <div className="sticky left-0 w-fit bg-[var(--background)] px-3 font-bold">
+      <div className="sticky left-0 w-fit px-3 font-bold">
         {format(date, "yyyy")}
       </div>
       <div className="mt-1 flex">
@@ -42,7 +42,7 @@ interface MonthItemProps {
 function MonthItem({ date, days }: MonthItemProps) {
   return (
     <div className="month-item w-fit">
-      <div className="sticky left-0 w-fit bg-[var(--background)] px-3 font-bold">
+      <div className="sticky left-0 w-fit px-3 font-bold">
         {format(date, "MMMM")}
       </div>
       <div className="mt-2 flex">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTrackStore } from "@/app/stores/TrackStore";
-import clsx from "clsx";
 import { midnightUTCstring } from "@/app/util";
 import { CheckIcon } from "@radix-ui/react-icons";
 import {
@@ -27,11 +26,7 @@ export default function CounterRowItem({ date }: { date: Date }) {
   const percentage = Math.round(raw / step) * step;
 
   return (
-    <div
-      className={clsx(
-        "app-CounterRowItem relative flex w-day items-center justify-center"
-      )}
-    >
+    <div className="app-CounterRowItem relative flex w-day items-center justify-center">
       {tasksSize > 0 && (
         <AppTooltip>
           <AppTrigger className="flex items-center justify-center">
