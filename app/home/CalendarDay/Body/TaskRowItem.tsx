@@ -108,7 +108,7 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
   );
 }
 
-function LockDot({ task, isActive, onClick, ...props }: DotProps) {
+function LockDot({ isActive, onClick, ...props }: DotProps) {
   const [unlock, setUnlock] = useState<boolean>();
 
   return (
@@ -118,7 +118,6 @@ function LockDot({ task, isActive, onClick, ...props }: DotProps) {
       )}
       <Dot
         {...props}
-        task={task}
         isActive={isActive}
         onClick={(e) => {
           if (unlock) onClick?.(e);
