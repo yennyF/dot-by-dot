@@ -6,7 +6,7 @@ export default function DateRow() {
   const years = useTrackStore((s) => s.totalDate);
 
   return (
-    <div className="app-DateRow sticky flex bg-[var(--background)]">
+    <div className="app-DateRow sticky flex w-fit bg-[var(--background)]">
       {years.map(([date, months], index) => (
         <YearItem key={index} date={date} months={months} />
       ))}
@@ -21,7 +21,7 @@ interface YearItemProps {
 
 function YearItem({ date, months }: YearItemProps) {
   return (
-    <div className="year-item w-fit">
+    <div className="app-YearItem w-fit">
       <div className="sticky left-0 w-fit px-3 font-bold">
         {format(date, "yyyy")}
       </div>
@@ -41,7 +41,7 @@ interface MonthItemProps {
 
 function MonthItem({ date, days }: MonthItemProps) {
   return (
-    <div className="month-item w-fit">
+    <div className="app-MonthItem w-fit">
       <div className="sticky left-0 w-fit px-3 font-bold">
         {format(date, "MMMM")}
       </div>

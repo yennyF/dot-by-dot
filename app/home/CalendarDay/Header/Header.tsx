@@ -6,12 +6,12 @@ import DateRow from "./DateRow";
 
 export default function Header() {
   return (
-    <div className="calendar-header sticky top-0 z-20 w-fit">
-      <div className="f flex items-stretch">
+    <div className="App-CalendarHeader sticky top-0 z-20 w-fit">
+      <div className="flex items-stretch">
         <ShadowLeft />
         {/* Space to match body space */}
         <div className="w-[30px]" />
-        <div>
+        <div className="w-full">
           <DateRow />
           <CounterRow />
         </div>
