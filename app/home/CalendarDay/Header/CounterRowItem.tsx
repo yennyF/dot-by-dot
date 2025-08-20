@@ -8,10 +8,14 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
+import { isToday } from "date-fns";
+import clsx from "clsx";
 
 const MAX_TASK_SIZE = 5;
 
 export default function CounterRowItem({ date }: { date: Date }) {
+  const isTodayDate = isToday(date);
+
   const tasksSize = useTrackStore(
     (s) => s.tasksByDate?.[midnightUTCstring(date)]?.size ?? 0
   );
@@ -27,16 +31,23 @@ export default function CounterRowItem({ date }: { date: Date }) {
 
   return (
     <div className="app-CounterRowItem relative flex w-day items-center justify-center">
-      {tasksSize > 0 && (
+      {(isTodayDate || tasksSize > 0) && (
         <AppTooltip>
           <AppTrigger className="flex items-center justify-center">
             <div
-              className="absolute flex size-3.5 transform rounded-full bg-[var(--green)]"
-              style={{ opacity: percentage }}
+              className={clsx(
+                "absolute flex size-[var(--dot-size)] transform rounded-full",
+                isTodayDate && tasksSize === 0
+                  ? "border-[1px] border-[var(--green)]"
+                  : "bg-[var(--green)]"
+              )}
+              style={{
+                opacity: isTodayDate && tasksSize === 0 ? 1 : percentage,
+              }}
             ></div>
             <CheckIcon className="absolute size-3 text-white" />
           </AppTrigger>
-          <AppContent side="left" align="center" sideOffset={10}>
+          <AppContent side="top" align="center" sideOffset={10}>
             {tasksSize} dots
           </AppContent>
         </AppTooltip>

@@ -45,7 +45,7 @@ function MonthItem({ date, days }: MonthItemProps) {
       <div className="sticky left-0 w-fit px-3 font-bold">
         {format(date, "MMMM")}
       </div>
-      <div className="mt-2 flex">
+      <div className="mt-2.5 flex">
         {days.map((date, index) => (
           <DateRowItem key={index} date={date} />
         ))}

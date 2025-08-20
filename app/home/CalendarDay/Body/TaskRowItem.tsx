@@ -67,9 +67,17 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
       )}
 
       {isTodayDate ? (
-        <Dot task={task} isActive={isActive} onClick={handleClick} />
+        <Dot
+          isActive={isActive}
+          isTodayDate={isTodayDate}
+          onClick={handleClick}
+        />
       ) : (
-        <LockDot task={task} isActive={isActive} onClick={handleClick} />
+        <LockDot
+          isActive={isActive}
+          isTodayDate={isTodayDate}
+          onClick={handleClick}
+        />
       )}
     </div>
   );
@@ -77,23 +85,21 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
 
 interface DotProps extends React.ComponentProps<"button"> {
   isActive: boolean;
-  task: Task;
+  isTodayDate: boolean;
 }
 
-function Dot({ isActive, task, ...props }: DotProps) {
+function Dot({ isActive, isTodayDate, ...props }: DotProps) {
   return (
     <button
       {...props}
       className={clsx(
-        "flex size-3.5 transform items-center justify-center rounded-full transition-transform duration-100",
+        "box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-transform duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
-          ? task.groupId
-            ? "bg-[var(--accent)]"
-            : "bg-[var(--accent)]"
-          : task.groupId
-            ? "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+          ? "bg-[var(--accent)]"
+          : isTodayDate
+            ? "border-[1px] border-black hover:border-[var(--accent-5)] hover:bg-[var(--accent-5)]"
             : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
       )}
     >

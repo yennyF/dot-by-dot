@@ -43,11 +43,11 @@ export default function LoadMore({
   };
 
   return (
-    // 110 header height
+    // TODO 100 header height
     // 15 shadow top/bottom height
     <div
-      className="sticky top-[calc(110px+15px)] flex w-[30px] shrink-0 items-center justify-center"
-      style={{ height: height - 110 - 15 - 15 + "px" }}
+      className="sticky top-[calc(100px+15px)] flex w-[30px] shrink-0 items-center justify-center"
+      style={{ height: height - 100 - 15 - 15 + "px" }}
     >
       <AppTooltip>
         <AppTrigger asChild>
