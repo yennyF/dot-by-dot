@@ -60,7 +60,7 @@ function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
       onDragEnd={handleDragEnd}
     >
       <div className="flex items-center gap-2 overflow-hidden">
-        <CubeIcon className="h-[12px] w-[12px] shrink-0" />
+        <CubeIcon className="size-[12px] shrink-0" />
         <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
           {group.name}
         </div>

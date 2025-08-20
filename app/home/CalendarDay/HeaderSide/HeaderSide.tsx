@@ -27,7 +27,7 @@ export default function HeaderSide() {
   return (
     <SortableContainer
       scrollRef={scrollRef}
-      className="sticky right-0 z-10 w-name shrink-0 bg-[var(--background)]"
+      className="sticky right-0 w-name shrink-0 bg-[var(--background)]"
     >
       <TaskList groupId={null} />
 

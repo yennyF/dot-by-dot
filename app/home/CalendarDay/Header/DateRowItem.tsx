@@ -1,14 +1,12 @@
-"use client";
-
-import { format, isToday, isWeekend } from "date-fns";
 import { scrollStore } from "@/app/stores/scrollStore";
+import { format, isToday, isWeekend } from "date-fns";
 import { useEffect } from "react";
 
 interface DayItemProps {
   date: Date;
 }
 
-export default function DayItem({ date }: DayItemProps) {
+export default function DateRowItem({ date }: DayItemProps) {
   const isTodayDate = isToday(date);
   const dateFormatted = format(date, "EE");
 

@@ -38,7 +38,7 @@ function TaskRowWrapper({ task }: TaskRowProps) {
 
 function YearItem({ months, task }: { months: MonthType[]; task: Task }) {
   return (
-    <div className="year-item flex">
+    <div className="flex">
       {months.map(([, days], index) => (
         <MonthItem key={index} days={days} task={task} />
       ))}
@@ -48,7 +48,7 @@ function YearItem({ months, task }: { months: MonthType[]; task: Task }) {
 
 function MonthItem({ days, task }: { days: Date[]; task: Task }) {
   return (
-    <div className="month-item flex">
+    <div className="flex">
       {days.map((date, index) => (
         <TaskRowItem key={index} date={date} task={task} />
       ))}

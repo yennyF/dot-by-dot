@@ -44,7 +44,7 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
     >
       <div className="flex items-center gap-2 overflow-hidden">
         <div className="h-[12px] w-[12px] shrink-0" />
-        <div className="overflow-hidden text-ellipsis text-nowrap text-[var(--gray-9)]">
+        <div className="overflow-hidden text-ellipsis text-nowrap">
           {task.name}
         </div>
       </div>
