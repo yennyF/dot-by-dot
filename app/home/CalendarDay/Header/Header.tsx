@@ -7,10 +7,10 @@ import DateRow from "./DateRow";
 export default function Header() {
   return (
     <div className="App-CalendarHeader sticky top-0 z-20 w-fit">
-      <div className="flex items-stretch">
+      <div className="flex items-stretch bg-[var(--background)]">
         <ShadowLeft />
         {/* Space to match body space */}
-        <div className="w-[30px]" />
+        <div className="w-[30px] shrink-0" />
         <div className="w-full">
           <DateRow />
           <CounterRow />
