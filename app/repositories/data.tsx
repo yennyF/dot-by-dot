@@ -82,7 +82,7 @@ export function genTracks(start: Date, end: Date, tasks: Task[]): Track[] {
 
   totalDays.forEach((date) => {
     tasks.forEach((task) => {
-      if (Math.random() > 0.7) {
+      if (Math.random() > 0.8) {
         tracks.push({ taskId: task.id, date: midnightUTC(date) });
       }
     });

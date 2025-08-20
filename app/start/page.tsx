@@ -156,7 +156,7 @@ export default function Start() {
                   disabled={isLoading}
                   onClick={handleClickStartMock}
                 >
-                  Skip for a quick setup
+                  Jump to test
                 </button>
               </AppTrigger>
               <AppContent className="p-2" side="right" sideOffset={10}>
