@@ -99,8 +99,9 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
         isActive
           ? "bg-[var(--accent)]"
           : isTodayDate
-            ? "border-[1px] border-black hover:border-[var(--accent-5)] hover:bg-[var(--accent-5)]"
-            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
+            ? "bg-[var(--background)] hover:bg-[var(--accent-5)]"
+            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]",
+        isTodayDate && "border-[1px] border-black"
       )}
     >
       {/* {isActive && !task.groupId && <CheckIcon className="size-3 text-white" />} */}

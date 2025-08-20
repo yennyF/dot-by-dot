@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body {
-  overscroll-behavior-x: none; // block go back page behavior on Chrome
+  overscroll-behavior: none; // block go back page behavior on Chrome
   // overscroll-behavior-y: none;
   font-size: 15px;
 }
