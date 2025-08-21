@@ -31,7 +31,7 @@ export default function CalendarDay() {
         </div>
         <ShadowTop />
       </div>
-      <div className="sticky left-0 flex w-fit">
+      <div className="sticky left-0 mt-5 flex w-fit">
         <ShadowLeft />
         <LoadMore scrollRef={scrollRef} />
         <Body />

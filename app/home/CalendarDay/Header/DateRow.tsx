@@ -6,7 +6,7 @@ export default function DateRow() {
   const years = useTrackStore((s) => s.totalDate);
 
   return (
-    <div className="app-DateRow sticky flex w-fit">
+    <div className="app-DateRow flex w-fit">
       {years.map(([date, months], index) => (
         <YearItem key={index} date={date} months={months} />
       ))}
