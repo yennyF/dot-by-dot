@@ -42,13 +42,16 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
         isTodayDate && "isToday"
       )}
     >
-      {isPrevActive && isActive && (
-        <div className="absolute left-0 right-[50%] z-[-1] h-[2px] animate-fade-in bg-[var(--accent-4)]" />
+      {isActive && (
+        <>
+          {isPrevActive && (
+            <div className="absolute left-0 right-[50%] z-[-1] h-[1px] animate-fade-in bg-[var(--accent-4)]" />
+          )}
+          {isNextActive && (
+            <div className="absolute left-[50%] right-0 z-[-1] h-[1px] animate-fade-in bg-[var(--accent-4)]" />
+          )}
+        </>
       )}
-      {isNextActive && isActive && (
-        <div className="absolute left-[50%] right-0 z-[-1] h-[2px] animate-fade-in bg-[var(--accent-4)]" />
-      )}
-
       <Dot isActive={isActive} />
     </div>
   );
@@ -65,7 +68,7 @@ function Dot({ isActive, ...props }: DotProps) {
       className={clsx(
         "flex transform items-center justify-center rounded-full",
         isActive
-          ? "size-[var(--dot-size)] bg-[var(--accent-4)]"
+          ? "size-[10px] bg-[var(--accent-4)]"
           : "size-1 bg-[var(--gray)]"
       )}
     >
