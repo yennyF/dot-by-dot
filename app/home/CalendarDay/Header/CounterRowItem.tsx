@@ -27,7 +27,12 @@ export default function CounterRowItem({ date }: { date: Date }) {
   const percentage = Math.round(raw / step) * step;
 
   return (
-    <div className="app-CounterRowItem relative flex w-day items-center justify-center">
+    <div
+      className={clsx(
+        "app-CounterRowItem relative flex w-day items-center justify-center",
+        isTodayDate && "isToday"
+      )}
+    >
       {(isTodayDate || tasksSize > 0) && (
         <AppTooltip>
           <AppTrigger className="flex cursor-default items-center justify-center">

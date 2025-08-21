@@ -22,11 +22,12 @@ export default function DateRowItem({ date }: DayItemProps) {
     });
   }, [todayRef]);
 
-  const children = (
+  return (
     <div
+      ref={isTodayDate ? todayRef : null}
       className={clsx(
         "day-item flex w-day flex-col items-center",
-        isTodayDate && "text-[var(--accent)]",
+        isTodayDate && "isToday text-[var(--accent)]",
         isWeekend(date) && "text-[var(--inverted)]"
       )}
     >
@@ -43,6 +44,4 @@ export default function DateRowItem({ date }: DayItemProps) {
       </div>
     </div>
   );
-
-  return isTodayDate ? <div ref={todayRef}>{children}</div> : children;
 }
