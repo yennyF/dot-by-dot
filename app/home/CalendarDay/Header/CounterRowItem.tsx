@@ -10,10 +10,6 @@ import {
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 
-function getColor(alpha: number) {
-  return `rgba(88, 192, 120, ${alpha})`;
-}
-
 export default function CounterRowItem({ date }: { date: Date }) {
   const isTodayDate = isToday(date);
 
@@ -46,16 +42,16 @@ export default function CounterRowItem({ date }: { date: Date }) {
           }}
         />
       )}
-      {(isTodayDate || isCurrentActive) && (
+      {(isCurrentActive || isTodayDate) && (
         <AppTooltip>
           <AppTrigger className="flex cursor-default items-center justify-center">
             <div
               className={clsx(
-                "absolute flex size-[10px] transform rounded-full",
+                "size-[10px] transform rounded-full",
                 isTodayDate && "border-[1px] border-[var(--green)]"
               )}
               style={{ backgroundColor: colorStart }}
-            ></div>
+            />
           </AppTrigger>
           <AppContent side="top" align="center" sideOffset={10}>
             {currentSize} dots
@@ -64,4 +60,8 @@ export default function CounterRowItem({ date }: { date: Date }) {
       )}
     </div>
   );
+}
+
+function getColor(alpha: number) {
+  return `rgba(88, 192, 120, ${alpha})`;
 }
