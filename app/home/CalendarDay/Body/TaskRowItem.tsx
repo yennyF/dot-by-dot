@@ -3,7 +3,7 @@
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTrackStore } from "@/app/stores/TrackStore";
-import { LockClosedIcon } from "@radix-ui/react-icons";
+import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Task } from "@/app/repositories/types";
 import { midnightUTCstring } from "@/app/util";
@@ -93,7 +93,7 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
     <button
       {...props}
       className={clsx(
-        "box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-transform duration-100",
+        "box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-all duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
@@ -104,7 +104,14 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
         isTodayDate && "border-[1px] border-black"
       )}
     >
-      {/* {isActive && !task.groupId && <CheckIcon className="size-3 text-white" />} */}
+      {isTodayDate && (
+        <CheckIcon
+          className={clsx(
+            "size-3 text-black transition-opacity",
+            isActive ? "opacity-100" : "opacity-0 hover:opacity-100"
+          )}
+        />
+      )}
     </button>
   );
 }

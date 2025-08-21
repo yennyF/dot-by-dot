@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Header from "./Header/Header";
-import { ShadowBottom, ShadowLeft, ShadowRight } from "./shadows";
+import { ShadowBottom, ShadowLeft, ShadowRight, ShadowTop } from "./shadows";
 import HeaderSide from "./HeaderSide/HeaderSide";
 import Body from "./Body/Body";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
@@ -19,9 +19,18 @@ export default function CalendarDay() {
   return (
     <HorizontalDragScroll
       ref={scrollRef}
-      className="app-CalendarDay scrollbar-none relative mx-[40px] mb-[30px] mt-[70px] max-h-[calc(100vh-70px-30px)] w-[calc(100vw-80px)] flex-1 overflow-scroll"
+      className="app-CalendarDay scrollbar-none relative top-[60px] mx-[35px] mb-[35px] max-h-[calc(100dvh-60px-35px)] w-[calc(100dvw-70px)] flex-1 overflow-scroll overscroll-none"
     >
-      <Header />
+      <div className="sticky top-0 z-20 w-fit">
+        <div className="flex items-stretch bg-[var(--background)]">
+          <ShadowLeft />
+          <div className="w-[30px] shrink-0" />
+          <Header />
+          <ShadowRight />
+          <div className="sticky right-0 z-10 flex w-name shrink-0 items-end bg-[var(--background)]"></div>
+        </div>
+        <ShadowTop />
+      </div>
       <div className="sticky left-0 flex w-fit">
         <ShadowLeft />
         <LoadMore scrollRef={scrollRef} />
