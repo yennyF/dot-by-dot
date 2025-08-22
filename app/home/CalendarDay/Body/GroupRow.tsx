@@ -23,21 +23,21 @@ function GroupRowWrapper({ group }: GroupRowWrapperProps) {
 
 function YearItem({ months, group }: { months: MonthType[]; group: Group }) {
   return (
-    <div className="app-YearItem flex">
+    <>
       {months.map(([, days], index) => (
         <MonthItem key={index} days={days} group={group} />
       ))}
-    </div>
+    </>
   );
 }
 
 function MonthItem({ days, group }: { days: DayType[]; group: Group }) {
   return (
-    <div className="app-MonthItem flex">
+    <>
       {days.map((date, index) => (
         <GroupRowItem key={index} date={date} group={group} />
       ))}
-    </div>
+    </>
   );
 }
 

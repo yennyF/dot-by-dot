@@ -8,7 +8,6 @@ import Body from "./Body/Body";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { scrollStore } from "@/app/stores/scrollStore";
 import LoadMore from "./LoadMore";
-import { TodayBody, TodayHeader } from "./TodayCol";
 
 export default function CalendarDay() {
   const scrollRef = scrollStore((s) => s.calendarScrollRef);

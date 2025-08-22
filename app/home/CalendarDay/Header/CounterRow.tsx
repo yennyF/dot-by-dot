@@ -17,20 +17,20 @@ export default function CounterRow() {
 
 function YearItem({ months }: { months: MonthType[] }) {
   return (
-    <div className="flex">
+    <>
       {months.map(([, days], index) => (
         <MonthItem key={index} days={days} />
       ))}
-    </div>
+    </>
   );
 }
 
 function MonthItem({ days }: { days: DayType[] }) {
   return (
-    <div className="flex">
+    <>
       {days.map((date, index) => (
         <CounterRowItem key={index} date={date} />
       ))}
-    </div>
+    </>
   );
 }
