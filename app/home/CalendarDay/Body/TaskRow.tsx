@@ -7,7 +7,6 @@ import { MonthType, useTrackStore } from "@/app/stores/TrackStore";
 
 interface TaskRowProps {
   task: Task;
-  isDummy?: boolean;
 }
 
 function TaskRowWrapper({ task }: TaskRowProps) {

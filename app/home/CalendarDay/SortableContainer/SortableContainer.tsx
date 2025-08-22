@@ -1,25 +1,25 @@
 "use client";
 
 import { useGroupStore } from "@/app/stores/GroupStore";
+import { scrollStore } from "@/app/stores/scrollStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
-import { useRef, DragEvent, ReactNode, RefObject } from "react";
+import { useRef, DragEvent, ReactNode } from "react";
 
 interface SortableContainerProps {
   children: ReactNode;
-  scrollRef: RefObject<HTMLDivElement | null>;
   className?: string;
 }
 
 export default function SortableContainer({
   children,
-  scrollRef,
   className,
 }: SortableContainerProps) {
   const dataSort = useRef<"task" | "group">(null);
 
+  const scrollRef = scrollStore((s) => s.calendarScrollRef);
+
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
-
   const moveGroupBefore = useGroupStore((s) => s.moveGroupBefore);
   const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
 
@@ -132,6 +132,7 @@ export default function SortableContainer({
 
   return (
     <div
+      ref={scrollRef}
       className={`app-SortableContainer ${className}`}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}

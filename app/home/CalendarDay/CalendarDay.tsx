@@ -28,7 +28,7 @@ export default function CalendarDay() {
           <div className="w-[30px] shrink-0" />
           <Header />
           <ShadowRight />
-          <TodayHeader />
+          {/* <TodayHeader /> */}
           <div className="sticky right-0 z-10 flex w-name shrink-0 items-end bg-[var(--background)]"></div>
         </div>
         <ShadowTop />
@@ -38,7 +38,7 @@ export default function CalendarDay() {
         <LoadMore scrollRef={scrollRef} />
         <Body />
         <ShadowRight />
-        <TodayBody />
+        {/* <TodayBody /> */}
         <HeaderSide />
       </div>
       <ShadowBottom />
