@@ -7,7 +7,7 @@ export default function CounterRow() {
   const years = useTrackStore((s) => s.totalDate);
 
   return (
-    <div className="app-CounterRow flex h-row w-fit bg-[var(--background)]">
+    <div className="app-CounterRow flex w-fit bg-[var(--background)]">
       {years.map(([, months], index) => (
         <YearItem key={index} months={months} />
       ))}

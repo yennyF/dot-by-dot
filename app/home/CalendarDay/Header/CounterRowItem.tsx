@@ -30,7 +30,7 @@ export default function CounterRowItem({ date }: { date: Date }) {
   return (
     <div
       className={clsx(
-        "app-CounterRowItem relative flex w-day items-center justify-center",
+        "app-CounterRowItem relative flex h-row w-day items-center justify-center",
         isTodayDate && "isToday"
       )}
     >

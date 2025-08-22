@@ -8,6 +8,7 @@ import Body from "./Body/Body";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { scrollStore } from "@/app/stores/scrollStore";
 import LoadMore from "./LoadMore";
+import { TodayBody, TodayHeader } from "./TodayCol";
 
 export default function CalendarDay() {
   const scrollRef = scrollStore((s) => s.calendarScrollRef);
@@ -27,6 +28,7 @@ export default function CalendarDay() {
           <div className="w-[30px] shrink-0" />
           <Header />
           <ShadowRight />
+          <TodayHeader />
           <div className="sticky right-0 z-10 flex w-name shrink-0 items-end bg-[var(--background)]"></div>
         </div>
         <ShadowTop />
@@ -36,6 +38,7 @@ export default function CalendarDay() {
         <LoadMore scrollRef={scrollRef} />
         <Body />
         <ShadowRight />
+        <TodayBody />
         <HeaderSide />
       </div>
       <ShadowBottom />

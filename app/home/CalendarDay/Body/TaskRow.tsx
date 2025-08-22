@@ -23,12 +23,12 @@ function TaskRowWrapper({ task }: TaskRowProps) {
   // }, []);
 
   return (
-    <div className="app-TaskRow flex h-row w-fit">
+    <div className="app-TaskRow flex w-fit">
       {years.map(([, months], index) => (
         <YearItem key={index} months={months} task={task} />
       ))}
       {/* {currentStreak > 0 && (
-        <div className="flex h-row items-center text-nowrap px-2 text-xs">
+        <div className="flex items-center text-nowrap px-2 text-xs">
           {currentStreak} day streak
         </div>
       )} */}

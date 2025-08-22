@@ -13,7 +13,7 @@ function GroupRowWrapper({ group }: GroupRowWrapperProps) {
   const years = useTrackStore((s) => s.totalDate);
 
   return (
-    <div className="app-GroupRow flex h-row">
+    <div className="app-GroupRow flex">
       {years.map(([, months], index) => (
         <YearItem key={index} months={months} group={group} />
       ))}
