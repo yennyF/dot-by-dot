@@ -6,11 +6,15 @@ import {
   GearIcon,
   InfoCircledIcon,
 } from "@radix-ui/react-icons";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useGroupStore } from "@/app/stores/GroupStore";
+import { useTaskStore } from "@/app/stores/TaskStore";
 
 export default function AppHeader({ children }: { children?: ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
+
+  const groupSize = useGroupStore((s) => s.size);
+  const taskSize = useTaskStore((s) => s.size);
 
   useEffect(() => {
     console.log("AppHeader rendered");
@@ -19,20 +23,16 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
   return (
     <header className="fixed left-0 top-0 z-30 flex h-[60px] w-full items-center gap-8 bg-[var(--background)] px-[20px]">
       <Logo />
-      {(pathname === "/" ||
-        pathname === "/about" ||
-        pathname === "/settings") && (
-        <button
-          className="flex items-center gap-2"
-          onClick={async () => {
-            router.push("/about");
-          }}
-        >
-          <InfoCircledIcon />
-          About
-        </button>
-      )}
-      {(pathname === "/" || pathname === "/settings") && (
+      <button
+        className="flex items-center gap-2"
+        onClick={async () => {
+          router.push("/about");
+        }}
+      >
+        <InfoCircledIcon />
+        About
+      </button>
+      {(groupSize > 0 || taskSize > 0) && (
         <button
           className="flex items-center gap-2"
           onClick={() => {

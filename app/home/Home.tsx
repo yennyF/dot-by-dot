@@ -49,12 +49,11 @@ function Content() {
     <>
       <AppHeader>
         <div className="flex flex-1 justify-between">
+          <div className="flex items-center gap-2"></div>
           <div className="flex items-center gap-2">
-            <TodayButton />
             <LeftButton />
             <RightButton />
-          </div>
-          <div className="flex items-center gap-2">
+            <TodayButton />
             <LockButton />
             <CreateDropdown>
               <span>

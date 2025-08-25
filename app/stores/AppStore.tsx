@@ -52,6 +52,8 @@ export const useAppStore = create<Action>((set, get) => ({
       await db.groups.bulkAdd(Array.from(groups));
       await db.tasks.bulkAdd(Array.from(tasks));
       if (tracks) await db.tracks.bulkAdd(tracks);
+
+      get().init();
     } catch (error) {
       console.error("Error starting:", error);
       throw error;

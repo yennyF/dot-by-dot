@@ -5,7 +5,7 @@ import AppHeader from "../components/AppHeader/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 
-export default function Settings() {
+export default function Setting() {
   return (
     <>
       <AppHeader></AppHeader>

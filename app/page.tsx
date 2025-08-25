@@ -1,30 +1,37 @@
 "use client";
 
-import { AppProvider } from "./AppContext";
-import { db } from "./repositories/db";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { notifyLoadError } from "./components/Notification";
 import Home from "./home/Home";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useAppStore } from "./stores/AppStore";
+import { useGroupStore } from "./stores/GroupStore";
+import { useTaskStore } from "./stores/TaskStore";
+import Product from "./product/Product";
 import Loading from "./components/Loading/Loading";
-import Product from "./product/page";
 
 export default function Page() {
-  return (
-    <AppProvider>
-      <Content />
-    </AppProvider>
-  );
-}
+  const [isLoading, setIsLoading] = useState(true);
 
-function Content() {
-  // const count = useLiveQuery(() => db.tasks.count(), []);
+  const init = useAppStore((s) => s.init);
+  const groupSize = useGroupStore((s) => s.size);
+  const taskSize = useTaskStore((s) => s.size);
 
-  // if (count === undefined) {
-  //   return <Loading />;
-  // }
+  useEffect(() => {
+    setIsLoading(true);
+    (async () => {
+      try {
+        await init();
+      } catch {
+        notifyLoadError();
+      }
+      setIsLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // if (count === 0) {
-  // return <Product />;
-  // }
+  if (isLoading) return <Loading />;
 
-  return <Home />;
+  return groupSize > 0 || taskSize > 0 ? <Home /> : <Product />;
 }
