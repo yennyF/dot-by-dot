@@ -7,7 +7,7 @@ import {
   CubeIcon,
 } from "@radix-ui/react-icons";
 import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
 import { Checkbox } from "radix-ui";
 import {
@@ -16,19 +16,25 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import { redirect, RedirectType } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import AppHeader from "../components/AppHeader/AppHeader";
 
 export default function Start() {
-  const ungroupedTasks = useRef(genUngroupedTasks());
-  const groupedTasks = useRef(genGroupedTasks());
+  const router = useRouter();
+
+  const [ungroupedTasks, setUngroupedTasks] = useState<Task[]>([]);
+  const [groupedTasks, setGroupedTasks] = useState<[Group, Task[]][]>([]);
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const toastId = useRef<Id>(null);
+
+  useEffect(() => {
+    setUngroupedTasks(genUngroupedTasks());
+    setGroupedTasks(genGroupedTasks());
+  }, []);
 
   const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
@@ -43,8 +49,6 @@ export default function Start() {
   };
 
   async function handleClickStart() {
-    setIsLoading(true);
-
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
@@ -53,7 +57,7 @@ export default function Start() {
       tasksSelected.forEach((task) => {
         const groupId = task.groupId;
         if (groupId) {
-          const group = groupedTasks.current.find(
+          const group = groupedTasks.find(
             ([group]) => group.id === groupId
           )?.[0];
 
@@ -67,13 +71,12 @@ export default function Start() {
       await start(groups, tasks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      redirect("/", RedirectType.replace);
-    } catch {
+      router.push("/");
+    } catch (error) {
+      console.log(error);
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
-
-    setIsLoading(false);
   }
 
   return (
@@ -83,7 +86,7 @@ export default function Start() {
         <section className="mt-[100px]">
           <button
             className="flex items-center gap-2"
-            onClick={() => redirect("/")}
+            onClick={() => router.back()}
           >
             <ArrowLeftIcon />
             Go back
@@ -97,7 +100,7 @@ export default function Start() {
           </p>
 
           <div className="mt-[30px] flex flex-col gap-2">
-            {ungroupedTasks.current.map((task) => (
+            {ungroupedTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}
@@ -113,7 +116,7 @@ export default function Start() {
           </p>
 
           <div className="mt-[30px] flex flex-wrap gap-10">
-            {groupedTasks.current.map(([group, tasks]) => (
+            {groupedTasks.map(([group, tasks]) => (
               <GroupItem key={group.id} group={group}>
                 <div className="flex flex-col items-start gap-2">
                   {tasks.map((task) => (
@@ -132,7 +135,7 @@ export default function Start() {
           <div className="mt-[50px] flex flex-col items-center justify-center">
             <button
               className="button-accent mt-2 flex items-center gap-2"
-              disabled={isLoading || tasksSelected.size < 3}
+              disabled={tasksSelected.size < 3}
               onClick={handleClickStart}
             >
               <span>Let&apos;s begin </span>

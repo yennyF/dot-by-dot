@@ -1,7 +1,7 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { GearIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 
 export default function MenuDropdown({
@@ -9,6 +9,8 @@ export default function MenuDropdown({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
@@ -21,7 +23,7 @@ export default function MenuDropdown({
           <DropdownMenu.Item
             className="dropdown-item flex items-center gap-2"
             onClick={() => {
-              redirect("/settings");
+              router.push("/settings");
             }}
           >
             <GearIcon />
@@ -30,7 +32,7 @@ export default function MenuDropdown({
           <DropdownMenu.Item
             className="dropdown-item flex items-center gap-2"
             onClick={async () => {
-              redirect("/about");
+              router.push("/about");
             }}
           >
             <InfoCircledIcon />
