@@ -1,20 +1,25 @@
 "use client";
 
+import clsx from "clsx";
 import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
 
 export default function TestButton({
-  isLoading,
+  disabled,
   onClick,
 }: {
-  isLoading: boolean;
+  disabled: boolean;
   onClick: () => void;
 }) {
   return (
     <AppTooltip>
       <AppTrigger asChild>
         <button
-          className="mt-5 text-xs hover:text-[var(--inverted)] hover:underline"
-          disabled={isLoading}
+          className={clsx(
+            "mt-5 cursor-pointer text-xs hover:text-[var(--inverted)] hover:underline",
+            disabled &&
+              "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
+          )}
+          disabled={disabled}
           onClick={onClick}
         >
           Only here for testing

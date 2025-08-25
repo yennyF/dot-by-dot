@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import AppHeader from "../components/AppHeader/AppHeader";
@@ -14,13 +13,20 @@ import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
 import { useAppStore } from "../stores/AppStore";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <AppProvider>
-      <Content />
-    </AppProvider>
-  );
+  const router = useRouter();
+
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === true) {
+      router.replace("/product");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === false ? <Content /> : <Loading />;
 }
 
 function Content() {
@@ -71,7 +77,7 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      {isLoading ? <Loading /> : <CalendarDay />}
+      <main>{isLoading ? <Loading /> : <CalendarDay />}</main>
     </>
   );
 }

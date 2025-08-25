@@ -22,107 +22,87 @@ type Action = {
   startMock: () => Promise<void>;
 };
 
-export const useAppStore = create<State & Action>((set, get) => ({
-  isDataEmpty: undefined,
+const setDataEmpty = async () => {
+  const groupsCount = await db.groups.count();
+  const tasksCount = await db.tasks.count();
+  const isDataEmpty = groupsCount === 0 && tasksCount === 0;
+  useAppStore.setState({ isDataEmpty });
+};
 
-  init: async () => {
-    try {
-      await Promise.all([
-        useGroupStore.getState().initGroups(),
-        useTaskStore.getState().initTasks(),
-        useTrackStore.getState().initTracks(),
-      ]);
-    } catch (error) {
-      console.log("Error initializing", error);
-      throw error;
-    }
-  },
-  reset: async () => {
-    try {
-      await db.tables.forEach((table) => table.clear());
+export const useAppStore = create<State & Action>((set, get) => {
+  setDataEmpty();
 
-      useTrackStore.getState().destroyTracks();
-      useTaskStore.getState().destroyTasks();
-      useGroupStore.getState().destroyGroups();
-    } catch (error) {
-      console.error("Error reseting:", error);
-      notifyDeleteError();
-    }
-  },
+  return {
+    isDataEmpty: undefined,
 
-  start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
-    try {
-      await db.tables.forEach((table) => table.clear());
-      await db.groups.bulkAdd(Array.from(groups));
-      await db.tasks.bulkAdd(Array.from(tasks));
-      if (tracks) await db.tracks.bulkAdd(tracks);
+    init: async () => {
+      try {
+        await Promise.all([
+          useGroupStore.getState().initGroups(),
+          useTaskStore.getState().initTasks(),
+          useTrackStore.getState().initTracks(),
+        ]);
+      } catch (error) {
+        console.log("Error initializing", error);
+        throw error;
+      }
+    },
+    reset: async () => {
+      try {
+        await db.tables.forEach((table) => table.clear());
 
-      get().init();
-    } catch (error) {
-      console.error("Error starting:", error);
-      throw error;
-    }
-  },
-  startMock: async () => {
-    const groups: Group[] = [];
-    const tasks: Task[] = genUngroupedTasks();
-    genGroupedTasks().forEach(([group, _tasks]) => {
-      groups.push(group);
-      tasks.push(..._tasks);
-    });
+        useTrackStore.getState().destroyTracks();
+        useTaskStore.getState().destroyTasks();
+        useGroupStore.getState().destroyGroups();
 
-    const tracks = genTracks(
-      useTrackStore.getState().startDate,
-      useTrackStore.getState().endDate,
-      tasks
-    );
+        get().init();
+      } catch (error) {
+        console.error("Error reseting:", error);
+        notifyDeleteError();
+      }
+    },
+    start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
+      try {
+        await db.tables.forEach((table) => table.clear());
+        await db.groups.bulkAdd(Array.from(groups));
+        await db.tasks.bulkAdd(Array.from(tasks));
+        if (tracks) await db.tracks.bulkAdd(tracks);
 
-    get().start(groups, tasks, tracks);
-  },
-}));
+        get().init();
+      } catch (error) {
+        console.error("Error starting:", error);
+        throw error;
+      }
+    },
+    startMock: async () => {
+      const groups: Group[] = [];
+      const tasks: Task[] = genUngroupedTasks();
+      genGroupedTasks().forEach(([group, _tasks]) => {
+        groups.push(group);
+        tasks.push(..._tasks);
+      });
+
+      const tracks = genTracks(
+        useTrackStore.getState().startDate,
+        useTrackStore.getState().endDate,
+        tasks
+      );
+
+      get().start(groups, tasks, tracks);
+    },
+  };
+});
 
 useGroupStore.subscribe(
   (state) => state.groups,
-  (groups) => {
-    useGroupStore.setState((state) => {
-      state.size = groups?.length;
-    });
+  async () => {
+    setDataEmpty();
   }
 );
+
 useTaskStore.subscribe(
   (state) => state.tasksByGroup,
-  (tasksByGroup) => {
-    useTaskStore.setState((state) => {
-      state.size = tasksByGroup
-        ? Object.values(tasksByGroup).reduce(
-            (acc, tasks) => acc + tasks.length,
-            0
-          )
-        : undefined;
-    });
+  async () => {
+    setDataEmpty();
   }
 );
-useGroupStore.subscribe(
-  (state) => state.size,
-  (size) => {
-    useAppStore.setState(() => {
-      const taskSize = useTaskStore.getState().size;
-      if (size === undefined || taskSize === undefined) {
-        return { isDataEmpty: undefined };
-      }
-      return { isDataEmpty: size === 0 && taskSize === 0 };
-    });
-  }
-);
-// useTaskStore.subscribe(
-//   (state) => state.size,
-//   (size) => {
-//     useAppStore.setState(() => {
-//       const groupSize = useGroupStore.getState().size;
-//       if (size === undefined || groupSize === undefined) {
-//         return { isDataEmpty: undefined };
-//       }
-//       return { isDataEmpty: size === 0 && groupSize === 0 };
-//     });
-//   }
-// );

@@ -1,15 +1,32 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import AppHeader from "../components/AppHeader/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "../stores/AppStore";
+import Loading from "../components/Loading/Loading";
 
-export default function Setting() {
+export default function Settings() {
+  const router = useRouter();
+
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === true) {
+      router.replace("/");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === false ? <Content /> : <Loading />;
+}
+
+function Content() {
   return (
     <>
-      <AppHeader></AppHeader>
-      <div className="flex w-screen justify-center">
+      <AppHeader />
+      <main className="m-auto flex w-[88vw] max-w-[800px] flex-col gap-[70px]">
         <div className="mb-[200px] max-w-[800px]">
           <h1 className="mt-[100px] text-4xl font-bold">Settings</h1>
 
@@ -41,7 +58,7 @@ export default function Setting() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

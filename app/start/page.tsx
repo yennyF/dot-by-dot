@@ -19,8 +19,23 @@ import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import AppHeader from "../components/AppHeader/AppHeader";
+import Loading from "../components/Loading/Loading";
 
 export default function Start() {
+  const router = useRouter();
+
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === false) {
+      router.replace("/");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === true ? <Content /> : <Loading />;
+}
+
+function Content() {
   const router = useRouter();
 
   const [ungroupedTasks, setUngroupedTasks] = useState<Task[]>([]);
@@ -28,20 +43,14 @@ export default function Start() {
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
-  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
+  const [isLoading, setIsLoading] = useState(false);
   const toastId = useRef<Id>(null);
 
   useEffect(() => {
     setUngroupedTasks(genUngroupedTasks());
     setGroupedTasks(genGroupedTasks());
   }, []);
-
-  useEffect(() => {
-    if (isDataEmpty === false) {
-      router.replace("/");
-    }
-  }, [isDataEmpty, router]);
 
   const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
@@ -55,7 +64,10 @@ export default function Start() {
     });
   };
 
-  async function handleClickStart() {
+  const handleClickStart = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
@@ -78,15 +90,15 @@ export default function Start() {
       await start(groups, tasks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      router.push("/");
+      router.replace("/");
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
-  }
 
-  // if (isDataEmpty === undefined) return null;
+    setIsLoading(false);
+  };
 
   return (
     <>

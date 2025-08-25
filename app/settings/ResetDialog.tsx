@@ -41,7 +41,7 @@ function Content() {
 
   const reset = useAppStore((s) => s.reset);
 
-  async function onClickHandle() {
+  async function handleClick() {
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
@@ -96,7 +96,7 @@ function Content() {
         <Dialog.Close asChild>
           <button
             className="button-accept"
-            onClick={onClickHandle}
+            onClick={handleClick}
             disabled={checked === false}
           >
             Reset

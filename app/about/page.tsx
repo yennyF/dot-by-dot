@@ -4,8 +4,7 @@ import AppHeader from "../components/AppHeader/AppHeader";
 export default function About() {
   return (
     <>
-      <AppHeader></AppHeader>
-
+      <AppHeader />
       <main className="m-auto flex w-[88vw] max-w-[800px] flex-col gap-[70px]">
         <section className="pt-[100px]">
           <h1 className="text-xl font-bold text-[var(--gray-9)]">

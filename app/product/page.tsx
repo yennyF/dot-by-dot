@@ -1,27 +1,43 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   notifyLoadError,
   notifyLoading,
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import AppHeader from "../components/AppHeader/AppHeader";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import Image from "next/image";
 import TestButton from "./TestButton";
+import AppHeader from "../components/AppHeader/AppHeader";
+import Loading from "../components/Loading/Loading";
 
 export default function Product() {
   const router = useRouter();
 
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === false) {
+      router.replace("/");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === true ? <Content /> : <Loading />;
+}
+
+function Content() {
+  const router = useRouter();
+
   const startMock = useAppStore((s) => s.startMock);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const toastId = useRef<Id>(null);
 
-  async function handleClickStartMock() {
+  async function handleClickTest() {
+    if (isLoading) return;
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
@@ -31,8 +47,8 @@ export default function Product() {
       await startMock();
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      router.replace("/");
-    } catch {
+    } catch (error) {
+      console.log(error);
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
@@ -42,7 +58,7 @@ export default function Product() {
 
   return (
     <>
-      <AppHeader></AppHeader>
+      <AppHeader />
       <main className="m-auto flex w-[88vw] flex-col items-center gap-[50px]">
         <section className="mt-[150px] w-full text-center">
           <h1 className="m-auto max-w-[800] text-4xl font-bold">
@@ -66,11 +82,12 @@ export default function Product() {
           <div className="m-auto w-fit">
             <button
               className="button-accent"
+              disabled={isLoading}
               onClick={() => router.push("/start")}
             >
               Get started
             </button>
-            <TestButton isLoading={isLoading} onClick={handleClickStartMock} />
+            <TestButton disabled={isLoading} onClick={handleClickTest} />
           </div>
         </section>
 
