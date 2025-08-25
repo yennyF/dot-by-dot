@@ -18,8 +18,18 @@ export const metadata: Metadata = {
   description: "A lightweight place to track tasks and habits",
   icons: {
     icon: [
-      // { url: "/favicon.ico", sizes: "any" }, // Fallback for browsers that don't support SVG
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/favicon-light.svg",
+        // url: "/favicon.ico", sizes: "any", // Fallback for browsers that don't support SVG // TODO
+        type: "image/svg+xml",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/favicon-dark.svg",
+        // url: "/favicon.ico", sizes: "any", // Fallback for browsers that don't support SVG // TODO
+        type: "image/svg+xml",
+      },
     ],
   },
 };
