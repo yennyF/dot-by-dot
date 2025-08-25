@@ -1,6 +1,11 @@
 "use client";
 
-import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  CubeIcon,
+} from "@radix-ui/react-icons";
 import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
 import { ReactNode, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
@@ -11,13 +16,11 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import AppHeader from "../components/AppHeader/AppHeader";
 
 export default function Start() {
-  const router = useRouter();
-
   const ungroupedTasks = useRef(genUngroupedTasks());
   const groupedTasks = useRef(genGroupedTasks());
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
@@ -64,7 +67,7 @@ export default function Start() {
       await start(groups, tasks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      router.replace("/");
+      redirect("/", RedirectType.replace);
     } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();
@@ -77,8 +80,17 @@ export default function Start() {
     <>
       <AppHeader />
       <main className="m-auto w-[88vw] max-w-[800]">
-        <section>
-          <h1 className="mt-[100px] text-4xl font-bold">Getting started</h1>
+        <section className="mt-[100px]">
+          <button
+            className="flex items-center gap-2"
+            onClick={() => redirect("/")}
+          >
+            <ArrowLeftIcon />
+            Go back
+          </button>
+
+          <h1 className="mt-[50px] text-4xl font-bold">Getting started</h1>
+
           <p className="mt-[30px] leading-relaxed">
             Let’s set up your first tasks or habits. Select at least 3 to begin
             — you can update or reorganize them anytime.
@@ -96,8 +108,8 @@ export default function Start() {
           </div>
 
           <p className="mt-[30px] leading-relaxed">
-            Use groups to stay organized. You can create a group and add tasks
-            inside it — like folders for your habits.
+            Use groups to stay organized. You can create a groups — like folders
+            for your habits.
           </p>
 
           <div className="mt-[30px] flex flex-wrap gap-10">
@@ -117,7 +129,7 @@ export default function Start() {
             ))}
           </div>
 
-          <div className="mt-[40px] flex flex-col items-center justify-center">
+          <div className="mt-[50px] flex flex-col items-center justify-center">
             <button
               className="button-accent mt-2 flex items-center gap-2"
               disabled={isLoading || tasksSelected.size < 3}

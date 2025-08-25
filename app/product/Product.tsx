@@ -8,14 +8,12 @@ import {
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
 import AppHeader from "../components/AppHeader/AppHeader";
-import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import Image from "next/image";
 import TestButton from "./TestButton";
+import { redirect, RedirectType } from "next/navigation";
 
 export default function Product() {
-  const router = useRouter();
-
   const startMock = useAppStore((s) => s.startMock);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,7 +29,7 @@ export default function Product() {
       await startMock();
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      router.replace("/");
+      redirect("/", RedirectType.replace);
     } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();
@@ -66,7 +64,7 @@ export default function Product() {
           <div className="m-auto w-fit">
             <button
               className="button-accent"
-              onClick={() => router.push("/start")}
+              onClick={() => redirect("/start")}
             >
               Get started
             </button>

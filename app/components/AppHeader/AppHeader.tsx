@@ -6,13 +6,11 @@ import {
   GearIcon,
   InfoCircledIcon,
 } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
+import { redirect } from "next/navigation";
 
 export default function AppHeader({ children }: { children?: ReactNode }) {
-  const router = useRouter();
-
   const groupSize = useGroupStore((s) => s.size);
   const taskSize = useTaskStore((s) => s.size);
 
@@ -26,7 +24,7 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
       <button
         className="flex items-center gap-2"
         onClick={async () => {
-          router.push("/about");
+          redirect("/about");
         }}
       >
         <InfoCircledIcon />
@@ -36,7 +34,7 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
         <button
           className="flex items-center gap-2"
           onClick={() => {
-            router.push("/settings");
+            redirect("/settings");
           }}
         >
           <GearIcon />
@@ -49,13 +47,11 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
 }
 
 function Logo() {
-  const router = useRouter();
-
   return (
     <div
       className="app-Logo flex cursor-pointer items-center gap-2"
       onClick={() => {
-        router.push("/");
+        redirect("/");
       }}
     >
       <CheckCircledIcon />
