@@ -11,10 +11,9 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import AppHeader from "../components/AppHeader/AppHeader";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
-import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
+import AppHeader from "../components/AppHeader/AppHeader";
 
 export default function Start() {
   const router = useRouter();
@@ -24,7 +23,6 @@ export default function Start() {
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
-  const startMock = useAppStore((s) => s.startMock);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const toastId = useRef<Id>(null);
@@ -75,33 +73,13 @@ export default function Start() {
     setIsLoading(false);
   }
 
-  async function handleClickStartMock() {
-    setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
-
-    try {
-      await startMock();
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
-      router.replace("/");
-    } catch {
-      toast.dismiss(toastId.current);
-      notifyLoadError();
-    }
-
-    setIsLoading(false);
-  }
-
   return (
     <>
       <AppHeader />
-      <div className="flex w-screen justify-center">
-        <div className="mb-[100px] max-w-[800px]">
+      <main className="m-auto w-[88vw] max-w-[800]">
+        <section>
           <h1 className="mt-[100px] text-4xl font-bold">Getting started</h1>
-
-          <p className="mt-[50px] leading-relaxed">
+          <p className="mt-[30px] leading-relaxed">
             Let’s set up your first tasks or habits. Select at least 3 to begin
             — you can update or reorganize them anytime.
           </p>
@@ -148,30 +126,9 @@ export default function Start() {
               <span>Let&apos;s begin </span>
               <ArrowRightIcon />
             </button>
-
-            <AppTooltip>
-              <AppTrigger asChild>
-                <button
-                  className="mt-5 text-xs hover:text-[var(--accent)] hover:underline"
-                  disabled={isLoading}
-                  onClick={handleClickStartMock}
-                >
-                  Jump to test
-                </button>
-              </AppTrigger>
-              <AppContent className="p-2" side="right" sideOffset={10}>
-                <h2 className="text-sm font-bold">Want a quick preview?</h2>
-
-                <p className="mt-[10px] leading-relaxed">
-                  Fill your app with sample data to explore the app.
-                  <br />
-                  You can reset your data anytime from Settings.
-                </p>
-              </AppContent>
-            </AppTooltip>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 }

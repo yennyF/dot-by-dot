@@ -7,12 +7,21 @@ export default function About() {
       <AppHeader></AppHeader>
 
       <main className="m-auto flex w-[88vw] max-w-[800px] flex-col gap-[70px]">
-        <section className="mt-[100px]">
-          <h1 className="text-4xl font-bold">Hello</h1>
-          <h2 className="mt-[20px] text-2xl">
-            This app isn’t about nagging you to get things done — it simply
-            helps you see what you’ve been working on.
+        <section className="pt-[100px]">
+          <h1 className="text-xl font-bold text-[var(--gray-9)]">
+            About dot by dot
+          </h1>
+          <h2 className="mt-[30px] text-4xl font-bold">
+            The thought behind it
           </h2>
+          <p className="mt-[30px]">
+            Hello there! I built this little app to help you (and me!) keep
+            track of daily tasks. It’s not about nagging you to get things done
+            — it’s about showing you what you’ve been working on. It’s easy to
+            get caught up in just one thing, but what really matters is the mix
+            of many things, repeated over time. Every effort counts, even the
+            small ones.
+          </p>
           <p className="mt-[20px] text-[var(--gray-9)]">
             Track your effort, notice where your time goes, and try to keep a
             nice balance across your habits {":)"}
@@ -32,7 +41,7 @@ export default function About() {
           </p>
         </section>
 
-        <section>
+        <section className="pb-[100px]">
           <h3 className="flex items-center gap-3 text-lg font-semibold">
             <MagicWandIcon className="size-5" /> See what’s under the hood
           </h3>

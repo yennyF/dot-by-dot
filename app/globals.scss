@@ -8,6 +8,9 @@ html, body {
 body {
   font-size: 14px;
 }
+h1, h2, h3, body, p, span {
+  @apply tracking-wide leading-relaxed;
+}
 :root {
   --background: #f1efe7;
   --foreground: #0a0a0a;

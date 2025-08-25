@@ -2,7 +2,7 @@
 
 import { DropdownMenu } from "radix-ui";
 import { useRouter } from "next/navigation";
-import { GearIcon, HomeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { GearIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 
 export default function MenuDropdown({
   children,
@@ -20,15 +20,6 @@ export default function MenuDropdown({
           side="bottom"
           align="start"
         >
-          <DropdownMenu.Item
-            className="dropdown-item flex items-center gap-2"
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-            <HomeIcon />
-            Home
-          </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item flex items-center gap-2"
             onClick={() => {

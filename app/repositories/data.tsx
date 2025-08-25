@@ -17,8 +17,8 @@ function setIdAndOrder<T>(arr: T[]): (T & { id: string; order: string })[] {
 export function genUngroupedTasks(): Task[] {
   const taskProps = [
     { name: "Check my emails" },
-    { name: "Learn something new" },
-    { name: "Read a chapter of a book" },
+    { name: "Read some pages of a book" },
+    { name: "No smoking" },
   ];
   return setIdAndOrder(taskProps);
 }
