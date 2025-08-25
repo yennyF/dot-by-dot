@@ -16,7 +16,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 type State = {
   dummyGroup: Group | undefined;
   groups: Group[] | undefined;
-  size: number;
+  size: number | undefined;
 };
 
 type Action = {
@@ -259,14 +259,4 @@ export const useGroupStore = create<State & Action>()(
       },
     }))
   )
-);
-
-useGroupStore.subscribe(
-  (state) => state.groups,
-  (groups) => {
-    useGroupStore.setState((state) => {
-      const newSize = groups?.length ?? 0;
-      state.size = newSize;
-    });
-  }
 );

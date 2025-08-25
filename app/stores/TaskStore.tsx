@@ -17,7 +17,7 @@ export const UNGROUPED_KEY = "_ungrouped";
 type State = {
   dummyTask: Task | undefined;
   tasksByGroup: Record<string, Task[]> | undefined; // undefined = loading
-  size: number;
+  size: number | undefined;
 };
 
 type Action = {
@@ -277,18 +277,3 @@ function locateTask(
   }
   return null;
 }
-
-useTaskStore.subscribe(
-  (state) => state.tasksByGroup,
-  (tasksByGroup) => {
-    useTaskStore.setState((state) => {
-      const newSize = tasksByGroup
-        ? Object.values(tasksByGroup).reduce(
-            (acc, tasks) => acc + tasks.length,
-            0
-          )
-        : 0;
-      state.size = newSize;
-    });
-  }
-);

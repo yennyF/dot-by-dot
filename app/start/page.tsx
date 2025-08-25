@@ -28,6 +28,7 @@ export default function Start() {
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   const toastId = useRef<Id>(null);
 
@@ -35,6 +36,12 @@ export default function Start() {
     setUngroupedTasks(genUngroupedTasks());
     setGroupedTasks(genGroupedTasks());
   }, []);
+
+  useEffect(() => {
+    if (isDataEmpty === false) {
+      router.replace("/");
+    }
+  }, [isDataEmpty, router]);
 
   const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
@@ -78,6 +85,8 @@ export default function Start() {
       notifyLoadError();
     }
   }
+
+  // if (isDataEmpty === undefined) return null;
 
   return (
     <>

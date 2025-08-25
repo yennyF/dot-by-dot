@@ -7,14 +7,12 @@ import {
   InfoCircledIcon,
 } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
-import { useGroupStore } from "@/app/stores/GroupStore";
-import { useTaskStore } from "@/app/stores/TaskStore";
+import { useAppStore } from "@/app/stores/AppStore";
 
 export default function AppHeader({ children }: { children?: ReactNode }) {
   const router = useRouter();
 
-  const groupSize = useGroupStore((s) => s.size);
-  const taskSize = useTaskStore((s) => s.size);
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
     console.log("AppHeader rendered");
@@ -32,7 +30,7 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
         <InfoCircledIcon />
         About
       </button>
-      {(groupSize > 0 || taskSize > 0) && (
+      {isDataEmpty === false && (
         <button
           className="flex items-center gap-2"
           onClick={() => {

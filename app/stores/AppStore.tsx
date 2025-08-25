@@ -11,7 +11,9 @@ import {
   genUngroupedTasks,
 } from "../repositories/data";
 
-// type State = {};
+type State = {
+  isDataEmpty: boolean | undefined;
+};
 
 type Action = {
   init: () => Promise<void>;
@@ -20,7 +22,9 @@ type Action = {
   startMock: () => Promise<void>;
 };
 
-export const useAppStore = create<Action>((set, get) => ({
+export const useAppStore = create<State & Action>((set, get) => ({
+  isDataEmpty: undefined,
+
   init: async () => {
     try {
       await Promise.all([
@@ -76,3 +80,49 @@ export const useAppStore = create<Action>((set, get) => ({
     get().start(groups, tasks, tracks);
   },
 }));
+
+useGroupStore.subscribe(
+  (state) => state.groups,
+  (groups) => {
+    useGroupStore.setState((state) => {
+      state.size = groups?.length;
+    });
+  }
+);
+useTaskStore.subscribe(
+  (state) => state.tasksByGroup,
+  (tasksByGroup) => {
+    useTaskStore.setState((state) => {
+      state.size = tasksByGroup
+        ? Object.values(tasksByGroup).reduce(
+            (acc, tasks) => acc + tasks.length,
+            0
+          )
+        : undefined;
+    });
+  }
+);
+useGroupStore.subscribe(
+  (state) => state.size,
+  (size) => {
+    useAppStore.setState(() => {
+      const taskSize = useTaskStore.getState().size;
+      if (size === undefined || taskSize === undefined) {
+        return { isDataEmpty: undefined };
+      }
+      return { isDataEmpty: size === 0 && taskSize === 0 };
+    });
+  }
+);
+// useTaskStore.subscribe(
+//   (state) => state.size,
+//   (size) => {
+//     useAppStore.setState(() => {
+//       const groupSize = useGroupStore.getState().size;
+//       if (size === undefined || groupSize === undefined) {
+//         return { isDataEmpty: undefined };
+//       }
+//       return { isDataEmpty: size === 0 && groupSize === 0 };
+//     });
+//   }
+// );
