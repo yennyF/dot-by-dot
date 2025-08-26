@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import Loading from "../components/Loading/Loading";
 
-export default function Settings() {
+export default function SettingsPage() {
   const router = useRouter();
 
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);

@@ -14,7 +14,7 @@ import TestButton from "./TestButton";
 import AppHeader from "../components/AppHeader/AppHeader";
 import Loading from "../components/Loading/Loading";
 
-export default function Product() {
+export default function ProductPage() {
   const router = useRouter();
 
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);

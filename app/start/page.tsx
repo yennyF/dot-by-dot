@@ -21,7 +21,7 @@ import { useAppStore } from "../stores/AppStore";
 import AppHeader from "../components/AppHeader/AppHeader";
 import Loading from "../components/Loading/Loading";
 
-export default function Start() {
+export default function StartPage() {
   const router = useRouter();
 
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);

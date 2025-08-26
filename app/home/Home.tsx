@@ -15,7 +15,7 @@ import { useAppStore } from "../stores/AppStore";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function HomePage() {
   const router = useRouter();
 
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
