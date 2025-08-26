@@ -9,8 +9,11 @@ import useOnScreen from "@/app/hooks/useOnScreen";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
+import { useScrollStore } from "@/app/stores/scrollStore";
 
-export default function HeaderSide() {
+export default function HeaderRow() {
+  const headerRowRef = useScrollStore((s) => s.headerRowRef);
+
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
@@ -24,32 +27,37 @@ export default function HeaderSide() {
   }, [dummyGroup, isTopRefVisible]);
 
   return (
-    <SortableContainer className="sticky right-0 flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]">
-      <div>
-        <DummyTaskRow groupId={null} />
-        <TaskList groupId={null} />
-        <div ref={topRef} />
+    <SortableContainer className="sticky right-0">
+      <div
+        ref={headerRowRef}
+        className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
+      >
+        <div>
+          <DummyTaskRow groupId={null} />
+          <TaskList groupId={null} />
+          <div ref={topRef} />
+        </div>
+
+        {dummyGroup && (
+          <>
+            <DropIndicatorGroup />
+            <GroupRow group={dummyGroup} isDummy={true} />
+          </>
+        )}
+
+        {groups?.map((group) => (
+          <Fragment key={group.id}>
+            <DropIndicatorGroup beforeId={group.id} />
+            <div>
+              <GroupRow group={group} />
+              <DummyTaskRow groupId={group.id} />
+              <TaskList groupId={group.id} />
+            </div>
+          </Fragment>
+        ))}
+
+        <DropIndicatorGroup />
       </div>
-
-      {dummyGroup && (
-        <>
-          <DropIndicatorGroup />
-          <GroupRow group={dummyGroup} isDummy={true} />
-        </>
-      )}
-
-      {groups?.map((group) => (
-        <Fragment key={group.id}>
-          <DropIndicatorGroup beforeId={group.id} />
-          <div>
-            <GroupRow group={group} />
-            <DummyTaskRow groupId={group.id} />
-            <TaskList groupId={group.id} />
-          </div>
-        </Fragment>
-      ))}
-
-      <DropIndicatorGroup />
     </SortableContainer>
   );
 }

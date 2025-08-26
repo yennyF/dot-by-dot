@@ -20,7 +20,7 @@ import React, {
   ReactNode,
   RefObject,
 } from "react";
-import { scrollStore } from "../stores/scrollStore";
+import { useScrollStore } from "../stores/scrollStore";
 
 interface HorizontalDragScroll {
   children: ReactNode;
@@ -33,8 +33,8 @@ export default function HorizontalDragScroll({
   className,
   ref,
 }: HorizontalDragScroll) {
-  const setIsAtLeft = scrollStore((s) => s.setIsAtLeft);
-  const setIsAtRight = scrollStore((s) => s.setIsAtRight);
+  const setIsAtLeft = useScrollStore((s) => s.setIsAtLeft);
+  const setIsAtRight = useScrollStore((s) => s.setIsAtRight);
 
   const localRef = useRef<HTMLDivElement>(null);
   useImperativeHandle(ref, () => localRef.current as HTMLDivElement);

@@ -1,4 +1,4 @@
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
 import clsx from "clsx";
 import { format, isToday, isWeekend } from "date-fns";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ export default function DateRowItem({ date }: DayItemProps) {
   const isTodayDate = isToday(date);
   const dateFormatted = format(date, "EE");
 
-  const todayRef = scrollStore((s) => (isTodayDate ? s.todayRef : null));
+  const todayRef = useScrollStore((s) => (isTodayDate ? s.todayRef : null));
 
   // Scroll to "today" the first it loads
   useEffect(() => {

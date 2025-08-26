@@ -1,7 +1,7 @@
 "use client";
 
 import { useGroupStore } from "@/app/stores/GroupStore";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
 import { useTaskStore } from "@/app/stores/TaskStore";
 import { useRef, DragEvent, ReactNode } from "react";
 
@@ -15,8 +15,9 @@ export default function SortableContainer({
   className,
 }: SortableContainerProps) {
   const dataSort = useRef<"task" | "group">(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  const scrollRef = scrollStore((s) => s.calendarScrollRef);
+  const contentRef = useScrollStore((s) => s.contentRef);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
@@ -27,7 +28,7 @@ export default function SortableContainer({
     if (!dataSort.current) return [];
 
     return Array.from(
-      scrollRef.current?.querySelectorAll(
+      ref.current?.querySelectorAll(
         `[data-sort=${dataSort.current}].drop-indicator`
       ) ?? []
     ) as HTMLElement[];
@@ -116,7 +117,7 @@ export default function SortableContainer({
   };
 
   const handlePointerMove = (e: DragEvent) => {
-    const scrollEl = scrollRef.current;
+    const scrollEl = contentRef.current;
     if (!scrollEl) return;
 
     const scrollSpeed = 5;
@@ -132,7 +133,7 @@ export default function SortableContainer({
 
   return (
     <div
-      ref={scrollRef}
+      ref={ref}
       className={`app-SortableContainer ${className}`}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}

@@ -3,10 +3,10 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
 
 export default function TodayButton() {
-  const todayRef = scrollStore((s) => s.todayRef);
+  const todayRef = useScrollStore((s) => s.todayRef);
 
   const handleClick = () => {
     todayRef.current?.scrollIntoView({

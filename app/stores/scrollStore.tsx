@@ -3,8 +3,10 @@ import { createRef, RefObject } from "react";
 
 type State = {
   todayRef: RefObject<HTMLDivElement | null>;
-  calendarScrollRef: RefObject<HTMLDivElement | null>;
-  todayEl: HTMLDivElement | null;
+  headerColRef: RefObject<HTMLDivElement | null>;
+  headerRowRef: RefObject<HTMLDivElement | null>;
+  contentRef: RefObject<HTMLDivElement | null>;
+
   isAtLeft: boolean;
   isAtRight: boolean;
   isAtBottom: boolean;
@@ -12,33 +14,30 @@ type State = {
 };
 
 type Action = {
-  setTodayEl: (todayEl: HTMLDivElement) => void;
-
   setIsAtLeft: () => void;
   setIsAtRight: () => void;
   setIsAtBottom: () => void;
   setIsAtTop: () => void;
 
-  scrollToLeft: (offset?: number) => void;
-  scrollToRight: (offset?: number) => void;
+  scrollToLeft: (forceToEnd?: boolean) => void;
+  scrollToRight: (forceToEnd?: boolean) => void;
   scrollToTop: () => void;
   scrollToBottom: () => void;
 };
 
-export const scrollStore = create<Action & State>((set, get) => ({
+export const useScrollStore = create<Action & State>((set, get) => ({
   todayRef: createRef<HTMLDivElement>(),
-  calendarScrollRef: createRef<HTMLDivElement>(),
-  todayEl: null,
+  headerColRef: createRef<HTMLDivElement>(),
+  headerRowRef: createRef<HTMLDivElement>(),
+  contentRef: createRef<HTMLDivElement>(),
 
   isAtLeft: false,
   isAtRight: false,
   isAtTop: false,
   isAtBottom: false,
 
-  setTodayEl: (todayEl) => set({ todayEl }),
-
   setIsAtLeft: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
 
     const { scrollLeft } = el;
@@ -46,7 +45,7 @@ export const scrollStore = create<Action & State>((set, get) => ({
     set({ isAtLeft });
   },
   setIsAtRight: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
 
     const { scrollLeft, clientWidth, scrollWidth } = el;
@@ -54,7 +53,7 @@ export const scrollStore = create<Action & State>((set, get) => ({
     set({ isAtRight });
   },
   setIsAtTop: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
 
     const { scrollTop } = el;
@@ -62,7 +61,7 @@ export const scrollStore = create<Action & State>((set, get) => ({
     set({ isAtTop });
   },
   setIsAtBottom: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
 
     const { scrollTop, scrollHeight, clientHeight } = el;
@@ -70,31 +69,37 @@ export const scrollStore = create<Action & State>((set, get) => ({
     set({ isAtBottom });
   },
 
-  scrollToLeft: (offset?: number) => {
-    const el = get().calendarScrollRef.current;
-    if (!el) return;
-    if (offset) {
-      el.scrollTo({ left: el.scrollLeft - offset, behavior: "smooth" });
-    } else {
+  scrollToLeft: (forceToEnd: boolean = false) => {
+    const el = get().contentRef.current;
+    const headerRowEl = get().headerRowRef.current;
+    if (!el || !headerRowEl) return;
+
+    if (forceToEnd) {
       el.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      const offset = el.clientWidth - headerRowEl.clientWidth;
+      el.scrollTo({ left: el.scrollLeft - offset, behavior: "smooth" });
     }
   },
-  scrollToRight: (offset?: number) => {
-    const el = get().calendarScrollRef.current;
-    if (!el) return;
-    if (offset) {
-      el.scrollTo({ left: el.scrollLeft + offset, behavior: "smooth" });
-    } else {
+  scrollToRight: (forceToEnd: boolean = false) => {
+    const el = get().contentRef.current;
+    const headerRowEl = get().headerRowRef.current;
+    if (!el || !headerRowEl) return;
+
+    if (forceToEnd) {
       el.scrollTo({ left: el.scrollLeft, behavior: "smooth" });
+    } else {
+      const offset = el.clientWidth - headerRowEl.clientWidth;
+      el.scrollTo({ left: el.scrollLeft + offset, behavior: "smooth" });
     }
   },
   scrollToTop: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
     el.scrollTo({ left: 0, behavior: "smooth" });
   },
   scrollToBottom: () => {
-    const el = get().calendarScrollRef.current;
+    const el = get().contentRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   },

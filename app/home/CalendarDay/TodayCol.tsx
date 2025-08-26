@@ -1,7 +1,7 @@
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import TaskRowItem from "./Body/TaskRowItem";
-import DateRowItem from "./Header/DateRowItem";
-import CounterRowItem from "./Header/CounterRowItem";
+import DateRowItem from "./HeaderCol/DateRowItem";
+import CounterRowItem from "./HeaderCol/CounterRowItem";
 import { useGroupStore } from "@/app/stores/GroupStore";
 
 export function TodayHeader() {
