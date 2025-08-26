@@ -36,7 +36,7 @@ export default function CalendarDay() {
         </div>
         <ShadowTop />
       </div>
-      <div className="mt-5 flex w-fit">
+      <div className="flex w-fit">
         <ShadowLeft />
         <Body />
         <ShadowRight />

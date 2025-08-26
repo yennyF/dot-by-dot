@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  CheckIcon,
-  CubeIcon,
-} from "@radix-ui/react-icons";
+import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
 import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
@@ -18,8 +13,9 @@ import {
 import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
-import AppHeader from "../components/AppHeader/AppHeader";
+import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
+import GoBackButton from "../components/GoBackButton";
 
 export default function StartPage() {
   const router = useRouter();
@@ -103,24 +99,16 @@ function Content() {
   return (
     <>
       <AppHeader />
-      <main className="m-auto w-[88vw] max-w-[800]">
-        <section className="mt-[100px]">
-          <button
-            className="flex items-center gap-2"
-            onClick={() => router.back()}
-          >
-            <ArrowLeftIcon />
-            Go back
-          </button>
+      <main className="page-main flex flex-col gap-[50px]">
+        <GoBackButton />
 
-          <h1 className="mt-[50px] text-4xl font-bold">Getting started</h1>
-
-          <p className="mt-[30px] leading-relaxed">
-            Let’s set up your first tasks or habits. Select at least 3 to begin
-            — you can update or reorganize them anytime.
+        <section>
+          <h1 className="page-title-1">Getting started</h1>
+          <p>
+            Let’s set up your first habits. Select at least one to get started —
+            you can always change them later.
           </p>
-
-          <div className="mt-[30px] flex flex-col gap-2">
+          <ul className="mt-[30px] flex flex-col gap-2">
             {ungroupedTasks.map((task) => (
               <TaskItem
                 key={task.id}
@@ -129,17 +117,16 @@ function Content() {
                 onCheckedChange={() => handleCheckedChange(task)}
               />
             ))}
-          </div>
+          </ul>
+        </section>
 
-          <p className="mt-[30px] leading-relaxed">
-            Use groups to stay organized. You can create a groups — like folders
-            for your habits.
-          </p>
-
+        <section>
+          <h2 className="page-title-2">Use groups to stay organized</h2>
+          <p>You can create groups — like folders for your habits.</p>
           <div className="mt-[30px] flex flex-wrap gap-10">
             {groupedTasks.map(([group, tasks]) => (
               <GroupItem key={group.id} group={group}>
-                <div className="flex flex-col items-start gap-2">
+                <ul className="flex flex-col items-start gap-2">
                   {tasks.map((task) => (
                     <TaskItem
                       key={task.id}
@@ -148,22 +135,20 @@ function Content() {
                       onCheckedChange={() => handleCheckedChange(task)}
                     />
                   ))}
-                </div>
+                </ul>
               </GroupItem>
             ))}
           </div>
-
-          <div className="mt-[50px] flex flex-col items-center justify-center">
-            <button
-              className="button-accent mt-2 flex items-center gap-2"
-              disabled={tasksSelected.size < 3}
-              onClick={handleClickStart}
-            >
-              <span>Let&apos;s begin </span>
-              <ArrowRightIcon />
-            </button>
-          </div>
         </section>
+
+        <button
+          className="button-accent m-auto"
+          disabled={tasksSelected.size === 0}
+          onClick={handleClickStart}
+        >
+          <span>Let&apos;s begin </span>
+          <ArrowRightIcon />
+        </button>
       </main>
     </>
   );
@@ -191,7 +176,7 @@ function TaskItem({
   onCheckedChange: () => void;
 }) {
   return (
-    <div className="checkbox">
+    <li className="checkbox">
       <div className="flex h-[24px] items-center">
         <Checkbox.Root
           id={task.id}
@@ -209,6 +194,6 @@ function TaskItem({
       <label htmlFor={task.id} className="checkbox-label">
         {task.name}
       </label>
-    </div>
+    </li>
   );
 }

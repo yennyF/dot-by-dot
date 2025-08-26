@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
-import AppHeader from "../components/AppHeader/AppHeader";
+import AppHeader from "../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
 import LockButton from "./Header/LockButton";
@@ -14,6 +14,7 @@ import RightButton from "./Header/RightButton";
 import { useAppStore } from "../stores/AppStore";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 import { useRouter } from "next/navigation";
+import SettingsButton from "./Header/SettingsButton";
 
 export default function HomePage() {
   const router = useRouter();
@@ -54,12 +55,14 @@ function Content() {
   return (
     <>
       <AppHeader>
-        <div className="flex flex-1 justify-between">
-          <div className="flex items-center gap-2"></div>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center justify-end gap-10">
+          <div className="flex gap-2">
             <LeftButton />
             <RightButton />
             <TodayButton />
+          </div>
+          <div className="flex gap-2">
+            <SettingsButton />
             <LockButton />
             <CreateDropdown>
               <span>
@@ -77,7 +80,9 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      <main>{isLoading ? <Loading /> : <CalendarDay />}</main>
+      <main className="pt-[10px]">
+        {isLoading ? <Loading /> : <CalendarDay />}
+      </main>
     </>
   );
 }

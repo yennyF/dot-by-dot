@@ -27,7 +27,7 @@ export default function RightButton() {
           <ChevronRightIcon />
         </button>
       </AppTrigger>
-      <AppContent>Go next</AppContent>
+      <AppContent align="center">Go next</AppContent>
     </AppTooltip>
   );
 }

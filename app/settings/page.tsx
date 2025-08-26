@@ -1,12 +1,13 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
-import AppHeader from "../components/AppHeader/AppHeader";
+import { useEffect } from "react";
+import AppHeader from "../components/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import Loading from "../components/Loading/Loading";
+import GoBackButton from "../components/GoBackButton";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -26,47 +27,36 @@ function Content() {
   return (
     <>
       <AppHeader />
-      <main className="m-auto flex w-[88vw] max-w-[800px] flex-col gap-[70px]">
-        <div className="mb-[200px] max-w-[800px]">
-          <h1 className="mt-[100px] text-4xl font-bold">Settings</h1>
+      <main className="page-main flex flex-col gap-[50px]">
+        <GoBackButton />
 
-          <div className="mt-[80px] flex flex-col gap-[60px]">
+        <section>
+          <h1 className="page-title-1">Settings</h1>
+
+          <div className="flex flex-col gap-[50px]">
             <div>
-              <Subhead>
-                <h2 className="text-xl font-bold">Clear history</h2>
-              </Subhead>
-              <span className="block">
-                This will remove all your progress — like streaks and
-                completions — but keep your habits.
-              </span>
+              <h2 className="page-title-2">Clear history</h2>
+              <Separator />
+              <p>Remove all your progress, but keep your habits.</p>
               <ClearHistoryDialog>Clear history</ClearHistoryDialog>
             </div>
 
             <div>
-              <Subhead>
-                <h2 className="text-xl font-bold">Reset account</h2>
-              </Subhead>
-              <div>
-                <span className="mt-2 block">
-                  This will fully reset your account: it will delete all your
-                  habits, groups, and tracking history — like starting fresh.
-                  {/* Once you delete your history, there is no going back. Please be
-                certain. */}
-                </span>
-                <ResetDialog> Reset account</ResetDialog>
-              </div>
+              <h2 className="page-title-2">Reset account</h2>
+              <Separator />
+              <p>
+                Delete all your habits, groups, and progress — like starting
+                fresh.
+              </p>
+              <ResetDialog> Reset account</ResetDialog>
             </div>
           </div>
-        </div>
+        </section>
       </main>
     </>
   );
 }
 
-function Subhead({ children }: { children: ReactNode }) {
-  return (
-    <div className="mb-2 border-b-[1px] border-[var(--gray)] pb-2">
-      {children}
-    </div>
-  );
+function Separator() {
+  return <div className="my-3 border-b-[1px] border-[var(--gray)]" />;
 }

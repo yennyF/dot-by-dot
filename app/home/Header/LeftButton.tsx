@@ -69,7 +69,7 @@ function LoadMoreButton() {
           More
         </button>
       </AppTrigger>
-      <AppContent>Load more</AppContent>
+      <AppContent align="center">Load more</AppContent>
     </AppTooltip>
   );
 }

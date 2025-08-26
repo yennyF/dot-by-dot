@@ -42,7 +42,7 @@ export function genGroupedTasks(): [Group, Task[]][] {
       ],
     },
     {
-      name: "Connection",
+      name: "Social",
       tasks: [
         { name: "Text my parents" },
         { name: "Chat with a loved one" },
@@ -53,7 +53,7 @@ export function genGroupedTasks(): [Group, Task[]][] {
       name: "Home",
       tasks: [
         { name: "Water my plants" },
-        { name: "Vacuum or sweep one room" },
+        { name: "Vacuum or sweep my space" },
         { name: "Change bed linens and pillowcases" },
       ],
     },

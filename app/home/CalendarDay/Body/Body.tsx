@@ -10,36 +10,49 @@ export default function Body() {
   const groups = useGroupStore((s) => s.groups);
 
   return (
-    <div className="flex shrink-0 flex-col gap-10">
-      <div>
-        <DummyTaskRow groupId={null} />
-        <TaskList groupId={null} />
-      </div>
+    <div className="app-Body flex flex-col gap-10">
+      <TaskListUngrouped />
 
       {dummyGroup && <GroupRow group={dummyGroup} />}
 
       {groups?.map((group) => (
-        <div key={group.id}>
+        <div key={group.id} data-name={group.name}>
           <GroupRow group={group} />
-          <DummyTaskRow groupId={group.id} />
-          <TaskList groupId={group.id} />
+          <TaskListGrouped groupId={group.id} />
         </div>
       ))}
     </div>
   );
 }
 
-function DummyTaskRow({ groupId }: { groupId: string | null }) {
+function TaskListUngrouped() {
   const dummyTask = useTaskStore((s) =>
-    s.dummyTask && s.dummyTask.groupId === (groupId || undefined)
-      ? s.dummyTask
-      : null
+    s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
   );
-  return dummyTask ? <TaskRow task={dummyTask} /> : null;
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
+
+  if (!dummyTask && (!tasks || tasks.length === 0)) return null;
+
+  return (
+    <div>
+      {dummyTask && <TaskRow task={dummyTask} />}
+      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
+    </div>
+  );
 }
 
-function TaskList({ groupId }: { groupId: string | null }) {
+function TaskListGrouped({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
-  return tasks?.map((task) => <TaskRow key={task.id} task={task} />);
+
+  const dummyTask = useTaskStore((s) =>
+    s.dummyTask && s.dummyTask.groupId === groupId ? s.dummyTask : null
+  );
+
+  return (
+    <>
+      {dummyTask && <TaskRow task={dummyTask} />}
+      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
+    </>
+  );
 }

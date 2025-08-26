@@ -10,9 +10,10 @@ import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
 import Image from "next/image";
-import TestButton from "./TestButton";
-import AppHeader from "../components/AppHeader/AppHeader";
+import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
+import clsx from "clsx";
+import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -59,27 +60,17 @@ function Content() {
   return (
     <>
       <AppHeader />
-      <main className="m-auto flex w-[88vw] flex-col items-center gap-[50px]">
-        <section className="mt-[150px] w-full text-center">
-          <h1 className="m-auto max-w-[800] text-4xl font-bold">
+      <main className="page-main !max-w-none">
+        <section className="m-auto w-full max-w-[600] text-center">
+          <h1 className="page-title-1 mb-[20px]">
             One habit at a time
+            {/* Progress is made of small repeats */}
           </h1>
-          <p className="m-auto mt-[20px] max-w-[800] text-lg">
-            Progress is really just a bunch of small repeats.
-            {/* Progress is an endless cycle of small repetitions and refinement. */}
+          <p className="m-auto text-lg">
+            This app isn’t about reminding you to get things done — it helps you
+            track what you’ve been working on.
           </p>
-          <div
-            className="relative m-auto w-full max-w-[1000]"
-            style={{ aspectRatio: "16 / 9" }}
-          >
-            <Image
-              src="/preview.png"
-              alt="App preview"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="m-auto w-fit">
+          <div className="mb-[10px] mt-[40px] flex items-center justify-center gap-5">
             <button
               className="button-accent"
               disabled={isLoading}
@@ -87,22 +78,53 @@ function Content() {
             >
               Get started
             </button>
-            <TestButton disabled={isLoading} onClick={handleClickTest} />
+            <AppTooltip>
+              <AppTrigger asChild>
+                <button
+                  className={clsx(
+                    "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
+                    isLoading &&
+                      "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
+                  )}
+                  disabled={isLoading}
+                  onClick={handleClickTest}
+                >
+                  Only here for testing
+                </button>
+              </AppTrigger>
+              <AppContent className="p-2" side="right" sideOffset={10}>
+                <h2 className="text-sm font-bold">Want a quick preview?</h2>
+
+                <p className="mt-[10px] leading-relaxed">
+                  Fill with sample data to explore the app.
+                  <br />
+                  You can reset the data anytime from Settings.
+                </p>
+              </AppContent>
+            </AppTooltip>
           </div>
         </section>
 
-        {/* <section className="flex h-[100dvh] w-[800px] gap-[40px]">
-          <div className="flex flex-1 shrink-0 flex-col justify-center">
-            <h2 className="text-2xl font-bold">Process over outcome</h2>
-            <h3 className="mt-[20px] text-xl">
-              This app isn’t about nagging you to get things done, it helps you
-              track what you’ve been working on.
-            </h3>
-            <p className="mt-[20px] text-[var(--gray-9)]">
-              Track your effort, notice where your time goes, and keep a nice
-              balance across your habits
-            </p>
-          </div>
+        <div
+          className="relative m-auto w-full max-w-[1000]"
+          style={{ aspectRatio: "16 / 9" }}
+        >
+          <Image
+            src="/preview.png"
+            alt="App preview"
+            fill
+            className="object-cover"
+          />
+        </div>
+
+        {/* <section className="m-auto max-w-[600] py-[100px] text-center">
+          <h2 className="mb-[10px] text-xl font-bold">
+            Progress is made of small repeats
+          </h2>
+          <p className="text-base text-[var(--gray-9)]">
+            Track your effort, notice where your time goes, and keep a better
+            balance across your habits {":)"}
+          </p>
         </section> */}
       </main>
     </>

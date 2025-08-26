@@ -5,7 +5,6 @@ import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/GroupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
-import useOnScreen from "@/app/hooks/useOnScreen";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
@@ -18,40 +17,34 @@ export default function HeaderRow() {
   const groups = useGroupStore((s) => s.groups);
 
   const topRef = useRef<HTMLDivElement>(null);
-  const isTopRefVisible = useOnScreen(topRef);
 
   useEffect(() => {
-    if (dummyGroup && !isTopRefVisible) {
+    if (dummyGroup) {
       topRef.current?.scrollIntoView({ block: "center" });
     }
-  }, [dummyGroup, isTopRefVisible]);
+  }, [dummyGroup]);
 
   return (
     <SortableContainer className="sticky right-0">
       <div
         ref={headerRowRef}
-        className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
+        className="flex w-name shrink-0 flex-col gap-10 bg-[var(--background)]"
       >
-        <div>
-          <DummyTaskRow groupId={null} />
-          <TaskList groupId={null} />
-          <div ref={topRef} />
-        </div>
+        <TaskListUngrouped />
 
         {dummyGroup && (
-          <>
-            <DropIndicatorGroup />
+          <div>
+            <DropIndicatorGroup ref={topRef} />
             <GroupRow group={dummyGroup} isDummy={true} />
-          </>
+          </div>
         )}
 
         {groups?.map((group) => (
           <Fragment key={group.id}>
-            <DropIndicatorGroup beforeId={group.id} />
             <div>
+              <DropIndicatorGroup beforeId={group.id} />
               <GroupRow group={group} />
-              <DummyTaskRow groupId={group.id} />
-              <TaskList groupId={group.id} />
+              <TaskListGrouped groupId={group.id} />
             </div>
           </Fragment>
         ))}
@@ -62,9 +55,45 @@ export default function HeaderRow() {
   );
 }
 
+function TaskListUngrouped() {
+  const dummyTask = useTaskStore((s) =>
+    s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
+  );
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
+
+  if (!dummyTask && (!tasks || tasks.length === 0)) return null;
+
+  return (
+    <div>
+      {dummyTask && <DummyTaskRow groupId={null} />}
+      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
+    </div>
+  );
+}
+
+function TaskListGrouped({ groupId }: { groupId: string }) {
+  const key = groupId ?? UNGROUPED_KEY;
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+
+  return (
+    <>
+      <DummyTaskRow groupId={groupId} />
+      {tasks?.map((task) => (
+        <Fragment key={task.id}>
+          <DropIndicatorTask
+            groupId={task.groupId ?? null}
+            beforeId={task.id}
+          />
+          <TaskRow task={task} />
+        </Fragment>
+      ))}
+      <DropIndicatorTask groupId={groupId ?? null} />
+    </>
+  );
+}
+
 function DummyTaskRow({ groupId }: { groupId: string | null }) {
   const topRef = useRef<HTMLDivElement>(null);
-  const isTopRefVisible = useOnScreen(topRef);
 
   const dummyTask = useTaskStore((s) =>
     s.dummyTask && s.dummyTask.groupId === (groupId || undefined)
@@ -73,10 +102,8 @@ function DummyTaskRow({ groupId }: { groupId: string | null }) {
   );
 
   useEffect(() => {
-    if (dummyTask && !isTopRefVisible) {
-      topRef.current?.scrollIntoView({ block: "center" });
-    }
-  }, [dummyTask, isTopRefVisible]);
+    topRef.current?.scrollIntoView({ block: "center" });
+  }, [dummyTask]);
 
   return (
     <>
@@ -90,26 +117,6 @@ function DummyTaskRow({ groupId }: { groupId: string | null }) {
           <TaskRow task={dummyTask} isDummy={true} />
         </>
       )}
-    </>
-  );
-}
-
-function TaskList({ groupId }: { groupId: string | null }) {
-  const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
-
-  return (
-    <>
-      {tasks?.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask
-            groupId={task.groupId ?? null}
-            beforeId={task.id}
-          />
-          <TaskRow task={task} />
-        </Fragment>
-      ))}
-      <DropIndicatorTask groupId={groupId ?? null} />
     </>
   );
 }
