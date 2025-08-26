@@ -135,7 +135,7 @@ export default function HorizontalDragScroll({
   return (
     <div
       ref={localRef}
-      className={`overflow-x-auto ${className}`}
+      className={` ${className}`}
       // style={{ WebkitOverflowScrolling: "touch" }}
       onClickCapture={handleClickCapture}
     >
