@@ -27,15 +27,14 @@ type Action = {
   deleteGroup: (id: string) => void;
   moveGroupBefore: (id: string, beforeId: string) => void;
   moveGroupAfter: (id: string, afterId: string | null) => void;
-  setDummyGroup: (group: State["groups"]) => void;
+  setDummyGroup: (group: Group) => void;
 };
 
 export const useGroupStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set) => ({
       dummyGroup: undefined,
-      setDummyGroup: (group: State["groups"]) =>
-        set(() => ({ dummyGroup: group })),
+      setDummyGroup: (group: Group) => set(() => ({ dummyGroup: group })),
 
       groups: undefined,
       size: 0,
