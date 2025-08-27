@@ -80,9 +80,7 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      <main className="pt-[10px]">
-        {isLoading ? <Loading /> : <CalendarDay />}
-      </main>
+      <main>{isLoading ? <Loading /> : <CalendarDay />}</main>
     </>
   );
 }
