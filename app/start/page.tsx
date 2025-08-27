@@ -2,7 +2,7 @@
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
 import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group, Task } from "../repositories/types";
 import { Checkbox } from "radix-ui";
 import {
@@ -11,23 +11,42 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import AppHeader from "../components/AppHeader/AppHeader";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/AppStore";
-import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
+import AppHeader from "../components/AppHeader";
+import Loading from "../components/Loading/Loading";
+import GoBackButton from "../components/GoBackButton";
 
-export default function Start() {
+export default function StartPage() {
   const router = useRouter();
 
-  const ungroupedTasks = useRef(genUngroupedTasks());
-  const groupedTasks = useRef(genGroupedTasks());
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === false) {
+      router.replace("/");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === true ? <Content /> : <Loading />;
+}
+
+function Content() {
+  const router = useRouter();
+
+  const [ungroupedTasks, setUngroupedTasks] = useState<Task[]>([]);
+  const [groupedTasks, setGroupedTasks] = useState<[Group, Task[]][]>([]);
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
-  const startMock = useAppStore((s) => s.startMock);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const toastId = useRef<Id>(null);
+
+  useEffect(() => {
+    setUngroupedTasks(genUngroupedTasks());
+    setGroupedTasks(genGroupedTasks());
+  }, []);
 
   const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
@@ -41,7 +60,8 @@ export default function Start() {
     });
   };
 
-  async function handleClickStart() {
+  const handleClickStart = async () => {
+    if (isLoading) return;
     setIsLoading(true);
 
     if (toastId.current) toast.dismiss(toastId.current);
@@ -52,7 +72,7 @@ export default function Start() {
       tasksSelected.forEach((task) => {
         const groupId = task.groupId;
         if (groupId) {
-          const group = groupedTasks.current.find(
+          const group = groupedTasks.find(
             ([group]) => group.id === groupId
           )?.[0];
 
@@ -67,47 +87,29 @@ export default function Start() {
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
       router.replace("/");
-    } catch {
+    } catch (error) {
+      console.log(error);
       toast.dismiss(toastId.current);
       notifyLoadError();
     }
 
     setIsLoading(false);
-  }
-
-  async function handleClickStartMock() {
-    setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
-
-    try {
-      await startMock();
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
-      router.replace("/");
-    } catch {
-      toast.dismiss(toastId.current);
-      notifyLoadError();
-    }
-
-    setIsLoading(false);
-  }
+  };
 
   return (
     <>
       <AppHeader />
-      <div className="flex w-screen justify-center">
-        <div className="mb-[100px] max-w-[800px]">
-          <h1 className="mt-[100px] text-4xl font-bold">Getting started</h1>
+      <main className="page-main flex flex-col gap-[50px]">
+        <GoBackButton />
 
-          <p className="mt-[50px] leading-relaxed">
-            Let’s set up your first tasks or habits. Select at least 3 to begin
-            — you can update or reorganize them anytime.
+        <section>
+          <h1 className="page-title-1">Getting started</h1>
+          <p>
+            Let’s set up your first habits. Select at least one to get started —
+            you can always change them later.
           </p>
-
-          <div className="mt-[30px] flex flex-col gap-2">
-            {ungroupedTasks.current.map((task) => (
+          <ul className="mt-[30px] flex flex-col gap-2">
+            {ungroupedTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}
@@ -115,17 +117,16 @@ export default function Start() {
                 onCheckedChange={() => handleCheckedChange(task)}
               />
             ))}
-          </div>
+          </ul>
+        </section>
 
-          <p className="mt-[30px] leading-relaxed">
-            Use groups to stay organized. You can create a group and add tasks
-            inside it — like folders for your habits.
-          </p>
-
+        <section>
+          <h2 className="page-title-2">Use groups to stay organized</h2>
+          <p>You can create groups — like folders for your habits.</p>
           <div className="mt-[30px] flex flex-wrap gap-10">
-            {groupedTasks.current.map(([group, tasks]) => (
+            {groupedTasks.map(([group, tasks]) => (
               <GroupItem key={group.id} group={group}>
-                <div className="flex flex-col items-start gap-2">
+                <ul className="flex flex-col items-start gap-2">
                   {tasks.map((task) => (
                     <TaskItem
                       key={task.id}
@@ -134,44 +135,21 @@ export default function Start() {
                       onCheckedChange={() => handleCheckedChange(task)}
                     />
                   ))}
-                </div>
+                </ul>
               </GroupItem>
             ))}
           </div>
+        </section>
 
-          <div className="mt-[40px] flex flex-col items-center justify-center">
-            <button
-              className="button-accent mt-2 flex items-center gap-2"
-              disabled={isLoading || tasksSelected.size < 3}
-              onClick={handleClickStart}
-            >
-              <span>Let&apos;s begin </span>
-              <ArrowRightIcon />
-            </button>
-
-            <AppTooltip>
-              <AppTrigger asChild>
-                <button
-                  className="mt-5 text-xs hover:text-[var(--accent)] hover:underline"
-                  disabled={isLoading}
-                  onClick={handleClickStartMock}
-                >
-                  Jump to test
-                </button>
-              </AppTrigger>
-              <AppContent className="p-2" side="right" sideOffset={10}>
-                <h2 className="text-sm font-bold">Want a quick preview?</h2>
-
-                <p className="mt-[10px] leading-relaxed">
-                  Fill your app with sample data to explore the app.
-                  <br />
-                  You can reset your data anytime from Settings.
-                </p>
-              </AppContent>
-            </AppTooltip>
-          </div>
-        </div>
-      </div>
+        <button
+          className="button-accent m-auto"
+          disabled={tasksSelected.size === 0}
+          onClick={handleClickStart}
+        >
+          <span>Let&apos;s begin </span>
+          <ArrowRightIcon />
+        </button>
+      </main>
     </>
   );
 }
@@ -198,7 +176,7 @@ function TaskItem({
   onCheckedChange: () => void;
 }) {
   return (
-    <div className="checkbox">
+    <li className="checkbox">
       <div className="flex h-[24px] items-center">
         <Checkbox.Root
           id={task.id}
@@ -216,6 +194,6 @@ function TaskItem({
       <label htmlFor={task.id} className="checkbox-label">
         {task.name}
       </label>
-    </div>
+    </li>
   );
 }

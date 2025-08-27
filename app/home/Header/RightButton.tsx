@@ -6,19 +6,14 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
 
 export default function RightButton() {
-  const scrollRef = scrollStore((s) => s.calendarScrollRef);
-  const isAtRight = scrollStore((s) => s.isAtRight);
-  const scrollToRight = scrollStore((s) => s.scrollToRight);
+  const isAtRight = useScrollStore((s) => s.isAtRight);
+  const scrollToRight = useScrollStore((s) => s.scrollToRight);
 
   const handleClick = async () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const offset = (el.clientWidth - 300) * 0.5;
-    scrollToRight(offset);
+    scrollToRight();
   };
 
   return (
@@ -32,7 +27,7 @@ export default function RightButton() {
           <ChevronRightIcon />
         </button>
       </AppTrigger>
-      <AppContent>Go next</AppContent>
+      <AppContent align="center">Go next</AppContent>
     </AppTooltip>
   );
 }

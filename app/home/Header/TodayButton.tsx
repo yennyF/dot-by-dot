@@ -3,10 +3,10 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
 
 export default function TodayButton() {
-  const todayRef = scrollStore((s) => s.todayRef);
+  const todayRef = useScrollStore((s) => s.todayRef);
 
   const handleClick = () => {
     todayRef.current?.scrollIntoView({
@@ -23,7 +23,7 @@ export default function TodayButton() {
           Today
         </button>
       </AppTrigger>
-      <AppContent align="start">Go to most recent</AppContent>
+      <AppContent align="center">Go to most recent</AppContent>
     </AppTooltip>
   );
 }

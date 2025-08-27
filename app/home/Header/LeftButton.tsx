@@ -1,41 +1,75 @@
 "use client";
 
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import { useLoadMore } from "@/app/hooks/useLoadMore";
 import {
   AppTooltip,
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { scrollStore } from "@/app/stores/scrollStore";
+import { useScrollStore } from "@/app/stores/scrollStore";
+import { useRef } from "react";
+import { useTrackStore } from "@/app/stores/TrackStore";
 
 export default function LeftButton() {
-  const scrollRef = scrollStore((s) => s.calendarScrollRef);
-  const isAtLeft = scrollStore((s) => s.isAtLeft);
-  const scrollToLeft = scrollStore((s) => s.scrollToLeft);
+  const isAtLeft = useScrollStore((s) => s.isAtLeft);
 
-  const { loadMore } = useLoadMore(scrollRef);
+  return isAtLeft ? <LoadMoreButton /> : <LeftButtonContent />;
+}
+
+function LeftButtonContent() {
+  const scrollToLeft = useScrollStore((s) => s.scrollToLeft);
 
   const handleClick = async () => {
-    if (isAtLeft) {
-      await loadMore();
-    } else {
-      const el = scrollRef.current;
-      if (!el) return;
-
-      const offset = (el.clientWidth - 300) * 0.5;
-      scrollToLeft(offset);
-    }
+    scrollToLeft();
   };
 
   return (
     <AppTooltip>
       <AppTrigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
-          <ChevronLeftIcon /> {isAtLeft ? "More" : ""}
+          <ChevronLeftIcon />
         </button>
       </AppTrigger>
-      <AppContent>{isAtLeft ? "Load more" : "Go previous"}</AppContent>
+      <AppContent>Go previous</AppContent>
+    </AppTooltip>
+  );
+}
+
+function LoadMoreButton() {
+  const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
+  const contentRef = useScrollStore((s) => s.contentRef);
+  const scrollToLeft = useScrollStore((s) => s.scrollToLeft);
+
+  const prevScrollLeft = useRef<number>(0);
+  const prevScrollWidth = useRef<number>(0);
+
+  const handleClick = async () => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    prevScrollWidth.current = el.scrollWidth;
+    prevScrollLeft.current = el.scrollLeft;
+
+    await loadMorePrevTracks();
+
+    // Move where it was
+    const addedWidth = el.scrollWidth - prevScrollWidth.current;
+    el.scrollLeft = prevScrollLeft.current + addedWidth;
+    el.scrollTo({ left: el.scrollLeft, behavior: "smooth" });
+
+    // Shift
+    scrollToLeft();
+  };
+
+  return (
+    <AppTooltip>
+      <AppTrigger asChild>
+        <button className="button-outline button-sm" onClick={handleClick}>
+          <ChevronLeftIcon />
+          More
+        </button>
+      </AppTrigger>
+      <AppContent align="center">Load more</AppContent>
     </AppTooltip>
   );
 }

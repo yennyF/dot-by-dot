@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AppProvider } from "../AppContext";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
-import AppHeader from "../components/AppHeader/AppHeader";
+import AppHeader from "../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
 import LockButton from "./Header/LockButton";
@@ -14,13 +13,21 @@ import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
 import { useAppStore } from "../stores/AppStore";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
+import { useRouter } from "next/navigation";
+import SettingsButton from "./Header/SettingsButton";
 
-export default function Home() {
-  return (
-    <AppProvider>
-      <Content />
-    </AppProvider>
-  );
+export default function HomePage() {
+  const router = useRouter();
+
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+
+  useEffect(() => {
+    if (isDataEmpty === true) {
+      router.replace("/product");
+    }
+  }, [isDataEmpty, router]);
+
+  return isDataEmpty === false ? <Content /> : <Loading />;
 }
 
 function Content() {
@@ -48,13 +55,14 @@ function Content() {
   return (
     <>
       <AppHeader>
-        <div className="flex flex-1 justify-between">
-          <div className="flex items-center gap-2">
-            <TodayButton />
+        <div className="flex flex-1 items-center justify-end gap-10">
+          <div className="flex gap-2">
             <LeftButton />
             <RightButton />
+            <TodayButton />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2">
+            <SettingsButton />
             <LockButton />
             <CreateDropdown>
               <span>
@@ -72,7 +80,9 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      {isLoading ? <Loading /> : <CalendarDay />}
+      <main className="pt-[10px]">
+        {isLoading ? <Loading /> : <CalendarDay />}
+      </main>
     </>
   );
 }

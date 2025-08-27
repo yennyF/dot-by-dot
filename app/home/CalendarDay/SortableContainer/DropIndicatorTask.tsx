@@ -1,12 +1,14 @@
 "use client";
 
+import clsx from "clsx";
 import { RefObject } from "react";
 
 interface DropIndicatorProps {
-  ref?: RefObject<HTMLInputElement>;
+  ref?: RefObject<HTMLDivElement> | null;
   groupId: string | null;
   beforeId?: string;
   afterId?: string;
+  className?: string;
 }
 
 export default function DropIndicatorTask({
@@ -14,11 +16,15 @@ export default function DropIndicatorTask({
   groupId,
   beforeId,
   afterId,
+  className,
 }: DropIndicatorProps) {
   return (
     <div
       ref={ref}
-      className="app-DropIndicatorTask drop-indicator sticky z-10 flex h-0 items-center pl-[12px] opacity-0"
+      className={clsx(
+        className,
+        "app-DropIndicatorTask drop-indicator sticky z-10 flex h-0 items-center pl-[12px] opacity-0"
+      )}
       data-sort="task"
       data-group-id={groupId}
       data-before-id={beforeId}

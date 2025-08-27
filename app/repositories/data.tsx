@@ -17,8 +17,8 @@ function setIdAndOrder<T>(arr: T[]): (T & { id: string; order: string })[] {
 export function genUngroupedTasks(): Task[] {
   const taskProps = [
     { name: "Check my emails" },
-    { name: "Learn something new" },
-    { name: "Read a chapter of a book" },
+    { name: "Read some pages of a book" },
+    { name: "No smoking" },
   ];
   return setIdAndOrder(taskProps);
 }
@@ -42,7 +42,7 @@ export function genGroupedTasks(): [Group, Task[]][] {
       ],
     },
     {
-      name: "Connection",
+      name: "Social",
       tasks: [
         { name: "Text my parents" },
         { name: "Chat with a loved one" },
@@ -53,7 +53,7 @@ export function genGroupedTasks(): [Group, Task[]][] {
       name: "Home",
       tasks: [
         { name: "Water my plants" },
-        { name: "Vacuum or sweep one room" },
+        { name: "Vacuum or sweep my space" },
         { name: "Change bed linens and pillowcases" },
       ],
     },

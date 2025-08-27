@@ -1,0 +1,37 @@
+"use client";
+
+import { ReactNode } from "react";
+import { CheckCircledIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
+
+export default function AppHeader({ children }: { children?: ReactNode }) {
+  const router = useRouter();
+
+  return (
+    <header className="app-AppHeader fixed left-0 top-0 z-30 flex h-[60px] w-full items-center gap-8 border-[1px] border-[var(--gray)] bg-[var(--background)] px-[20px]">
+      <button
+        className="flex items-center gap-2"
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        <CheckCircledIcon />
+        <span className="flex gap-1 text-sm tracking-wider">
+          <b>dot</b>
+          by
+          <b>dot</b>
+        </span>
+      </button>
+      <button
+        className="flex items-center gap-2"
+        onClick={() => {
+          router.push("/about");
+        }}
+      >
+        <InfoCircledIcon />
+        About
+      </button>
+      {children}
+    </header>
+  );
+}

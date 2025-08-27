@@ -1,45 +1,66 @@
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import AppHeader from "../components/AppHeader/AppHeader";
+import { ExclamationTriangleIcon, MagicWandIcon } from "@radix-ui/react-icons";
+import AppHeader from "../components/AppHeader";
 
-export default function About() {
+export default function AboutPage() {
   return (
     <>
-      <AppHeader></AppHeader>
-      <div className="flex w-screen justify-center">
-        <div className="mb-[200px] max-w-[800px]">
-          <h1 className="mt-[100px] text-4xl font-bold">About</h1>
-          <p className="mt-[30px]">
-            Hi 👋 — This little app helps you (and me!) keep track daily tasks
-            and habits. It’s simple on purpose: no clutter, just a place to add
-            what matters and check it off.
-          </p>
+      <AppHeader />
+      <main className="page-main flex flex-col gap-[50px]">
+        <h1 className="text-xl font-bold text-[var(--gray-9)]">
+          About dot by dot
+        </h1>
 
-          <h2 className="mt-[60px] text-lg font-semibold">More on the way</h2>
-          <p className="mt-[10px]">
-            I’m still building and experimenting, so expect new features soon —
-            like stats, progress tracking, and more ways to view your habits.
+        <section>
+          <h2 className="page-title-1">The thought behind it</h2>
+          <p>
+            Hello there! I built this little app to help you (and me!) keep
+            track of daily habits. It’s not about nagging you to get things done
+            — it’s about giving you a clear picture of what you’ve been doing,
+            and what you might be skipping.
           </p>
-
-          <h3 className="mt-[60px] text-lg font-semibold">Data storage</h3>
-          <p className="mt-[10px]">
-            For now, all data is stored locally in your browser, so it’s only
-            accessible from the same browser and device you’ve been using.
+          <br />
+          <p>
+            Sometimes we pour all our energy into one thing and forget about the
+            rest. This app helps you notice those patterns, see where your
+            effort really goes so you can find a better balance.
           </p>
+          <br />
+          <p className="text-[var(--gray-9)]">
+            Progress isn’t one big leap — it is the mix of many things, repeated
+            over time. Every effort counts, even the small ones.
+          </p>
+        </section>
 
-          <p className="mt-[60px]">
-            It’s open source — peek at the code here:{" "}
+        <section>
+          <h2 className="page-title-2 flex items-center gap-3">
+            <ExclamationTriangleIcon className="size-5" /> Heads up
+          </h2>
+          <p>
+            - More is on the way! The app’s still experimental, which means new
+            features coming — and yes, a few bugs too.
+            <br />
+            <br />- For now, all your data is stored locally in your browser, so
+            it’s only accessible from the same device and browser you’re using.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="page-title-2 flex items-center gap-3">
+            <MagicWandIcon className="size-5" /> See what’s under the hood
+          </h2>
+          <p>
+            Take a peek at the code here:{" "}
             <a
               href="https://github.com/yennyF/dot-by-dot"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline"
+              className="text-[var(--accent)] hover:text-[var(--inverted)] hover:underline"
             >
-              View on GitHub
-              <GitHubLogoIcon className="ml-2 inline" />
+              view on GitHub
             </a>
           </p>
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 }

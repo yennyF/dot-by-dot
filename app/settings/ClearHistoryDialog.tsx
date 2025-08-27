@@ -43,7 +43,7 @@ function Content() {
 
   const clearHistory = useTrackStore((s) => s.clearHistory);
 
-  async function onClickHandle() {
+  async function handleClick() {
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
@@ -98,7 +98,7 @@ function Content() {
         <Dialog.Close asChild>
           <button
             className="button-accept"
-            onClick={onClickHandle}
+            onClick={handleClick}
             disabled={checked === false}
           >
             Clear
