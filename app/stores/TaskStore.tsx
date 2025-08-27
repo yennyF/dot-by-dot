@@ -21,7 +21,7 @@ type State = {
 };
 
 type Action = {
-  setDummyTask: (task: Task) => void;
+  setDummyTask: (task: Task | undefined) => void;
 
   destroyTasks: () => void;
   initTasks: () => Promise<void>;
@@ -44,7 +44,8 @@ export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set) => ({
       dummyTask: undefined,
-      setDummyTask: (task: Task) => set(() => ({ dummyTask: task })),
+      setDummyTask: (task: Task | undefined) =>
+        set(() => ({ dummyTask: task })),
 
       tasksByGroup: undefined,
       size: 0,
