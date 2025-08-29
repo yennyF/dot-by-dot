@@ -41,14 +41,14 @@ function Content() {
 
   const toastId = useRef<Id>(null);
 
-  const clearHistory = useTrackStore((s) => s.clearHistory);
+  const deleteAllTrack = useTrackStore((s) => s.deleteAllTrack);
 
   async function handleClick() {
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
     try {
-      await clearHistory();
+      await deleteAllTrack();
       toast.dismiss(toastId.current);
       notifySuccessful("Clear history successful");
     } catch (error) {

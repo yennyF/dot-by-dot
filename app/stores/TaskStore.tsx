@@ -1,3 +1,4 @@
+import { supabase } from "../repositories/db";
 import { create } from "zustand";
 import { Task } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
@@ -9,7 +10,6 @@ import {
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
-import { db } from "../repositories/db";
 import { subscribeWithSelector } from "zustand/middleware";
 
 export const UNGROUPED_KEY = "_ungrouped";
@@ -42,7 +42,7 @@ type Action = {
 
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
-    immer((set) => ({
+    immer((set, get) => ({
       dummyTask: undefined,
       setDummyTask: (task: Task | undefined) =>
         set(() => ({ dummyTask: task })),
@@ -57,16 +57,18 @@ export const useTaskStore = create<State & Action>()(
       },
       initTasks: async () => {
         try {
+          const { data, error } = await supabase
+            .from("tasks")
+            .select("id, name, group_id, order");
+          if (error) throw error;
+
           const tasksByGroup: Record<string, Task[]> = {};
-
-          await db.groups.each((group) => {
-            tasksByGroup[group.id] = [];
-          });
-
-          await db.tasks.orderBy("order").each((task) => {
-            const key = task.groupId ?? UNGROUPED_KEY;
-            (tasksByGroup[key] ??= []).push(task);
-          });
+          if (data) {
+            apiToTaskArray(data).forEach((task) => {
+              const key = task.groupId ?? UNGROUPED_KEY;
+              (tasksByGroup[key] ??= []).push(task);
+            });
+          }
 
           set(() => ({ tasksByGroup }));
         } catch (error) {
@@ -76,26 +78,26 @@ export const useTaskStore = create<State & Action>()(
       },
       addTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
         try {
-          let task: Task | undefined;
+          const key = props.groupId ?? UNGROUPED_KEY;
 
+          const firstOrder = get().tasksByGroup?.[key]?.[0]?.order;
+          const order = firstOrder
+            ? LexoRank.parse(firstOrder).genPrev().toString()
+            : LexoRank.middle().toString();
+
+          const task: Task = { ...props, order };
+
+          // insert in local
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
-
-            const key = props.groupId ?? UNGROUPED_KEY;
-            const tasks = (tasksByGroup[key] ??= []);
-
-            const firstOrder = tasks[0]?.order;
-            const order = firstOrder
-              ? LexoRank.parse(firstOrder).genPrev().toString()
-              : LexoRank.middle().toString();
-
-            task = { ...props, order };
-            tasksByGroup[key].unshift(task);
+            (tasksByGroup[key] ??= []).unshift(task);
           });
 
-          if (!task) throw Error();
-
-          await db.tasks.add(task);
+          // insert in db
+          const { error } = await supabase
+            .from("tasks")
+            .insert(taskToApi(task));
+          if (error) throw error;
         } catch (error) {
           console.error("Error adding task:", error);
           notifyCreateError();
@@ -103,6 +105,7 @@ export const useTaskStore = create<State & Action>()(
       },
       updateTask: async (id: string, props: Pick<Task, "name">) => {
         try {
+          // update in local
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
 
@@ -113,7 +116,12 @@ export const useTaskStore = create<State & Action>()(
             task.name = props.name;
           });
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
           console.error("Error updating task:", error);
           notifyUpdateError();
@@ -165,7 +173,12 @@ export const useTaskStore = create<State & Action>()(
 
           if (!props) throw Error();
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
           console.error("Error moving task:", error);
           notifyMoveError();
@@ -231,7 +244,12 @@ export const useTaskStore = create<State & Action>()(
 
           if (!props) throw Error();
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
           console.error("Error moving task:", error);
           notifyMoveError();
@@ -257,7 +275,9 @@ export const useTaskStore = create<State & Action>()(
             tasksByGroup[loc.key].splice(loc.index, 1);
           });
 
-          await db.tasks.delete(id);
+          // delete from db
+          const response = await supabase.from("tasks").delete().eq("id", id);
+          if (response.error) throw response.error;
         } catch (error) {
           console.error("Error deleting task:", error);
           notifyDeleteError();
@@ -276,4 +296,32 @@ function locateTask(
     if (index > -1) return { key, index };
   }
   return null;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function apiToTaskArray(data: any[]): Task[] {
+  return data.map((t) => apiToTask(t));
+}
+
+export function tasksToApiArray(tasks: Task[]) {
+  return tasks.map((t) => taskToApi(t));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function apiToTask(data: any): Task {
+  return {
+    id: data.id,
+    groupId: data.group_id,
+    name: data.name,
+    order: data.order,
+  };
+}
+
+export function taskToApi(task: Task) {
+  return {
+    id: task.id,
+    group_id: task.groupId,
+    name: task.name,
+    order: task.order,
+  };
 }

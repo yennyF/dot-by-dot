@@ -112,6 +112,7 @@ function Content() {
           <Image
             src="/preview.png"
             alt="App preview"
+            priority={true}
             fill
             className="object-cover"
           />

@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { LocaleDateString } from "../repositories/types";
-import { db } from "../repositories/db";
+import { LocaleDateString, Track } from "../repositories/types";
 import {
   notifyCreateError,
   notifyDeleteError,
@@ -21,6 +20,7 @@ import {
 } from "date-fns";
 import { midnightUTC, midnightUTCstring } from "../util";
 import { toast } from "react-toastify";
+import { supabase } from "../repositories/db";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
@@ -30,7 +30,6 @@ type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
   unlock: boolean;
-  currentStreaks: Record<string, number>;
 
   startDate: Date;
   endDate: Date;
@@ -42,15 +41,10 @@ type Action = {
   destroyTracks: () => void;
   initTracks: () => Promise<void>;
   loadMorePrevTracks: () => Promise<void>;
-  clearHistory: () => Promise<void>;
-
-  updateCurrentStreak: (taskId: string) => void;
-  getCurrentStreak: (taskId: string) => Promise<number>;
 
   addTrack: (date: Date, taskId: string) => void;
-  addTracks: (date: Date, taskIds: string[]) => void;
   deleteTrack: (date: Date, taskId: string) => void;
-  deleteTracks: (date: Date, taskIds: string[]) => void;
+  deleteAllTrack: () => Promise<void>;
 };
 
 export const useTrackStore = create<State & Action>((set, get) => ({
@@ -77,13 +71,19 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tasksByDate: Record<LocaleDateString, Set<string>> = {};
 
     try {
-      await db.tracks
-        .where("date")
-        .between(midnightUTC(startDate), midnightUTC(endDate), true, true)
-        .each((track) => {
+      const { data, error } = await supabase
+        .from("task_logs")
+        .select("date, task_id")
+        .gte("date", midnightUTCstring(startDate))
+        .lte("date", midnightUTCstring(endDate));
+      if (error) throw error;
+
+      if (data) {
+        apiToTaskLogArray(data).forEach((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
+      }
 
       set(() => ({ tasksByDate, totalDate }));
     } catch (error) {
@@ -99,13 +99,19 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const tastId = notifyLoading();
 
     try {
-      await db.tracks
-        .where("date")
-        .between(midnightUTC(startDate), midnightUTC(endDate), true, false)
-        .each((track) => {
+      const { data, error } = await supabase
+        .from("task_logs")
+        .select("date, task_id")
+        .gte("created_at", midnightUTC(startDate))
+        .lte("created_at", midnightUTC(endDate));
+      if (error) throw error;
+
+      if (data) {
+        apiToTaskLogArray(data).forEach((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
+      }
 
       // console.log(await timeoutPromise(2000));
 
@@ -117,52 +123,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       toast.dismiss(tastId);
       notifyLoadError();
     }
-  },
-  clearHistory: async () => {
-    try {
-      get().destroyTracks();
-      await db.tracks.clear();
-    } catch (error) {
-      console.error("Error cleaning history:", error);
-      throw error;
-    }
-  },
-
-  currentStreaks: {},
-  updateCurrentStreak: async (taskId: string) => {
-    const streak = await get().getCurrentStreak(taskId);
-
-    set((s) => {
-      const newCurrentStreak = { ...s.currentStreaks };
-      newCurrentStreak[taskId] = streak;
-      return { currentStreaks: newCurrentStreak };
-    });
-  },
-  getCurrentStreak: async (taskId: string) => {
-    const today = midnightUTC(new Date());
-
-    const tracks = await db.tracks
-      .where("taskId")
-      .equals(taskId)
-      .and((track) => track.date <= today)
-      .reverse()
-      .sortBy("date"); // sort by date descending
-
-    let streak = 0;
-    const expectedDate = today;
-
-    for (const track of tracks) {
-      const trackDate = new Date(track.date);
-
-      if (trackDate.getTime() === expectedDate.getTime()) {
-        streak++;
-        expectedDate.setDate(expectedDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-
-    return streak;
   },
 
   addTrack: async (date: Date, taskId: string) => {
@@ -177,33 +137,17 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      await db.tracks.add({ taskId, date });
-      get().updateCurrentStreak(taskId);
+      const { error } = await supabase
+        .from("task_logs")
+        .insert(taskLogToApi({ taskId, date }));
+      if (error) throw error;
     } catch (error) {
       console.error("Error checking task:", error);
       notifyCreateError();
     }
   },
-  addTracks: async (date: Date, taskIds) => {
-    const dateString = midnightUTCstring(date);
-    set((state) => {
-      const tasksByDate = { ...state.tasksByDate };
-      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
-      taskIds.forEach((taskId) => tasksByDate[dateString].add(taskId));
-      return { tasksByDate };
-    });
-
-    try {
-      date = midnightUTC(date);
-      await db.tracks.bulkAdd(taskIds.map((taskId) => ({ taskId, date })));
-    } catch (error) {
-      console.error("Error checking tracks:", error);
-      notifyCreateError();
-    }
-  },
   deleteTrack: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
-    date = midnightUTC(date);
 
     set((state) => {
       if (!state.tasksByDate) return {};
@@ -215,31 +159,25 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     });
 
     try {
-      await db.tracks.delete([taskId, date]);
-      get().updateCurrentStreak(taskId);
+      const { error } = await supabase
+        .from("task_logs")
+        .delete()
+        .eq("date", dateString)
+        .eq("task_id", taskId);
+      if (error) throw error;
     } catch (error) {
       console.error("Error checking task:", error);
       notifyDeleteError();
     }
   },
-  deleteTracks: async (date: Date, taskIds: string[]) => {
-    const dateString = midnightUTCstring(date);
-    date = midnightUTC(date);
-
-    set((state) => {
-      if (!state.tasksByDate) return {};
-
-      const tasksByDate = { ...state.tasksByDate };
-      tasksByDate[dateString] = new Set(state.tasksByDate?.[dateString]);
-      taskIds.forEach((taskId) => tasksByDate[dateString].delete(taskId));
-      return { tasksByDate };
-    });
-
+  deleteAllTrack: async () => {
     try {
-      await db.tracks.bulkDelete(taskIds.map((taskId) => [taskId, date]));
+      get().destroyTracks();
+      const { error } = await supabase.from("task_logs").delete();
+      if (error) throw error;
     } catch (error) {
-      console.error("Error checking tracks:", error);
-      notifyDeleteError();
+      console.error("Error cleaning history:", error);
+      throw error;
     }
   },
 }));
@@ -272,4 +210,28 @@ function getTotalDate(startDate: Date, endDate: Date) {
   });
 
   return years;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function apiToTaskLogArray(data: any[]): Track[] {
+  return data.map((t) => apiToTaskLog(t));
+}
+
+export function taskLogsToApiArray(track: Track[]) {
+  return track.map((t) => taskLogToApi(t));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function apiToTaskLog(data: any): Track {
+  return {
+    date: new Date(data.date),
+    taskId: data.task_id,
+  };
+}
+
+export function taskLogToApi(track: Track) {
+  return {
+    date: track.date,
+    task_id: track.taskId,
+  };
 }

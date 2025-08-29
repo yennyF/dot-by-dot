@@ -1,15 +1,16 @@
+import { supabase } from "../repositories/db";
 import { create } from "zustand";
 import { Group, Task, Track } from "../repositories/types";
 import { notifyDeleteError } from "../components/Notification";
-import { useTaskStore } from "./TaskStore";
+import { tasksToApiArray, useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
-import { useTrackStore } from "./TrackStore";
-import { db } from "../repositories/db";
+import { taskLogsToApiArray, useTrackStore } from "./TrackStore";
 import {
   genGroupedTasks,
   genTracks,
   genUngroupedTasks,
 } from "../repositories/data";
+import { v4 as uuidv4 } from "uuid";
 
 type State = {
   isDataEmpty: boolean | undefined;
@@ -20,13 +21,6 @@ type Action = {
   reset: () => Promise<void>;
   start: (groups: Group[], tasks: Task[], tracks?: Track[]) => Promise<void>;
   startMock: () => Promise<void>;
-};
-
-const setDataEmpty = async () => {
-  const groupsCount = await db.groups.count();
-  const tasksCount = await db.tasks.count();
-  const isDataEmpty = groupsCount === 0 && tasksCount === 0;
-  useAppStore.setState({ isDataEmpty });
 };
 
 export const useAppStore = create<State & Action>((set, get) => {
@@ -49,7 +43,11 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
     reset: async () => {
       try {
-        await db.tables.forEach((table) => table.clear());
+        await Promise.all([
+          supabase.from("task_logs").delete().neq("task_id", uuidv4()),
+          supabase.from("tasks").delete().neq("id", uuidv4()),
+          supabase.from("groups").delete().neq("id", uuidv4()),
+        ]);
 
         useTrackStore.getState().destroyTracks();
         useTaskStore.getState().destroyTasks();
@@ -63,10 +61,18 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
     start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
       try {
-        await db.tables.forEach((table) => table.clear());
-        await db.groups.bulkAdd(Array.from(groups));
-        await db.tasks.bulkAdd(Array.from(tasks));
-        if (tracks) await db.tracks.bulkAdd(tracks);
+        const { error: errorGroup } = await supabase
+          .from("groups")
+          .insert(groups);
+        if (errorGroup) throw errorGroup;
+
+        const { error: errorTasks } = await supabase
+          .from("tasks")
+          .insert(tasksToApiArray(tasks));
+        if (errorTasks) throw errorTasks;
+
+        if (tracks)
+          await supabase.from("task_logs").insert(taskLogsToApiArray(tracks));
 
         get().init();
       } catch (error) {
@@ -92,6 +98,34 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
   };
 });
+
+async function countTask() {
+  const { count, error } = await supabase
+    .from("tasks")
+    .select("*", { count: "exact", head: true });
+  if (error) throw error;
+  return count ?? 0;
+}
+
+async function countGroup() {
+  const { count, error } = await supabase
+    .from("groups")
+    .select("*", { count: "exact", head: true });
+  if (error) throw error;
+  return count ?? 0;
+}
+
+async function setDataEmpty() {
+  if ((await countTask()) > 0) {
+    useAppStore.setState({ isDataEmpty: false });
+    return;
+  }
+  if ((await countGroup()) > 0) {
+    useAppStore.setState({ isDataEmpty: false });
+    return;
+  }
+  useAppStore.setState({ isDataEmpty: true });
+}
 
 useGroupStore.subscribe(
   (state) => state.groups,

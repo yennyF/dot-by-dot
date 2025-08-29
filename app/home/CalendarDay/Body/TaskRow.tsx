@@ -12,25 +12,11 @@ interface TaskRowProps {
 function TaskRowWrapper({ task }: TaskRowProps) {
   const years = useTrackStore((s) => s.totalDate);
 
-  // const currentStreak = useTrackStore((s) => s.currentStreaks[task.id]);
-  // const updateCurrentStreak = useTrackStore((s) => s.updateCurrentStreak);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await updateCurrentStreak(task.id);
-  //   })();
-  // }, []);
-
   return (
     <div className="app-TaskRow flex w-fit">
       {years.map(([, months], index) => (
         <YearItem key={index} months={months} task={task} />
       ))}
-      {/* {currentStreak > 0 && (
-        <div className="flex items-center text-nowrap px-2 text-xs">
-          {currentStreak} day streak
-        </div>
-      )} */}
     </div>
   );
 }
