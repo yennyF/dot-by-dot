@@ -1,6 +1,6 @@
 import { supabase } from "../repositories/db";
 import { create } from "zustand";
-import { Task } from "../repositories/types";
+import { Task, toApiTask, toTaskArray } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
 import { useTrackStore } from "./TrackStore";
 import { LexoRank } from "lexorank";
@@ -17,7 +17,6 @@ export const UNGROUPED_KEY = "_ungrouped";
 type State = {
   dummyTask: Task | undefined;
   tasksByGroup: Record<string, Task[]> | undefined; // undefined = loading
-  size: number | undefined;
 };
 
 type Action = {
@@ -48,7 +47,6 @@ export const useTaskStore = create<State & Action>()(
         set(() => ({ dummyTask: task })),
 
       tasksByGroup: undefined,
-      size: 0,
       destroyTasks: async () => {
         set(() => ({
           dummyTask: undefined,
@@ -64,7 +62,7 @@ export const useTaskStore = create<State & Action>()(
 
           const tasksByGroup: Record<string, Task[]> = {};
           if (data) {
-            apiToTaskArray(data).forEach((task) => {
+            toTaskArray(data).forEach((task) => {
               const key = task.groupId ?? UNGROUPED_KEY;
               (tasksByGroup[key] ??= []).push(task);
             });
@@ -96,7 +94,7 @@ export const useTaskStore = create<State & Action>()(
           // insert in db
           const { error } = await supabase
             .from("tasks")
-            .insert(taskToApi(task));
+            .insert(toApiTask(task));
           if (error) throw error;
         } catch (error) {
           console.error("Error adding task:", error);
@@ -296,32 +294,4 @@ function locateTask(
     if (index > -1) return { key, index };
   }
   return null;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function apiToTaskArray(data: any[]): Task[] {
-  return data.map((t) => apiToTask(t));
-}
-
-export function tasksToApiArray(tasks: Task[]) {
-  return tasks.map((t) => taskToApi(t));
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function apiToTask(data: any): Task {
-  return {
-    id: data.id,
-    groupId: data.group_id,
-    name: data.name,
-    order: data.order,
-  };
-}
-
-export function taskToApi(task: Task) {
-  return {
-    id: task.id,
-    group_id: task.groupId,
-    name: task.name,
-    order: task.order,
-  };
 }

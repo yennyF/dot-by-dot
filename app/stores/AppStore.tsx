@@ -1,10 +1,16 @@
 import { supabase } from "../repositories/db";
 import { create } from "zustand";
-import { Group, Task, Track } from "../repositories/types";
+import {
+  Group,
+  Task,
+  toApiTaskArray,
+  toApiTaskLogArray,
+  Track,
+} from "../repositories/types";
 import { notifyDeleteError } from "../components/Notification";
-import { tasksToApiArray, useTaskStore } from "./TaskStore";
+import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
-import { taskLogsToApiArray, useTrackStore } from "./TrackStore";
+import { useTrackStore } from "./TrackStore";
 import {
   genGroupedTasks,
   genTracks,
@@ -68,11 +74,11 @@ export const useAppStore = create<State & Action>((set, get) => {
 
         const { error: errorTasks } = await supabase
           .from("tasks")
-          .insert(tasksToApiArray(tasks));
+          .insert(toApiTaskArray(tasks));
         if (errorTasks) throw errorTasks;
 
         if (tracks)
-          await supabase.from("task_logs").insert(taskLogsToApiArray(tracks));
+          await supabase.from("task_logs").insert(toApiTaskLogArray(tracks));
 
         get().init();
       } catch (error) {

@@ -1,5 +1,3 @@
-export type LocaleDateString = string; // Format: "M/D/YYYY"
-
 export type Group = {
   id: string;
   name: string;
@@ -13,7 +11,67 @@ export type Task = {
   order: string;
 };
 
+export type ApiTask = {
+  id: string;
+  name: string;
+  group_id: string | null;
+  order: string;
+};
+
 export type Track = {
   taskId: string;
   date: Date;
 };
+
+export type ApiTrack = {
+  task_id: string;
+  date: string; // Format: "M/D/YYYY"
+};
+
+export function toTaskArray(data: ApiTask[]): Task[] {
+  return data.map((t) => toTask(t));
+}
+
+export function toApiTaskArray(tasks: Task[]): ApiTask[] {
+  return tasks.map((t) => toApiTask(t));
+}
+
+export function toTask(data: ApiTask): Task {
+  return {
+    id: data.id,
+    groupId: data.group_id || undefined,
+    name: data.name,
+    order: data.order,
+  };
+}
+
+export function toApiTask(task: Task): ApiTask {
+  return {
+    id: task.id,
+    group_id: task.groupId || null,
+    name: task.name,
+    order: task.order,
+  };
+}
+
+export function toTaskLogArray(data: ApiTrack[]): Track[] {
+  return data.map((t) => toTaskLog(t));
+}
+
+export function toApiTaskLogArray(track: Track[]): ApiTrack[] {
+  return track.map((t) => toApiTaskLog(t));
+}
+
+export function toTaskLog(data: ApiTrack): Track {
+  return {
+    date: new Date(data.date),
+    taskId: data.task_id,
+  };
+}
+
+export function toApiTaskLog(track: Track): ApiTrack {
+  return {
+    date: midnightUTCstring(track.date),
+    task_id: track.taskId,
+  };
+}

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { LocaleDateString, Track } from "../repositories/types";
 import {
   notifyCreateError,
   notifyDeleteError,
@@ -18,9 +17,11 @@ import {
   startOfYear,
   subMonths,
 } from "date-fns";
-import { midnightUTC, midnightUTCstring } from "../util";
+import { midnightUTCstring } from "../util";
 import { toast } from "react-toastify";
 import { supabase } from "../repositories/db";
+import { v4 as uuidv4 } from "uuid";
+import { toTaskLogArray, toApiTaskLog } from "../repositories/types";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
@@ -28,7 +29,7 @@ export type YearType = [Date, MonthType[]];
 
 type State = {
   // Store date strings for reliable value-based Set comparison
-  tasksByDate: Record<LocaleDateString, Set<string>> | undefined;
+  tasksByDate: Record<string, Set<string>> | undefined;
   unlock: boolean;
 
   startDate: Date;
@@ -68,7 +69,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     const startDate = get().startDate;
     const endDate = get().endDate;
     const totalDate = getTotalDate(startDate, endDate);
-    const tasksByDate: Record<LocaleDateString, Set<string>> = {};
+    const tasksByDate: Record<string, Set<string>> = {};
 
     try {
       const { data, error } = await supabase
@@ -79,7 +80,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       if (error) throw error;
 
       if (data) {
-        apiToTaskLogArray(data).forEach((track) => {
+        toTaskLogArray(data).forEach((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
@@ -102,18 +103,16 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       const { data, error } = await supabase
         .from("task_logs")
         .select("date, task_id")
-        .gte("created_at", midnightUTC(startDate))
-        .lte("created_at", midnightUTC(endDate));
+        .gte("created_at", midnightUTCstring(startDate))
+        .lte("created_at", midnightUTCstring(endDate));
       if (error) throw error;
 
       if (data) {
-        apiToTaskLogArray(data).forEach((track) => {
+        toTaskLogArray(data).forEach((track) => {
           const dateString = track.date.toLocaleDateString();
           (tasksByDate[dateString] ??= new Set()).add(track.taskId);
         });
       }
-
-      // console.log(await timeoutPromise(2000));
 
       set(() => ({ tasksByDate, startDate, totalDate }));
 
@@ -127,7 +126,6 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
   addTrack: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
-    date = midnightUTC(date);
 
     set((state) => {
       const tasksByDate = { ...state.tasksByDate };
@@ -139,7 +137,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
     try {
       const { error } = await supabase
         .from("task_logs")
-        .insert(taskLogToApi({ taskId, date }));
+        .insert(toApiTaskLog({ taskId, date }));
       if (error) throw error;
     } catch (error) {
       console.error("Error checking task:", error);
@@ -173,7 +171,10 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   deleteAllTrack: async () => {
     try {
       get().destroyTracks();
-      const { error } = await supabase.from("task_logs").delete();
+      const { error } = await supabase
+        .from("task_logs")
+        .delete()
+        .neq("task_id", uuidv4());
       if (error) throw error;
     } catch (error) {
       console.error("Error cleaning history:", error);
@@ -210,28 +211,4 @@ function getTotalDate(startDate: Date, endDate: Date) {
   });
 
   return years;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function apiToTaskLogArray(data: any[]): Track[] {
-  return data.map((t) => apiToTaskLog(t));
-}
-
-export function taskLogsToApiArray(track: Track[]) {
-  return track.map((t) => taskLogToApi(t));
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function apiToTaskLog(data: any): Track {
-  return {
-    date: new Date(data.date),
-    taskId: data.task_id,
-  };
-}
-
-export function taskLogToApi(track: Track) {
-  return {
-    date: track.date,
-    task_id: track.taskId,
-  };
 }
