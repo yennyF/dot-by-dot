@@ -1,6 +1,6 @@
 "use client";
 
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/TaskLogStore";
 import { getSnappedPercentage, midnightUTCstring } from "@/app/util";
 import {
   AppTooltip,
@@ -16,10 +16,10 @@ export default function CounterRowItem({ date }: { date: Date }) {
   const currentKey = midnightUTCstring(date);
   const nextKey = midnightUTCstring(addDays(date, 1));
 
-  const currentSize = useTrackStore(
+  const currentSize = useTaskLogStore(
     (s) => s.tasksByDate?.[currentKey]?.size ?? 0
   );
-  const nextSize = useTrackStore((s) => s.tasksByDate?.[nextKey]?.size ?? 0);
+  const nextSize = useTaskLogStore((s) => s.tasksByDate?.[nextKey]?.size ?? 0);
 
   const isCurrentActive = currentSize > 0;
   const isNextActive = nextSize > 0;

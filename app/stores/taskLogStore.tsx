@@ -37,17 +37,17 @@ type State = {
 };
 
 type Action = {
-  destroyTracks: () => void;
+  destroyTaskLogs: () => void;
   setUnlock: (unlock: boolean) => void;
-  fetchTracks: () => Promise<void>;
-  fetchMoreTracks: () => Promise<void>;
-  insertTrack: (date: Date, taskId: string) => void;
-  deleteTrack: (date: Date, taskId: string) => void;
-  deleteAllTrack: () => Promise<void>;
+  fetchTaskLogs: () => Promise<void>;
+  fetchMoreTaskLogs: () => Promise<void>;
+  insertTaskLog: (date: Date, taskId: string) => void;
+  deleteTaskLog: (date: Date, taskId: string) => void;
+  deleteAllTaskLog: () => Promise<void>;
 };
 
-export const useTrackStore = create<State & Action>((set, get) => ({
-  destroyTracks: async () => {
+export const useTaskLogStore = create<State & Action>((set, get) => ({
+  destroyTaskLogs: async () => {
     set(() => ({
       unlock: false,
       tasksByDate: undefined,
@@ -64,7 +64,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
   totalDate: [],
 
   tasksByDate: undefined,
-  fetchTracks: async () => {
+  fetchTaskLogs: async () => {
     const startDate = get().startDate;
     const endDate = get().endDate;
     const totalDate = getTotalDate(startDate, endDate);
@@ -79,19 +79,19 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       if (error) throw error;
 
       if (data) {
-        toTaskLogArray(data).forEach((track) => {
-          const dateString = track.date.toLocaleDateString();
-          (tasksByDate[dateString] ??= new Set()).add(track.taskId);
+        toTaskLogArray(data).forEach((taskLog) => {
+          const dateString = taskLog.date.toLocaleDateString();
+          (tasksByDate[dateString] ??= new Set()).add(taskLog.taskId);
         });
       }
 
       set(() => ({ tasksByDate, totalDate }));
     } catch (error) {
-      console.error("Error initialing tracks:", error);
+      console.error(error);
       throw error;
     }
   },
-  fetchMoreTracks: async () => {
+  fetchMoreTaskLogs: async () => {
     const startDate = subMonths(get().startDate, 1);
     const endDate = get().endDate;
     const totalDate = getTotalDate(startDate, endDate);
@@ -107,9 +107,9 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       if (error) throw error;
 
       if (data) {
-        toTaskLogArray(data).forEach((track) => {
-          const dateString = track.date.toLocaleDateString();
-          (tasksByDate[dateString] ??= new Set()).add(track.taskId);
+        toTaskLogArray(data).forEach((taskLog) => {
+          const dateString = taskLog.date.toLocaleDateString();
+          (tasksByDate[dateString] ??= new Set()).add(taskLog.taskId);
         });
       }
 
@@ -117,12 +117,12 @@ export const useTrackStore = create<State & Action>((set, get) => ({
 
       toast.dismiss(tastId);
     } catch (error) {
-      console.error("Error loading more tracks:", error);
+      console.error(error);
       toast.dismiss(tastId);
       notifyLoadError();
     }
   },
-  insertTrack: async (date: Date, taskId: string) => {
+  insertTaskLog: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
 
     set((state) => {
@@ -138,11 +138,11 @@ export const useTrackStore = create<State & Action>((set, get) => ({
         .insert(toApiTaskLog({ taskId, date }));
       if (error) throw error;
     } catch (error) {
-      console.error("Error checking task:", error);
+      console.error(error);
       notifyCreateError();
     }
   },
-  deleteTrack: async (date: Date, taskId: string) => {
+  deleteTaskLog: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
 
     set((state) => {
@@ -162,20 +162,20 @@ export const useTrackStore = create<State & Action>((set, get) => ({
         .eq("task_id", taskId);
       if (error) throw error;
     } catch (error) {
-      console.error("Error checking task:", error);
+      console.error(error);
       notifyDeleteError();
     }
   },
-  deleteAllTrack: async () => {
+  deleteAllTaskLog: async () => {
     try {
-      get().destroyTracks();
+      get().destroyTaskLogs();
       const { error } = await supabase
         .from("task_logs")
         .delete()
         .neq("task_id", uuidv4());
       if (error) throw error;
     } catch (error) {
-      console.error("Error cleaning history:", error);
+      console.error(error);
       throw error;
     }
   },

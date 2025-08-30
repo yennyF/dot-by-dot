@@ -1,6 +1,6 @@
 "use client";
 
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/TaskLogStore";
 import { Group } from "@/app/repositories/types";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
@@ -21,10 +21,10 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
   const currentKey = midnightUTCstring(date);
   const nextKey = midnightUTCstring(addDays(date, 1));
 
-  const currentSize = useTrackStore(
+  const currentSize = useTaskLogStore(
     (s) => s.tasksByDate?.[currentKey]?.intersection(taskIdSet).size ?? 0
   );
-  const nextSize = useTrackStore(
+  const nextSize = useTaskLogStore(
     (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size ?? 0
   );
 

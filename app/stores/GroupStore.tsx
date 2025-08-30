@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./TaskStore";
-import { useTrackStore } from "./TrackStore";
+import { useTaskLogStore } from "./TaskLogStore";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
@@ -52,7 +52,7 @@ export const useGroupStore = create<State & Action>()(
 
           set(() => ({ groups }));
         } catch (error) {
-          console.error("Error initialing groups:", error);
+          console.error(error);
           throw error;
         }
       },
@@ -83,7 +83,7 @@ export const useGroupStore = create<State & Action>()(
           const { error } = await supabase.from("groups").insert(group);
           if (error) throw error;
         } catch (error) {
-          console.error("Error adding group:", error);
+          console.error(error);
           notifyCreateError();
         }
       },
@@ -105,7 +105,7 @@ export const useGroupStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error updating group:", error);
+          console.error(error);
           notifyUpdateError();
         }
       },
@@ -150,7 +150,7 @@ export const useGroupStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error moving group:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
@@ -208,18 +208,18 @@ export const useGroupStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error moving group:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
       deleteGroup: async (id: string) => {
         try {
-          // delete track state
+          // delete taskLog state
           const tasksByGroup = useTaskStore.getState().tasksByGroup;
           if (tasksByGroup) {
             const tasks = tasksByGroup[id];
             if (tasks && tasks.length > 0) {
-              useTrackStore.setState((state) => {
+              useTaskLogStore.setState((state) => {
                 if (!state.tasksByDate) return {};
 
                 const newTasksByDate = { ...state.tasksByDate };
@@ -255,7 +255,7 @@ export const useGroupStore = create<State & Action>()(
           const response = await supabase.from("groups").delete().eq("id", id);
           if (response.error) throw response.error;
         } catch (error) {
-          console.error("Error deleting group:", error);
+          console.error(error);
           notifyDeleteError();
         }
       },

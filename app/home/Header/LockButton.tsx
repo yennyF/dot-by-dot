@@ -1,7 +1,7 @@
 "use client";
 
 import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/TaskLogStore";
 import {
   AppTooltip,
   AppTrigger,
@@ -9,8 +9,8 @@ import {
 } from "@/app/components/AppTooltip";
 
 export default function LockButton() {
-  const unlock = useTrackStore((s) => s.unlock);
-  const setUnlock = useTrackStore((s) => s.setUnlock);
+  const unlock = useTaskLogStore((s) => s.unlock);
+  const setUnlock = useTaskLogStore((s) => s.setUnlock);
 
   const handleCheckedChange = () => {
     setUnlock(!unlock);

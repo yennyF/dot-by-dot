@@ -3,14 +3,14 @@
 import { memo } from "react";
 import { Task } from "@/app/repositories/types";
 import TaskRowItem from "./TaskRowItem";
-import { MonthType, useTrackStore } from "@/app/stores/TrackStore";
+import { MonthType, useTaskLogStore } from "@/app/stores/TaskLogStore";
 
 interface TaskRowProps {
   task: Task;
 }
 
 function TaskRowWrapper({ task }: TaskRowProps) {
-  const years = useTrackStore((s) => s.totalDate);
+  const years = useTaskLogStore((s) => s.totalDate);
 
   return (
     <div className="app-TaskRow flex w-fit">

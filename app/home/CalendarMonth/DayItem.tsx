@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isToday } from "date-fns";
-import { useTrackStore } from "../../stores/TrackStore";
+import { useTaskLogStore } from "../../stores/TaskLogStore";
 import { midnightUTCstring } from "@/app/util";
 
 const MAX_TASK_SIZE = 10;
@@ -11,7 +11,9 @@ interface DayItemProps {
 }
 
 export default function DayItem({ date }: DayItemProps) {
-  const tasks = useTrackStore((s) => s.tasksByDate?.[midnightUTCstring(date)]);
+  const tasks = useTaskLogStore(
+    (s) => s.tasksByDate?.[midnightUTCstring(date)]
+  );
 
   const percentage = Math.min(tasks?.size ?? 0, MAX_TASK_SIZE) / MAX_TASK_SIZE;
 

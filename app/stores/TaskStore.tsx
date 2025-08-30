@@ -2,7 +2,7 @@ import { supabase } from "../repositories/db";
 import { create } from "zustand";
 import { Task, toApiTask, toTaskArray } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
-import { useTrackStore } from "./TrackStore";
+import { useTaskLogStore } from "./TaskLogStore";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
@@ -70,7 +70,7 @@ export const useTaskStore = create<State & Action>()(
 
           set(() => ({ tasksByGroup }));
         } catch (error) {
-          console.error("Error initialing tasks:", error);
+          console.error(error);
           throw error;
         }
       },
@@ -97,7 +97,7 @@ export const useTaskStore = create<State & Action>()(
             .insert(toApiTask(task));
           if (error) throw error;
         } catch (error) {
-          console.error("Error adding task:", error);
+          console.error(error);
           notifyCreateError();
         }
       },
@@ -121,7 +121,7 @@ export const useTaskStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error updating task:", error);
+          console.error(error);
           notifyUpdateError();
         }
       },
@@ -178,7 +178,7 @@ export const useTaskStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error moving task:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
@@ -249,14 +249,14 @@ export const useTaskStore = create<State & Action>()(
             .eq("id", id);
           if (error) throw error;
         } catch (error) {
-          console.error("Error moving task:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
       deleteTask: async (id: string) => {
         try {
-          // delete track state
-          useTrackStore.setState(({ tasksByDate }) => {
+          // delete taskLog state
+          useTaskLogStore.setState(({ tasksByDate }) => {
             const updatedTasksByDate = { ...tasksByDate };
             for (const date in updatedTasksByDate) {
               updatedTasksByDate[date].delete(id);
@@ -277,7 +277,7 @@ export const useTaskStore = create<State & Action>()(
           const response = await supabase.from("tasks").delete().eq("id", id);
           if (response.error) throw response.error;
         } catch (error) {
-          console.error("Error deleting task:", error);
+          console.error(error);
           notifyDeleteError();
         }
       },

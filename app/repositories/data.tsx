@@ -1,4 +1,4 @@
-import { Group, Task, Track } from "./types";
+import { Group, Task, TaskLog } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { LexoRank } from "lexorank";
 import { eachDayOfInterval } from "date-fns";
@@ -76,17 +76,17 @@ export function genGroupedTasks(): [Group, Task[]][] {
   return result;
 }
 
-export function genTracks(start: Date, end: Date, tasks: Task[]): Track[] {
+export function genTaskLogs(start: Date, end: Date, tasks: Task[]): TaskLog[] {
   const totalDays = eachDayOfInterval({ start, end });
-  const tracks: Track[] = [];
+  const taskLogs: TaskLog[] = [];
 
   totalDays.forEach((date) => {
     tasks.forEach((task) => {
       if (Math.random() > 0.8) {
-        tracks.push({ taskId: task.id, date: midnightUTC(date) });
+        taskLogs.push({ taskId: task.id, date: midnightUTC(date) });
       }
     });
   });
 
-  return tracks;
+  return taskLogs;
 }

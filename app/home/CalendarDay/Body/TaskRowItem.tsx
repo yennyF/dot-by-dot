@@ -2,7 +2,7 @@
 
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/TaskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Task } from "@/app/repositories/types";
@@ -14,18 +14,18 @@ interface TaskRowItemProps {
 }
 
 export default function TaskRowItem({ date, task }: TaskRowItemProps) {
-  const insertTrack = useTrackStore((s) => s.insertTrack);
-  const deleteTrack = useTrackStore((s) => s.deleteTrack);
+  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
+  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
 
-  const isActive = useTrackStore(
+  const isActive = useTaskLogStore(
     (s) => s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id) ?? false
   );
-  const isPrevActive = useTrackStore(
+  const isPrevActive = useTaskLogStore(
     (s) =>
       s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id) ??
       false
   );
-  const isNextActive = useTrackStore(
+  const isNextActive = useTaskLogStore(
     (s) =>
       s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id) ??
       false
@@ -35,9 +35,9 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
 
   const handleClick = () => {
     if (isActive) {
-      deleteTrack(date, task.id);
+      deleteTaskLog(date, task.id);
     } else {
-      insertTrack(date, task.id);
+      insertTaskLog(date, task.id);
     }
   };
 
@@ -131,7 +131,7 @@ function LockDot({ isActive, onClick, ...props }: DotProps) {
           if (unlock) onClick?.(e);
         }}
         onMouseEnter={() => {
-          setUnlock(useTrackStore.getState().unlock);
+          setUnlock(useTaskLogStore.getState().unlock);
         }}
         onMouseLeave={() => {
           setUnlock(undefined);

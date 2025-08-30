@@ -5,15 +5,15 @@ import {
   Task,
   toApiTaskArray,
   toApiTaskLogArray,
-  Track,
+  TaskLog,
 } from "../repositories/types";
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
-import { useTrackStore } from "./TrackStore";
+import { useTaskLogStore } from "./TaskLogStore";
 import {
   genGroupedTasks,
-  genTracks,
+  genTaskLogs,
   genUngroupedTasks,
 } from "../repositories/data";
 import { v4 as uuidv4 } from "uuid";
@@ -25,7 +25,11 @@ type State = {
 type Action = {
   init: () => Promise<void>;
   reset: () => Promise<void>;
-  start: (groups: Group[], tasks: Task[], tracks?: Track[]) => Promise<void>;
+  start: (
+    groups: Group[],
+    tasks: Task[],
+    taskLogs?: TaskLog[]
+  ) => Promise<void>;
   startMock: () => Promise<void>;
 };
 
@@ -40,10 +44,10 @@ export const useAppStore = create<State & Action>((set, get) => {
         await Promise.all([
           useGroupStore.getState().fetchGroups(),
           useTaskStore.getState().fetchTasks(),
-          useTrackStore.getState().fetchTracks(),
+          useTaskLogStore.getState().fetchTaskLogs(),
         ]);
       } catch (error) {
-        console.log("Error initializing", error);
+        console.error(error);
         throw error;
       }
     },
@@ -55,17 +59,17 @@ export const useAppStore = create<State & Action>((set, get) => {
           supabase.from("groups").delete().neq("id", uuidv4()),
         ]);
 
-        useTrackStore.getState().destroyTracks();
+        useTaskLogStore.getState().destroyTaskLogs();
         useTaskStore.getState().destroyTasks();
         useGroupStore.getState().destroyGroups();
 
         get().init();
       } catch (error) {
-        console.error("Error reseting:", error);
+        console.error(error);
         notifyDeleteError();
       }
     },
-    start: async (groups: Group[], tasks: Task[], tracks?: Track[]) => {
+    start: async (groups: Group[], tasks: Task[], taskLogs?: TaskLog[]) => {
       try {
         const { error: errorGroup } = await supabase
           .from("groups")
@@ -77,12 +81,12 @@ export const useAppStore = create<State & Action>((set, get) => {
           .insert(toApiTaskArray(tasks));
         if (errorTasks) throw errorTasks;
 
-        if (tracks)
-          await supabase.from("task_logs").insert(toApiTaskLogArray(tracks));
+        if (taskLogs)
+          await supabase.from("task_logs").insert(toApiTaskLogArray(taskLogs));
 
         get().init();
       } catch (error) {
-        console.error("Error starting:", error);
+        console.error(error);
         throw error;
       }
     },
@@ -94,13 +98,13 @@ export const useAppStore = create<State & Action>((set, get) => {
         tasks.push(..._tasks);
       });
 
-      const tracks = genTracks(
-        useTrackStore.getState().startDate,
-        useTrackStore.getState().endDate,
+      const taskLogs = genTaskLogs(
+        useTaskLogStore.getState().startDate,
+        useTaskLogStore.getState().endDate,
         tasks
       );
 
-      get().start(groups, tasks, tracks);
+      get().start(groups, tasks, taskLogs);
     },
   };
 });

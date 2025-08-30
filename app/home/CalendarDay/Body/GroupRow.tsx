@@ -3,14 +3,14 @@
 import { memo } from "react";
 import { Group } from "@/app/repositories/types";
 import GroupRowItem from "./GroupRowItem";
-import { DayType, MonthType, useTrackStore } from "@/app/stores/TrackStore";
+import { DayType, MonthType, useTaskLogStore } from "@/app/stores/TaskLogStore";
 
 interface GroupRowWrapperProps {
   group: Group;
 }
 
 function GroupRowWrapper({ group }: GroupRowWrapperProps) {
-  const years = useTrackStore((s) => s.totalDate);
+  const years = useTaskLogStore((s) => s.totalDate);
 
   return (
     <div className="app-GroupRow flex">

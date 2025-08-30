@@ -20,12 +20,12 @@ export type ApiTask = {
   order: string;
 };
 
-export type Track = {
+export type TaskLog = {
   taskId: string;
   date: Date;
 };
 
-export type ApiTrack = {
+export type ApiTaskLog = {
   task_id: string;
   date: string; // Format: "M/D/YYYY"
 };
@@ -56,24 +56,24 @@ export function toApiTask(task: Task): ApiTask {
   };
 }
 
-export function toTaskLogArray(data: ApiTrack[]): Track[] {
+export function toTaskLogArray(data: ApiTaskLog[]): TaskLog[] {
   return data.map((t) => toTaskLog(t));
 }
 
-export function toApiTaskLogArray(track: Track[]): ApiTrack[] {
-  return track.map((t) => toApiTaskLog(t));
+export function toApiTaskLogArray(taskLog: TaskLog[]): ApiTaskLog[] {
+  return taskLog.map((t) => toApiTaskLog(t));
 }
 
-export function toTaskLog(data: ApiTrack): Track {
+export function toTaskLog(data: ApiTaskLog): TaskLog {
   return {
     date: new Date(data.date),
     taskId: data.task_id,
   };
 }
 
-export function toApiTaskLog(track: Track): ApiTrack {
+export function toApiTaskLog(taskLog: TaskLog): ApiTaskLog {
   return {
-    date: midnightUTCstring(track.date),
-    task_id: track.taskId,
+    date: midnightUTCstring(taskLog.date),
+    task_id: taskLog.taskId,
   };
 }
