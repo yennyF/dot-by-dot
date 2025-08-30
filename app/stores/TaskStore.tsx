@@ -20,11 +20,10 @@ type State = {
 };
 
 type Action = {
-  setDummyTask: (task: Task | undefined) => void;
-
   destroyTasks: () => void;
-  initTasks: () => Promise<void>;
-  addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
+  setDummyTask: (task: Task | undefined) => void;
+  fetchTasks: () => Promise<void>;
+  insertTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
   updateTask: (id: string, task: Pick<Task, "name">) => void;
   moveTaskBefore: (
     id: string,
@@ -42,18 +41,19 @@ type Action = {
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
-      dummyTask: undefined,
-      setDummyTask: (task: Task | undefined) =>
-        set(() => ({ dummyTask: task })),
-
-      tasksByGroup: undefined,
       destroyTasks: async () => {
         set(() => ({
           dummyTask: undefined,
           tasksByGroup: undefined,
         }));
       },
-      initTasks: async () => {
+
+      dummyTask: undefined,
+      setDummyTask: (task: Task | undefined) =>
+        set(() => ({ dummyTask: task })),
+
+      tasksByGroup: undefined,
+      fetchTasks: async () => {
         try {
           const { data, error } = await supabase
             .from("tasks")
@@ -74,7 +74,7 @@ export const useTaskStore = create<State & Action>()(
           throw error;
         }
       },
-      addTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
+      insertTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
         try {
           const key = props.groupId ?? UNGROUPED_KEY;
 

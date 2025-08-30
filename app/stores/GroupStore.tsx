@@ -16,33 +16,32 @@ import { subscribeWithSelector } from "zustand/middleware";
 type State = {
   dummyGroup: Group | undefined;
   groups: Group[] | undefined;
-  size: number | undefined;
 };
 
 type Action = {
-  initGroups: () => Promise<void>;
   destroyGroups: () => void;
-  addGroup: (props: Pick<Group, "id" | "name">) => void;
+  setDummyGroup: (group: Group | undefined) => void;
+  fetchGroups: () => Promise<void>;
+  insertGroup: (props: Pick<Group, "id" | "name">) => void;
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
-  deleteGroup: (id: string) => void;
   moveGroupBefore: (id: string, beforeId: string) => void;
   moveGroupAfter: (id: string, afterId: string | null) => void;
-  setDummyGroup: (group: Group | undefined) => void;
+  deleteGroup: (id: string) => void;
 };
 
 export const useGroupStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
+      destroyGroups: async () => {
+        set(() => ({ dummyGroup: undefined, groups: undefined }));
+      },
+
       dummyGroup: undefined,
       setDummyGroup: (group: Group | undefined) =>
         set(() => ({ dummyGroup: group })),
 
       groups: undefined,
-      size: 0,
-      destroyGroups: async () => {
-        set(() => ({ dummyGroup: undefined, groups: undefined }));
-      },
-      initGroups: async () => {
+      fetchGroups: async () => {
         try {
           const { data, error } = await supabase
             .from("groups")
@@ -57,7 +56,7 @@ export const useGroupStore = create<State & Action>()(
           throw error;
         }
       },
-      addGroup: async (props: Pick<Group, "id" | "name">) => {
+      insertGroup: async (props: Pick<Group, "id" | "name">) => {
         try {
           const key = props.id ?? UNGROUPED_KEY;
 

@@ -36,7 +36,7 @@ function LeftButtonContent() {
 }
 
 function LoadMoreButton() {
-  const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
+  const fetchMoreTracks = useTrackStore((s) => s.fetchMoreTracks);
   const contentRef = useScrollStore((s) => s.contentRef);
   const scrollToLeft = useScrollStore((s) => s.scrollToLeft);
 
@@ -50,7 +50,7 @@ function LoadMoreButton() {
     prevScrollWidth.current = el.scrollWidth;
     prevScrollLeft.current = el.scrollLeft;
 
-    await loadMorePrevTracks();
+    await fetchMoreTracks();
 
     // Move where it was
     const addedWidth = el.scrollWidth - prevScrollWidth.current;

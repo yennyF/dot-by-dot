@@ -31,41 +31,40 @@ type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<string, Set<string>> | undefined;
   unlock: boolean;
-
   startDate: Date;
   endDate: Date;
   totalDate: YearType[];
 };
 
 type Action = {
-  setUnlock: (unlock: boolean) => void;
   destroyTracks: () => void;
-  initTracks: () => Promise<void>;
-  loadMorePrevTracks: () => Promise<void>;
-
-  addTrack: (date: Date, taskId: string) => void;
+  setUnlock: (unlock: boolean) => void;
+  fetchTracks: () => Promise<void>;
+  fetchMoreTracks: () => Promise<void>;
+  insertTrack: (date: Date, taskId: string) => void;
   deleteTrack: (date: Date, taskId: string) => void;
   deleteAllTrack: () => Promise<void>;
 };
 
 export const useTrackStore = create<State & Action>((set, get) => ({
+  destroyTracks: async () => {
+    set(() => ({
+      unlock: false,
+      tasksByDate: undefined,
+    }));
+  },
+
   unlock: true,
   setUnlock: (unlock: boolean) => {
     set(() => ({ unlock }));
   },
 
-  tasksByDate: undefined,
   startDate: subMonths(startOfMonth(new Date()), 3),
   endDate: new Date(),
   totalDate: [],
 
-  destroyTracks: async () => {
-    set(() => ({
-      unlock: false,
-      asksByDate: undefined,
-    }));
-  },
-  initTracks: async () => {
+  tasksByDate: undefined,
+  fetchTracks: async () => {
     const startDate = get().startDate;
     const endDate = get().endDate;
     const totalDate = getTotalDate(startDate, endDate);
@@ -92,7 +91,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       throw error;
     }
   },
-  loadMorePrevTracks: async () => {
+  fetchMoreTracks: async () => {
     const startDate = subMonths(get().startDate, 1);
     const endDate = get().endDate;
     const totalDate = getTotalDate(startDate, endDate);
@@ -123,8 +122,7 @@ export const useTrackStore = create<State & Action>((set, get) => ({
       notifyLoadError();
     }
   },
-
-  addTrack: async (date: Date, taskId: string) => {
+  insertTrack: async (date: Date, taskId: string) => {
     const dateString = midnightUTCstring(date);
 
     set((state) => {

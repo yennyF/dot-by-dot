@@ -14,7 +14,7 @@ interface TaskRowItemProps {
 }
 
 export default function TaskRowItem({ date, task }: TaskRowItemProps) {
-  const addTrack = useTrackStore((s) => s.addTrack);
+  const insertTrack = useTrackStore((s) => s.insertTrack);
   const deleteTrack = useTrackStore((s) => s.deleteTrack);
 
   const isActive = useTrackStore(
@@ -37,7 +37,7 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
     if (isActive) {
       deleteTrack(date, task.id);
     } else {
-      addTrack(date, task.id);
+      insertTrack(date, task.id);
     }
   };
 

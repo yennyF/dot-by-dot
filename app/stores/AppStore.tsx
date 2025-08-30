@@ -38,9 +38,9 @@ export const useAppStore = create<State & Action>((set, get) => {
     init: async () => {
       try {
         await Promise.all([
-          useGroupStore.getState().initGroups(),
-          useTaskStore.getState().initTasks(),
-          useTrackStore.getState().initTracks(),
+          useGroupStore.getState().fetchGroups(),
+          useTaskStore.getState().fetchTasks(),
+          useTrackStore.getState().fetchTracks(),
         ]);
       } catch (error) {
         console.log("Error initializing", error);
