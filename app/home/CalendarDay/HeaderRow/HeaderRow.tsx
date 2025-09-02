@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useRef } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
-import { useGroupStore } from "@/app/stores/GroupStore";
+import { useGroupStore } from "@/app/stores/GroupStore2";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";

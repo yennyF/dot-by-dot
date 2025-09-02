@@ -9,7 +9,7 @@ import {
 } from "../repositories/types";
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./TaskStore";
-import { useGroupStore } from "./GroupStore";
+import { useGroupStore } from "./GroupStore2";
 import { useTaskLogStore } from "./taskLogStore";
 import {
   genGroupedTasks,

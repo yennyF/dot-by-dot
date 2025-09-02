@@ -1,6 +1,6 @@
 "use client";
 
-import { useGroupStore } from "@/app/stores/GroupStore";
+import { useGroupStore } from "@/app/stores/GroupStore2";
 import GroupRow from "./GroupRow";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
 import TaskRow from "./TaskRow";
