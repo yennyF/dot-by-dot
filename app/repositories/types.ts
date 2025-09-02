@@ -1,5 +1,3 @@
-import { midnightUTCstring } from "../util";
-
 export type Group = {
   id: string;
   name: string;
@@ -73,7 +71,11 @@ export function toTaskLog(data: ApiTaskLog): TaskLog {
 
 export function toApiTaskLog(taskLog: TaskLog): ApiTaskLog {
   return {
-    date: midnightUTCstring(taskLog.date),
+    date: toApiDate(taskLog.date),
     task_id: taskLog.taskId,
   };
+}
+
+export function toApiDate(date: Date): string {
+  return date.toISOString().split("T")[0];
 }

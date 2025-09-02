@@ -2,7 +2,6 @@ import { Group, Task, TaskLog } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { LexoRank } from "lexorank";
 import { eachDayOfInterval } from "date-fns";
-import { midnightUTC } from "../util";
 
 function setIdAndOrder<T>(arr: T[]): (T & { id: string; order: string })[] {
   let lexoRank = LexoRank.middle();
@@ -83,7 +82,7 @@ export function genTaskLogs(start: Date, end: Date, tasks: Task[]): TaskLog[] {
   totalDays.forEach((date) => {
     tasks.forEach((task) => {
       if (Math.random() > 0.8) {
-        taskLogs.push({ taskId: task.id, date: midnightUTC(date) });
+        taskLogs.push({ taskId: task.id, date });
       }
     });
   });

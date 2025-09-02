@@ -1,10 +1,10 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import { Group } from "@/app/repositories/types";
+import { Group, toApiDate } from "@/app/repositories/types";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { getPercentage, midnightUTCstring } from "@/app/util";
+import { getPercentage } from "@/app/util";
 import { useTaskStore } from "@/app/stores/taskStore";
 
 interface GroupRowItemProps {
@@ -18,8 +18,8 @@ export default function GroupRowItem({ date, group }: GroupRowItemProps) {
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
   const taskIdSet = new Set(tasks.map((t) => t.id));
 
-  const currentKey = midnightUTCstring(date);
-  const nextKey = midnightUTCstring(addDays(date, 1));
+  const currentKey = toApiDate(date);
+  const nextKey = toApiDate(addDays(date, 1));
 
   const currentSize = useTaskLogStore(
     (s) => s.tasksByDate?.[currentKey]?.intersection(taskIdSet).size ?? 0

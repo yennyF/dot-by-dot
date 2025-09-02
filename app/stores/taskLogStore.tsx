@@ -17,11 +17,10 @@ import {
   startOfYear,
   subMonths,
 } from "date-fns";
-import { midnightUTCstring } from "../util";
 import { toast } from "react-toastify";
 import { supabase } from "../repositories/db";
 import { v4 as uuidv4 } from "uuid";
-import { toTaskLogArray, toApiTaskLog } from "../repositories/types";
+import { toTaskLogArray, toApiTaskLog, toApiDate } from "../repositories/types";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
@@ -79,14 +78,15 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         const { data, error } = await supabase
           .from("task_logs")
           .select("date, task_id")
-          .gte("date", midnightUTCstring(startDate))
-          .lte("date", midnightUTCstring(endDate));
+          .gte("date", toApiDate(startDate))
+          .lte("date", toApiDate(endDate));
         if (error) throw error;
 
         if (data) {
           toTaskLogArray(data).forEach((taskLog) => {
-            const dateString = taskLog.date.toLocaleDateString();
-            (tasksByDate[dateString] ??= new Set()).add(taskLog.taskId);
+            (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
+              taskLog.taskId
+            );
           });
         }
 
@@ -107,14 +107,15 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         const { data, error } = await supabase
           .from("task_logs")
           .select("date, task_id")
-          .gte("created_at", midnightUTCstring(startDate))
-          .lte("created_at", midnightUTCstring(endDate));
+          .gte("created_at", toApiDate(startDate))
+          .lte("created_at", toApiDate(endDate));
         if (error) throw error;
 
         if (data) {
           toTaskLogArray(data).forEach((taskLog) => {
-            const dateString = taskLog.date.toLocaleDateString();
-            (tasksByDate[dateString] ??= new Set()).add(taskLog.taskId);
+            (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
+              taskLog.taskId
+            );
           });
         }
 
@@ -128,7 +129,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }
     },
     insertTaskLog: async (date: Date, taskId: string) => {
-      const dateString = midnightUTCstring(date);
+      const dateString = toApiDate(date);
 
       set((state) => {
         const tasksByDate = { ...state.tasksByDate };
@@ -148,7 +149,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }
     },
     deleteTaskLog: async (date: Date, taskId: string) => {
-      const dateString = midnightUTCstring(date);
+      const dateString = toApiDate(date);
 
       set((state) => {
         if (!state.tasksByDate) return {};

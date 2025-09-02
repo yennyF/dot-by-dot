@@ -5,8 +5,7 @@ import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import { Task } from "@/app/repositories/types";
-import { midnightUTCstring } from "@/app/util";
+import { Task, toApiDate } from "@/app/repositories/types";
 
 interface TaskRowItemProps {
   date: Date;
@@ -18,17 +17,13 @@ export default function TaskRowItem({ date, task }: TaskRowItemProps) {
   const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
 
   const isActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id) ?? false
+    (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
   );
   const isPrevActive = useTaskLogStore(
-    (s) =>
-      s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id) ??
-      false
+    (s) => s.tasksByDate?.[toApiDate(addDays(date, -1))]?.has(task.id) ?? false
   );
   const isNextActive = useTaskLogStore(
-    (s) =>
-      s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id) ??
-      false
+    (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(task.id) ?? false
   );
 
   const isTodayDate = isToday(date);

@@ -92,8 +92,8 @@ export default function CalendarMonth() {
         className="grid grid-cols-7 gap-2 text-neutral-400"
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
-        {totalDays.map((date) => (
-          <DayItem key={date.toLocaleDateString()} date={date} />
+        {totalDays.map((date, index) => (
+          <DayItem key={index} date={date} />
         ))}
       </div>
     </div>
