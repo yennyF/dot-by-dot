@@ -2,7 +2,7 @@ import { supabase } from "../repositories/db";
 import { create } from "zustand";
 import { Task, toApiTask, toTaskArray } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
-import { useTaskLogStore } from "./TaskLogStore2";
+import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,

@@ -2,7 +2,7 @@
 
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { Task } from "@/app/repositories/types";

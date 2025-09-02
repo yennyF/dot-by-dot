@@ -10,7 +10,7 @@ import {
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./TaskStore";
 import { useGroupStore } from "./GroupStore";
-import { useTaskLogStore } from "./TaskLogStore2";
+import { useTaskLogStore } from "./taskLogStore";
 import {
   genGroupedTasks,
   genTaskLogs,

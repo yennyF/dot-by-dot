@@ -1,7 +1,7 @@
 "use client";
 
 import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
-import { useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import {
   AppTooltip,
   AppTrigger,

@@ -1,4 +1,4 @@
-import { MonthType, DayType, useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { MonthType, DayType, useTaskLogStore } from "@/app/stores/taskLogStore";
 import { format } from "date-fns";
 import DateRowItem from "./DateRowItem";
 

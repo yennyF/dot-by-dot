@@ -1,6 +1,6 @@
 "use client";
 
-import { useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { Group } from "@/app/repositories/types";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";

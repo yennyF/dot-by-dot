@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isToday } from "date-fns";
-import { useTaskLogStore } from "../../stores/TaskLogStore2";
+import { useTaskLogStore } from "../../stores/taskLogStore";
 import { midnightUTCstring } from "@/app/util";
 
 const MAX_TASK_SIZE = 10;

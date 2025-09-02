@@ -8,7 +8,7 @@ import {
 } from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { useRef } from "react";
-import { useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function LeftButton() {
   const isAtLeft = useScrollStore((s) => s.isAtLeft);

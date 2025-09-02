@@ -1,6 +1,6 @@
 "use client";
 
-import { DayType, MonthType, useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { DayType, MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
 import CounterRowItem from "./CounterRowItem";
 
 export default function CounterRow() {

@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Group } from "@/app/repositories/types";
 import GroupRowItem from "./GroupRowItem";
-import { DayType, MonthType, useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { DayType, MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
 
 interface GroupRowWrapperProps {
   group: Group;

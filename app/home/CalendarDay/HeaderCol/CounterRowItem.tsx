@@ -1,6 +1,6 @@
 "use client";
 
-import { useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { getSnappedPercentage, midnightUTCstring } from "@/app/util";
 import {
   AppTooltip,

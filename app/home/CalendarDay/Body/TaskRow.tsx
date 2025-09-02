@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Task } from "@/app/repositories/types";
 import TaskRowItem from "./TaskRowItem";
-import { MonthType, useTaskLogStore } from "@/app/stores/TaskLogStore";
+import { MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
 
 interface TaskRowProps {
   task: Task;
