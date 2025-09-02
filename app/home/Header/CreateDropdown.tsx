@@ -1,7 +1,7 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { useGroupStore } from "../../stores/GroupStore2";
+import { useGroupStore } from "../../stores/groupStore";
 import { useTaskStore } from "../../stores/TaskStore";
 import { v4 as uuidv4 } from "uuid";
 
