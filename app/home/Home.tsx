@@ -11,7 +11,7 @@ import Loading from "../components/Loading/Loading";
 import { notifyLoadError } from "../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import { useAppStore } from "../stores/AppStore";
+import { useAppStore } from "../stores/AppStore2";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
