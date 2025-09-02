@@ -1,8 +1,8 @@
 "use client";
 
-import { useGroupStore } from "@/app/stores/GroupStore2";
+import { useGroupStore } from "@/app/stores/groupStore";
 import { useScrollStore } from "@/app/stores/scrollStore";
-import { useTaskStore } from "@/app/stores/TaskStore2";
+import { useTaskStore } from "@/app/stores/taskStore";
 import { useRef, DragEvent, ReactNode } from "react";
 
 interface SortableContainerProps {

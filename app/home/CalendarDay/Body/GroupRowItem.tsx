@@ -5,7 +5,7 @@ import { Group } from "@/app/repositories/types";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { getPercentage, midnightUTCstring } from "@/app/util";
-import { useTaskStore } from "@/app/stores/TaskStore2";
+import { useTaskStore } from "@/app/stores/taskStore";
 
 interface GroupRowItemProps {
   date: Date;

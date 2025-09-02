@@ -1,6 +1,6 @@
 "use client";
 
-import { useGroupStore } from "@/app/stores/GroupStore2";
+import { useGroupStore } from "@/app/stores/groupStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
