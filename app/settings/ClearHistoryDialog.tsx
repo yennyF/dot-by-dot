@@ -9,7 +9,7 @@ import {
   notifySuccessful,
   notifyDeleteError,
 } from "../components/Notification";
-import { useTaskLogStore } from "../stores/TaskLogStore";
+import { useTaskLogStore } from "../stores/TaskLogStore2";
 
 interface ClearHistoryDialogProps {
   children: React.ReactNode;

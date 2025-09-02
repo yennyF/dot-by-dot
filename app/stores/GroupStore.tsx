@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./TaskStore";
-import { useTaskLogStore } from "./TaskLogStore";
+import { useTaskLogStore } from "./TaskLogStore2";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
