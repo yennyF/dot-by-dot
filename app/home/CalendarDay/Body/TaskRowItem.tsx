@@ -4,7 +4,7 @@ import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task } from "@/app/repositories/types";
 import { midnightUTCstring } from "@/app/util";
 
@@ -117,24 +117,28 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
 }
 
 function LockDot({ isActive, onClick, ...props }: DotProps) {
-  const [unlock, setUnlock] = useState<boolean>();
+  const [visible, setVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    return () => setVisible(false);
+  }, []);
 
   return (
     <div className="group relative flex justify-center">
-      {unlock === false && (
+      {visible === true && useTaskLogStore.getState().lock === true && (
         <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
       )}
       <Dot
         {...props}
         isActive={isActive}
         onClick={(e) => {
-          if (unlock) onClick?.(e);
+          if (useTaskLogStore.getState().lock === false) onClick?.(e);
         }}
         onMouseEnter={() => {
-          setUnlock(useTaskLogStore.getState().unlock);
+          setVisible(true);
         }}
         onMouseLeave={() => {
-          setUnlock(undefined);
+          setVisible(false);
         }}
       />
     </div>
