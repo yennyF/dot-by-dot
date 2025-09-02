@@ -53,6 +53,7 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
     reset: async () => {
       try {
+        // TODO single trasaction
         await Promise.all([
           supabase.from("task_logs").delete().neq("task_id", uuidv4()),
           supabase.from("tasks").delete().neq("id", uuidv4()),
@@ -62,8 +63,6 @@ export const useAppStore = create<State & Action>((set, get) => {
         useTaskLogStore.getState().destroyTaskLogs();
         useTaskStore.getState().destroyTasks();
         useGroupStore.getState().destroyGroups();
-
-        get().init();
       } catch (error) {
         console.error(error);
         notifyDeleteError();

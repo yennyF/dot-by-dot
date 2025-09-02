@@ -49,8 +49,11 @@ type Action = {
 export const useTaskLogStore = create<State & Action>((set, get) => ({
   destroyTaskLogs: async () => {
     set(() => ({
-      unlock: false,
       tasksByDate: undefined,
+      unlock: false,
+      startDate: subMonths(startOfMonth(new Date()), 3),
+      endDate: new Date(),
+      totalDate: [],
     }));
   },
 
@@ -168,7 +171,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => ({
   },
   deleteAllTaskLog: async () => {
     try {
-      get().destroyTaskLogs();
+      set(() => ({ tasksByDate: {} }));
       const { error } = await supabase
         .from("task_logs")
         .delete()
