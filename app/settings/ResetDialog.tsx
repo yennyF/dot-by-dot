@@ -9,7 +9,7 @@ import {
   notifyLoadError,
   notifySuccessful,
 } from "../components/Notification";
-import { useAppStore } from "../stores/AppStore";
+import { useAppStore } from "../stores/appStore";
 
 interface ResetDialogProps {
   children: React.ReactNode;

@@ -8,7 +8,7 @@ import {
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "../stores/AppStore";
+import { useAppStore } from "../stores/appStore";
 import Image from "next/image";
 import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
