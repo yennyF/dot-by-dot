@@ -1,8 +1,8 @@
-import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import TaskRowItem from "./Body/TaskRowItem";
 import DateRowItem from "./HeaderCol/DateRowItem";
 import CounterRowItem from "./HeaderCol/CounterRowItem";
-import { useGroupStore } from "@/app/stores/GroupStore";
+import { useGroupStore } from "@/app/stores/groupStore";
 
 export function TodayHeader() {
   const today = new Date();

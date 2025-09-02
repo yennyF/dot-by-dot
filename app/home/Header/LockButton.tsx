@@ -1,7 +1,7 @@
 "use client";
 
 import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import {
   AppTooltip,
   AppTrigger,
@@ -9,11 +9,11 @@ import {
 } from "@/app/components/AppTooltip";
 
 export default function LockButton() {
-  const unlock = useTrackStore((s) => s.unlock);
-  const setUnlock = useTrackStore((s) => s.setUnlock);
+  const lock = useTaskLogStore((s) => s.lock);
+  const setLock = useTaskLogStore((s) => s.setLock);
 
   const handleCheckedChange = () => {
-    setUnlock(!unlock);
+    setLock(!lock);
   };
 
   return (
@@ -23,13 +23,13 @@ export default function LockButton() {
           className="button-outline button-sm"
           onClick={handleCheckedChange}
         >
-          {unlock ? <LockOpen1Icon /> : <LockClosedIcon />}
+          {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
         </button>
       </AppTrigger>
       <AppContent align="end">
-        {unlock
-          ? "Lock previous track from changes"
-          : "Allow updates to previous track"}
+        {lock
+          ? "Allow updates to previous track"
+          : "Lock previous track from changes"}
       </AppContent>
     </AppTooltip>
   );

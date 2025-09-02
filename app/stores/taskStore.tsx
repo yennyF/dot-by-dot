@@ -1,7 +1,8 @@
+import { supabase } from "../repositories/db";
 import { create } from "zustand";
-import { Task } from "../repositories/types";
+import { Task, toApiTask, toTaskArray } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
-import { useTrackStore } from "./TrackStore";
+import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
@@ -9,7 +10,6 @@ import {
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
-import { db } from "../repositories/db";
 import { subscribeWithSelector } from "zustand/middleware";
 
 export const UNGROUPED_KEY = "_ungrouped";
@@ -17,15 +17,13 @@ export const UNGROUPED_KEY = "_ungrouped";
 type State = {
   dummyTask: Task | undefined;
   tasksByGroup: Record<string, Task[]> | undefined; // undefined = loading
-  size: number | undefined;
 };
 
 type Action = {
-  setDummyTask: (task: Task | undefined) => void;
-
   destroyTasks: () => void;
-  initTasks: () => Promise<void>;
-  addTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
+  setDummyTask: (task: Task | undefined) => void;
+  fetchTasks: () => Promise<void>;
+  insertTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
   updateTask: (id: string, task: Pick<Task, "name">) => void;
   moveTaskBefore: (
     id: string,
@@ -42,67 +40,70 @@ type Action = {
 
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
-    immer((set) => ({
-      dummyTask: undefined,
-      setDummyTask: (task: Task | undefined) =>
-        set(() => ({ dummyTask: task })),
-
-      tasksByGroup: undefined,
-      size: 0,
+    immer((set, get) => ({
       destroyTasks: async () => {
         set(() => ({
           dummyTask: undefined,
           tasksByGroup: undefined,
         }));
       },
-      initTasks: async () => {
+
+      dummyTask: undefined,
+      setDummyTask: (task: Task | undefined) =>
+        set(() => ({ dummyTask: task })),
+
+      tasksByGroup: undefined,
+      fetchTasks: async () => {
         try {
+          const { data, error } = await supabase
+            .from("tasks")
+            .select("id, name, group_id, order");
+          if (error) throw error;
+
           const tasksByGroup: Record<string, Task[]> = {};
-
-          await db.groups.each((group) => {
-            tasksByGroup[group.id] = [];
-          });
-
-          await db.tasks.orderBy("order").each((task) => {
-            const key = task.groupId ?? UNGROUPED_KEY;
-            (tasksByGroup[key] ??= []).push(task);
-          });
+          if (data) {
+            toTaskArray(data).forEach((task) => {
+              const key = task.groupId ?? UNGROUPED_KEY;
+              (tasksByGroup[key] ??= []).push(task);
+            });
+          }
 
           set(() => ({ tasksByGroup }));
         } catch (error) {
-          console.error("Error initialing tasks:", error);
+          console.error(error);
           throw error;
         }
       },
-      addTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
+      insertTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
         try {
-          let task: Task | undefined;
+          const key = props.groupId ?? UNGROUPED_KEY;
 
+          const firstOrder = get().tasksByGroup?.[key]?.[0]?.order;
+          const order = firstOrder
+            ? LexoRank.parse(firstOrder).genPrev().toString()
+            : LexoRank.middle().toString();
+
+          const task: Task = { ...props, order };
+
+          // insert in local
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
-
-            const key = props.groupId ?? UNGROUPED_KEY;
-            const tasks = (tasksByGroup[key] ??= []);
-
-            const firstOrder = tasks[0]?.order;
-            const order = firstOrder
-              ? LexoRank.parse(firstOrder).genPrev().toString()
-              : LexoRank.middle().toString();
-
-            task = { ...props, order };
-            tasksByGroup[key].unshift(task);
+            (tasksByGroup[key] ??= []).unshift(task);
           });
 
-          if (!task) throw Error();
-
-          await db.tasks.add(task);
+          // insert in db
+          const { error } = await supabase
+            .from("tasks")
+            .insert(toApiTask(task));
+          if (error) throw error;
         } catch (error) {
-          console.error("Error adding task:", error);
+          console.error(error);
           notifyCreateError();
         }
       },
       updateTask: async (id: string, props: Pick<Task, "name">) => {
         try {
+          // update in local
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
 
@@ -113,9 +114,14 @@ export const useTaskStore = create<State & Action>()(
             task.name = props.name;
           });
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error updating task:", error);
+          console.error(error);
           notifyUpdateError();
         }
       },
@@ -165,9 +171,14 @@ export const useTaskStore = create<State & Action>()(
 
           if (!props) throw Error();
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error moving task:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
@@ -231,16 +242,21 @@ export const useTaskStore = create<State & Action>()(
 
           if (!props) throw Error();
 
-          await db.tasks.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error moving task:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
       deleteTask: async (id: string) => {
         try {
-          // delete track state
-          useTrackStore.setState(({ tasksByDate }) => {
+          // delete taskLog state
+          useTaskLogStore.setState(({ tasksByDate }) => {
             const updatedTasksByDate = { ...tasksByDate };
             for (const date in updatedTasksByDate) {
               updatedTasksByDate[date].delete(id);
@@ -257,9 +273,11 @@ export const useTaskStore = create<State & Action>()(
             tasksByGroup[loc.key].splice(loc.index, 1);
           });
 
-          await db.tasks.delete(id);
+          // delete from db
+          const response = await supabase.from("tasks").delete().eq("id", id);
+          if (response.error) throw response.error;
         } catch (error) {
-          console.error("Error deleting task:", error);
+          console.error(error);
           notifyDeleteError();
         }
       },

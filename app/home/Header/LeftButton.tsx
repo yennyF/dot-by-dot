@@ -8,7 +8,7 @@ import {
 } from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { useRef } from "react";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function LeftButton() {
   const isAtLeft = useScrollStore((s) => s.isAtLeft);
@@ -36,7 +36,7 @@ function LeftButtonContent() {
 }
 
 function LoadMoreButton() {
-  const loadMorePrevTracks = useTrackStore((s) => s.loadMorePrevTracks);
+  const fetchMoreTaskLogs = useTaskLogStore((s) => s.fetchMoreTaskLogs);
   const contentRef = useScrollStore((s) => s.contentRef);
   const scrollToLeft = useScrollStore((s) => s.scrollToLeft);
 
@@ -50,7 +50,7 @@ function LoadMoreButton() {
     prevScrollWidth.current = el.scrollWidth;
     prevScrollLeft.current = el.scrollLeft;
 
-    await loadMorePrevTracks();
+    await fetchMoreTaskLogs();
 
     // Move where it was
     const addedWidth = el.scrollWidth - prevScrollWidth.current;

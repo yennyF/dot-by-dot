@@ -2,11 +2,10 @@
 
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { useTrackStore } from "@/app/stores/TrackStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
-import { Task } from "@/app/repositories/types";
-import { midnightUTCstring } from "@/app/util";
+import { useEffect, useState } from "react";
+import { Task, toApiDate } from "@/app/repositories/types";
 
 interface TaskRowItemProps {
   date: Date;
@@ -14,30 +13,26 @@ interface TaskRowItemProps {
 }
 
 export default function TaskRowItem({ date, task }: TaskRowItemProps) {
-  const addTrack = useTrackStore((s) => s.addTrack);
-  const deleteTrack = useTrackStore((s) => s.deleteTrack);
+  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
+  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
 
-  const isActive = useTrackStore(
-    (s) => s.tasksByDate?.[midnightUTCstring(date)]?.has(task.id) ?? false
+  const isActive = useTaskLogStore(
+    (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
   );
-  const isPrevActive = useTrackStore(
-    (s) =>
-      s.tasksByDate?.[midnightUTCstring(addDays(date, -1))]?.has(task.id) ??
-      false
+  const isPrevActive = useTaskLogStore(
+    (s) => s.tasksByDate?.[toApiDate(addDays(date, -1))]?.has(task.id) ?? false
   );
-  const isNextActive = useTrackStore(
-    (s) =>
-      s.tasksByDate?.[midnightUTCstring(addDays(date, 1))]?.has(task.id) ??
-      false
+  const isNextActive = useTaskLogStore(
+    (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(task.id) ?? false
   );
 
   const isTodayDate = isToday(date);
 
   const handleClick = () => {
     if (isActive) {
-      deleteTrack(date, task.id);
+      deleteTaskLog(date, task.id);
     } else {
-      addTrack(date, task.id);
+      insertTaskLog(date, task.id);
     }
   };
 
@@ -117,24 +112,28 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
 }
 
 function LockDot({ isActive, onClick, ...props }: DotProps) {
-  const [unlock, setUnlock] = useState<boolean>();
+  const [visible, setVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    return () => setVisible(false);
+  }, []);
 
   return (
     <div className="group relative flex justify-center">
-      {unlock === false && (
+      {visible === true && useTaskLogStore.getState().lock === true && (
         <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
       )}
       <Dot
         {...props}
         isActive={isActive}
         onClick={(e) => {
-          if (unlock) onClick?.(e);
+          if (useTaskLogStore.getState().lock === false) onClick?.(e);
         }}
         onMouseEnter={() => {
-          setUnlock(useTrackStore.getState().unlock);
+          setVisible(true);
         }}
         onMouseLeave={() => {
-          setUnlock(undefined);
+          setVisible(false);
         }}
       />
     </div>

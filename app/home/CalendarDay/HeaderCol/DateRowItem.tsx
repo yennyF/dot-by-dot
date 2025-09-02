@@ -15,16 +15,20 @@ export default function DateRowItem({ date }: DayItemProps) {
 
   // Scroll to "today" the first it loads
   useEffect(() => {
-    todayRef?.current?.scrollIntoView({
-      block: "end",
-      behavior: "smooth",
-      inline: "start",
-    });
+    if (todayRef) {
+      requestAnimationFrame(() => {
+        todayRef.current?.scrollIntoView({
+          block: "end",
+          behavior: "smooth",
+          inline: "start",
+        });
+      });
+    }
   }, [todayRef]);
 
   return (
     <div
-      ref={isTodayDate ? todayRef : null}
+      ref={isTodayDate ? todayRef : undefined}
       className={clsx(
         "day-item flex w-day flex-col items-center",
         isTodayDate && "isToday text-[var(--accent)]",

@@ -6,16 +6,6 @@ export const timeoutPromise = (duration: number) => {
   });
 };
 
-export function midnightUTC(date: Date): Date {
-  return new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
-  );
-}
-
-export function midnightUTCstring(date: Date): string {
-  return midnightUTC(date).toLocaleDateString();
-}
-
 // "snap" percentage to the closest step by rounding it to the nearest quarter (25%).
 // 0.13 → 0.2
 // 0.61 → 0.6

@@ -1,8 +1,9 @@
+import { supabase } from "../repositories/db";
 import { create } from "zustand";
 import { Group } from "../repositories/types";
 import { immer } from "zustand/middleware/immer";
-import { UNGROUPED_KEY, useTaskStore } from "./TaskStore";
-import { useTrackStore } from "./TrackStore";
+import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
+import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
 import {
   notifyCreateError,
@@ -10,77 +11,79 @@ import {
   notifyMoveError,
   notifyUpdateError,
 } from "../components/Notification";
-import { db } from "../repositories/db";
 import { subscribeWithSelector } from "zustand/middleware";
 
 type State = {
   dummyGroup: Group | undefined;
   groups: Group[] | undefined;
-  size: number | undefined;
 };
 
 type Action = {
-  initGroups: () => Promise<void>;
   destroyGroups: () => void;
-  addGroup: (props: Pick<Group, "id" | "name">) => void;
+  setDummyGroup: (group: Group | undefined) => void;
+  fetchGroups: () => Promise<void>;
+  insertGroup: (props: Pick<Group, "id" | "name">) => void;
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
-  deleteGroup: (id: string) => void;
   moveGroupBefore: (id: string, beforeId: string) => void;
   moveGroupAfter: (id: string, afterId: string | null) => void;
-  setDummyGroup: (group: Group | undefined) => void;
+  deleteGroup: (id: string) => void;
 };
 
 export const useGroupStore = create<State & Action>()(
   subscribeWithSelector(
-    immer((set) => ({
+    immer((set, get) => ({
+      destroyGroups: async () => {
+        set(() => ({ dummyGroup: undefined, groups: undefined }));
+      },
+
       dummyGroup: undefined,
       setDummyGroup: (group: Group | undefined) =>
         set(() => ({ dummyGroup: group })),
 
       groups: undefined,
-      size: 0,
-      destroyGroups: async () => {
-        set(() => ({ dummyGroup: undefined, groups: undefined }));
-      },
-      initGroups: async () => {
+      fetchGroups: async () => {
         try {
-          const groups = await db.groups.orderBy("order").toArray();
+          const { data, error } = await supabase
+            .from("groups")
+            .select("id, name, order");
+          if (error) throw error;
+
+          const groups = data ?? [];
+
           set(() => ({ groups }));
         } catch (error) {
-          console.error("Error initialing groups:", error);
+          console.error(error);
           throw error;
         }
       },
-      addGroup: async (props: Pick<Group, "id" | "name">) => {
+      insertGroup: async (props: Pick<Group, "id" | "name">) => {
         try {
-          let group: Group | undefined;
+          const key = props.id ?? UNGROUPED_KEY;
+
+          const firstOrder = get().groups?.[0]?.order;
+          const order = firstOrder
+            ? LexoRank.parse(firstOrder).genPrev().toString()
+            : LexoRank.middle().toString();
+
+          const group: Group = { ...props, order };
 
           // Add group
           set(({ groups }) => {
             if (!groups) return;
-
-            const firstOrder = groups[0]?.order;
-            const order = firstOrder
-              ? LexoRank.parse(firstOrder).genPrev().toString()
-              : LexoRank.middle().toString();
-
-            group = { ...props, order };
             groups.unshift(group);
           });
 
           // Init empty task for group
           useTaskStore.setState(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
-
-            const key = props.id ?? UNGROUPED_KEY;
             tasksByGroup[key] = [];
           });
 
-          if (!group) throw Error();
-
-          await db.groups.add(group);
+          // insert in db;
+          const { error } = await supabase.from("groups").insert(group);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error adding group:", error);
+          console.error(error);
           notifyCreateError();
         }
       },
@@ -95,9 +98,14 @@ export const useGroupStore = create<State & Action>()(
             group.name = props.name;
           });
 
-          await db.groups.update(id, props);
+          // update in db
+          const { error } = await supabase
+            .from("groups")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error updating group:", error);
+          console.error(error);
           notifyUpdateError();
         }
       },
@@ -135,9 +143,14 @@ export const useGroupStore = create<State & Action>()(
 
           if (!order) throw Error();
 
-          await db.tasks.update(id, { order });
+          // update in db
+          const { error } = await supabase
+            .from("groups")
+            .update({ order })
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error moving group:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
@@ -188,20 +201,25 @@ export const useGroupStore = create<State & Action>()(
 
           if (!order) throw Error();
 
-          await db.tasks.update(id, { order });
+          // update in db
+          const { error } = await supabase
+            .from("groups")
+            .update({ order })
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
-          console.error("Error moving group:", error);
+          console.error(error);
           notifyMoveError();
         }
       },
       deleteGroup: async (id: string) => {
         try {
-          // delete track state
+          // delete taskLog state
           const tasksByGroup = useTaskStore.getState().tasksByGroup;
           if (tasksByGroup) {
             const tasks = tasksByGroup[id];
             if (tasks && tasks.length > 0) {
-              useTrackStore.setState((state) => {
+              useTaskLogStore.setState((state) => {
                 if (!state.tasksByDate) return {};
 
                 const newTasksByDate = { ...state.tasksByDate };
@@ -234,26 +252,10 @@ export const useGroupStore = create<State & Action>()(
             groups.splice(index, 1);
           });
 
-          // delete from db
-          await db.transaction(
-            "rw",
-            db.groups,
-            db.tasks,
-            db.tracks,
-            async () => {
-              const taskIds = await db.tasks
-                .where("groupId")
-                .equals(id)
-                .primaryKeys();
-              if (taskIds.length > 0) {
-                await db.tracks.where("taskId").anyOf(taskIds).delete();
-              }
-              await db.tasks.where("groupId").equals(id).delete();
-              await db.groups.delete(id);
-            }
-          );
+          const response = await supabase.from("groups").delete().eq("id", id);
+          if (response.error) throw response.error;
         } catch (error) {
-          console.error("Error deleting group:", error);
+          console.error(error);
           notifyDeleteError();
         }
       },

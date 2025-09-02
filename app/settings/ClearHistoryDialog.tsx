@@ -9,7 +9,7 @@ import {
   notifySuccessful,
   notifyDeleteError,
 } from "../components/Notification";
-import { useTrackStore } from "../stores/TrackStore";
+import { useTaskLogStore } from "../stores/taskLogStore";
 
 interface ClearHistoryDialogProps {
   children: React.ReactNode;
@@ -41,14 +41,14 @@ function Content() {
 
   const toastId = useRef<Id>(null);
 
-  const clearHistory = useTrackStore((s) => s.clearHistory);
+  const deleteAllTaskLog = useTaskLogStore((s) => s.deleteAllTaskLog);
 
   async function handleClick() {
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
 
     try {
-      await clearHistory();
+      await deleteAllTaskLog();
       toast.dismiss(toastId.current);
       notifySuccessful("Clear history successful");
     } catch (error) {

@@ -11,10 +11,11 @@ import Loading from "../components/Loading/Loading";
 import { notifyLoadError } from "../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import { useAppStore } from "../stores/AppStore";
+import { useAppStore } from "../stores/appStore";
 import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
+import { useTaskLogStore } from "../stores/taskLogStore";
 
 export default function HomePage() {
   const router = useRouter();
@@ -34,12 +35,15 @@ function Content() {
   const [isLoading, setIsLoading] = useState(true);
 
   const init = useAppStore((s) => s.init);
+  const setLock = useTaskLogStore((s) => s.setLock);
 
   useEffect(() => {
     console.log("Home rendered");
   });
 
   useEffect(() => {
+    setLock(localStorage.getItem("lock") === "true" ? true : false);
+
     setIsLoading(true);
     (async () => {
       try {

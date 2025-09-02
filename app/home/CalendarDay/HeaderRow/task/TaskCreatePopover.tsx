@@ -1,6 +1,6 @@
 "use client";
 
-import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
+import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
@@ -38,7 +38,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const tasks = useTaskStore(
     (s) => s.tasksByGroup?.[dummyTask?.groupId ?? UNGROUPED_KEY]
   );
-  const addTask = useTaskStore((s) => s.addTask);
+  const insertTask = useTaskStore((s) => s.insertTask);
 
   const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
@@ -57,7 +57,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   const handleSaveClick = () => {
     if (!dummyTask) return;
-    addTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
+    insertTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
     setOpen(false);
   };
 

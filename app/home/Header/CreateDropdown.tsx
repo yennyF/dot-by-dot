@@ -1,8 +1,8 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { useGroupStore } from "../../stores/GroupStore";
-import { useTaskStore } from "../../stores/TaskStore";
+import { useGroupStore } from "../../stores/groupStore";
+import { useTaskStore } from "../../stores/taskStore";
 import { v4 as uuidv4 } from "uuid";
 
 export default function CreateDropdown({

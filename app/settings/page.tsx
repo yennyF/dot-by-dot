@@ -5,7 +5,7 @@ import AppHeader from "../components/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "../stores/AppStore";
+import { useAppStore } from "../stores/appStore";
 import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
 

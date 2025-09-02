@@ -1,9 +1,9 @@
-import { MonthType, DayType, useTrackStore } from "@/app/stores/TrackStore";
+import { MonthType, DayType, useTaskLogStore } from "@/app/stores/taskLogStore";
 import { format } from "date-fns";
 import DateRowItem from "./DateRowItem";
 
 export default function DateRow() {
-  const years = useTrackStore((s) => s.totalDate);
+  const years = useTaskLogStore((s) => s.totalDate);
 
   return (
     <div className="app-DateRow flex w-fit bg-[var(--background)]">

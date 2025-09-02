@@ -1,6 +1,6 @@
 "use client";
 
-import { useGroupStore } from "@/app/stores/GroupStore";
+import { useGroupStore } from "@/app/stores/groupStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
@@ -36,7 +36,7 @@ export default function GroupCreatePopover({
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
-  const addGroup = useGroupStore((s) => s.addGroup);
+  const insertGroup = useGroupStore((s) => s.insertGroup);
 
   const [name, setName] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
@@ -55,7 +55,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   const handleSaveClick = async () => {
     if (!dummyGroup) return;
-    await addGroup({ id: dummyGroup.id, name });
+    await insertGroup({ id: dummyGroup.id, name });
     setOpen(false);
   };
 

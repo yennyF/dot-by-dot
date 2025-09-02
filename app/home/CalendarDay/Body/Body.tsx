@@ -1,8 +1,8 @@
 "use client";
 
-import { useGroupStore } from "@/app/stores/GroupStore";
+import { useGroupStore } from "@/app/stores/groupStore";
 import GroupRow from "./GroupRow";
-import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import TaskRow from "./TaskRow";
 
 export default function Body() {

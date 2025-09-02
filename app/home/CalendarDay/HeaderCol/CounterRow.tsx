@@ -1,10 +1,10 @@
 "use client";
 
-import { DayType, MonthType, useTrackStore } from "@/app/stores/TrackStore";
+import { DayType, MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
 import CounterRowItem from "./CounterRowItem";
 
 export default function CounterRow() {
-  const years = useTrackStore((s) => s.totalDate);
+  const years = useTaskLogStore((s) => s.totalDate);
 
   return (
     <div className="app-CounterRow flex w-fit bg-[var(--background)]">
