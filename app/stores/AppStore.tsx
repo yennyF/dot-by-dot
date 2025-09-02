@@ -8,7 +8,7 @@ import {
   TaskLog,
 } from "../repositories/types";
 import { notifyDeleteError } from "../components/Notification";
-import { useTaskStore } from "./TaskStore";
+import { useTaskStore } from "./taskStore";
 import { useGroupStore } from "./groupStore";
 import { useTaskLogStore } from "./taskLogStore";
 import {

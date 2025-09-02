@@ -2,7 +2,7 @@
 
 import { useGroupStore } from "@/app/stores/GroupStore2";
 import GroupRow from "./GroupRow";
-import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore2";
 import TaskRow from "./TaskRow";
 
 export default function Body() {

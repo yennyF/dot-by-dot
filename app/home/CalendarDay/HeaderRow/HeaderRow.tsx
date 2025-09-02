@@ -5,7 +5,7 @@ import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/GroupStore2";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupRow from "./GroupRow";
-import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore";
+import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/TaskStore2";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";

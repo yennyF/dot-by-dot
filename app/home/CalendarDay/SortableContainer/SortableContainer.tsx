@@ -2,7 +2,7 @@
 
 import { useGroupStore } from "@/app/stores/GroupStore2";
 import { useScrollStore } from "@/app/stores/scrollStore";
-import { useTaskStore } from "@/app/stores/TaskStore";
+import { useTaskStore } from "@/app/stores/TaskStore2";
 import { useRef, DragEvent, ReactNode } from "react";
 
 interface SortableContainerProps {

@@ -6,7 +6,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Group } from "@/app/repositories/types";
 import { v4 as uuidv4 } from "uuid";
-import { useTaskStore } from "@/app/stores/TaskStore";
+import { useTaskStore } from "@/app/stores/TaskStore2";
 import { useState, DragEvent, memo } from "react";
 import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";

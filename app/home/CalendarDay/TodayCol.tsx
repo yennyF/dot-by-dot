@@ -1,4 +1,4 @@
-import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore";
+import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/TaskStore2";
 import TaskRowItem from "./Body/TaskRowItem";
 import DateRowItem from "./HeaderCol/DateRowItem";
 import CounterRowItem from "./HeaderCol/CounterRowItem";
