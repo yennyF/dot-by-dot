@@ -3,7 +3,7 @@
 import { Dialog, Checkbox } from "radix-ui";
 import { useEffect, useState } from "react";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { Task } from "@/app/repositories/types";
+import { Task } from "@/app/types";
 import { useTaskStore } from "@/app/stores/taskStore";
 
 interface TaskDeleteDialogProps {

@@ -3,7 +3,7 @@
 import { Checkbox, Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { Group } from "@/app/repositories/types";
+import { Group } from "@/app/types";
 import { useGroupStore } from "@/app/stores/groupStore";
 
 interface GroupDeleteDialogProps {

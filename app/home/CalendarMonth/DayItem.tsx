@@ -2,7 +2,7 @@
 
 import { format, isToday } from "date-fns";
 import { useTaskLogStore } from "../../stores/taskLogStore";
-import { toApiDate } from "@/app/repositories/types";
+import { toApiDate } from "@/app/types";
 
 const MAX_TASK_SIZE = 10;
 

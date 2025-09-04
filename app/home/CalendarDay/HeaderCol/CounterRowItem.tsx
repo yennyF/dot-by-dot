@@ -1,7 +1,7 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import { getSnappedPercentage } from "@/app/util";
+import { getSnappedPercentage } from "@/app/utils/utils";
 import {
   AppTooltip,
   AppTrigger,
@@ -9,7 +9,7 @@ import {
 } from "@/app/components/AppTooltip";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { toApiDate } from "@/app/repositories/types";
+import { toApiDate } from "@/app/types";
 
 export default function CounterRowItem({ date }: { date: Date }) {
   const isTodayDate = isToday(date);

@@ -4,7 +4,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import { Group } from "@/app/repositories/types";
+import { Group } from "@/app/types";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/taskStore";
 import { useState, DragEvent, memo } from "react";

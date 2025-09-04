@@ -1,6 +1,6 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Task, toApiTask, toTaskArray } from "../repositories/types";
+import { Task, toApiTask, toTaskArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";

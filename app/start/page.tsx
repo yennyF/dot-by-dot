@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
-import { genGroupedTasks, genUngroupedTasks } from "../repositories/data";
+import { genGroupedTasks, genUngroupedTasks } from "../utils/data";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { Group, Task } from "../repositories/types";
+import { Group, Task } from "../types";
 import { Checkbox } from "radix-ui";
 import {
   notifyLoadError,

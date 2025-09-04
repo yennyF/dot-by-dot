@@ -1,10 +1,10 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import { Group, toApiDate } from "@/app/repositories/types";
+import { Group, toApiDate } from "@/app/types";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
-import { getPercentage } from "@/app/util";
+import { getPercentage } from "@/app/utils/utils";
 import { useTaskStore } from "@/app/stores/taskStore";
 
 interface GroupRowItemProps {

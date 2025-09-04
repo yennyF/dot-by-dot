@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import { Task, toApiDate } from "@/app/repositories/types";
+import { Task, toApiDate } from "@/app/types";
 
 interface TaskRowItemProps {
   date: Date;

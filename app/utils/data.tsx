@@ -1,4 +1,4 @@
-import { Group, Task, TaskLog } from "./types";
+import { Group, Task, TaskLog } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { LexoRank } from "lexorank";
 import { eachDayOfInterval } from "date-fns";

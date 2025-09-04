@@ -1,4 +1,4 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
 import {
   Group,
@@ -6,16 +6,12 @@ import {
   toApiTaskArray,
   toApiTaskLogArray,
   TaskLog,
-} from "../repositories/types";
+} from "../types";
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./taskStore";
 import { useGroupStore } from "./groupStore";
 import { useTaskLogStore } from "./taskLogStore";
-import {
-  genGroupedTasks,
-  genTaskLogs,
-  genUngroupedTasks,
-} from "../repositories/data";
+import { genGroupedTasks, genTaskLogs, genUngroupedTasks } from "../utils/data";
 import { v4 as uuidv4 } from "uuid";
 
 type State = {

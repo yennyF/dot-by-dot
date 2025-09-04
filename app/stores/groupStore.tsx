@@ -1,6 +1,6 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Group } from "../repositories/types";
+import { Group } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";

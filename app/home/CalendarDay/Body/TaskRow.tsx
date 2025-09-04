@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Task } from "@/app/repositories/types";
+import { Task } from "@/app/types";
 import TaskRowItem from "./TaskRowItem";
 import { MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
 

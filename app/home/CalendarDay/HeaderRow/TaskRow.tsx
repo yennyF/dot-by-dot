@@ -2,7 +2,7 @@
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, memo, useState } from "react";
-import { Task } from "@/app/repositories/types";
+import { Task } from "@/app/types";
 import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";

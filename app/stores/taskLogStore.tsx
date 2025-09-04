@@ -18,9 +18,9 @@ import {
   subMonths,
 } from "date-fns";
 import { toast } from "react-toastify";
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { v4 as uuidv4 } from "uuid";
-import { toTaskLogArray, toApiTaskLog, toApiDate } from "../repositories/types";
+import { toTaskLogArray, toApiTaskLog, toApiDate } from "../types";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
