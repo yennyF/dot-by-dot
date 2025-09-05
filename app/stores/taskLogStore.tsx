@@ -20,7 +20,11 @@ import {
 import { toast } from "react-toastify";
 import { supabase } from "../supabase/server";
 import { v4 as uuidv4 } from "uuid";
-import { toTaskLogArray, toApiTaskLog, toApiDate } from "../types";
+import {
+  mapTaskLogResponseArray,
+  mapTaskLogRequest,
+  toApiDate,
+} from "../types";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
@@ -83,7 +87,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         if (error) throw error;
 
         if (data) {
-          toTaskLogArray(data).forEach((taskLog) => {
+          mapTaskLogResponseArray(data).forEach((taskLog) => {
             (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
               taskLog.taskId
             );
@@ -112,7 +116,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         if (error) throw error;
 
         if (data) {
-          toTaskLogArray(data).forEach((taskLog) => {
+          mapTaskLogResponseArray(data).forEach((taskLog) => {
             (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
               taskLog.taskId
             );
@@ -141,7 +145,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       try {
         const { error } = await supabase
           .from("task_logs")
-          .insert(toApiTaskLog({ taskId, date }));
+          .insert(mapTaskLogRequest({ taskId, date }));
         if (error) throw error;
       } catch (error) {
         console.error(error);

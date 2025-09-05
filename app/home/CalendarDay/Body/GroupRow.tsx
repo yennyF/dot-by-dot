@@ -1,9 +1,9 @@
 "use client";
 
 import { memo } from "react";
-import { Group } from "@/app/types";
 import GroupRowItem from "./GroupRowItem";
 import { DayType, MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
+import { Group } from "@/app/types";
 
 interface GroupRowWrapperProps {
   group: Group;

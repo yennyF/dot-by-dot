@@ -1,7 +1,10 @@
 "use client";
 
-import Home from "./home/Home";
+import LoginPage from "./login";
+
+// import Home from "./home/Home";
 
 export default function Page() {
-  return <Home />;
+  // return <Home />;
+  return <LoginPage />;
 }

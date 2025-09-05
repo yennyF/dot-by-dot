@@ -3,8 +3,8 @@ import { create } from "zustand";
 import {
   Group,
   Task,
-  toApiTaskArray,
-  toApiTaskLogArray,
+  mapTaskRequestArray,
+  mapTaskLogRequestArray,
   TaskLog,
 } from "../types";
 import { notifyDeleteError } from "../components/Notification";
@@ -73,11 +73,13 @@ export const useAppStore = create<State & Action>((set, get) => {
 
         const { error: errorTasks } = await supabase
           .from("tasks")
-          .insert(toApiTaskArray(tasks));
+          .insert(mapTaskRequestArray(tasks));
         if (errorTasks) throw errorTasks;
 
         if (taskLogs)
-          await supabase.from("task_logs").insert(toApiTaskLogArray(taskLogs));
+          await supabase
+            .from("task_logs")
+            .insert(mapTaskLogRequestArray(taskLogs));
 
         get().init();
       } catch (error) {

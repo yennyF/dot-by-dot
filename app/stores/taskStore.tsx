@@ -1,6 +1,6 @@
 import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Task, toApiTask, toTaskArray } from "../types";
+import { Task, mapTaskRequest, mapTaskResponseArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
@@ -62,7 +62,7 @@ export const useTaskStore = create<State & Action>()(
 
           const tasksByGroup: Record<string, Task[]> = {};
           if (data) {
-            toTaskArray(data).forEach((task) => {
+            mapTaskResponseArray(data).forEach((task) => {
               const key = task.groupId ?? UNGROUPED_KEY;
               (tasksByGroup[key] ??= []).push(task);
             });
@@ -94,7 +94,7 @@ export const useTaskStore = create<State & Action>()(
           // insert in db
           const { error } = await supabase
             .from("tasks")
-            .insert(toApiTask(task));
+            .insert(mapTaskRequest(task));
           if (error) throw error;
         } catch (error) {
           console.error(error);
