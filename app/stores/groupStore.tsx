@@ -1,6 +1,6 @@
 import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Group } from "../types";
+import { Group, mapGroupRequest } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";
@@ -48,9 +48,7 @@ export const useGroupStore = create<State & Action>()(
             .select("id, name, order");
           if (error) throw error;
 
-          const groups = data ?? [];
-
-          set(() => ({ groups }));
+          set(() => ({ groups: mapGroupResponseArray(data ?? []) }));
         } catch (error) {
           console.error(error);
           throw error;
@@ -80,7 +78,9 @@ export const useGroupStore = create<State & Action>()(
           });
 
           // insert in db;
-          const { error } = await supabase.from("groups").insert(group);
+          const { error } = await supabase
+            .from("groups")
+            .insert(mapGroupRequest(group));
           if (error) throw error;
         } catch (error) {
           console.error(error);
@@ -262,3 +262,6 @@ export const useGroupStore = create<State & Action>()(
     }))
   )
 );
+function mapGroupResponseArray(arg0: { id: any; name: any; order: any }[]) {
+  throw new Error("Function not implemented.");
+}

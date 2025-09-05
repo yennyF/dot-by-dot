@@ -1,9 +1,13 @@
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "./supabase/server";
+import { useUserStore } from "./stores/userStore";
+import { mapUserResponse } from "./types/user";
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const setUser = useUserStore((s) => s.setUser);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,8 +38,17 @@ export default function LoginPage() {
       email,
       password,
     });
-    if (error) console.error(error.message);
-    else console.log("Logged in:", data);
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+    if (!data.user) {
+      return;
+    }
+
+    console.log("Logged in:", data);
+
+    setUser(mapUserResponse(data.user));
   }
 
   return (
