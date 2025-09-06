@@ -1,6 +1,6 @@
 import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Group, mapGroupRequest } from "../types";
+import { Group, mapGroupRequest, mapGroupResponseArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";
@@ -12,6 +12,7 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useUserStore } from "./userStore";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -45,7 +46,7 @@ export const useGroupStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("groups")
-            .select("id, name, order");
+            .select("id, name, order, user_id");
           if (error) throw error;
 
           set(() => ({ groups: mapGroupResponseArray(data ?? []) }));
@@ -63,7 +64,11 @@ export const useGroupStore = create<State & Action>()(
             ? LexoRank.parse(firstOrder).genPrev().toString()
             : LexoRank.middle().toString();
 
-          const group: Group = { ...props, order };
+          const group: Group = {
+            ...props,
+            order,
+            userId: useUserStore.getState().user!.id,
+          };
 
           // Add group
           set(({ groups }) => {
@@ -262,6 +267,3 @@ export const useGroupStore = create<State & Action>()(
     }))
   )
 );
-function mapGroupResponseArray(arg0: { id: any; name: any; order: any }[]) {
-  throw new Error("Function not implemented.");
-}

@@ -11,6 +11,7 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useUserStore } from "./userStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -57,7 +58,7 @@ export const useTaskStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("tasks")
-            .select("id, name, group_id, order");
+            .select("id, name, group_id, order, user_id");
           if (error) throw error;
 
           const tasksByGroup: Record<string, Task[]> = {};
@@ -83,7 +84,11 @@ export const useTaskStore = create<State & Action>()(
             ? LexoRank.parse(firstOrder).genPrev().toString()
             : LexoRank.middle().toString();
 
-          const task: Task = { ...props, order };
+          const task: Task = {
+            ...props,
+            order,
+            userId: useUserStore.getState().user!.id,
+          };
 
           // insert in local
           set(({ tasksByGroup }) => {

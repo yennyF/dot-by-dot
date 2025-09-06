@@ -12,10 +12,10 @@ import {
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "../stores/appStore";
 import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
+import { useAppStore } from "../stores/appStore";
 
 export default function StartPage() {
   const router = useRouter();
@@ -87,8 +87,7 @@ function Content() {
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
       router.replace("/");
-    } catch (error) {
-      console.log(error);
+    } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();
     }

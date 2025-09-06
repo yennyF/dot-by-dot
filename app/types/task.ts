@@ -3,6 +3,7 @@ export type Task = {
   name: string;
   groupId?: string;
   order: string;
+  userId: string;
 };
 
 export type ApiTask = {
@@ -10,6 +11,7 @@ export type ApiTask = {
   name: string;
   group_id: string | null;
   order: string;
+  user_id: string;
 };
 
 export function mapTaskResponse(data: ApiTask): Task {
@@ -18,6 +20,7 @@ export function mapTaskResponse(data: ApiTask): Task {
     groupId: data.group_id || undefined,
     name: data.name,
     order: data.order,
+    userId: data.user_id,
   };
 }
 
@@ -27,6 +30,7 @@ export function mapTaskRequest(task: Task): ApiTask {
     group_id: task.groupId || null,
     name: task.name,
     order: task.order,
+    user_id: task.userId,
   };
 }
 

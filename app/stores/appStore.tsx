@@ -6,6 +6,7 @@ import {
   mapTaskRequestArray,
   mapTaskLogRequestArray,
   TaskLog,
+  mapGroupRequestArray,
 } from "../types";
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./taskStore";
@@ -68,7 +69,7 @@ export const useAppStore = create<State & Action>((set, get) => {
       try {
         const { error: errorGroup } = await supabase
           .from("groups")
-          .insert(groups);
+          .insert(mapGroupRequestArray(groups));
         if (errorGroup) throw errorGroup;
 
         const { error: errorTasks } = await supabase
