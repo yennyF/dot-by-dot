@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
-import { genGroupedTasks, genUngroupedTasks } from "../utils/data";
+import { generateGroupedTasks, generateTasks } from "../utils/generateData";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group, Task } from "../types";
 import { Checkbox } from "radix-ui";
@@ -44,8 +44,8 @@ function Content() {
   const toastId = useRef<Id>(null);
 
   useEffect(() => {
-    setUngroupedTasks(genUngroupedTasks());
-    setGroupedTasks(genGroupedTasks());
+    setUngroupedTasks(generateTasks());
+    setGroupedTasks(generateGroupedTasks());
   }, []);
 
   const handleCheckedChange = (task: Task) => {

@@ -12,7 +12,11 @@ import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./taskStore";
 import { useGroupStore } from "./groupStore";
 import { useTaskLogStore } from "./taskLogStore";
-import { genGroupedTasks, genTaskLogs, genUngroupedTasks } from "../utils/data";
+import {
+  generateGroupedTasks,
+  generateTaskLogs,
+  generateTasks,
+} from "../utils/generateData";
 import { v4 as uuidv4 } from "uuid";
 
 type State = {
@@ -90,13 +94,13 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
     startMock: async () => {
       const groups: Group[] = [];
-      const tasks: Task[] = genUngroupedTasks();
-      genGroupedTasks().forEach(([group, _tasks]) => {
+      const tasks: Task[] = generateTasks();
+      generateGroupedTasks().forEach(([group, _tasks]) => {
         groups.push(group);
         tasks.push(..._tasks);
       });
 
-      const taskLogs = genTaskLogs(
+      const taskLogs = generateTaskLogs(
         useTaskLogStore.getState().startDate,
         useTaskLogStore.getState().endDate,
         tasks
