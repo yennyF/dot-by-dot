@@ -2,8 +2,8 @@
 
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../supabase/server";
-import AppHeader from "../components/AppHeader";
+import { supabase } from "../../supabase/server";
+import AppHeader from "../../components/AppHeader";
 
 export default function LoginPage() {
   const router = useRouter();

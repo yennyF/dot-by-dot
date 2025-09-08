@@ -1,5 +1,5 @@
 import { ExclamationTriangleIcon, MagicWandIcon } from "@radix-ui/react-icons";
-import AppHeader from "../components/AppHeader";
+import AppHeader from "../../components/AppHeader";
 
 export default function AboutPage() {
   return (

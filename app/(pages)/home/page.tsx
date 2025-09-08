@@ -3,20 +3,24 @@
 import { useEffect } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
-import AppHeader from "../components/AppHeader";
+import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
 import LockButton from "./Header/LockButton";
-import Loading from "../components/Loading/Loading";
-import { notifyLoadError } from "../components/Notification";
+import Loading from "../../components/Loading/Loading";
+import { notifyLoadError } from "../../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import { useAppStore } from "../stores/appStore";
-import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
+import { useAppStore } from "../../stores/appStore";
+import {
+  AppContent,
+  AppTooltip,
+  AppTrigger,
+} from "../../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
-import { useTaskLogStore } from "../stores/taskLogStore";
-import { useUserStore } from "../stores/userStore";
+import { useTaskLogStore } from "../../stores/taskLogStore";
+import { useUserStore } from "../../stores/userStore";
 
 export default function HomePage() {
   const router = useRouter();

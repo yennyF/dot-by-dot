@@ -1,24 +1,28 @@
 "use client";
 
 import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
-import { generateGroupedTasks, generateTasks } from "../utils/generateData";
+import { generateGroupedTasks, generateTasks } from "../../utils/generateData";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { Group, Task } from "../types";
+import { Group, Task } from "../../types";
 import { Checkbox } from "radix-ui";
 import {
   notifyLoadError,
   notifyLoading,
   notifySuccessful,
-} from "../components/Notification";
+} from "../../components/Notification";
 import { Id, toast } from "react-toastify";
-import { usePathname, useRouter } from "next/navigation";
-import AppHeader from "../components/AppHeader";
-import Loading from "../components/Loading/Loading";
-import GoBackButton from "../components/GoBackButton";
-import { useAppStore } from "../stores/appStore";
+import { useRouter } from "next/navigation";
+import AppHeader from "../../components/AppHeader";
+import Loading from "../../components/Loading/Loading";
+import GoBackButton from "../../components/GoBackButton";
+import { useAppStore } from "../../stores/appStore";
 import clsx from "clsx";
-import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
-import { useUserStore } from "../stores/userStore";
+import {
+  AppTooltip,
+  AppTrigger,
+  AppContent,
+} from "../../components/AppTooltip";
+import { useUserStore } from "../../stores/userStore";
 
 export default function StartPage() {
   const router = useRouter();

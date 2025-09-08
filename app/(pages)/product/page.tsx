@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import AppHeader from "../components/AppHeader";
-import { useUserStore } from "../stores/userStore";
+import AppHeader from "../../components/AppHeader";
+import { useUserStore } from "../../stores/userStore";
 
 export default function ProductPage() {
   const router = useRouter();

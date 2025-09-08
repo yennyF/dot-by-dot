@@ -1,7 +1,7 @@
 "use client";
 
 import { format, isToday } from "date-fns";
-import { useTaskLogStore } from "../../stores/taskLogStore";
+import { useTaskLogStore } from "../../../stores/taskLogStore";
 import { toApiDate } from "@/app/types";
 
 const MAX_TASK_SIZE = 10;

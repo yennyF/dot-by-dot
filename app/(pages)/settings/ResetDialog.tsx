@@ -8,8 +8,8 @@ import {
   notifyLoading,
   notifyLoadError,
   notifySuccessful,
-} from "../components/Notification";
-import { useAppStore } from "../stores/appStore";
+} from "../../components/Notification";
+import { useAppStore } from "../../stores/appStore";
 import { useRouter } from "next/navigation";
 
 interface ResetDialogProps {

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import AppHeader from "../components/AppHeader";
+import AppHeader from "../../components/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 import { useRouter } from "next/navigation";
-import GoBackButton from "../components/GoBackButton";
-import { useUserStore } from "../stores/userStore";
-import Loading from "../components/Loading/Loading";
+import GoBackButton from "../../components/GoBackButton";
+import { useUserStore } from "../../stores/userStore";
+import Loading from "../../components/Loading/Loading";
 
 export default function SettingsPage() {
   const router = useRouter();

@@ -8,8 +8,8 @@ import {
   notifyLoading,
   notifySuccessful,
   notifyDeleteError,
-} from "../components/Notification";
-import { useTaskLogStore } from "../stores/taskLogStore";
+} from "../../components/Notification";
+import { useTaskLogStore } from "../../stores/taskLogStore";
 
 interface ClearHistoryDialogProps {
   children: React.ReactNode;
