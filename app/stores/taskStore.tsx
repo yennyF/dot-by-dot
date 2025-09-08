@@ -11,15 +11,19 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useGroupStore } from "./groupStore";
+import { useAppStore } from "./appStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
 type State = {
   dummyTask: Task | undefined;
-  tasksByGroup: Record<string, Task[]> | undefined; // undefined = loading
+  tasksByGroup: Record<string, Task[]> | undefined;
+  ungroupTotal: number | undefined;
 };
 
 type Action = {
+  setUngroupTotal: (ungroupTotal: number | undefined) => void;
   destroyTasks: () => void;
   setDummyTask: (task: Task | undefined) => void;
   fetchTasks: () => Promise<void>;
@@ -41,6 +45,10 @@ type Action = {
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
+      ungroupTotal: undefined,
+      setUngroupTotal: (ungroupTotal: number | undefined) =>
+        set(() => ({ ungroupTotal })),
+
       destroyTasks: async () => {
         set(() => ({
           dummyTask: undefined,
@@ -298,3 +306,30 @@ function locateTask(
   }
   return null;
 }
+
+useTaskStore.subscribe(
+  (state) => state.tasksByGroup,
+  (tasksByGroup) => {
+    if (tasksByGroup === undefined) {
+      useTaskStore.getState().setUngroupTotal(undefined);
+    } else {
+      useTaskStore
+        .getState()
+        .setUngroupTotal(tasksByGroup[UNGROUPED_KEY]?.length ?? 0);
+    }
+  }
+);
+
+useTaskStore.subscribe(
+  (state) => state.ungroupTotal,
+  (ungroupTotal) => {
+    const groupTotal = useGroupStore.getState().groupTotal;
+    if (ungroupTotal !== undefined && groupTotal !== undefined) {
+      useAppStore.setState(() => ({
+        isEmpty: ungroupTotal === 0 && groupTotal === 0,
+      }));
+    } else {
+      useAppStore.setState({ isEmpty: undefined });
+    }
+  }
+);

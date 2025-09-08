@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import AppHeader from "../components/AppHeader";
@@ -20,44 +20,38 @@ import { useUserStore } from "../stores/userStore";
 
 export default function HomePage() {
   const router = useRouter();
+
   const user = useUserStore((s) => s.user);
-  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+  const init = useAppStore((s) => s.init);
+  const isEmpty = useAppStore((s) => s.isEmpty);
 
   useEffect(() => {
+    if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else if (isDataEmpty === true) {
+    } else {
+      init().catch(() => {
+        notifyLoadError();
+      });
+    }
+  }, [user, init, router]);
+
+  useEffect(() => {
+    if (isEmpty === undefined) return;
+    if (isEmpty === true) {
       router.replace("/start");
     }
-  }, [user, isDataEmpty, router]);
+  }, [isEmpty, router]);
 
-  return user && isDataEmpty === false ? <Content /> : <Loading />;
+  return user && isEmpty === false ? <Content /> : <Loading />;
 }
 
 function Content() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  const init = useAppStore((s) => s.init);
   const setLock = useTaskLogStore((s) => s.setLock);
 
   useEffect(() => {
-    console.log("Home rendered");
-  });
-
-  useEffect(() => {
     setLock(localStorage.getItem("lock") === "true" ? true : false);
-
-    setIsLoading(true);
-    (async () => {
-      try {
-        await init();
-      } catch {
-        notifyLoadError();
-      }
-      setIsLoading(false);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setLock]);
 
   return (
     <>
@@ -87,7 +81,9 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      <main>{isLoading ? <Loading /> : <CalendarDay />}</main>
+      <main>
+        <CalendarDay />
+      </main>
     </>
   );
 }

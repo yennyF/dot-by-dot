@@ -11,7 +11,7 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { Id, toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
@@ -22,21 +22,30 @@ import { useUserStore } from "../stores/userStore";
 
 export default function StartPage() {
   const router = useRouter();
+
   const user = useUserStore((s) => s.user);
-  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
+  const init = useAppStore((s) => s.init);
+  const isEmpty = useAppStore((s) => s.isEmpty);
 
   useEffect(() => {
     if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else if (isDataEmpty === false) {
+    } else {
+      init().catch(() => {
+        notifyLoadError();
+      });
+    }
+  }, [user, router, init, isEmpty]);
+
+  useEffect(() => {
+    if (isEmpty === undefined) return;
+    if (isEmpty === false) {
       router.replace("/home");
     }
-  }, [user, isDataEmpty, router]);
+  }, [isEmpty, router]);
 
-  if (!user || !isDataEmpty) return <Loading />;
-
-  return <Content />;
+  return user && isEmpty === true ? <Content /> : <Loading />;
 }
 
 function Content() {
@@ -128,7 +137,7 @@ function Content() {
     <>
       <AppHeader />
       <main className="page-main flex flex-col gap-[50px]">
-        <GoBackButton />
+        <GoBackButton path="/product" />
 
         <section>
           <h1 className="page-title-1">Getting started</h1>

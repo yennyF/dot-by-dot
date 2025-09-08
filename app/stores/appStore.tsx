@@ -20,10 +20,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 type State = {
-  isDataEmpty: boolean | undefined;
+  isEmpty: boolean | undefined;
 };
 
 type Action = {
+  setIsEmpty: (isEmpty: boolean | undefined) => void;
   init: () => Promise<void>;
   reset: () => Promise<void>;
   start: (
@@ -35,10 +36,9 @@ type Action = {
 };
 
 export const useAppStore = create<State & Action>((set, get) => {
-  setDataEmpty();
-
   return {
-    isDataEmpty: undefined,
+    isEmpty: undefined,
+    setIsEmpty: (isEmpty) => set({ isEmpty }),
 
     init: async () => {
       try {
@@ -110,45 +110,3 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
   };
 });
-
-async function countTask() {
-  const { count, error } = await supabase
-    .from("tasks")
-    .select("*", { count: "exact", head: true });
-  if (error) throw error;
-  return count ?? 0;
-}
-
-async function countGroup() {
-  const { count, error } = await supabase
-    .from("groups")
-    .select("*", { count: "exact", head: true });
-  if (error) throw error;
-  return count ?? 0;
-}
-
-async function setDataEmpty() {
-  if ((await countTask()) > 0) {
-    useAppStore.setState({ isDataEmpty: false });
-    return;
-  }
-  if ((await countGroup()) > 0) {
-    useAppStore.setState({ isDataEmpty: false });
-    return;
-  }
-  useAppStore.setState({ isDataEmpty: true });
-}
-
-useGroupStore.subscribe(
-  (state) => state.groups,
-  async () => {
-    setDataEmpty();
-  }
-);
-
-useTaskStore.subscribe(
-  (state) => state.tasksByGroup,
-  async () => {
-    setDataEmpty();
-  }
-);
