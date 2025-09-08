@@ -1,16 +1,26 @@
 "use client";
 
-import Home from "./home/Home";
-import LoginPage from "./login";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "./stores/appStore";
 import { useUserStore } from "./stores/userStore";
 
-// import Home from "./home/Home";
-
 export default function Page() {
+  const router = useRouter();
   const user = useUserStore((s) => s.user);
+  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
-  if (user) {
-    return <Home />;
-  }
-  return <LoginPage />;
+  useEffect(() => {
+    if (user) {
+      if (isDataEmpty === true) {
+        router.replace("/product");
+      } else if (isDataEmpty === false) {
+        router.push("/dashboard");
+      }
+    } else {
+      router.push("/product");
+    }
+  }, [user, isDataEmpty, router]);
+
+  return null;
 }

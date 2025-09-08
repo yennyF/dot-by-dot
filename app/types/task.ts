@@ -1,9 +1,10 @@
+import { useUserStore } from "../stores/userStore";
+
 export type Task = {
   id: string;
   name: string;
   groupId?: string;
   order: string;
-  userId: string;
 };
 
 export type ApiTask = {
@@ -20,7 +21,6 @@ export function mapTaskResponse(data: ApiTask): Task {
     groupId: data.group_id || undefined,
     name: data.name,
     order: data.order,
-    userId: data.user_id,
   };
 }
 
@@ -30,7 +30,7 @@ export function mapTaskRequest(task: Task): ApiTask {
     group_id: task.groupId || null,
     name: task.name,
     order: task.order,
-    user_id: task.userId,
+    user_id: useUserStore.getState().user?.id || "",
   };
 }
 

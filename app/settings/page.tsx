@@ -8,17 +8,20 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "../stores/appStore";
 import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
+import { useUserStore } from "../stores/userStore";
 
 export default function SettingsPage() {
   const router = useRouter();
-
+  const user = useUserStore((s) => s.user);
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
-    if (isDataEmpty === true) {
-      router.replace("/");
+    if (user === null) {
+      router.replace("/product");
+    } else if (isDataEmpty === true) {
+      router.replace("/start");
     }
-  }, [isDataEmpty, router]);
+  }, [user, isDataEmpty, router]);
 
   return isDataEmpty === false ? <Content /> : <Loading />;
 }

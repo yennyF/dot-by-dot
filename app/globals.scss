@@ -50,10 +50,18 @@ body {
   @apply font-mono tracking-wide leading-relaxed;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: black !important; /* Adjust text color if needed */
+    background-color: transparent !important; /* For other browsers */
+}
+
 input {
   @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
 }
-
 
 .page-main {
   @apply m-auto w-[88vw] max-w-[800] py-[100px]; 

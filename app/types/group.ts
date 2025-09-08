@@ -1,8 +1,9 @@
+import { useUserStore } from "../stores/userStore";
+
 export type Group = {
   id: string;
   name: string;
   order: string;
-  userId: string;
 };
 
 export type ApiGroup = {
@@ -17,7 +18,6 @@ export function mapGroupResponse(data: ApiGroup): Group {
     id: data.id,
     name: data.name,
     order: data.order,
-    userId: data.user_id,
   };
 }
 
@@ -26,7 +26,7 @@ export function mapGroupRequest(group: Group): ApiGroup {
     id: group.id,
     name: group.name,
     order: group.order,
-    user_id: group.userId,
+    user_id: useUserStore.getState().user?.id || "",
   };
 }
 

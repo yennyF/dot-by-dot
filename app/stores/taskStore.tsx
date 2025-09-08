@@ -11,7 +11,6 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
-import { useUserStore } from "./userStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
@@ -87,7 +86,6 @@ export const useTaskStore = create<State & Action>()(
           const task: Task = {
             ...props,
             order,
-            userId: useUserStore.getState().user!.id,
           };
 
           // insert in local

@@ -2,21 +2,17 @@ import { Group, Task, TaskLog } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { LexoRank } from "lexorank";
 import { eachDayOfInterval } from "date-fns";
-import { useUserStore } from "../stores/userStore";
 
 function setMoreProps<T>(
   arr: T[],
   optional?: Record<string, unknown>
-): (T & { id: string; order: string; userId: string })[] {
-  const userId = useUserStore.getState().user?.id;
-  if (!userId) throw Error("User not found");
-
+): (T & { id: string; order: string })[] {
   let lexoRank = LexoRank.middle();
 
   return arr.map((props) => {
     const order = lexoRank.toString();
     lexoRank = lexoRank.genNext();
-    return { id: uuidv4(), order, userId, optional, ...props };
+    return { id: uuidv4(), order, optional, ...props };
   });
 }
 

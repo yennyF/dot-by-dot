@@ -12,7 +12,6 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
-import { useUserStore } from "./userStore";
 
 type State = {
   dummyGroup: Group | undefined;
@@ -67,7 +66,6 @@ export const useGroupStore = create<State & Action>()(
           const group: Group = {
             ...props,
             order,
-            userId: useUserStore.getState().user!.id,
           };
 
           // Add group

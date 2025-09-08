@@ -1,61 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  notifyLoadError,
-  notifyLoading,
-  notifySuccessful,
-} from "../components/Notification";
-import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "../stores/appStore";
 import Image from "next/image";
 import AppHeader from "../components/AppHeader";
-import Loading from "../components/Loading/Loading";
-import clsx from "clsx";
-import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
+import { useUserStore } from "../stores/userStore";
 
 export default function ProductPage() {
   const router = useRouter();
-
-  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
-
-  useEffect(() => {
-    if (isDataEmpty === false) {
-      router.replace("/");
-    }
-  }, [isDataEmpty, router]);
-
-  return isDataEmpty === true ? <Content /> : <Loading />;
-}
-
-function Content() {
-  const router = useRouter();
-
-  const startMock = useAppStore((s) => s.startMock);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const toastId = useRef<Id>(null);
-
-  async function handleClickTest() {
-    if (isLoading) return;
-    setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
-
-    try {
-      await startMock();
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
-    } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId.current);
-      notifyLoadError();
-    }
-
-    setIsLoading(false);
-  }
+  const user = useUserStore((s) => s.user);
 
   return (
     <>
@@ -73,35 +25,16 @@ function Content() {
           <div className="mb-[10px] mt-[40px] flex items-center justify-center gap-5">
             <button
               className="button-accent"
-              disabled={isLoading}
-              onClick={() => router.push("/start")}
+              onClick={() => {
+                if (user) {
+                  router.push("/start");
+                } else {
+                  router.push("/login");
+                }
+              }}
             >
               Get started
             </button>
-            <AppTooltip>
-              <AppTrigger asChild>
-                <button
-                  className={clsx(
-                    "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
-                    isLoading &&
-                      "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
-                  )}
-                  disabled={isLoading}
-                  onClick={handleClickTest}
-                >
-                  Only here for testing
-                </button>
-              </AppTrigger>
-              <AppContent className="p-2" side="right" sideOffset={10}>
-                <h2 className="text-sm font-bold">Want a quick preview?</h2>
-
-                <p className="mt-[10px] leading-relaxed">
-                  Fill with sample data to explore the app.
-                  <br />
-                  You can reset the data anytime from Settings.
-                </p>
-              </AppContent>
-            </AppTooltip>
           </div>
         </section>
 

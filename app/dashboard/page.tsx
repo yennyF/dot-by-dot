@@ -16,19 +16,25 @@ import { AppContent, AppTooltip, AppTrigger } from "../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
 import { useTaskLogStore } from "../stores/taskLogStore";
+import { useUserStore } from "../stores/userStore";
 
-export default function HomePage() {
+export default function DashboardPage() {
   const router = useRouter();
-
+  const user = useUserStore((s) => s.user);
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
-    if (isDataEmpty === true) {
+    if (user === null) {
       router.replace("/product");
+    } else if (isDataEmpty === true) {
+      router.replace("/start");
     }
-  }, [isDataEmpty, router]);
+  }, [user, isDataEmpty, router]);
 
-  return isDataEmpty === false ? <Content /> : <Loading />;
+  if (!user || isDataEmpty === undefined || isDataEmpty === true)
+    return <Loading />;
+
+  return <Content />;
 }
 
 function Content() {

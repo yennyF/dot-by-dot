@@ -16,19 +16,26 @@ import AppHeader from "../components/AppHeader";
 import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
 import { useAppStore } from "../stores/appStore";
+import clsx from "clsx";
+import { AppTooltip, AppTrigger, AppContent } from "../components/AppTooltip";
+import { useUserStore } from "../stores/userStore";
 
 export default function StartPage() {
   const router = useRouter();
-
+  const user = useUserStore((s) => s.user);
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
-    if (isDataEmpty === false) {
-      router.replace("/");
+    if (user === null) {
+      router.replace("/product");
+    } else if (isDataEmpty === false) {
+      router.replace("/dashboard");
     }
-  }, [isDataEmpty, router]);
+  }, [user, isDataEmpty, router]);
 
-  return isDataEmpty === true ? <Content /> : <Loading />;
+  if (!user || !isDataEmpty) return <Loading />;
+
+  return <Content />;
 }
 
 function Content() {
@@ -39,6 +46,7 @@ function Content() {
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
+  const startMock = useAppStore((s) => s.startMock);
 
   const [isLoading, setIsLoading] = useState(false);
   const toastId = useRef<Id>(null);
@@ -95,6 +103,26 @@ function Content() {
     setIsLoading(false);
   };
 
+  async function handleClickTest() {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    if (toastId.current) toast.dismiss(toastId.current);
+    toastId.current = notifyLoading();
+
+    try {
+      await startMock();
+      toast.dismiss(toastId.current);
+      notifySuccessful("Ready to start");
+    } catch (error) {
+      console.log(error);
+      toast.dismiss(toastId.current);
+      notifyLoadError();
+    }
+
+    setIsLoading(false);
+  }
+
   return (
     <>
       <AppHeader />
@@ -148,6 +176,30 @@ function Content() {
           <span>Let&apos;s begin </span>
           <ArrowRightIcon />
         </button>
+        <AppTooltip>
+          <AppTrigger asChild>
+            <button
+              className={clsx(
+                "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
+                isLoading &&
+                  "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
+              )}
+              disabled={isLoading}
+              onClick={handleClickTest}
+            >
+              Only here for testing
+            </button>
+          </AppTrigger>
+          <AppContent className="p-2" side="right" sideOffset={10}>
+            <h2 className="text-sm font-bold">Want a quick preview?</h2>
+
+            <p className="mt-[10px] leading-relaxed">
+              Fill with sample data to explore the app.
+              <br />
+              You can reset the data anytime from Settings.
+            </p>
+          </AppContent>
+        </AppTooltip>
       </main>
     </>
   );
