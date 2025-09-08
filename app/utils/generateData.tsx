@@ -12,7 +12,7 @@ function setMoreProps<T>(
   return arr.map((props) => {
     const order = lexoRank.toString();
     lexoRank = lexoRank.genNext();
-    return { id: uuidv4(), order, optional, ...props };
+    return { id: uuidv4(), order, ...props, ...optional };
   });
 }
 
