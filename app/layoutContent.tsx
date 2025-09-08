@@ -15,7 +15,9 @@ export default function RootLayoutContent({
 
   useEffect(() => {
     // 1. Check session on load
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
 
     // 2. Listen for changes
     const { data: listener } = supabase.auth.onAuthStateChange(
@@ -25,7 +27,7 @@ export default function RootLayoutContent({
     );
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [setUser]);
 
   return (
     <>

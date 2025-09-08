@@ -5,25 +5,20 @@ import AppHeader from "../components/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "../stores/appStore";
-import Loading from "../components/Loading/Loading";
 import GoBackButton from "../components/GoBackButton";
 import { useUserStore } from "../stores/userStore";
+import Loading from "../components/Loading/Loading";
 
 export default function SettingsPage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
-  const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
-    if (user === null) {
-      router.replace("/product");
-    } else if (isDataEmpty === true) {
-      router.replace("/start");
-    }
-  }, [user, isDataEmpty, router]);
+    if (user === undefined) return;
+    if (user === null) router.replace("/product");
+  }, [user, router]);
 
-  return isDataEmpty === false ? <Content /> : <Loading />;
+  return user ? <Content /> : <Loading />;
 }
 
 function Content() {

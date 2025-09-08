@@ -26,10 +26,11 @@ export default function StartPage() {
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
+    if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
     } else if (isDataEmpty === false) {
-      router.replace("/dashboard");
+      router.replace("/home");
     }
   }, [user, isDataEmpty, router]);
 

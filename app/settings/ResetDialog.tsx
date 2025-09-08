@@ -10,6 +10,7 @@ import {
   notifySuccessful,
 } from "../components/Notification";
 import { useAppStore } from "../stores/appStore";
+import { useRouter } from "next/navigation";
 
 interface ResetDialogProps {
   children: React.ReactNode;
@@ -41,6 +42,8 @@ function Content() {
 
   const reset = useAppStore((s) => s.reset);
 
+  const router = useRouter();
+
   async function handleClick() {
     if (toastId.current) toast.dismiss(toastId.current);
     toastId.current = notifyLoading();
@@ -49,6 +52,7 @@ function Content() {
       await reset();
       toast.dismiss(toastId.current);
       notifySuccessful("Reset successful");
+      router.replace("/product");
     } catch (error) {
       console.error(error);
       toast.dismiss(toastId.current);

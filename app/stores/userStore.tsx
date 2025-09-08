@@ -2,20 +2,16 @@ import { create } from "zustand";
 import { User } from "../types/user";
 
 type State = {
-  user: User | null;
-  loading: boolean;
+  user: User | null | undefined;
 };
 
 type Action = {
   setUser: (user: User | null) => void;
-  setLoading: (loading: boolean) => void;
 };
 
 export const useUserStore = create<State & Action>((set) => {
   return {
-    user: null,
+    user: undefined,
     setUser: (user) => set({ user }),
-    loading: true,
-    setLoading: (loading) => set({ loading }),
   };
 });

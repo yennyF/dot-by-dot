@@ -31,7 +31,7 @@ export default function LoginPage() {
     if (!data.user) {
       return;
     }
-    router.push("/dashboard");
+    router.push("/home");
   }
 
   return (

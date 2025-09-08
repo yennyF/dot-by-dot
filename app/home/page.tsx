@@ -18,7 +18,7 @@ import SettingsButton from "./Header/SettingsButton";
 import { useTaskLogStore } from "../stores/taskLogStore";
 import { useUserStore } from "../stores/userStore";
 
-export default function DashboardPage() {
+export default function HomePage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
@@ -31,10 +31,7 @@ export default function DashboardPage() {
     }
   }, [user, isDataEmpty, router]);
 
-  if (!user || isDataEmpty === undefined || isDataEmpty === true)
-    return <Loading />;
-
-  return <Content />;
+  return user && isDataEmpty === false ? <Content /> : <Loading />;
 }
 
 function Content() {

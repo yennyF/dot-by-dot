@@ -11,14 +11,11 @@ export default function Page() {
   const isDataEmpty = useAppStore((s) => s.isDataEmpty);
 
   useEffect(() => {
-    if (user) {
-      if (isDataEmpty === true) {
-        router.replace("/product");
-      } else if (isDataEmpty === false) {
-        router.push("/dashboard");
-      }
-    } else {
-      router.push("/product");
+    if (user === undefined) return;
+    if (user === null || isDataEmpty === true) {
+      router.replace("/product");
+    } else if (isDataEmpty === false) {
+      router.push("/home");
     }
   }, [user, isDataEmpty, router]);
 

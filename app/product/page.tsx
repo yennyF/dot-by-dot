@@ -26,6 +26,7 @@ export default function ProductPage() {
             <button
               className="button-accent"
               onClick={() => {
+                if (user === undefined) return;
                 if (user) {
                   router.push("/start");
                 } else {
