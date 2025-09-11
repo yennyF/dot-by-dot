@@ -108,7 +108,7 @@ function Content() {
       await start(groups, tasks);
       toast.dismiss(toastId.current);
       notifySuccessful("Ready to start");
-      router.replace("/");
+      router.replace("/home");
     } catch {
       toast.dismiss(toastId.current);
       notifyLoadError();

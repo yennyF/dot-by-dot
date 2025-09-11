@@ -30,7 +30,7 @@ export default function ProductPage() {
                 if (user) {
                   router.push("/start");
                 } else {
-                  router.push("/login");
+                  router.push("/signUp");
                 }
               }}
             >

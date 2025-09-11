@@ -17,6 +17,7 @@
   --gray-9: #696B75;
   --green: #58c078;
   --green-5: rgba(88, 192, 120, 0.2);
+  --red: rgb(235, 87, 87);
 
   --width-name: 300px;
   --width-day: 45px;
@@ -61,6 +62,17 @@ input:-webkit-autofill:active {
 
 input {
   @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
+}
+
+.label-auth {
+  @apply block mb-1 text-xs text-[var(--gray-9)];
+
+  .required {
+    @apply text-[var(--red)];
+  }
+}
+.required-input {
+  @apply text-xs text-[var(--red)] mt-1;
 }
 
 .page-main {

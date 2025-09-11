@@ -31,7 +31,7 @@ export const notifySuccessful = (message: string) =>
 export const notifyLoading = () =>
   toast(
     <div className="flex items-center">
-      <LoadingIcon />
+      <LoadingIcon className="-ml-1 mr-3 size-5 text-[var(--black)]" />
       <span>Loading…</span>
     </div>,
     { ...baseOptions, autoClose: false }
