@@ -65,14 +65,19 @@ input {
 }
 
 .label-auth {
-  @apply block mb-1 text-xs text-[var(--gray-9)];
+  @apply mb-1 text-xs text-[var(--gray-9)];
 
   .required {
-    @apply text-[var(--red)];
+    @apply relative -top-0.5;
   }
 }
-.required-input {
-  @apply text-xs text-[var(--red)] mt-1;
+
+.valid-required {
+  @apply text-xs text-[var(--red)];
+}
+
+.valid-email, .valid-length {
+  @apply text-xs text-[var(--gray-9)] mt-1;
 }
 
 .page-main {

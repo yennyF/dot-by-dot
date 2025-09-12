@@ -1,20 +1,35 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../supabase/server";
 import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
-import EmailInput from "../EmailInput";
 import { PasswordInputLogin } from "../PasswordInput";
+import { EmailInputLogin } from "../EmailInput";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const nonValidArray = useRef<Set<string>>(new Set());
+
+  function handleValidChange(isValid: boolean, id: string) {
+    if (isValid) {
+      nonValidArray.current.delete(id);
+    } else {
+      nonValidArray.current.add(id);
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (nonValidArray.current.size > 0) {
+      setError("Missing or invalid data");
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
@@ -22,14 +37,6 @@ export default function LoginPage() {
 
     if (typeof email !== "string" || typeof password !== "string") {
       setError("Invalid data");
-      return;
-    }
-    if (email.length === 0) {
-      setError("Missing email");
-      return;
-    }
-    if (password.length === 0) {
-      setError("Missing password");
       return;
     }
 
@@ -78,8 +85,11 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-[15px]"
           >
-            <EmailInput id="email" required={false} />
-            <PasswordInputLogin id="password" />
+            <EmailInputLogin id="email" onValidChange={handleValidChange} />
+            <PasswordInputLogin
+              id="password"
+              onValidChange={handleValidChange}
+            />
           </form>
 
           <button

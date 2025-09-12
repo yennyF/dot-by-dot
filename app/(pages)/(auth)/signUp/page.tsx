@@ -5,21 +5,22 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../../../supabase/server";
 import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
-import EmailInput from "../EmailInput";
 import NameInput from "../NameInput";
 import { PasswordInputSignUp } from "../PasswordInput";
+import { EmailInputSignUp } from "../EmailInput";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const nonValidArray = useRef<Set<string>>(new Set());
 
-  function onValidChange(isValid: boolean, field: string) {
+  function handleValidChange(isValid: boolean, id: string) {
     if (isValid) {
-      nonValidArray.current.delete(field);
+      nonValidArray.current.delete(id);
     } else {
-      nonValidArray.current.add(field);
+      nonValidArray.current.add(id);
     }
   }
 
@@ -27,7 +28,7 @@ export default function SignUpPage() {
     event.preventDefault();
 
     if (nonValidArray.current.size > 0) {
-      setError("Invalid form data");
+      setError("Missing or invalid data");
       return;
     }
 
@@ -41,7 +42,7 @@ export default function SignUpPage() {
       typeof email !== "string" ||
       typeof password !== "string"
     ) {
-      setError("Invalid form data");
+      setError("Invalid data");
       return;
     }
 
@@ -97,20 +98,14 @@ export default function SignUpPage() {
           <form
             id="form-signUp"
             onSubmit={handleSubmit}
+            autoComplete="off"
             className="flex flex-col items-center gap-[15px]"
           >
-            <NameInput
-              id="name"
-              onValidChange={(isValid) => onValidChange(isValid, "name")}
-            />
-            <EmailInput
-              id="email"
-              required={true}
-              onValidChange={(isValid) => onValidChange(isValid, "email")}
-            />
+            <NameInput id="name" onValidChange={handleValidChange} />
+            <EmailInputSignUp id="email" onValidChange={handleValidChange} />
             <PasswordInputSignUp
               id="password"
-              onValidChange={(isValid) => onValidChange(isValid, "password")}
+              onValidChange={handleValidChange}
             />
           </form>
 
@@ -136,5 +131,3 @@ export default function SignUpPage() {
     </>
   );
 }
-
-//COMFY20-Z47NZN6P

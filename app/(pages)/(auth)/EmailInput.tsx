@@ -1,31 +1,26 @@
+import { validateEmail } from "@/app/utils/utils";
 import { useEffect, useState } from "react";
 
 interface EmailInputProps {
-  required?: boolean;
   id: string;
-  onValidChange?: (valid: boolean) => void;
+  onValidChange?: (valid: boolean, id: string) => void;
 }
 
-export default function EmailInput({
-  id,
-  required,
-  onValidChange,
-}: EmailInputProps) {
-  const [inputValue, setInputValue] = useState<string>();
-  const [isValid, setIsValid] = useState(true);
+export function EmailInputSignUp({ id, onValidChange }: EmailInputProps) {
+  const [isValidRequired, setIsValidRequired] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
 
   useEffect(() => {
-    if (inputValue === undefined) return;
-
-    const isValid = required && inputValue.length === 0 ? false : true;
-    setIsValid(isValid);
-    onValidChange?.(isValid);
-  }, [inputValue, required, onValidChange]);
+    onValidChange?.(isValidRequired && isValidEmail, id);
+  }, [isValidRequired, isValidEmail, id, onValidChange]);
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="label-auth">
-        Email {required && <span className="required">*</span>}
+      <label htmlFor={id} className="label-auth flex justify-between">
+        <div>
+          Email <span className="required">*</span>
+        </div>
+        {!isValidRequired && <div className="valid-required">Required</div>}
       </label>
       <input
         id={id}
@@ -33,12 +28,46 @@ export default function EmailInput({
         type="email"
         autoComplete=""
         className="w-full bg-white"
-        value={inputValue ?? ""}
         onChange={(event) => {
-          setInputValue(event.target.value);
+          const value = event.target.value;
+          setIsValidRequired(value.length > 0);
+          setIsValidEmail(true);
+        }}
+        onBlur={(event) => {
+          const value = event.target.value;
+          setIsValidEmail(value.length === 0 || validateEmail(value));
         }}
       />
-      {!isValid && <div className="required-input">Required</div>}
+      {!isValidEmail && <div className="valid-email">Email is not valid</div>}
+    </div>
+  );
+}
+
+export function EmailInputLogin({ id, onValidChange }: EmailInputProps) {
+  const [isValidRequired, setIsValidRequired] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
+  useEffect(() => {
+    onValidChange?.(isValidRequired && isValidEmail, id);
+  }, [isValidRequired, isValidEmail, id, onValidChange]);
+
+  return (
+    <div className="w-full">
+      <label htmlFor={id} className="label-auth">
+        Email
+      </label>
+      <input
+        id={id}
+        name={id}
+        type="email"
+        autoComplete=""
+        className="w-full bg-white"
+        onChange={(event) => {
+          const value = event.target.value;
+          setIsValidRequired(value.length > 0);
+          setIsValidEmail(value.length === 0 || validateEmail(value));
+        }}
+      />
     </div>
   );
 }

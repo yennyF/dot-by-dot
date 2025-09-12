@@ -2,24 +2,23 @@ import { useEffect, useState } from "react";
 
 interface TextInputProps {
   id: string;
-  onValidChange?: (valid: boolean) => void;
+  onValidChange?: (valid: boolean, id: string) => void;
 }
 
 export default function NameInput({ id, onValidChange }: TextInputProps) {
-  const [inputValue, setInputValue] = useState<string>();
-  const [isValid, setIsValid] = useState(true);
+  const [isValidRequired, setIsValidRequired] = useState(false);
 
   useEffect(() => {
-    const isValid = inputValue !== undefined && inputValue.length === 0;
-    setIsValid(isValid);
-    onValidChange?.(isValid);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    onValidChange?.(isValidRequired, id);
+  }, [isValidRequired, id, onValidChange]);
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="label-auth">
-        Name <span className="required">*</span>
+      <label htmlFor={id} className="label-auth flex justify-between">
+        <div>
+          Name <span className="required">*</span>
+        </div>
+        {!isValidRequired && <div className="valid-required">Required</div>}
       </label>
       <input
         id={id}
@@ -27,16 +26,11 @@ export default function NameInput({ id, onValidChange }: TextInputProps) {
         type="text"
         autoComplete=""
         className="w-full bg-white"
-        value={inputValue ?? ""}
         onChange={(event) => {
-          setInputValue(event.target.value);
-
-          const isValid = inputValue !== undefined && inputValue.length === 0;
-          setIsValid(isValid);
-          onValidChange?.(isValid);
+          const value = event.target.value;
+          setIsValidRequired(value.length > 0);
         }}
       />
-      {!isValid && <div className="required-input">Required</div>}
     </div>
   );
 }
