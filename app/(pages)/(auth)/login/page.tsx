@@ -7,6 +7,7 @@ import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 import { PasswordInputLogin } from "../PasswordInput";
 import { EmailInputLogin } from "../EmailInput";
+import { notifyUnexpectedError } from "@/app/components/Notification";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,25 +41,30 @@ export default function LoginPage() {
       return;
     }
 
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    setIsLoading(false);
-
-    if (error) {
-      console.error(error.message);
-      setError(
-        "We couldn’t log you in. Please try again with a different email or password."
-      );
-    } else if (data.user) {
-      setError(null);
-      router.push("/home");
-    } else {
-      setError("Something unexpected happened. Please try again");
+      if (error) {
+        console.error(error.message);
+        setError(
+          "We couldn’t log you in. Please try again with a different email or password."
+        );
+      } else if (data.user) {
+        setError(null);
+        router.push("/home");
+      } else {
+        setError("Something unexpected happened. Please try again");
+      }
+    } catch (error) {
+      console.error(error);
+      notifyUnexpectedError();
+    } finally {
+      setIsLoading(false);
     }
   }
 

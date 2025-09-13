@@ -8,6 +8,10 @@ import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 import NameInput from "../NameInput";
 import { PasswordInputSignUp } from "../PasswordInput";
 import { EmailInputSignUp } from "../EmailInput";
+import {
+  notifySuccessful,
+  notifyUnexpectedError,
+} from "@/app/components/Notification";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -46,36 +50,44 @@ export default function SignUpPage() {
       return;
     }
 
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: name,
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            display_name: name,
+          },
         },
-      },
-    });
+      });
 
-    setIsLoading(false);
-
-    if (error) {
-      console.error(error.message);
-      setError(
-        "We couldn’t log you in. Please try again with a different email or password."
-      );
-    } else if (data.user) {
-      if (!data.user.identities || data.user.identities.length === 0) {
+      if (error) {
+        console.error(error.message);
         setError(
-          "We couldn’t log you in. Please try again with a different email"
+          "We couldn’t log you in. Please try again with a different email or password."
         );
+      } else if (data.user) {
+        if (!data.user.identities || data.user.identities.length === 0) {
+          setError(
+            "We couldn’t log you in. Please try again with a different email"
+          );
+        } else {
+          setError(null);
+          notifySuccessful(
+            "Account created! Welcome aboard — you’re all set to sign in"
+          );
+          router.push("/login");
+        }
       } else {
-        setError(null);
-        router.push("/login");
+        setError("Something unexpected happened. Please try again");
       }
-    } else {
-      setError("Something unexpected happened. Please try again");
+    } catch (error) {
+      console.error(error);
+      notifyUnexpectedError();
+    } finally {
+      setIsLoading(false);
     }
   }
 

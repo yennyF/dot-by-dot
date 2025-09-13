@@ -10,6 +10,9 @@ const baseOptions: ToastOptions = {
   draggable: false,
 };
 
+export const notifyUnexpectedError = () =>
+  toast(<div>Unexpected error</div>, baseOptions);
+
 export const notifyLoadError = () =>
   toast(<div>Error loading</div>, baseOptions);
 
