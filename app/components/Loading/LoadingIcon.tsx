@@ -1,14 +1,19 @@
 "use client";
 
+import { ComponentProps } from "react";
 import "./LoadingIcon.scss";
+import clsx from "clsx";
 
-export default function LoadingIcon() {
+type LoadingIconProps = ComponentProps<"svg">;
+
+export default function LoadingIcon({ className, ...props }: LoadingIconProps) {
   return (
     <svg
-      className="-ml-1 mr-3 size-5 animate-spin text-[var(--black)]"
+      className={clsx("animate-spin", className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      {...props}
     >
       <circle
         className="opacity-25"

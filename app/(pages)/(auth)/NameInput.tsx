@@ -1,0 +1,36 @@
+import { useEffect, useState } from "react";
+
+interface TextInputProps {
+  id: string;
+  onValidChange?: (valid: boolean, id: string) => void;
+}
+
+export default function NameInput({ id, onValidChange }: TextInputProps) {
+  const [isValidRequired, setIsValidRequired] = useState(false);
+
+  useEffect(() => {
+    onValidChange?.(isValidRequired, id);
+  }, [isValidRequired, id, onValidChange]);
+
+  return (
+    <div className="w-full">
+      <label htmlFor={id} className="label-auth flex justify-between">
+        <div>
+          Name <span className="required">*</span>
+        </div>
+        {!isValidRequired && <div className="valid-required">Required</div>}
+      </label>
+      <input
+        id={id}
+        name={id}
+        type="text"
+        autoComplete=""
+        className="w-full bg-white"
+        onChange={(event) => {
+          const value = event.target.value;
+          setIsValidRequired(value.length > 0);
+        }}
+      />
+    </div>
+  );
+}

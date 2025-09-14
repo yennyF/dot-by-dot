@@ -10,6 +10,9 @@ const baseOptions: ToastOptions = {
   draggable: false,
 };
 
+export const notifyUnexpectedError = () =>
+  toast(<div>Unexpected error</div>, baseOptions);
+
 export const notifyLoadError = () =>
   toast(<div>Error loading</div>, baseOptions);
 
@@ -31,7 +34,7 @@ export const notifySuccessful = (message: string) =>
 export const notifyLoading = () =>
   toast(
     <div className="flex items-center">
-      <LoadingIcon />
+      <LoadingIcon className="-ml-1 mr-3 size-5 text-[var(--black)]" />
       <span>Loading…</span>
     </div>,
     { ...baseOptions, autoClose: false }

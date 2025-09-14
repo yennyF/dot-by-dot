@@ -1,6 +1,6 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Task, toApiTask, toTaskArray } from "../repositories/types";
+import { Task, mapTaskRequest, mapTaskResponseArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
@@ -11,15 +11,19 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useGroupStore } from "./groupStore";
+import { useAppStore } from "./appStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
 type State = {
   dummyTask: Task | undefined;
-  tasksByGroup: Record<string, Task[]> | undefined; // undefined = loading
+  tasksByGroup: Record<string, Task[]> | undefined;
+  ungroupTotal: number | undefined;
 };
 
 type Action = {
+  setUngroupTotal: (ungroupTotal: number | undefined) => void;
   destroyTasks: () => void;
   setDummyTask: (task: Task | undefined) => void;
   fetchTasks: () => Promise<void>;
@@ -41,6 +45,10 @@ type Action = {
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
+      ungroupTotal: undefined,
+      setUngroupTotal: (ungroupTotal: number | undefined) =>
+        set(() => ({ ungroupTotal })),
+
       destroyTasks: async () => {
         set(() => ({
           dummyTask: undefined,
@@ -57,12 +65,12 @@ export const useTaskStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("tasks")
-            .select("id, name, group_id, order");
+            .select("id, name, group_id, order, user_id");
           if (error) throw error;
 
           const tasksByGroup: Record<string, Task[]> = {};
           if (data) {
-            toTaskArray(data).forEach((task) => {
+            mapTaskResponseArray(data).forEach((task) => {
               const key = task.groupId ?? UNGROUPED_KEY;
               (tasksByGroup[key] ??= []).push(task);
             });
@@ -83,7 +91,10 @@ export const useTaskStore = create<State & Action>()(
             ? LexoRank.parse(firstOrder).genPrev().toString()
             : LexoRank.middle().toString();
 
-          const task: Task = { ...props, order };
+          const task: Task = {
+            ...props,
+            order,
+          };
 
           // insert in local
           set(({ tasksByGroup }) => {
@@ -94,7 +105,7 @@ export const useTaskStore = create<State & Action>()(
           // insert in db
           const { error } = await supabase
             .from("tasks")
-            .insert(toApiTask(task));
+            .insert(mapTaskRequest(task));
           if (error) throw error;
         } catch (error) {
           console.error(error);
@@ -295,3 +306,30 @@ function locateTask(
   }
   return null;
 }
+
+useTaskStore.subscribe(
+  (state) => state.tasksByGroup,
+  (tasksByGroup) => {
+    if (tasksByGroup === undefined) {
+      useTaskStore.getState().setUngroupTotal(undefined);
+    } else {
+      useTaskStore
+        .getState()
+        .setUngroupTotal(tasksByGroup[UNGROUPED_KEY]?.length ?? 0);
+    }
+  }
+);
+
+useTaskStore.subscribe(
+  (state) => state.ungroupTotal,
+  (ungroupTotal) => {
+    const groupTotal = useGroupStore.getState().groupTotal;
+    if (ungroupTotal !== undefined && groupTotal !== undefined) {
+      useAppStore.setState(() => ({
+        isEmpty: ungroupTotal === 0 && groupTotal === 0,
+      }));
+    } else {
+      useAppStore.setState({ isEmpty: undefined });
+    }
+  }
+);

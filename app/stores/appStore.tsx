@@ -1,28 +1,30 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
 import {
   Group,
   Task,
-  toApiTaskArray,
-  toApiTaskLogArray,
+  mapTaskRequestArray,
+  mapTaskLogRequestArray,
   TaskLog,
-} from "../repositories/types";
+  mapGroupRequestArray,
+} from "../types";
 import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./taskStore";
 import { useGroupStore } from "./groupStore";
 import { useTaskLogStore } from "./taskLogStore";
 import {
-  genGroupedTasks,
-  genTaskLogs,
-  genUngroupedTasks,
-} from "../repositories/data";
+  generateGroupedTasks,
+  generateTaskLogs,
+  generateTasks,
+} from "../utils/generateData";
 import { v4 as uuidv4 } from "uuid";
 
 type State = {
-  isDataEmpty: boolean | undefined;
+  isEmpty: boolean | undefined;
 };
 
 type Action = {
+  setIsEmpty: (isEmpty: boolean | undefined) => void;
   init: () => Promise<void>;
   reset: () => Promise<void>;
   start: (
@@ -34,10 +36,9 @@ type Action = {
 };
 
 export const useAppStore = create<State & Action>((set, get) => {
-  setDataEmpty();
-
   return {
-    isDataEmpty: undefined,
+    isEmpty: undefined,
+    setIsEmpty: (isEmpty) => set({ isEmpty }),
 
     init: async () => {
       try {
@@ -72,16 +73,18 @@ export const useAppStore = create<State & Action>((set, get) => {
       try {
         const { error: errorGroup } = await supabase
           .from("groups")
-          .insert(groups);
+          .insert(mapGroupRequestArray(groups));
         if (errorGroup) throw errorGroup;
 
         const { error: errorTasks } = await supabase
           .from("tasks")
-          .insert(toApiTaskArray(tasks));
+          .insert(mapTaskRequestArray(tasks));
         if (errorTasks) throw errorTasks;
 
         if (taskLogs)
-          await supabase.from("task_logs").insert(toApiTaskLogArray(taskLogs));
+          await supabase
+            .from("task_logs")
+            .insert(mapTaskLogRequestArray(taskLogs));
 
         get().init();
       } catch (error) {
@@ -91,13 +94,13 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
     startMock: async () => {
       const groups: Group[] = [];
-      const tasks: Task[] = genUngroupedTasks();
-      genGroupedTasks().forEach(([group, _tasks]) => {
+      const tasks: Task[] = generateTasks();
+      generateGroupedTasks().forEach(([group, _tasks]) => {
         groups.push(group);
         tasks.push(..._tasks);
       });
 
-      const taskLogs = genTaskLogs(
+      const taskLogs = generateTaskLogs(
         useTaskLogStore.getState().startDate,
         useTaskLogStore.getState().endDate,
         tasks
@@ -107,45 +110,3 @@ export const useAppStore = create<State & Action>((set, get) => {
     },
   };
 });
-
-async function countTask() {
-  const { count, error } = await supabase
-    .from("tasks")
-    .select("*", { count: "exact", head: true });
-  if (error) throw error;
-  return count ?? 0;
-}
-
-async function countGroup() {
-  const { count, error } = await supabase
-    .from("groups")
-    .select("*", { count: "exact", head: true });
-  if (error) throw error;
-  return count ?? 0;
-}
-
-async function setDataEmpty() {
-  if ((await countTask()) > 0) {
-    useAppStore.setState({ isDataEmpty: false });
-    return;
-  }
-  if ((await countGroup()) > 0) {
-    useAppStore.setState({ isDataEmpty: false });
-    return;
-  }
-  useAppStore.setState({ isDataEmpty: true });
-}
-
-useGroupStore.subscribe(
-  (state) => state.groups,
-  async () => {
-    setDataEmpty();
-  }
-);
-
-useTaskStore.subscribe(
-  (state) => state.tasksByGroup,
-  async () => {
-    setDataEmpty();
-  }
-);

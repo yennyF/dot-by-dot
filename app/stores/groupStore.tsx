@@ -1,6 +1,6 @@
-import { supabase } from "../repositories/db";
+import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Group } from "../repositories/types";
+import { Group, mapGroupRequest, mapGroupResponseArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";
@@ -12,13 +12,16 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
+import { useAppStore } from "./appStore";
 
 type State = {
   dummyGroup: Group | undefined;
   groups: Group[] | undefined;
+  groupTotal: number | undefined;
 };
 
 type Action = {
+  setTotal: (groupTotal: number | undefined) => void;
   destroyGroups: () => void;
   setDummyGroup: (group: Group | undefined) => void;
   fetchGroups: () => Promise<void>;
@@ -32,6 +35,9 @@ type Action = {
 export const useGroupStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
+      groupTotal: undefined,
+      setTotal: (groupTotal: number | undefined) => set(() => ({ groupTotal })),
+
       destroyGroups: async () => {
         set(() => ({ dummyGroup: undefined, groups: undefined }));
       },
@@ -45,12 +51,10 @@ export const useGroupStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("groups")
-            .select("id, name, order");
+            .select("id, name, order, user_id");
           if (error) throw error;
 
-          const groups = data ?? [];
-
-          set(() => ({ groups }));
+          set(() => ({ groups: mapGroupResponseArray(data ?? []) }));
         } catch (error) {
           console.error(error);
           throw error;
@@ -65,7 +69,10 @@ export const useGroupStore = create<State & Action>()(
             ? LexoRank.parse(firstOrder).genPrev().toString()
             : LexoRank.middle().toString();
 
-          const group: Group = { ...props, order };
+          const group: Group = {
+            ...props,
+            order,
+          };
 
           // Add group
           set(({ groups }) => {
@@ -80,7 +87,9 @@ export const useGroupStore = create<State & Action>()(
           });
 
           // insert in db;
-          const { error } = await supabase.from("groups").insert(group);
+          const { error } = await supabase
+            .from("groups")
+            .insert(mapGroupRequest(group));
           if (error) throw error;
         } catch (error) {
           console.error(error);
@@ -261,4 +270,25 @@ export const useGroupStore = create<State & Action>()(
       },
     }))
   )
+);
+
+useGroupStore.subscribe(
+  (state) => state.groups,
+  (groups) => {
+    useGroupStore.getState().setTotal(groups?.length);
+  }
+);
+
+useGroupStore.subscribe(
+  (state) => state.groupTotal,
+  (groupTotal) => {
+    const ungroupTotal = useTaskStore.getState().ungroupTotal;
+    if (ungroupTotal !== undefined && groupTotal !== undefined) {
+      useAppStore.setState(() => ({
+        isEmpty: ungroupTotal === 0 && groupTotal === 0,
+      }));
+    } else {
+      useAppStore.setState({ isEmpty: undefined });
+    }
+  }
 );

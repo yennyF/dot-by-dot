@@ -17,6 +17,7 @@
   --gray-9: #696B75;
   --green: #58c078;
   --green-5: rgba(88, 192, 120, 0.2);
+  --red: rgb(235, 87, 87);
 
   --width-name: 300px;
   --width-day: 45px;
@@ -50,10 +51,34 @@ body {
   @apply font-mono tracking-wide leading-relaxed;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: black !important; /* Adjust text color if needed */
+    background-color: transparent !important; /* For other browsers */
+}
+
 input {
   @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
 }
 
+.label-auth {
+  @apply mb-1 text-xs text-[var(--gray-9)];
+
+  .required {
+    @apply relative -top-0.5;
+  }
+}
+
+.valid-required {
+  @apply text-xs text-[var(--red)];
+}
+
+.valid-email, .valid-length {
+  @apply text-xs text-[var(--gray-9)] mt-1;
+}
 
 .page-main {
   @apply m-auto w-[88vw] max-w-[800] py-[100px]; 
