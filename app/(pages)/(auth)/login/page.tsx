@@ -8,6 +8,7 @@ import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 import { PasswordInputLogin } from "../PasswordInput";
 import { EmailInputLogin } from "../EmailInput";
 import { notifyUnexpectedError } from "@/app/components/Notification";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -81,9 +82,9 @@ export default function LoginPage() {
 
           <p className="mb-[30px]">
             Don&apos;t have an account?{" "}
-            <a href="/signUp" className="text-[var(--inverted)]">
+            <Link href="/signUp" className="text-[var(--inverted)]">
               Join here
-            </a>
+            </Link>
           </p>
 
           <form
