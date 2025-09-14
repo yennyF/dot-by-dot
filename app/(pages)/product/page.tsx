@@ -13,7 +13,7 @@ export default function ProductPage() {
     <>
       <AppHeader />
       <main className="page-main !max-w-none">
-        <section className="m-auto w-full max-w-[600] text-center">
+        <section className="m-auto w-full max-w-[600px] text-center">
           <h1 className="page-title-1 mb-[20px]">
             One habit at a time
             {/* Progress is made of small repeats */}
@@ -40,7 +40,7 @@ export default function ProductPage() {
         </section>
 
         <div
-          className="relative m-auto w-full max-w-[1000]"
+          className="relative m-auto w-full max-w-[1000px]"
           style={{ aspectRatio: "16 / 9" }}
         >
           <Image
@@ -52,7 +52,7 @@ export default function ProductPage() {
           />
         </div>
 
-        {/* <section className="m-auto max-w-[600] py-[100px] text-center">
+        {/* <section className="m-auto max-w-[600px] py-[100px] text-center">
           <h2 className="mb-[10px] text-xl font-bold">
             Progress is made of small repeats
           </h2>
