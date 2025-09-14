@@ -12,6 +12,7 @@ import {
   notifySuccessful,
   notifyUnexpectedError,
 } from "@/app/components/Notification";
+import Link from "next/link";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -102,9 +103,9 @@ export default function SignUpPage() {
 
           <p className="mb-[30px]">
             Already have an account?{" "}
-            <a href="/login" className="text-[var(--inverted)]">
+            <Link href="/login" className="text-[var(--inverted)]">
               Login
-            </a>
+            </Link>
           </p>
 
           <form
