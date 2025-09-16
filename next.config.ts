@@ -8,5 +8,5 @@ const nextConfig: NextConfig = {
   // distDir: 'dist',
   basePath: process.env.NODE_ENV === "production" ? "/dot-by-dot" : "",
 };
-
+console.log("process.env.NODE_ENV", process.env.NODE_ENV);
 export default nextConfig;
