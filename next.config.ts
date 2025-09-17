@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // Optional: Change the output directory `out` -> `dist`
   // distDir: 'dist',
   basePath: process.env.NODE_ENV === "production" ? "/dot-by-dot" : "",
+  assetPrefix: process.env.NODE_ENV === "production" ? "/dot-by-dot/" : "",
+  trailingSlash: true,
 };
-console.log("process.env.NODE_ENV", process.env.NODE_ENV);
 export default nextConfig;
