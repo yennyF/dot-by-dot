@@ -5,6 +5,8 @@ import Image from "next/image";
 import AppHeader from "../../components/AppHeader";
 import { useUserStore } from "../../stores/userStore";
 
+const basePath = process.env.NODE_ENV === "production" ? "/dot-by-dot" : "";
+
 export default function ProductPage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
@@ -44,7 +46,7 @@ export default function ProductPage() {
           style={{ aspectRatio: "16 / 9" }}
         >
           <Image
-            src="/preview.png"
+            src={`${basePath}/preview.png`}
             alt="App preview"
             priority={true}
             fill
