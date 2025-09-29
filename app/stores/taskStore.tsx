@@ -1,6 +1,6 @@
 import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Task, mapTaskRequest, mapTaskResponseArray } from "../types";
+import { ApiTask, Task, mapTaskRequest, mapTaskResponseArray } from "../types";
 import { immer } from "zustand/middleware/immer";
 import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
@@ -112,7 +112,7 @@ export const useTaskStore = create<State & Action>()(
           notifyCreateError();
         }
       },
-      updateTask: async (id: string, props: Pick<Task, "name">) => {
+      updateTask: async (id: string, props: Pick<ApiTask, "name">) => {
         try {
           // update in local
           set(({ tasksByGroup }) => {
@@ -143,7 +143,7 @@ export const useTaskStore = create<State & Action>()(
       ) => {
         if (beforeId === id) return;
 
-        let props: Pick<Task, "groupId" | "order"> | undefined;
+        let props: Pick<ApiTask, "group_id" | "order"> | undefined;
 
         try {
           set(({ tasksByGroup }) => {
@@ -174,7 +174,7 @@ export const useTaskStore = create<State & Action>()(
 
             // Update task
             props = {
-              groupId: groupId ?? undefined,
+              group_id: groupId ?? null,
               order: rank.toString(),
             };
             Object.assign(task, props);
@@ -199,7 +199,7 @@ export const useTaskStore = create<State & Action>()(
         groupId: string | null
       ) => {
         try {
-          let props: Pick<Task, "groupId" | "order"> | undefined;
+          let props: Pick<ApiTask, "group_id" | "order"> | undefined;
 
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
@@ -228,7 +228,7 @@ export const useTaskStore = create<State & Action>()(
                 ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
                 : LexoRank.parse(prev.order).genNext();
               props = {
-                groupId: groupId || undefined,
+                group_id: groupId || null,
                 order: rank.toString(),
               };
             } else {
@@ -242,7 +242,7 @@ export const useTaskStore = create<State & Action>()(
                 ? LexoRank.parse(prev.order).genNext()
                 : LexoRank.middle();
               props = {
-                groupId: groupId || undefined,
+                group_id: groupId || null,
                 order: rank.toString(),
               };
             }

@@ -1,6 +1,11 @@
 import { supabase } from "../supabase/server";
 import { create } from "zustand";
-import { Group, mapGroupRequest, mapGroupResponseArray } from "../types";
+import {
+  ApiGroup,
+  Group,
+  mapGroupRequest,
+  mapGroupResponseArray,
+} from "../types";
 import { immer } from "zustand/middleware/immer";
 import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";
@@ -96,7 +101,7 @@ export const useGroupStore = create<State & Action>()(
           notifyCreateError();
         }
       },
-      updateGroup: async (id: string, props: Pick<Group, "name">) => {
+      updateGroup: async (id: string, props: Pick<ApiGroup, "name">) => {
         try {
           set(({ groups }) => {
             if (!groups) return;
