@@ -66,28 +66,30 @@ function TaskListUngrouped() {
   return (
     <div>
       {dummyTask && <DummyTaskRow groupId={null} />}
-      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
+      {tasks?.map((task) => (
+        <Fragment key={task.id}>
+          <DropIndicatorTask groupId={null} beforeId={task.id} />
+          <TaskRow key={task.id} task={task} />
+        </Fragment>
+      ))}
+      <DropIndicatorTask groupId={null} />
     </div>
   );
 }
 
 function TaskListGrouped({ groupId }: { groupId: string }) {
-  const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[groupId]);
 
   return (
     <>
       <DummyTaskRow groupId={groupId} />
       {tasks?.map((task) => (
         <Fragment key={task.id}>
-          <DropIndicatorTask
-            groupId={task.groupId ?? null}
-            beforeId={task.id}
-          />
+          <DropIndicatorTask groupId={groupId} beforeId={task.id} />
           <TaskRow task={task} />
         </Fragment>
       ))}
-      <DropIndicatorTask groupId={groupId ?? null} />
+      <DropIndicatorTask groupId={groupId} />
     </>
   );
 }
@@ -102,7 +104,9 @@ function DummyTaskRow({ groupId }: { groupId: string | null }) {
   );
 
   useEffect(() => {
-    topRef.current?.scrollIntoView({ block: "center" });
+    if (dummyTask) {
+      topRef.current?.scrollIntoView({ block: "center" });
+    }
   }, [dummyTask]);
 
   return (
