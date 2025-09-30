@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { RefObject } from "react";
 
 interface DropIndicatorProps {
-  ref?: RefObject<HTMLDivElement> | null;
+  ref?: RefObject<HTMLDivElement | null>;
   groupId: string | null;
   beforeId?: string;
   afterId?: string;

@@ -12,15 +12,14 @@ import { useScrollStore } from "@/app/stores/scrollStore";
 
 export default function HeaderRow() {
   const headerRowRef = useScrollStore((s) => s.headerRowRef);
+  const topGroupRef = useRef<HTMLDivElement>(null);
 
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
-  const topRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (dummyGroup) {
-      topRef.current?.scrollIntoView({ block: "center" });
+      topGroupRef.current?.scrollIntoView({ block: "center" });
     }
   }, [dummyGroup]);
 
@@ -28,25 +27,27 @@ export default function HeaderRow() {
     <SortableContainer className="sticky right-0">
       <div
         ref={headerRowRef}
-        className="flex w-name shrink-0 flex-col gap-10 bg-[var(--background)]"
+        className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
       >
-        <TaskListUngrouped />
+        <div className="app-group">
+          <DummyTask groupId={null} />
+          <TaskList groupId={null} />
+        </div>
 
         {dummyGroup && (
-          <div>
-            <DropIndicatorGroup ref={topRef} />
+          <div className="app-group" ref={topGroupRef}>
+            <DropIndicatorGroup />
             <GroupRow group={dummyGroup} isDummy={true} />
           </div>
         )}
 
         {groups?.map((group) => (
-          <Fragment key={group.id}>
-            <div>
-              <DropIndicatorGroup beforeId={group.id} />
-              <GroupRow group={group} />
-              <TaskListGrouped groupId={group.id} />
-            </div>
-          </Fragment>
+          <div className="app-group" key={group.id}>
+            <DropIndicatorGroup beforeId={group.id} />
+            <GroupRow group={group} />
+            <DummyTask groupId={group.id} />
+            <TaskList groupId={group.id} />
+          </div>
         ))}
 
         <DropIndicatorGroup />
@@ -55,72 +56,51 @@ export default function HeaderRow() {
   );
 }
 
-function TaskListUngrouped() {
-  const dummyTask = useTaskStore((s) =>
-    s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
-  );
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
+function DummyTask({ groupId }: { groupId: string | null }) {
+  const topTaskRef = useRef<HTMLDivElement>(null);
 
-  if (!dummyTask && (!tasks || tasks.length === 0)) return null;
+  const dummyTask = useTaskStore((s) => {
+    if (s.dummyTask) {
+      if (groupId === null || s.dummyTask.groupId === groupId) {
+        return s.dummyTask;
+      }
+    }
+    return null;
+  });
 
-  return (
-    <div>
-      {dummyTask && <DummyTaskRow groupId={null} />}
-      {tasks?.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask groupId={null} beforeId={task.id} />
-          <TaskRow key={task.id} task={task} />
-        </Fragment>
-      ))}
-      <DropIndicatorTask groupId={null} />
-    </div>
-  );
-}
+  useEffect(() => {
+    if (dummyTask) {
+      topTaskRef.current?.scrollIntoView({ block: "center" });
+    }
+  }, [dummyTask]);
 
-function TaskListGrouped({ groupId }: { groupId: string }) {
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[groupId]);
+  if (!dummyTask) return null;
 
   return (
     <>
-      <DummyTaskRow groupId={groupId} />
-      {tasks?.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask groupId={groupId} beforeId={task.id} />
-          <TaskRow task={task} />
-        </Fragment>
-      ))}
-      <DropIndicatorTask groupId={groupId} />
+      <DropIndicatorTask
+        ref={topTaskRef}
+        groupId={groupId}
+        beforeId={dummyTask.id}
+      />
+      <TaskRow task={dummyTask} isDummy={true} />
     </>
   );
 }
 
-function DummyTaskRow({ groupId }: { groupId: string | null }) {
-  const topRef = useRef<HTMLDivElement>(null);
-
-  const dummyTask = useTaskStore((s) =>
-    s.dummyTask && s.dummyTask.groupId === (groupId || undefined)
-      ? s.dummyTask
-      : null
-  );
-
-  useEffect(() => {
-    if (dummyTask) {
-      topRef.current?.scrollIntoView({ block: "center" });
-    }
-  }, [dummyTask]);
+function TaskList({ groupId }: { groupId: string | null }) {
+  const key = groupId ?? UNGROUPED_KEY;
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
   return (
     <>
-      <div ref={topRef} />
-      {dummyTask && (
-        <>
-          <DropIndicatorTask
-            groupId={groupId ?? null}
-            beforeId={dummyTask.id}
-          />
-          <TaskRow task={dummyTask} isDummy={true} />
-        </>
-      )}
+      {tasks?.map((task) => (
+        <Fragment key={task.id}>
+          <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
+          <TaskRow key={task.id} task={task} />
+        </Fragment>
+      ))}
+      <DropIndicatorTask groupId={groupId} />
     </>
   );
 }

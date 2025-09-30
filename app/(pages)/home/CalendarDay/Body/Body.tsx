@@ -10,49 +10,47 @@ export default function Body() {
   const groups = useGroupStore((s) => s.groups);
 
   return (
-    <div className="app-Body flex flex-col gap-10">
-      <TaskListUngrouped />
+    <div className="app-Body flex flex-col gap-5">
+      <div className="app-group">
+        <DummyTask groupId={null} />
+        <TaskList groupId={null} />
+      </div>
 
-      {dummyGroup && <GroupRow group={dummyGroup} />}
+      {dummyGroup && (
+        <div className="app-group">
+          <GroupRow group={dummyGroup} />
+        </div>
+      )}
 
       {groups?.map((group) => (
-        <div key={group.id} data-name={group.name}>
+        <div className="app-group" key={group.id} data-name={group.name}>
           <GroupRow group={group} />
-          <TaskListGrouped groupId={group.id} />
+          <DummyTask groupId={group.id} />
+          <TaskList groupId={group.id} />
         </div>
       ))}
     </div>
   );
 }
 
-function TaskListUngrouped() {
-  const dummyTask = useTaskStore((s) =>
-    s.dummyTask && s.dummyTask.groupId === undefined ? s.dummyTask : null
-  );
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[UNGROUPED_KEY]);
+function DummyTask({ groupId }: { groupId: string | null }) {
+  const dummyTask = useTaskStore((s) => {
+    if (s.dummyTask) {
+      if (groupId === null || s.dummyTask.groupId === groupId) {
+        return s.dummyTask;
+      }
+    }
+    return null;
+  });
 
-  if (!dummyTask && (!tasks || tasks.length === 0)) return null;
+  if (!dummyTask) return null;
 
-  return (
-    <div>
-      {dummyTask && <TaskRow task={dummyTask} />}
-      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
-    </div>
-  );
+  return <TaskRow task={dummyTask} />;
 }
 
-function TaskListGrouped({ groupId }: { groupId: string | null }) {
+function TaskList({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
-  const dummyTask = useTaskStore((s) =>
-    s.dummyTask && s.dummyTask.groupId === groupId ? s.dummyTask : null
-  );
-
-  return (
-    <>
-      {dummyTask && <TaskRow task={dummyTask} />}
-      {tasks?.map((task) => <TaskRow key={task.id} task={task} />)}
-    </>
-  );
+  return <>{tasks?.map((task) => <TaskRow key={task.id} task={task} />)}</>;
 }

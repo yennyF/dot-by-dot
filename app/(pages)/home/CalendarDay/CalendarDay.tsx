@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { ShadowBottom, ShadowLeft, ShadowRight, ShadowTop } from "./shadows";
 import HeaderRow from "./HeaderRow/HeaderRow";
 import Body from "./Body/Body";
@@ -12,10 +11,6 @@ import DateRow from "./HeaderCol/DateRow";
 export default function CalendarDay() {
   const contentRef = useScrollStore((s) => s.contentRef);
   const headerColRef = useScrollStore((s) => s.headerColRef);
-
-  useEffect(() => {
-    console.log("CalendarDay rendered");
-  });
 
   return (
     <HorizontalDragScroll
