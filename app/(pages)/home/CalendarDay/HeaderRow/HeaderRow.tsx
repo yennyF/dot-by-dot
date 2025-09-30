@@ -60,10 +60,8 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   const topTaskRef = useRef<HTMLDivElement>(null);
 
   const dummyTask = useTaskStore((s) => {
-    if (s.dummyTask) {
-      if (groupId === null || s.dummyTask.groupId === groupId) {
-        return s.dummyTask;
-      }
+    if (groupId === null || s.dummyTask?.groupId === groupId) {
+      return s.dummyTask;
     }
     return null;
   });

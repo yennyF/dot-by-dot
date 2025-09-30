@@ -35,19 +35,9 @@ export default function GroupCreatePopover({
 
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
-  const groups = useGroupStore((s) => s.groups);
   const insertGroup = useGroupStore((s) => s.insertGroup);
 
   const [name, setName] = useState("");
-  const [isDuplicated, setIsDuplicated] = useState(false);
-
-  useEffect(() => {
-    if (groups?.some((h) => h.name === name)) {
-      setIsDuplicated(true);
-    } else {
-      setIsDuplicated(false);
-    }
-  }, [name, groups]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -80,9 +70,6 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
           onChange={handleNameChange}
           placeholder="New group"
         ></input>
-        <div className="warning-xs">
-          {isDuplicated ? "There is a group with the same name" : "\u00A0"}
-        </div>
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>

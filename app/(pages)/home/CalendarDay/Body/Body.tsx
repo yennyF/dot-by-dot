@@ -35,10 +35,8 @@ export default function Body() {
 
 function DummyTask({ groupId }: { groupId: string | null }) {
   const dummyTask = useTaskStore((s) => {
-    if (s.dummyTask) {
-      if (groupId === null || s.dummyTask.groupId === groupId) {
-        return s.dummyTask;
-      }
+    if (groupId === null || s.dummyTask?.groupId === groupId) {
+      return s.dummyTask;
     }
     return null;
   });

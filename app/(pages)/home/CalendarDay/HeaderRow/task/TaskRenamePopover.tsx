@@ -40,26 +40,9 @@ interface ContentProps {
 }
 
 function Content({ setOpen, task }: ContentProps) {
-  const tasks = useTaskStore(
-    (s) => s.tasksByGroup?.[task.groupId ?? UNGROUPED_KEY]
-  );
   const updateTask = useTaskStore((s) => s.updateTask);
 
   const [name, setName] = useState(task.name);
-  const [isDuplicated, setIsDuplicated] = useState(false);
-
-  useEffect(() => {
-    if (!tasks) return;
-    if (
-      tasks.some(
-        (t) => t.id !== task.id && t.groupId === task.groupId && t.name === name
-      )
-    ) {
-      setIsDuplicated(true);
-    } else {
-      setIsDuplicated(false);
-    }
-  }, [task, name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -91,13 +74,6 @@ function Content({ setOpen, task }: ContentProps) {
           onChange={handleNameChange}
           placeholder={task.name}
         ></input>
-        <div className="warning-xs">
-          {isDuplicated
-            ? task.groupId !== undefined
-              ? "There is a task with the same name in this group"
-              : "There is a task with the same name"
-            : ""}
-        </div>
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>
