@@ -17,11 +17,14 @@ function setMoreProps<T>(
 }
 
 export function generateTasks(): Task[] {
-  return setMoreProps([
-    { name: "Check my emails" },
-    { name: "Read some pages of a book" },
-    { name: "No smoking" },
-  ]);
+  return setMoreProps(
+    [
+      { name: "Check my emails" },
+      { name: "Read some pages of a book" },
+      { name: "No smoking" },
+    ],
+    { groupId: null }
+  ) as Task[];
 }
 
 export function generateGroupedTasks(): [Group, Task[]][] {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Task } from "@/app/types";
-import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
+import { useTaskStore } from "@/app/stores/taskStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
