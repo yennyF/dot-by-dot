@@ -18,9 +18,7 @@ export function PasswordInputSignUp({ id, onValidChange }: PasswordInputProps) {
   return (
     <div className="w-full">
       <label htmlFor={id} className="label-auth flex justify-between">
-        <div>
-          Password <span className="required">*</span>
-        </div>
+        Password
         {!isValidRequired && <div className="valid-required">Required</div>}
       </label>
       <div className="relative">
