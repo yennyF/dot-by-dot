@@ -150,7 +150,7 @@ export const useTaskStore = create<State & Action>()(
             if (!tasksByGroup) return;
 
             const key = groupId ?? UNGROUPED_KEY;
-            if (!tasksByGroup[key]) throw Error();
+            if (!tasksByGroup[key]) tasksByGroup[key] = [];
 
             // Remove from current position
             const loc = locateTask(id, tasksByGroup);
@@ -205,7 +205,7 @@ export const useTaskStore = create<State & Action>()(
             if (!tasksByGroup) return;
 
             const key = groupId ?? UNGROUPED_KEY;
-            if (!tasksByGroup[key]) throw Error();
+            if (!tasksByGroup[key]) tasksByGroup[key] = [];
 
             // Remove from current position
             const loc = locateTask(id, tasksByGroup);
@@ -251,14 +251,14 @@ export const useTaskStore = create<State & Action>()(
             Object.assign(task, props);
           });
 
-          if (!props) throw Error();
+          // if (!props) throw Error();
 
-          // update in db
-          const { error } = await supabase
-            .from("tasks")
-            .update(props)
-            .eq("id", id);
-          if (error) throw error;
+          // // update in db
+          // const { error } = await supabase
+          //   .from("tasks")
+          //   .update(props)
+          //   .eq("id", id);
+          // if (error) throw error;
         } catch (error) {
           console.error(error);
           notifyMoveError();

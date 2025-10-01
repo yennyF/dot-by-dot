@@ -17,9 +17,7 @@ export function EmailInputSignUp({ id, onValidChange }: EmailInputProps) {
   return (
     <div className="w-full">
       <label htmlFor={id} className="label-auth flex justify-between">
-        <div>
-          Email <span className="required">*</span>
-        </div>
+        Email
         {!isValidRequired && <div className="valid-required">Required</div>}
       </label>
       <input

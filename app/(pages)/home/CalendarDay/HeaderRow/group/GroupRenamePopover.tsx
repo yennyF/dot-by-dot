@@ -40,20 +40,9 @@ interface ContentProps {
 }
 
 function Content({ setOpen, group }: ContentProps) {
-  const groups = useGroupStore((s) => s.groups);
   const updateGroup = useGroupStore((s) => s.updateGroup);
 
   const [name, setNameInput] = useState(group.name);
-  const [isDuplicated, setIsDuplicated] = useState(false);
-
-  useEffect(() => {
-    if (!groups) return;
-    if (groups.some((h) => h.id !== group.id && h.name === name)) {
-      setIsDuplicated(true);
-    } else {
-      setIsDuplicated(false);
-    }
-  }, [group, name, groups]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNameInput(event.target.value);
@@ -85,9 +74,6 @@ function Content({ setOpen, group }: ContentProps) {
           onChange={handleNameChange}
           placeholder={group.name}
         ></input>
-        <div className="warning-xs">
-          {isDuplicated ? "There is a group with the same name" : "\u00A0"}
-        </div>
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>

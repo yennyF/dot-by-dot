@@ -15,9 +15,7 @@ export default function NameInput({ id, onValidChange }: TextInputProps) {
   return (
     <div className="w-full">
       <label htmlFor={id} className="label-auth flex justify-between">
-        <div>
-          Name <span className="required">*</span>
-        </div>
+        Name
         {!isValidRequired && <div className="valid-required">Required</div>}
       </label>
       <input

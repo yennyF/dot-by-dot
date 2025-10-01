@@ -33,7 +33,12 @@ export default function CreateDropdown({
           <DropdownMenu.Item
             className="dropdown-item"
             onClick={async () => {
-              setDummyTask({ id: uuidv4(), name: "(No name)", order: "" });
+              setDummyTask({
+                id: uuidv4(),
+                name: "(No name)",
+                order: "",
+                groupId: null,
+              });
             }}
           >
             Task

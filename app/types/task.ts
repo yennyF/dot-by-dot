@@ -3,7 +3,7 @@ import { useUserStore } from "../stores/userStore";
 export type Task = {
   id: string;
   name: string;
-  groupId?: string;
+  groupId: string | null;
   order: string;
 };
 
@@ -18,7 +18,7 @@ export type ApiTask = {
 export function mapTaskResponse(data: ApiTask): Task {
   return {
     id: data.id,
-    groupId: data.group_id || undefined,
+    groupId: data.group_id,
     name: data.name,
     order: data.order,
   };
@@ -27,7 +27,7 @@ export function mapTaskResponse(data: ApiTask): Task {
 export function mapTaskRequest(task: Task): ApiTask {
   return {
     id: task.id,
-    group_id: task.groupId || null,
+    group_id: task.groupId,
     name: task.name,
     order: task.order,
     user_id: useUserStore.getState().user?.id || "",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
+import { useTaskStore } from "@/app/stores/taskStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
@@ -35,21 +35,9 @@ export default function TaskCreatePopover({
 
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
   const dummyTask = useTaskStore((s) => s.dummyTask);
-  const tasks = useTaskStore(
-    (s) => s.tasksByGroup?.[dummyTask?.groupId ?? UNGROUPED_KEY]
-  );
   const insertTask = useTaskStore((s) => s.insertTask);
 
   const [name, setName] = useState("");
-  const [isDuplicated, setIsDuplicated] = useState(false);
-
-  useEffect(() => {
-    if (tasks?.some((h) => h.name === name)) {
-      setIsDuplicated(true);
-    } else {
-      setIsDuplicated(false);
-    }
-  }, [name, tasks]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -82,13 +70,6 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
           onChange={handleNameChange}
           placeholder="New task"
         ></input>
-        <div className="warning-xs">
-          {isDuplicated
-            ? dummyTask?.groupId !== undefined
-              ? "There is a task with the same name in this group"
-              : "There is a task with the same name"
-            : ""}
-        </div>
       </fieldset>
       <div className="flex justify-center gap-3">
         <Popover.Close>
