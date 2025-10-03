@@ -7,12 +7,14 @@ import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 import NameInput from "../NameInput";
 import { EmailInputSignUp } from "../EmailInput";
 import Link from "next/link";
-import OTPSection from "../login/OTPSection";
+import OTPSection from "../login/OTPForm";
 
 export default function SignUpPage() {
+  const [email, setEmail] = useState<string | null>(null);
+  const [showOPT, setShowOPT] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
 
   const nonValidArray = useRef<Set<string>>(new Set());
 
@@ -63,6 +65,7 @@ export default function SignUpPage() {
       } else {
         setError(null);
         setEmail(email);
+        setShowOPT(true);
       }
     } catch (error) {
       console.error(error);
@@ -94,11 +97,24 @@ export default function SignUpPage() {
             autoComplete="off"
             className="flex flex-col items-center gap-[15px]"
           >
-            <NameInput id="name" onValidChange={handleValidChange} />
-            <EmailInputSignUp id="email" onValidChange={handleValidChange} />
+            <NameInput
+              id="name"
+              onValidChange={handleValidChange}
+              onValueChange={() => {
+                setShowOPT(false);
+              }}
+            />
+            <EmailInputSignUp
+              id="email"
+              value={email || undefined}
+              onValidChange={handleValidChange}
+              onValueChange={() => {
+                setShowOPT(false);
+              }}
+            />
           </form>
 
-          {!email ? (
+          {!showOPT || !email ? (
             <>
               <button
                 form="form-signUp"

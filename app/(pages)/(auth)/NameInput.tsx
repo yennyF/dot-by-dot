@@ -3,9 +3,14 @@ import { useEffect, useState } from "react";
 interface TextInputProps {
   id: string;
   onValidChange?: (valid: boolean, id: string) => void;
+  onValueChange?: (value: string) => void;
 }
 
-export default function NameInput({ id, onValidChange }: TextInputProps) {
+export default function NameInput({
+  id,
+  onValidChange,
+  onValueChange,
+}: TextInputProps) {
   const [isValidRequired, setIsValidRequired] = useState(false);
 
   useEffect(() => {
@@ -27,6 +32,7 @@ export default function NameInput({ id, onValidChange }: TextInputProps) {
         onChange={(event) => {
           const value = event.target.value;
           setIsValidRequired(value.length > 0);
+          onValueChange?.(value);
         }}
       />
     </div>

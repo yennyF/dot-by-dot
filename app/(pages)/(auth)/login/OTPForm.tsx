@@ -6,7 +6,7 @@ import { supabase } from "../../../supabase/server";
 import { unstable_OneTimePasswordField as OneTimePasswordField } from "radix-ui";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 
-export default function OTPSection({ email }: { email: string }) {
+export default function OTPForm({ email }: { email: string }) {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -47,16 +47,14 @@ export default function OTPSection({ email }: { email: string }) {
   }
 
   return (
-    <section className="m-auto mt-[20px] w-[320px]">
-      {/* <h1 className="mb-[15px] text-2xl font-bold">One-Time-Password</h1> */}
-
-      <p className="mb-[25px] text-xs text-[var(--gray-9)]">
-        {/* Enter the code sent to <b className="font-bold">{email}</b> */}
-        This account requires email verification. Please check your inbox and
-        paste in the verification code.
-      </p>
-
+    <>
       <form id="form-opt" onSubmit={handleSubmit} className="w-fit">
+        <p className="my-[25px] text-xs text-[var(--gray-9)]">
+          {/* Enter the code sent to <b className="font-bold">{email}</b> */}
+          This account requires email verification. Please check your inbox and
+          paste in the verification code.
+        </p>
+
         <label className="label-auth">Verification code</label>
         <OneTimePasswordField.Root
           name="otp"
@@ -89,6 +87,6 @@ export default function OTPSection({ email }: { email: string }) {
           {error}
         </div>
       )}
-    </section>
+    </>
   );
 }

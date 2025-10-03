@@ -6,12 +6,14 @@ import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 import { EmailInputLogin } from "../EmailInput";
 import Link from "next/link";
-import OTPSection from "./OTPSection";
+import OTPForm from "./OTPForm";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState<string | null>(null);
+  const [showOPT, setShowOPT] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
 
   const nonValidArray = useRef<Set<string>>(new Set());
 
@@ -58,6 +60,7 @@ export default function LoginPage() {
       } else {
         setError(null);
         setEmail(email);
+        setShowOPT(true);
       }
     } catch (error) {
       console.error(error);
@@ -94,12 +97,12 @@ export default function LoginPage() {
               id="email"
               onValidChange={handleValidChange}
               onValueChange={() => {
-                setEmail(null);
+                setShowOPT(false);
               }}
             />
           </form>
 
-          {!email ? (
+          {!showOPT || !email ? (
             <>
               <button
                 form="form-login"
@@ -120,7 +123,7 @@ export default function LoginPage() {
               )}
             </>
           ) : (
-            <OTPSection email={email} />
+            <OTPForm email={email} />
           )}
         </section>
       </main>

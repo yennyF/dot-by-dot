@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 
 interface EmailInputProps {
   id: string;
+  value?: string;
   onValidChange?: (valid: boolean, id: string) => void;
   onValueChange?: (value: string) => void;
 }
 
 export function EmailInputSignUp({
   id,
+  value,
   onValidChange,
   onValueChange,
 }: EmailInputProps) {
@@ -28,6 +30,7 @@ export function EmailInputSignUp({
       <input
         id={id}
         name={id}
+        value={value}
         type="email"
         autoComplete=""
         className="w-full bg-white"
@@ -49,6 +52,7 @@ export function EmailInputSignUp({
 
 export function EmailInputLogin({
   id,
+  value,
   onValidChange,
   onValueChange,
 }: EmailInputProps) {
@@ -67,6 +71,7 @@ export function EmailInputLogin({
       <input
         id={id}
         name={id}
+        value={value}
         type="email"
         autoComplete=""
         className="w-full bg-white"

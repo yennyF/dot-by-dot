@@ -65,7 +65,7 @@ input {
 }
 
 .label-auth {
-  @apply mb-1 text-xs text-[var(--gray-9)];
+  @apply mb-1 text-xs text-[var(--gray-9)] flex;
 
   .required {
     @apply relative -top-0.5;
