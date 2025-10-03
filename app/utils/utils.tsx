@@ -22,8 +22,3 @@ export function getPercentage(n: number, total: number) {
   if (n === 0) return 0;
   return Number((n / total).toFixed(2));
 }
-
-export const validateEmail = (email: string) => {
-  const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-  return regex.test(email);
-};

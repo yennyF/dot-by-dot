@@ -1,87 +1,34 @@
-import { validateEmail } from "@/app/utils/utils";
-import { useEffect, useState } from "react";
-
 interface EmailInputProps {
   id: string;
   value?: string;
-  onValidChange?: (valid: boolean, id: string) => void;
   onValueChange?: (value: string) => void;
+  onValid?: (valid: boolean) => void;
 }
 
-export function EmailInputSignUp({
+export default function EmailInput({
   id,
   value,
-  onValidChange,
   onValueChange,
+  onValid,
 }: EmailInputProps) {
-  const [isValidRequired, setIsValidRequired] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-
-  useEffect(() => {
-    onValidChange?.(isValidRequired && isValidEmail, id);
-  }, [isValidRequired, isValidEmail, id, onValidChange]);
-
   return (
-    <div className="w-full">
-      <label htmlFor={id} className="label-auth flex justify-between">
-        Email
-        {!isValidRequired && <div className="valid-required">Required</div>}
-      </label>
-      <input
-        id={id}
-        name={id}
-        value={value}
-        type="email"
-        autoComplete=""
-        className="w-full bg-white"
-        onChange={(event) => {
-          const value = event.target.value;
-          setIsValidRequired(value.length > 0);
-          setIsValidEmail(true);
-          onValueChange?.(value);
-        }}
-        onBlur={(event) => {
-          const value = event.target.value;
-          setIsValidEmail(value.length === 0 || validateEmail(value));
-        }}
-      />
-      {!isValidEmail && <div className="valid-email">Email is not valid</div>}
-    </div>
+    <input
+      id={id}
+      name={id}
+      value={value}
+      type="email"
+      autoComplete=""
+      className="w-full bg-white"
+      onChange={(event) => {
+        const value = event.target.value;
+        onValueChange?.(value);
+        onValid?.(value.length === 0 || validateEmail(value));
+      }}
+    />
   );
 }
 
-export function EmailInputLogin({
-  id,
-  value,
-  onValidChange,
-  onValueChange,
-}: EmailInputProps) {
-  const [isValidRequired, setIsValidRequired] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-
-  useEffect(() => {
-    onValidChange?.(isValidRequired && isValidEmail, id);
-  }, [isValidRequired, isValidEmail, id, onValidChange]);
-
-  return (
-    <div className="w-full">
-      <label htmlFor={id} className="label-auth">
-        Email
-      </label>
-      <input
-        id={id}
-        name={id}
-        value={value}
-        type="email"
-        autoComplete=""
-        className="w-full bg-white"
-        onChange={(event) => {
-          const value = event.target.value;
-          setIsValidRequired(value.length > 0);
-          setIsValidEmail(value.length === 0 || validateEmail(value));
-          onValueChange?.(value);
-        }}
-      />
-    </div>
-  );
-}
+const validateEmail = (email: string) => {
+  const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+  return regex.test(email);
+};

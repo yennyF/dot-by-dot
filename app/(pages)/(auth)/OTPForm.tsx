@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../../supabase/server";
+import { supabase } from "../../supabase/server";
 import { unstable_OneTimePasswordField as OneTimePasswordField } from "radix-ui";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
 
@@ -11,31 +11,30 @@ export default function OTPForm({ email }: { email: string }) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState<string>("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    const opt = formData.get("opt");
-
-    if (!opt || typeof opt !== "string" || opt.length !== 6) {
-      setError("Invalid data");
-      return;
-    }
-
     try {
       setIsLoading(true);
 
+      if (code.length !== 6) {
+        setError("Invalid code");
+        return;
+      }
+
       const { error } = await supabase.auth.verifyOtp({
         email,
-        token: opt,
+        token: code,
         type: "email",
       });
 
       if (error) {
-        console.error(error);
-        setError("Your login code was incorrect. Please try again.");
+        console.log(error.status, error.code, error.message);
+        setError("Your login code was incorrect. Please try again");
       } else {
+        setError(null);
         router.push("/home");
       }
     } catch (error) {
@@ -50,7 +49,6 @@ export default function OTPForm({ email }: { email: string }) {
     <>
       <form id="form-opt" onSubmit={handleSubmit} className="w-fit">
         <p className="my-[25px] text-xs text-[var(--gray-9)]">
-          {/* Enter the code sent to <b className="font-bold">{email}</b> */}
           This account requires email verification. Please check your inbox and
           paste in the verification code.
         </p>
@@ -58,7 +56,12 @@ export default function OTPForm({ email }: { email: string }) {
         <label className="label-auth">Verification code</label>
         <OneTimePasswordField.Root
           name="otp"
+          form="form-opt"
+          type="text"
           className="flex flex-nowrap gap-2"
+          onValueChange={(value) => {
+            setCode(value);
+          }}
         >
           {Array.from({ length: 6 }).map((_, i) => (
             <OneTimePasswordField.Input

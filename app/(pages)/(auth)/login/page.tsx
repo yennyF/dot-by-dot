@@ -4,59 +4,57 @@ import { FormEvent, useRef, useState } from "react";
 import { supabase } from "../../../supabase/server";
 import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
-import { EmailInputLogin } from "../EmailInput";
+import EmailInput from "../EmailInput";
 import Link from "next/link";
-import OTPForm from "./OTPForm";
+import OTPForm from "../OTPForm";
+import { useUserStore } from "@/app/stores/userStore";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState<string | null>(null);
-  const [showOPT, setShowOPT] = useState(false);
+  const defaultEmail = useUserStore((state) => state.email);
+
+  const [email, setEmail] = useState<string>(defaultEmail || "");
+  const [showOPT, setShowOPT] = useState(email.length > 0);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const nonValidArray = useRef<Set<string>>(new Set());
-
-  function handleValidChange(isValid: boolean, id: string) {
-    if (isValid) {
-      nonValidArray.current.delete(id);
-    } else {
-      nonValidArray.current.add(id);
-    }
-  }
+  const validEmail = useRef(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (nonValidArray.current.size > 0) {
-      setError("Missing or invalid data");
-      return;
-    }
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-
-    if (typeof email !== "string") {
-      setError("Invalid data");
-      return;
-    }
-
     try {
       setIsLoading(true);
+      const formData = new FormData(event.currentTarget);
+      const email = formData.get("email");
+
+      if (
+        typeof email !== "string" ||
+        email.length === 0 ||
+        !validEmail.current
+      ) {
+        setError("Invalid email address");
+        return;
+      }
 
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: undefined, // this is key! don't set redirect
         },
       });
 
       if (error) {
-        console.error(error.message);
-        setError(
-          "We couldn’t log you in. Please try again with a different email."
-        );
+        console.log(error.status, error.code, error.message);
+        if (error.status === 429) {
+          setError(
+            "Too many login attempts. Please wait a minute before trying again"
+          );
+        } else {
+          setError(
+            "We couldn’t log you in. Please try again with a different email"
+          );
+        }
       } else {
         setError(null);
         setEmail(email);
@@ -93,16 +91,25 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-[15px]"
           >
-            <EmailInputLogin
-              id="email"
-              onValidChange={handleValidChange}
-              onValueChange={() => {
-                setShowOPT(false);
-              }}
-            />
+            <div className="w-full">
+              <label htmlFor={"email"} className="label-auth">
+                Email
+              </label>
+              <EmailInput
+                id="email"
+                value={email}
+                onValueChange={(value) => {
+                  setEmail(value);
+                  setShowOPT(false);
+                }}
+                onValid={(valid) => {
+                  validEmail.current = valid;
+                }}
+              />
+            </div>
           </form>
 
-          {!showOPT || !email ? (
+          {!showOPT ? (
             <>
               <button
                 form="form-login"
