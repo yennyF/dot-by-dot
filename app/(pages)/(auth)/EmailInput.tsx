@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 interface EmailInputProps {
   id: string;
   onValidChange?: (valid: boolean, id: string) => void;
+  onValueChange?: (value: string) => void;
 }
 
-export function EmailInputSignUp({ id, onValidChange }: EmailInputProps) {
+export function EmailInputSignUp({
+  id,
+  onValidChange,
+  onValueChange,
+}: EmailInputProps) {
   const [isValidRequired, setIsValidRequired] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
 
@@ -30,6 +35,7 @@ export function EmailInputSignUp({ id, onValidChange }: EmailInputProps) {
           const value = event.target.value;
           setIsValidRequired(value.length > 0);
           setIsValidEmail(true);
+          onValueChange?.(value);
         }}
         onBlur={(event) => {
           const value = event.target.value;
@@ -41,7 +47,11 @@ export function EmailInputSignUp({ id, onValidChange }: EmailInputProps) {
   );
 }
 
-export function EmailInputLogin({ id, onValidChange }: EmailInputProps) {
+export function EmailInputLogin({
+  id,
+  onValidChange,
+  onValueChange,
+}: EmailInputProps) {
   const [isValidRequired, setIsValidRequired] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
 
@@ -64,6 +74,7 @@ export function EmailInputLogin({ id, onValidChange }: EmailInputProps) {
           const value = event.target.value;
           setIsValidRequired(value.length > 0);
           setIsValidEmail(value.length === 0 || validateEmail(value));
+          onValueChange?.(value);
         }}
       />
     </div>

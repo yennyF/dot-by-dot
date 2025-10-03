@@ -1,20 +1,18 @@
 "use client";
 
 import { FormEvent, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../../supabase/server";
 import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
-import { PasswordInputLogin } from "../PasswordInput";
 import { EmailInputLogin } from "../EmailInput";
-import { notifyUnexpectedError } from "@/app/components/Notification";
 import Link from "next/link";
+import OTPSection from "./OTPSection";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+
   const nonValidArray = useRef<Set<string>>(new Set());
 
   function handleValidChange(isValid: boolean, id: string) {
@@ -35,9 +33,8 @@ export default function LoginPage() {
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
-    const password = formData.get("password");
 
-    if (typeof email !== "string" || typeof password !== "string") {
+    if (typeof email !== "string") {
       setError("Invalid data");
       return;
     }
@@ -45,25 +42,26 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
 
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: undefined, // this is key! don't set redirect
+        },
       });
 
       if (error) {
         console.error(error.message);
         setError(
-          "We couldn’t log you in. Please try again with a different email or password."
+          "We couldn’t log you in. Please try again with a different email."
         );
-      } else if (data.user) {
-        setError(null);
-        router.push("/home");
       } else {
-        setError("Something unexpected happened. Please try again");
+        setError(null);
+        setEmail(email);
       }
     } catch (error) {
       console.error(error);
-      notifyUnexpectedError();
+      setError("Something unexpected happened. Please try again");
     } finally {
       setIsLoading(false);
     }
@@ -92,29 +90,37 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-[15px]"
           >
-            <EmailInputLogin id="email" onValidChange={handleValidChange} />
-            <PasswordInputLogin
-              id="password"
+            <EmailInputLogin
+              id="email"
               onValidChange={handleValidChange}
+              onValueChange={() => {
+                setEmail(null);
+              }}
             />
           </form>
 
-          <button
-            form="form-login"
-            className="button-accent relative m-auto my-[30px] px-[45px]"
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <LoadingIcon className="absolute left-[20px] size-4 text-white" />
-            )}
-            Sign in
-          </button>
+          {!email ? (
+            <>
+              <button
+                form="form-login"
+                className="button-accent relative m-auto my-[30px] px-[45px]"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <LoadingIcon className="absolute left-[20px] size-4 text-white" />
+                )}
+                Continue
+              </button>
 
-          {error && (
-            <div className="my-[12px] text-center text-xs text-[var(--red)]">
-              {error}
-            </div>
+              {error && (
+                <div className="my-[12px] text-center text-xs text-[var(--red)]">
+                  {error}
+                </div>
+              )}
+            </>
+          ) : (
+            <OTPSection email={email} />
           )}
         </section>
       </main>
