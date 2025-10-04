@@ -1,69 +1,68 @@
 "use client";
 
 import { FormEvent, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../../supabase/server";
 import AppHeader from "../../../components/AppHeader";
 import LoadingIcon from "@/app/components/Loading/LoadingIcon";
-import { PasswordInputLogin } from "../PasswordInput";
-import { EmailInputLogin } from "../EmailInput";
-import { notifyUnexpectedError } from "@/app/components/Notification";
+import EmailInput from "../EmailInput";
 import Link from "next/link";
+import OTPForm from "../OTPForm";
+import { useUserStore } from "@/app/stores/userStore";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const defaultEmail = useUserStore((state) => state.email);
+
+  const [email, setEmail] = useState<string>(defaultEmail || "");
+  const [showOPT, setShowOPT] = useState(email.length > 0);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const nonValidArray = useRef<Set<string>>(new Set());
 
-  function handleValidChange(isValid: boolean, id: string) {
-    if (isValid) {
-      nonValidArray.current.delete(id);
-    } else {
-      nonValidArray.current.add(id);
-    }
-  }
+  const validEmail = useRef(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (nonValidArray.current.size > 0) {
-      setError("Missing or invalid data");
-      return;
-    }
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    if (typeof email !== "string" || typeof password !== "string") {
-      setError("Invalid data");
-      return;
-    }
-
     try {
       setIsLoading(true);
+      const formData = new FormData(event.currentTarget);
+      const email = formData.get("email");
 
-      const { data, error } = await supabase.auth.signInWithPassword({
+      if (
+        typeof email !== "string" ||
+        email.length === 0 ||
+        !validEmail.current
+      ) {
+        setError("Invalid email address");
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          shouldCreateUser: false,
+        },
       });
 
       if (error) {
-        console.error(error.message);
-        setError(
-          "We couldn’t log you in. Please try again with a different email or password."
-        );
-      } else if (data.user) {
-        setError(null);
-        router.push("/home");
+        console.log(error.status, error.code, error.message);
+        if (error.status === 429) {
+          setError(
+            "Too many login attempts. Please wait a minute before trying again"
+          );
+        } else {
+          setError(
+            "We couldn’t log you in. Please try again with a different email"
+          );
+        }
       } else {
-        setError("Something unexpected happened. Please try again");
+        setError(null);
+        setEmail(email);
+        setShowOPT(true);
       }
     } catch (error) {
       console.error(error);
-      notifyUnexpectedError();
+      setError("Something unexpected happened. Please try again");
     } finally {
       setIsLoading(false);
     }
@@ -92,29 +91,46 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-[15px]"
           >
-            <EmailInputLogin id="email" onValidChange={handleValidChange} />
-            <PasswordInputLogin
-              id="password"
-              onValidChange={handleValidChange}
-            />
+            <div className="w-full">
+              <label htmlFor={"email"} className="label-auth">
+                Email
+              </label>
+              <EmailInput
+                id="email"
+                value={email}
+                onValueChange={(value) => {
+                  setEmail(value);
+                  setShowOPT(false);
+                }}
+                onValid={(valid) => {
+                  validEmail.current = valid;
+                }}
+              />
+            </div>
           </form>
 
-          <button
-            form="form-login"
-            className="button-accent relative m-auto my-[30px] px-[45px]"
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <LoadingIcon className="absolute left-[20px] size-4 text-white" />
-            )}
-            Sign in
-          </button>
+          {!showOPT ? (
+            <>
+              <button
+                form="form-login"
+                className="button-accent relative m-auto my-[30px] px-[45px]"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading && (
+                  <LoadingIcon className="absolute left-[20px] size-4 text-white" />
+                )}
+                Continue
+              </button>
 
-          {error && (
-            <div className="my-[12px] text-center text-xs text-[var(--red)]">
-              {error}
-            </div>
+              {error && (
+                <div className="my-[12px] text-center text-xs text-[var(--red)]">
+                  {error}
+                </div>
+              )}
+            </>
+          ) : (
+            <OTPForm email={email} />
           )}
         </section>
       </main>
