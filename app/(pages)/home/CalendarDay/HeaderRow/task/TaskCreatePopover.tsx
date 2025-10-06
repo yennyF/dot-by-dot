@@ -19,7 +19,8 @@ export default function TaskCreatePopover({
     if (!open) {
       setDummyTask(undefined);
     }
-  }, [open, setDummyTask]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -59,7 +60,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      align="center"
+      align="end"
       onKeyDown={handleKeyDown}
     >
       <p>Enter a new name</p>
