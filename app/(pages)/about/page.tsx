@@ -14,20 +14,21 @@ export default function AboutPage() {
           <h2 className="page-title-1">The thought behind it</h2>
           <p>
             Hello there! I built this little app to help you (and me!) keep
-            track of daily habits. It’s not about nagging you to get things done
-            — it’s about giving you a clear picture of what you’ve been doing,
-            and what you might be skipping.
+            track of your habits. It’s not about nagging you to get things done
+            — it’s about giving you a clear picture of what you’ve been doing
+            and what you might be skipping
           </p>
           <br />
           <p>
             Sometimes we pour all our energy into one thing and forget about the
-            rest. This app helps you notice those patterns, see where your
-            effort really goes so you can find a better balance.
+            rest — like focusing too much on work. Becoming aware of those
+            patterns can help you find a healthier balance and understand what
+            might be holding you back from reaching your goals.
           </p>
           <br />
           <p className="text-[var(--gray-9)]">
             Progress isn’t one big leap — it is the mix of many things, repeated
-            over time. Every effort counts, even the small ones.
+            over time. Every effort counts, even the small ones!
           </p>
         </section>
 
@@ -38,9 +39,6 @@ export default function AboutPage() {
           <p>
             - More is on the way! The app’s still experimental, which means new
             features coming — and yes, a few bugs too.
-            <br />
-            <br />- For now, all your data is stored locally in your browser, so
-            it’s only accessible from the same device and browser you’re using.
           </p>
         </section>
 
