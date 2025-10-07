@@ -176,7 +176,7 @@ export const useTaskStore = create<State & Action>()(
 
             // Update task
             props = {
-              group_id: groupId ?? null,
+              group_id: groupId,
               order: rank.toString(),
             };
             Object.assign(task, props);
@@ -244,7 +244,7 @@ export const useTaskStore = create<State & Action>()(
                 ? LexoRank.parse(prev.order).genNext()
                 : LexoRank.middle();
               props = {
-                group_id: groupId || null,
+                group_id: groupId,
                 order: rank.toString(),
               };
             }
@@ -253,14 +253,14 @@ export const useTaskStore = create<State & Action>()(
             Object.assign(task, props);
           });
 
-          // if (!props) throw Error();
+          if (!props) throw Error();
 
           // // update in db
-          // const { error } = await supabase
-          //   .from("tasks")
-          //   .update(props)
-          //   .eq("id", id);
-          // if (error) throw error;
+          const { error } = await supabase
+            .from("tasks")
+            .update(props)
+            .eq("id", id);
+          if (error) throw error;
         } catch (error) {
           console.error(error);
           notifyMoveError();
