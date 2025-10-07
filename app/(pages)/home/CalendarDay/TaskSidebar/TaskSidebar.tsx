@@ -10,7 +10,7 @@ import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";
 
-export default function HeaderRow() {
+export default function TaskSidebar() {
   const headerRowRef = useScrollStore((s) => s.headerRowRef);
   const topGroupRef = useRef<HTMLDivElement>(null);
 
