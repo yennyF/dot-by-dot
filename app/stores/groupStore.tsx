@@ -56,7 +56,8 @@ export const useGroupStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("groups")
-            .select("id, name, order, user_id");
+            .select("id, name, order, user_id")
+            .order("order", { ascending: true });
           if (error) throw error;
 
           set(() => ({ groups: mapGroupResponseArray(data ?? []) }));

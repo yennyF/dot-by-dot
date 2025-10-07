@@ -65,7 +65,9 @@ export const useTaskStore = create<State & Action>()(
         try {
           const { data, error } = await supabase
             .from("tasks")
-            .select("id, name, group_id, order, user_id");
+            .select("id, name, group_id, order, user_id")
+            .order("order", { ascending: true });
+
           if (error) throw error;
 
           const tasksByGroup: Record<string, Task[]> = {};
