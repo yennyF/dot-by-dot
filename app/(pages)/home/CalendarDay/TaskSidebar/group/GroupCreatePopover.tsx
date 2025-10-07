@@ -1,25 +1,25 @@
 "use client";
 
-import { useTaskStore } from "@/app/stores/taskStore";
+import { useGroupStore } from "@/app/stores/groupStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
-interface TaskCreatePopoverProps {
+interface GroupCreatePopoverProps {
   children: React.ReactNode;
 }
 
-export default function TaskCreatePopover({
+export default function GroupCreatePopover({
   children,
-}: TaskCreatePopoverProps) {
+}: GroupCreatePopoverProps) {
   const [open, setOpen] = useState(true);
 
-  const setDummyTask = useTaskStore((s) => s.setDummyTask);
+  const setDummyGroup = useGroupStore((s) => s.setDummyGroup);
 
   useEffect(() => {
     if (!open) {
-      setDummyTask(undefined);
+      setDummyGroup(undefined);
     }
-  }, [open, setDummyTask]);
+  }, [open, setDummyGroup]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -34,8 +34,8 @@ export default function TaskCreatePopover({
 }
 
 function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const dummyTask = useTaskStore((s) => s.dummyTask);
-  const insertTask = useTaskStore((s) => s.insertTask);
+  const dummyGroup = useGroupStore((s) => s.dummyGroup);
+  const insertGroup = useGroupStore((s) => s.insertGroup);
 
   const [name, setName] = useState("");
 
@@ -43,9 +43,9 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
     setName(event.target.value);
   };
 
-  const handleSaveClick = () => {
-    if (!dummyTask) return;
-    insertTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
+  const handleSaveClick = async () => {
+    if (!dummyGroup) return;
+    await insertGroup({ id: dummyGroup.id, name });
     setOpen(false);
   };
 
@@ -59,7 +59,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      align="center"
+      align="end"
       onKeyDown={handleKeyDown}
     >
       <p>Enter a new name</p>
@@ -68,7 +68,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
           type="text"
           value={name}
           onChange={handleNameChange}
-          placeholder="New task"
+          placeholder="New group"
         ></input>
       </fieldset>
       <div className="flex justify-center gap-3">

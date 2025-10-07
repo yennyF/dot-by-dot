@@ -10,7 +10,7 @@ import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";
 
-export default function HeaderRow() {
+export default function TaskSidebar() {
   const headerRowRef = useScrollStore((s) => s.headerRowRef);
   const topGroupRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +60,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   const topTaskRef = useRef<HTMLDivElement>(null);
 
   const dummyTask = useTaskStore((s) => {
-    if (groupId === null || s.dummyTask?.groupId === groupId) {
+    if (groupId === s.dummyTask?.groupId) {
       return s.dummyTask;
     }
     return null;

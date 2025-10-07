@@ -1,33 +1,33 @@
 "use client";
 
-import { Group } from "@/app/types";
-import { useGroupStore } from "@/app/stores/groupStore";
+import { Task } from "@/app/types";
+import { useTaskStore } from "@/app/stores/taskStore";
 import { Popover } from "radix-ui";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
-interface GroupRenamePopoverProps {
+interface TaskRenamePopoverProps {
   children: React.ReactNode;
-  group: Group;
-  onOpenChange?: (open: boolean) => void;
+  task: Task;
+  onOpenChange: (open: boolean) => void;
 }
 
-export default function GroupRenamePopover({
+export default function TaskRenamePopover({
   children,
-  group,
+  task,
   onOpenChange,
-}: GroupRenamePopoverProps) {
+}: TaskRenamePopoverProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    onOpenChange?.(open);
-  }, [onOpenChange, open]);
+    onOpenChange(open);
+  }, [open, onOpenChange]);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       {open && (
         <Popover.Portal>
-          <Content setOpen={setOpen} group={group} />
+          <Content setOpen={setOpen} task={task} />
         </Popover.Portal>
       )}
     </Popover.Root>
@@ -36,20 +36,20 @@ export default function GroupRenamePopover({
 
 interface ContentProps {
   setOpen: (open: boolean) => void;
-  group: Group;
+  task: Task;
 }
 
-function Content({ setOpen, group }: ContentProps) {
-  const updateGroup = useGroupStore((s) => s.updateGroup);
+function Content({ setOpen, task }: ContentProps) {
+  const updateTask = useTaskStore((s) => s.updateTask);
 
-  const [name, setNameInput] = useState(group.name);
+  const [name, setName] = useState(task.name);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNameInput(event.target.value);
+    setName(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    await updateGroup(group.id, { name });
+    updateTask(task.id, { name });
     setOpen(false);
   };
 
@@ -63,16 +63,16 @@ function Content({ setOpen, group }: ContentProps) {
     <Popover.Content
       className="popover-content z-20 flex w-[350px] flex-col gap-3"
       side="bottom"
-      align="center"
+      align="end"
       onKeyDown={handleKeyDown}
     >
-      <p>Rename the group</p>
+      <p>Rename the task</p>
       <fieldset className="flex flex-col gap-2">
         <input
           type="text"
           value={name}
           onChange={handleNameChange}
-          placeholder={group.name}
+          placeholder={task.name}
         ></input>
       </fieldset>
       <div className="flex justify-center gap-3">
@@ -82,7 +82,7 @@ function Content({ setOpen, group }: ContentProps) {
         <button
           className="button-accept"
           onClick={handleSaveClick}
-          disabled={name.length === 0 || name === group.name}
+          disabled={name.length === 0 || name === task.name}
         >
           Save
         </button>

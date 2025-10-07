@@ -1,12 +1,12 @@
 "use client";
 
 import { ShadowBottom, ShadowLeft, ShadowRight, ShadowTop } from "./shadows";
-import HeaderRow from "./HeaderRow/HeaderRow";
-import Body from "./Body/Body";
+import TaskSidebar from "./TaskSidebar/TaskSidebar";
+import TaskGrid from "./TaskGrid/TaskGrid";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { useScrollStore } from "@/app/stores/scrollStore";
-import CounterRow from "./HeaderCol/CounterRow";
-import DateRow from "./HeaderCol/DateRow";
+import CounterRow from "./TaskHeader/CounterRow";
+import DateRow from "./TaskHeader/DateRow";
 
 export default function CalendarDay() {
   const contentRef = useScrollStore((s) => s.contentRef);
@@ -25,18 +25,15 @@ export default function CalendarDay() {
             <CounterRow />
           </div>
           <ShadowRight />
-          {/* <TodayHeader /> */}
-          {/* HeaderRow */}
           <div className="sticky right-0 z-10 flex w-name shrink-0 items-end bg-[var(--background)]"></div>
         </div>
         <ShadowTop />
       </div>
       <div className="flex w-fit">
         <ShadowLeft />
-        <Body />
+        <TaskGrid />
         <ShadowRight />
-        {/* <TodayBody /> */}
-        <HeaderRow />
+        <TaskSidebar />
       </div>
       <ShadowBottom />
     </HorizontalDragScroll>
