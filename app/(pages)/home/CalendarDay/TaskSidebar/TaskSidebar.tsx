@@ -9,6 +9,10 @@ import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
 import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";
+import { Group } from "@/app/types";
+import { Collapsible } from "radix-ui";
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import { useCollapsedStore } from "@/app/stores/collapseStore";
 
 export default function TaskSidebar() {
   const headerRowRef = useScrollStore((s) => s.headerRowRef);
@@ -42,12 +46,7 @@ export default function TaskSidebar() {
         )}
 
         {groups?.map((group) => (
-          <div className="app-group" key={group.id}>
-            <DropIndicatorGroup beforeId={group.id} />
-            <GroupRow group={group} />
-            <DummyTask groupId={group.id} />
-            <TaskList groupId={group.id} />
-          </div>
+          <CollapsibleGroup key={group.id} group={group} />
         ))}
 
         <DropIndicatorGroup />
@@ -100,5 +99,33 @@ function TaskList({ groupId }: { groupId: string | null }) {
       ))}
       <DropIndicatorTask groupId={groupId} />
     </>
+  );
+}
+
+function CollapsibleGroup({ group }: { group: Group }) {
+  const open = useCollapsedStore((s) =>
+    s.collapsed.includes(group.id) ? false : true
+  );
+  const toggleCollapse = useCollapsedStore((s) => s.toggleCollapse);
+  const setOpen = () => {
+    toggleCollapse(group.id);
+  };
+
+  return (
+    <div className="app-group">
+      <Collapsible.Root open={open} onOpenChange={setOpen}>
+        <DropIndicatorGroup beforeId={group.id} />
+        <div className="flex justify-between">
+          <GroupRow group={group} />
+          <Collapsible.Trigger asChild>
+            {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </Collapsible.Trigger>
+        </div>
+        <DummyTask groupId={group.id} />
+        <Collapsible.Content>
+          <TaskList groupId={group.id} />
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </div>
   );
 }

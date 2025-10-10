@@ -4,6 +4,10 @@ import { useGroupStore } from "@/app/stores/groupStore";
 import GroupRow from "./GroupRow";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import TaskRow from "./TaskRow";
+import { useCollapsedStore } from "@/app/stores/collapseStore";
+import { Group } from "@/app/types";
+import { memo } from "react";
+import clsx from "clsx";
 
 export default function Body() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
@@ -23,11 +27,7 @@ export default function Body() {
       )}
 
       {groups?.map((group) => (
-        <div className="app-group" key={group.id} data-name={group.name}>
-          <GroupRow group={group} />
-          <DummyTask groupId={group.id} />
-          <TaskList groupId={group.id} />
-        </div>
+        <CollapsibleGroup key={group.id} group={group} />
       ))}
     </div>
   );
@@ -46,9 +46,26 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   return <TaskRow task={dummyTask} />;
 }
 
-function TaskList({ groupId }: { groupId: string | null }) {
+function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
   return <>{tasks?.map((task) => <TaskRow key={task.id} task={task} />)}</>;
+}
+const TaskList = memo(TaskListWrapper);
+
+function CollapsibleGroup({ group }: { group: Group }) {
+  const open = useCollapsedStore((s) =>
+    s.collapsed.includes(group.id) ? false : true
+  );
+
+  return (
+    <div className="app-group" key={group.id} data-name={group.name}>
+      <GroupRow group={group} />
+      <DummyTask groupId={group.id} />
+      <div className={clsx("overflow-hidden", !open && "h-0")}>
+        <TaskList groupId={group.id} />
+      </div>
+    </div>
+  );
 }
