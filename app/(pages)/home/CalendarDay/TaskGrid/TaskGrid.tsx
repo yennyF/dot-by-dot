@@ -4,7 +4,7 @@ import { useGroupStore } from "@/app/stores/groupStore";
 import GroupRow from "./GroupRow";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import TaskRow from "./TaskRow";
-import { useCollapsedStore } from "@/app/stores/collapseStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 import { Group } from "@/app/types";
 import { memo } from "react";
 import clsx from "clsx";
@@ -55,8 +55,8 @@ function TaskListWrapper({ groupId }: { groupId: string | null }) {
 const TaskList = memo(TaskListWrapper);
 
 function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useCollapsedStore((s) =>
-    s.collapsed.includes(group.id) ? false : true
+  const open = useUIStore((s) =>
+    s.collapsedGroups.includes(group.id) ? false : true
   );
 
   return (
