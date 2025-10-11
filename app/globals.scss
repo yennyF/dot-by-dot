@@ -109,7 +109,7 @@ input {
 }
 
 .draggable {
-  @apply cursor-grab active:cursor-grabbing hover:cursor-grab focus:cursor-grab;
+  @apply active:cursor-grabbing  focus:cursor-grab;
 }
 
 .overlay {
@@ -298,11 +298,9 @@ input {
     }
   }
 
-  [data-state="open"] {
-    .button-icon-sheer {
-      @apply bg-[var(--black)] text-[var(--white)];
-    }
-  }
+  [data-state="open"] > .button-icon-sheer {
+    @apply bg-[var(--black)] text-[var(--white)];
+  }  
 
   .button-icon-accent {
     @apply button-icon bg-[var(--accent)] hover:bg-[var(--black)];
