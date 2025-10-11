@@ -109,7 +109,7 @@ input {
 }
 
 .draggable {
-  @apply cursor-grab active:cursor-grabbing hover:cursor-grab focus:cursor-grab;
+  @apply active:cursor-grabbing  focus:cursor-grab;
 }
 
 .overlay {

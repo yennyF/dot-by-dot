@@ -1,4 +1,6 @@
 import {
+  ChevronDownIcon,
+  ChevronUpIcon,
   CubeIcon,
   Pencil1Icon,
   PlusIcon,
@@ -17,6 +19,7 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
+import { useCollapsedStore } from "@/app/stores/collapseStore";
 
 interface GroupRowProps {
   group: Group;
@@ -24,12 +27,21 @@ interface GroupRowProps {
 }
 
 function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
-  const draggable = isDummy ? false : true;
+  return (
+    <GroupRowDraggable group={group}>
+      <GroupRowName group={group} />
+      <GroupRowOptions group={group} isDummy={isDummy} />
+    </GroupRowDraggable>
+  );
+}
 
-  const [forceShow, setForceShow] = useState(false);
-
-  const setDummyTask = useTaskStore((s) => s.setDummyTask);
-
+function GroupRowDraggable({
+  group,
+  children,
+}: {
+  group: Group;
+  children: React.ReactNode;
+}) {
   const handleDragStart = (e: DragEvent) => {
     e.dataTransfer.setData("sort", "group");
     e.dataTransfer.setData("groupId", group.id);
@@ -38,6 +50,48 @@ function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
   const handleDragEnd = (e: DragEvent) => {
     e.preventDefault();
   };
+
+  return (
+    <div
+      className={clsx(
+        "app-GroupRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
+        "draggable active:cursor-grabbing"
+      )}
+      draggable={true}
+      data-id={group.id}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      {children}
+    </div>
+  );
+}
+
+function GroupRowName({ group }: { group: Group }) {
+  return (
+    <div className="flex items-center gap-2 overflow-hidden">
+      <CubeIcon className="size-[12px] shrink-0" />
+      <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
+        {group.name}
+      </div>
+    </div>
+  );
+}
+
+function GroupRowOptions({
+  group,
+  isDummy,
+}: {
+  group: Group;
+  isDummy?: boolean;
+}) {
+  const [forceShow, setForceShow] = useState(false);
+
+  const setDummyTask = useTaskStore((s) => s.setDummyTask);
+
+  const open = useCollapsedStore((s) =>
+    s.collapsed.includes(group.id) ? false : true
+  );
 
   const handleClickNew = () => {
     setDummyTask({
@@ -51,71 +105,56 @@ function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
-        draggable && "draggable cursor-grab active:cursor-grabbing"
+        "action-buttons items-center gap-1",
+        forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
       )}
-      draggable={draggable}
-      data-id={group.id}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
     >
-      <div className="flex items-center gap-2 overflow-hidden">
-        <CubeIcon className="size-[12px] shrink-0" />
-        <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
-          {group.name}
-        </div>
-      </div>
-      <div
-        className={clsx(
-          "action-buttons gap-1",
-          forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
-        )}
-      >
-        {isDummy ? (
-          <GroupCreatePopover>
-            <button className="button-icon-sheer">
-              <Pencil1Icon />
-            </button>
-          </GroupCreatePopover>
-        ) : (
-          <>
-            <AppTooltip>
-              <AppTrigger asChild>
-                <button className="button-icon-sheer" onClick={handleClickNew}>
-                  <PlusIcon />
-                </button>
-              </AppTrigger>
-              <AppContent>New task</AppContent>
-            </AppTooltip>
+      {isDummy ? (
+        <GroupCreatePopover>
+          <button className="button-icon-sheer">
+            <Pencil1Icon />
+          </button>
+        </GroupCreatePopover>
+      ) : (
+        <>
+          <AppTooltip>
+            <AppTrigger asChild>
+              <button className="button-icon-sheer" onClick={handleClickNew}>
+                <PlusIcon />
+              </button>
+            </AppTrigger>
+            <AppContent>New task</AppContent>
+          </AppTooltip>
 
-            <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-              <span>
-                <AppTooltip>
-                  <AppTrigger asChild>
-                    <button className="button-icon-sheer">
-                      <Pencil1Icon />
-                    </button>
-                  </AppTrigger>
-                  <AppContent>Rename</AppContent>
-                </AppTooltip>
-              </span>
-            </GroupRenamePopover>
+          <GroupRenamePopover group={group} onOpenChange={setForceShow}>
+            <span>
+              <AppTooltip>
+                <AppTrigger asChild>
+                  <button className="button-icon-sheer">
+                    <Pencil1Icon />
+                  </button>
+                </AppTrigger>
+                <AppContent>Rename</AppContent>
+              </AppTooltip>
+            </span>
+          </GroupRenamePopover>
 
-            <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-              <span>
-                <AppTooltip>
-                  <AppTrigger asChild>
-                    <button className="button-icon-sheer">
-                      <TrashIcon />
-                    </button>
-                  </AppTrigger>
-                  <AppContent>Delete</AppContent>
-                </AppTooltip>
-              </span>
-            </GroupDeleteDialog>
-          </>
-        )}
-      </div>
+          <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
+            <span>
+              <AppTooltip>
+                <AppTrigger asChild>
+                  <button className="button-icon-sheer">
+                    <TrashIcon />
+                  </button>
+                </AppTrigger>
+                <AppContent>Delete</AppContent>
+              </AppTooltip>
+            </span>
+          </GroupDeleteDialog>
+
+          {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </>
+      )}
     </div>
   );
 }

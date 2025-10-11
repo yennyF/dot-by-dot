@@ -35,7 +35,7 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
     <div
       className={clsx(
         "app-TaskRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
-        draggable && "draggable cursor-grab active:cursor-grabbing"
+        draggable && "draggable active:cursor-grabbing"
       )}
       draggable={draggable}
       data-id={task.id}

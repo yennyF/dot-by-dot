@@ -11,7 +11,6 @@ import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
-import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { useCollapsedStore } from "@/app/stores/collapseStore";
 
 export default function TaskSidebar() {
@@ -115,13 +114,15 @@ function CollapsibleGroup({ group }: { group: Group }) {
     <div className="app-group">
       <Collapsible.Root open={open} onOpenChange={setOpen}>
         <DropIndicatorGroup beforeId={group.id} />
-        <div className="flex justify-between">
-          <GroupRow group={group} />
-          <Collapsible.Trigger asChild>
-            {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          </Collapsible.Trigger>
-        </div>
+
+        <Collapsible.Trigger className="" asChild>
+          <span className="w-full">
+            <GroupRow group={group} />
+          </span>
+        </Collapsible.Trigger>
+
         <DummyTask groupId={group.id} />
+
         <Collapsible.Content>
           <TaskList groupId={group.id} />
         </Collapsible.Content>

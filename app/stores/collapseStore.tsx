@@ -22,7 +22,7 @@ export const useCollapsedStore = create<Store>()(
       reset: () => set({ collapsed: [] }),
     }),
     {
-      name: "collapsed-groups", // key in localStorage
+      name: "group-storage",
     }
   )
 );
