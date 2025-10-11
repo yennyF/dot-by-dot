@@ -11,7 +11,7 @@ import TaskRow from "./TaskRow";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
-import { useCollapsedStore } from "@/app/stores/collapseStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function TaskSidebar() {
   const headerRowRef = useScrollStore((s) => s.headerRowRef);
@@ -102,12 +102,12 @@ function TaskList({ groupId }: { groupId: string | null }) {
 }
 
 function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useCollapsedStore((s) =>
-    s.collapsed.includes(group.id) ? false : true
+  const open = useUIStore((s) =>
+    s.collapsedGroups.includes(group.id) ? false : true
   );
-  const toggleCollapse = useCollapsedStore((s) => s.toggleCollapse);
+  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
   const setOpen = () => {
-    toggleCollapse(group.id);
+    toggleCollapsedGroup(group.id);
   };
 
   return (

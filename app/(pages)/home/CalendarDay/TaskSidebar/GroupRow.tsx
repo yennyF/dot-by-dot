@@ -19,7 +19,7 @@ import {
   AppTrigger,
   AppContent,
 } from "@/app/components/AppTooltip";
-import { useCollapsedStore } from "@/app/stores/collapseStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 interface GroupRowProps {
   group: Group;
@@ -89,8 +89,8 @@ function GroupRowOptions({
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
-  const open = useCollapsedStore((s) =>
-    s.collapsed.includes(group.id) ? false : true
+  const open = useUIStore((s) =>
+    s.collapsedGroups.includes(group.id) ? false : true
   );
 
   const handleClickNew = () => {
