@@ -9,7 +9,7 @@ import { Group } from "@/app/types";
 import { memo } from "react";
 import clsx from "clsx";
 
-export default function Body() {
+export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 

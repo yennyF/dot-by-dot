@@ -92,8 +92,15 @@ function GroupRowOptions({
   const open = useUIStore((s) =>
     s.collapsedGroups.includes(group.id) ? false : true
   );
+  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
 
-  const handleClickNew = () => {
+  const handleClickNew = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    if (!open) {
+      toggleCollapsedGroup(group.id);
+    }
+
     setDummyTask({
       id: uuidv4(),
       name: "(No name)",
@@ -106,7 +113,7 @@ function GroupRowOptions({
     <div
       className={clsx(
         "action-buttons items-center gap-1",
-        forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
+        forceShow || isDummy ? "flex" : "flex group-hover/name:flex"
       )}
     >
       {isDummy ? (
@@ -127,7 +134,7 @@ function GroupRowOptions({
           </AppTooltip>
 
           <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-            <span>
+            <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
                 <AppTrigger asChild>
                   <button className="button-icon-sheer">
@@ -140,7 +147,7 @@ function GroupRowOptions({
           </GroupRenamePopover>
 
           <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-            <span>
+            <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
                 <AppTrigger asChild>
                   <button className="button-icon-sheer">

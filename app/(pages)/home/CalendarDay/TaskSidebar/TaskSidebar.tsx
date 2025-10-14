@@ -115,7 +115,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
       <Collapsible.Root open={open} onOpenChange={setOpen}>
         <DropIndicatorGroup beforeId={group.id} />
 
-        <Collapsible.Trigger className="" asChild>
+        <Collapsible.Trigger asChild>
           <span className="w-full">
             <GroupRow group={group} />
           </span>

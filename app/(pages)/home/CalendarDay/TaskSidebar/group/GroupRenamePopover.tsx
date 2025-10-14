@@ -65,6 +65,7 @@ function Content({ setOpen, group }: ContentProps) {
       side="bottom"
       align="end"
       onKeyDown={handleKeyDown}
+      onClick={(e) => e.stopPropagation()}
     >
       <p>Rename the group</p>
       <fieldset className="flex flex-col gap-2">

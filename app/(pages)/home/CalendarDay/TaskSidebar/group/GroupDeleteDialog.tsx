@@ -47,7 +47,10 @@ function Content({ group }: { group: Group }) {
   };
 
   return (
-    <Dialog.Content className="dialog-content">
+    <Dialog.Content
+      className="dialog-content"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="flex justify-between">
         <Dialog.Title className="dialog-title">
           Are you absolutely sure?
