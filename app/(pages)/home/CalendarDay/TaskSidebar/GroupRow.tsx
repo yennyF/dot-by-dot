@@ -113,7 +113,7 @@ function GroupRowOptions({
     <div
       className={clsx(
         "action-buttons items-center gap-1",
-        forceShow || isDummy ? "flex" : "flex group-hover/name:flex"
+        forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
       )}
     >
       {isDummy ? (
