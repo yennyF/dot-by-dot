@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
 import { useTaskLogStore } from "../../stores/taskLogStore";
 import { useUserStore } from "../../stores/userStore";
+import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 
 export default function HomePage() {
   const router = useRouter();
@@ -55,7 +56,8 @@ function Content() {
 
   useEffect(() => {
     setLock(localStorage.getItem("lock") === "true" ? true : false);
-  }, [setLock]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -68,6 +70,8 @@ function Content() {
           </div>
           <div className="flex gap-2">
             <SettingsButton />
+            <CollapseAllButton />
+            <ExpandAllButton />
             <LockButton />
             <CreateDropdown>
               <span>
