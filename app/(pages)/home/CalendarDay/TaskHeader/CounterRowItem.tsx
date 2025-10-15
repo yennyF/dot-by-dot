@@ -4,8 +4,8 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { getSnappedPercentage } from "@/app/utils/utils";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
@@ -45,7 +45,7 @@ export default function CounterRowItem({ date }: { date: Date }) {
       )}
       {(isCurrentActive || isTodayDate) && (
         <AppTooltip>
-          <AppTrigger className="flex cursor-default items-center justify-center">
+          <AppTooltipTrigger className="flex cursor-default items-center justify-center">
             <div
               className={clsx(
                 "size-[10px] transform rounded-full",
@@ -53,10 +53,10 @@ export default function CounterRowItem({ date }: { date: Date }) {
               )}
               style={{ backgroundColor: colorStart }}
             />
-          </AppTrigger>
-          <AppContent side="top" align="center" sideOffset={10}>
+          </AppTooltipTrigger>
+          <AppContentTrigger side="top" align="center" sideOffset={10}>
             {currentSize} dots
-          </AppContent>
+          </AppContentTrigger>
         </AppTooltip>
       )}
     </div>

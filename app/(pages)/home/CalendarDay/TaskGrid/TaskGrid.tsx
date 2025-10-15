@@ -3,7 +3,7 @@
 import { useGroupStore } from "@/app/stores/groupStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import { useUIStore } from "@/app/stores/useUIStore";
-import { Group } from "@/app/types";
+import { Group, Task } from "@/app/types";
 import { memo } from "react";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
@@ -52,10 +52,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
 
 function DummyTask({ groupId }: { groupId: string | null }) {
   const dummyTask = useTaskStore((s) => {
-    if (groupId === s.dummyTask?.groupId) {
-      return s.dummyTask;
-    }
-    return null;
+    return groupId === s.dummyTask?.groupId ? s.dummyTask : null;
   });
 
   if (!dummyTask) return null;
@@ -66,22 +63,9 @@ function DummyTask({ groupId }: { groupId: string | null }) {
 function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
-  const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <>
-      {tasks?.map((task) => (
-        <div key={task.id} className="app-TaskRow flex w-fit">
-          {totalDate.map(([, months]) =>
-            months.map(([, days]) =>
-              days.map((date, index) => (
-                <TaskItem key={index} date={date} task={task} />
-              ))
-            )
-          )}
-        </div>
-      ))}
-    </>
+    <>{tasks?.map((task, index) => <TaskRow task={task} key={index} />)}</>
   );
 }
 const TaskList = memo(TaskListWrapper);
@@ -102,3 +86,20 @@ function GroupRowWrapper({ group }: { group: Group }) {
   );
 }
 const GroupRow = memo(GroupRowWrapper);
+
+function TaskRowWrapper({ task }: { task: Task }) {
+  const totalDate = useTaskLogStore((s) => s.totalDate);
+
+  return (
+    <div className="app-TaskList flex">
+      {totalDate.map(([, months]) =>
+        months.map(([, days]) =>
+          days.map((date, index) => (
+            <TaskItem key={index} date={date} task={task} />
+          ))
+        )
+      )}
+    </div>
+  );
+}
+const TaskRow = memo(TaskRowWrapper);

@@ -16,8 +16,8 @@ import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
 
@@ -125,23 +125,23 @@ function GroupItemOptions({
       ) : (
         <>
           <AppTooltip>
-            <AppTrigger asChild>
+            <AppTooltipTrigger asChild>
               <button className="button-icon-sheer" onClick={handleClickNew}>
                 <PlusIcon />
               </button>
-            </AppTrigger>
-            <AppContent>New task</AppContent>
+            </AppTooltipTrigger>
+            <AppContentTrigger>New task</AppContentTrigger>
           </AppTooltip>
 
           <GroupRenamePopover group={group} onOpenChange={setForceShow}>
             <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
-                <AppTrigger asChild>
+                <AppTooltipTrigger asChild>
                   <button className="button-icon-sheer">
                     <Pencil1Icon />
                   </button>
-                </AppTrigger>
-                <AppContent>Rename</AppContent>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Rename</AppContentTrigger>
               </AppTooltip>
             </span>
           </GroupRenamePopover>
@@ -149,12 +149,12 @@ function GroupItemOptions({
           <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
             <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
-                <AppTrigger asChild>
+                <AppTooltipTrigger asChild>
                   <button className="button-icon-sheer">
                     <TrashIcon />
                   </button>
-                </AppTrigger>
-                <AppContent>Delete</AppContent>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Delete</AppContentTrigger>
               </AppTooltip>
             </span>
           </GroupDeleteDialog>

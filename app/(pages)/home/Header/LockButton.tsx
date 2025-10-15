@@ -4,8 +4,8 @@ import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 
 export default function LockButton() {
@@ -18,19 +18,19 @@ export default function LockButton() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button
           className="button-outline button-sm"
           onClick={handleCheckedChange}
         >
           {lock ? <LockClosedIcon /> : <LockOpen1Icon />}
         </button>
-      </AppTrigger>
-      <AppContent align="end">
+      </AppTooltipTrigger>
+      <AppContentTrigger align="end">
         {lock
           ? "Allow updates to previous track"
           : "Lock previous track from changes"}
-      </AppContent>
+      </AppContentTrigger>
     </AppTooltip>
   );
 }

@@ -3,8 +3,8 @@
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { useRef } from "react";
@@ -25,12 +25,12 @@ function LeftButtonContent() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
           <ChevronLeftIcon />
         </button>
-      </AppTrigger>
-      <AppContent>Go previous</AppContent>
+      </AppTooltipTrigger>
+      <AppContentTrigger>Go previous</AppContentTrigger>
     </AppTooltip>
   );
 }
@@ -63,13 +63,13 @@ function LoadMoreButton() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
           <ChevronLeftIcon />
           More
         </button>
-      </AppTrigger>
-      <AppContent align="center">Load more</AppContent>
+      </AppTooltipTrigger>
+      <AppContentTrigger align="center">Load more</AppContentTrigger>
     </AppTooltip>
   );
 }

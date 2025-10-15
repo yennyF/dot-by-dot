@@ -1,7 +1,7 @@
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { GearIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ export default function SettingsButton() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button
           className="button-outline button-sm"
           onClick={() => {
@@ -20,8 +20,8 @@ export default function SettingsButton() {
         >
           <GearIcon />
         </button>
-      </AppTrigger>
-      <AppContent align="center">Settings</AppContent>
+      </AppTooltipTrigger>
+      <AppContentTrigger align="center">Settings</AppContentTrigger>
     </AppTooltip>
   );
 }

@@ -19,8 +19,8 @@ import { useAppStore } from "../../stores/appStore";
 import clsx from "clsx";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "../../components/AppTooltip";
 import { useUserStore } from "../../stores/userStore";
 
@@ -191,7 +191,7 @@ function Content() {
           <ArrowRightIcon />
         </button>
         <AppTooltip>
-          <AppTrigger asChild>
+          <AppTooltipTrigger asChild>
             <button
               className={clsx(
                 "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
@@ -203,8 +203,8 @@ function Content() {
             >
               Only here for testing
             </button>
-          </AppTrigger>
-          <AppContent className="p-2" side="right" sideOffset={10}>
+          </AppTooltipTrigger>
+          <AppContentTrigger className="p-2" side="right" sideOffset={10}>
             <h2 className="text-sm font-bold">Want a quick preview?</h2>
 
             <p className="mt-[10px] leading-relaxed">
@@ -212,7 +212,7 @@ function Content() {
               <br />
               You can reset the data anytime from Settings.
             </p>
-          </AppContent>
+          </AppContentTrigger>
         </AppTooltip>
       </main>
     </>

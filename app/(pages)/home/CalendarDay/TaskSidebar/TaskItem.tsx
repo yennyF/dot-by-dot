@@ -8,9 +8,9 @@ import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
 import {
-  AppContent,
+  AppContentTrigger,
   AppTooltip,
-  AppTrigger,
+  AppTooltipTrigger,
 } from "@/app/components/AppTooltip";
 
 interface TaskItemProps {
@@ -66,12 +66,12 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
             <TaskRenamePopover task={task} onOpenChange={setForceShow}>
               <span>
                 <AppTooltip>
-                  <AppTrigger asChild>
+                  <AppTooltipTrigger asChild>
                     <button className="button-icon-sheer">
                       <Pencil1Icon />
                     </button>
-                  </AppTrigger>
-                  <AppContent>Rename</AppContent>
+                  </AppTooltipTrigger>
+                  <AppContentTrigger>Rename</AppContentTrigger>
                 </AppTooltip>
               </span>
             </TaskRenamePopover>
@@ -79,12 +79,12 @@ function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
             <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
               <span>
                 <AppTooltip>
-                  <AppTrigger asChild>
+                  <AppTooltipTrigger asChild>
                     <button className="button-icon-sheer">
                       <TrashIcon />
                     </button>
-                  </AppTrigger>
-                  <AppContent>Delete</AppContent>
+                  </AppTooltipTrigger>
+                  <AppContentTrigger>Delete</AppContentTrigger>
                 </AppTooltip>
               </span>
             </TaskDeleteDialog>

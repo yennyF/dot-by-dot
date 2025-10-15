@@ -8,11 +8,14 @@ function AppTooltip({ children }: Tooltip.TooltipProps) {
   );
 }
 
-function AppTrigger({ children, ...props }: Tooltip.TooltipTriggerProps) {
+function AppTooltipTrigger({
+  children,
+  ...props
+}: Tooltip.TooltipTriggerProps) {
   return <Tooltip.Trigger {...props}>{children}</Tooltip.Trigger>;
 }
 
-function AppContent({
+function AppContentTrigger({
   children,
   className,
   side,
@@ -34,4 +37,4 @@ function AppContent({
   );
 }
 
-export { AppTooltip, AppTrigger, AppContent };
+export { AppTooltip, AppTooltipTrigger, AppContentTrigger };

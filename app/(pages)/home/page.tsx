@@ -13,9 +13,9 @@ import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
 import { useAppStore } from "../../stores/appStore";
 import {
-  AppContent,
+  AppContentTrigger,
   AppTooltip,
-  AppTrigger,
+  AppTooltipTrigger,
 } from "../../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import SettingsButton from "./Header/SettingsButton";
@@ -72,13 +72,13 @@ function Content() {
             <CreateDropdown>
               <span>
                 <AppTooltip>
-                  <AppTrigger asChild>
+                  <AppTooltipTrigger asChild>
                     <button className="button-accent button-sm">
                       <PlusIcon />
                       <TriangleDownIcon />
                     </button>
-                  </AppTrigger>
-                  <AppContent>New</AppContent>
+                  </AppTooltipTrigger>
+                  <AppContentTrigger>New</AppContentTrigger>
                 </AppTooltip>
               </span>
             </CreateDropdown>
