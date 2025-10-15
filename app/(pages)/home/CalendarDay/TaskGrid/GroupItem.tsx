@@ -7,12 +7,12 @@ import clsx from "clsx";
 import { getPercentage } from "@/app/utils/utils";
 import { useTaskStore } from "@/app/stores/taskStore";
 
-interface GroupRowItemProps {
+interface GroupItemProps {
   date: Date;
   group: Group;
 }
 
-export default function GroupRowItem({ date, group }: GroupRowItemProps) {
+export default function GroupItem({ date, group }: GroupItemProps) {
   const isTodayDate = isToday(date);
 
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];

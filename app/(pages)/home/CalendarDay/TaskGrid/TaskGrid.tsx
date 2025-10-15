@@ -1,13 +1,14 @@
 "use client";
 
 import { useGroupStore } from "@/app/stores/groupStore";
-import GroupRow from "./GroupRow";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
-import TaskRow from "./TaskRow";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { Group } from "@/app/types";
 import { memo } from "react";
 import clsx from "clsx";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import TaskItem from "./TaskItem";
+import GroupItem from "./GroupItem";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
@@ -33,6 +34,22 @@ export default function TaskGrid() {
   );
 }
 
+function CollapsibleGroup({ group }: { group: Group }) {
+  const open = useUIStore((s) =>
+    s.collapsedGroups.includes(group.id) ? false : true
+  );
+
+  return (
+    <div className="app-group" key={group.id} data-name={group.name}>
+      <GroupRow group={group} />
+      <DummyTask groupId={group.id} />
+      <div className={clsx("overflow-hidden", !open && "h-0")}>
+        <TaskList groupId={group.id} />
+      </div>
+    </div>
+  );
+}
+
 function DummyTask({ groupId }: { groupId: string | null }) {
   const dummyTask = useTaskStore((s) => {
     if (groupId === s.dummyTask?.groupId) {
@@ -49,23 +66,39 @@ function DummyTask({ groupId }: { groupId: string | null }) {
 function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+  const totalDate = useTaskLogStore((s) => s.totalDate);
 
-  return <>{tasks?.map((task) => <TaskRow key={task.id} task={task} />)}</>;
+  return (
+    <>
+      {tasks?.map((task) => (
+        <div key={task.id} className="app-TaskRow flex w-fit">
+          {totalDate.map(([, months]) =>
+            months.map(([, days]) =>
+              days.map((date, index) => (
+                <TaskItem key={index} date={date} task={task} />
+              ))
+            )
+          )}
+        </div>
+      ))}
+    </>
+  );
 }
 const TaskList = memo(TaskListWrapper);
 
-function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useUIStore((s) =>
-    s.collapsedGroups.includes(group.id) ? false : true
-  );
+function GroupRowWrapper({ group }: { group: Group }) {
+  const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <div className="app-group" key={group.id} data-name={group.name}>
-      <GroupRow group={group} />
-      <DummyTask groupId={group.id} />
-      <div className={clsx("overflow-hidden", !open && "h-0")}>
-        <TaskList groupId={group.id} />
-      </div>
+    <div className="app-GroupRow flex">
+      {totalDate.map(([, months]) =>
+        months.map(([, days]) =>
+          days.map((date, index) => (
+            <GroupItem key={index} date={date} group={group} />
+          ))
+        )
+      )}
     </div>
   );
 }
+const GroupRow = memo(GroupRowWrapper);

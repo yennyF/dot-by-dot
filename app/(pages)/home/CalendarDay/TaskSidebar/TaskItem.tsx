@@ -13,12 +13,12 @@ import {
   AppTrigger,
 } from "@/app/components/AppTooltip";
 
-interface TaskRowProps {
+interface TaskItemProps {
   task: Task;
   isDummy?: boolean;
 }
 
-function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
+function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 
@@ -95,5 +95,5 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
   );
 }
 
-const TaskRow = memo(TaskRowWrapper);
-export default TaskRow;
+const TaskItem = memo(TaskItemWrapper);
+export default TaskItem;

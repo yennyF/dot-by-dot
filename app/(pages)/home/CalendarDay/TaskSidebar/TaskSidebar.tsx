@@ -4,10 +4,10 @@ import { Fragment, useEffect, useRef } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/groupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
-import GroupRow from "./GroupRow";
+import GroupItem from "./GroupItem";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
-import TaskRow from "./TaskRow";
+import TaskRow from "./TaskItem";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
@@ -40,7 +40,7 @@ export default function TaskSidebar() {
         {dummyGroup && (
           <div className="app-group" ref={topGroupRef}>
             <DropIndicatorGroup />
-            <GroupRow group={dummyGroup} isDummy={true} />
+            <GroupItem group={dummyGroup} isDummy={true} />
           </div>
         )}
 
@@ -51,6 +51,36 @@ export default function TaskSidebar() {
         <DropIndicatorGroup />
       </div>
     </SortableContainer>
+  );
+}
+
+function CollapsibleGroup({ group }: { group: Group }) {
+  const open = useUIStore((s) =>
+    s.collapsedGroups.includes(group.id) ? false : true
+  );
+  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
+  const setOpen = () => {
+    toggleCollapsedGroup(group.id);
+  };
+
+  return (
+    <div className="app-group">
+      <Collapsible.Root open={open} onOpenChange={setOpen}>
+        <DropIndicatorGroup beforeId={group.id} />
+
+        <Collapsible.Trigger asChild>
+          <span className="w-full">
+            <GroupItem group={group} />
+          </span>
+        </Collapsible.Trigger>
+
+        <DummyTask groupId={group.id} />
+
+        <Collapsible.Content>
+          <TaskList groupId={group.id} />
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </div>
   );
 }
 
@@ -98,35 +128,5 @@ function TaskList({ groupId }: { groupId: string | null }) {
       ))}
       <DropIndicatorTask groupId={groupId} />
     </>
-  );
-}
-
-function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useUIStore((s) =>
-    s.collapsedGroups.includes(group.id) ? false : true
-  );
-  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
-  const setOpen = () => {
-    toggleCollapsedGroup(group.id);
-  };
-
-  return (
-    <div className="app-group">
-      <Collapsible.Root open={open} onOpenChange={setOpen}>
-        <DropIndicatorGroup beforeId={group.id} />
-
-        <Collapsible.Trigger asChild>
-          <span className="w-full">
-            <GroupRow group={group} />
-          </span>
-        </Collapsible.Trigger>
-
-        <DummyTask groupId={group.id} />
-
-        <Collapsible.Content>
-          <TaskList groupId={group.id} />
-        </Collapsible.Content>
-      </Collapsible.Root>
-    </div>
   );
 }

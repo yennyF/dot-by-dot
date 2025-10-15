@@ -7,12 +7,12 @@ import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import { Task, toApiDate } from "@/app/types";
 
-interface TaskRowItemProps {
+interface TaskItemProps {
   date: Date;
   task: Task;
 }
 
-export default function TaskRowItem({ date, task }: TaskRowItemProps) {
+export default function TaskItem({ date, task }: TaskItemProps) {
   const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
   const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
 
@@ -112,7 +112,7 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
 }
 
 function LockDot({ isActive, onClick, ...props }: DotProps) {
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     return () => setVisible(false);
