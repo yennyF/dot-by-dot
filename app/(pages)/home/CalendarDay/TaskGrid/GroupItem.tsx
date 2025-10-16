@@ -43,25 +43,25 @@ export default function GroupItem({ date, group }: GroupItemProps) {
     >
       {isCurrentActive && isNextActive && (
         <div
-          className="absolute left-[calc(50%+3px)] right-[calc(-50%+3px)] h-[1px] animate-fade-in"
+          className="absolute left-[calc(50%+5px)] right-[calc(-50%+5px)] h-[1px] animate-fade-in"
           style={{
             background: `linear-gradient(to right, ${colorStart}, ${colorEnd})`,
           }}
         />
       )}
-      {(isCurrentActive || isTodayDate) && (
-        <div
-          className={clsx(
-            "size-[6px] transform rounded-full",
-            isTodayDate && "border-[1px] border-[var(--accent)]"
-          )}
-          style={{ backgroundColor: colorStart }}
-        />
-      )}
+      <div
+        className={clsx(
+          "transform rounded-full",
+          isCurrentActive
+            ? "size-[10px] bg-[var(--inverted)]"
+            : "size-[4px] bg-[var(--gray)]"
+        )}
+        style={isCurrentActive ? { backgroundColor: colorStart } : undefined}
+      />
     </div>
   );
 }
 
 function getColor(alpha: number) {
-  return `rgba(192, 120, 88, ${alpha})`;
+  return `rgba(88, 160, 192, ${alpha})`;
 }
