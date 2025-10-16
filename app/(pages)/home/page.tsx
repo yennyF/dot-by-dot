@@ -18,7 +18,6 @@ import {
   AppTooltipTrigger,
 } from "../../components/AppTooltip";
 import { useRouter } from "next/navigation";
-import SettingsButton from "./Header/SettingsButton";
 import { useTaskLogStore } from "../../stores/taskLogStore";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
@@ -69,9 +68,8 @@ function Content() {
             <TodayButton />
           </div>
           <div className="flex gap-2">
-            <SettingsButton />
-            <CollapseAllButton />
             <ExpandAllButton />
+            <CollapseAllButton />
             <LockButton />
             <CreateDropdown>
               <span>
@@ -82,7 +80,7 @@ function Content() {
                       <TriangleDownIcon />
                     </button>
                   </AppTooltipTrigger>
-                  <AppContentTrigger>New</AppContentTrigger>
+                  <AppContentTrigger>Create new...</AppContentTrigger>
                 </AppTooltip>
               </span>
             </CreateDropdown>

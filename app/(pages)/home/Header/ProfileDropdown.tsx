@@ -1,18 +1,16 @@
 "use client";
 
 import { DropdownMenu } from "radix-ui";
-import { useGroupStore } from "../../../stores/groupStore";
-import { useTaskStore } from "../../../stores/taskStore";
-import { v4 as uuidv4 } from "uuid";
-import { CheckCircledIcon, CubeIcon } from "@radix-ui/react-icons";
+import { supabase } from "@/app/supabase/server";
+import { ExitIcon, GearIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
-export default function CreateDropdown({
+export default function ProfileDropdown({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const setDummyTask = useTaskStore((s) => s.setDummyTask);
-  const setDummyGroup = useGroupStore((s) => s.setDummyGroup);
+  const router = useRouter();
 
   return (
     <DropdownMenu.Root modal={false}>
@@ -26,25 +24,18 @@ export default function CreateDropdown({
           <DropdownMenu.Item
             className="dropdown-item dropdown-item-icon"
             onClick={() => {
-              setDummyGroup({ id: uuidv4(), name: "(No name)", order: "" });
+              router.push("/settings");
             }}
           >
-            <CubeIcon />
-            New group
+            <GearIcon /> Settings
           </DropdownMenu.Item>
           <DropdownMenu.Item
             className="dropdown-item dropdown-item-icon"
             onClick={async () => {
-              setDummyTask({
-                id: uuidv4(),
-                name: "(No name)",
-                order: "",
-                groupId: null,
-              });
+              await supabase.auth.signOut();
             }}
           >
-            <CheckCircledIcon />
-            New task
+            <ExitIcon /> Log out
           </DropdownMenu.Item>
           <DropdownMenu.Arrow className="arrow" />
         </DropdownMenu.Content>
