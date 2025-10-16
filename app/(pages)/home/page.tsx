@@ -62,7 +62,7 @@ function Content() {
   return (
     <>
       <AppHeader>
-        <div className="flex flex-1 items-center justify-end gap-10">
+        <div className="flex flex-1 items-center justify-between gap-10">
           <div className="flex gap-2">
             <LeftButton />
             <RightButton />
