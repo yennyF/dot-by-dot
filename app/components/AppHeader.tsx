@@ -38,6 +38,11 @@ export default function AppHeader({ children }: { children?: ReactNode }) {
 
 function About() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  if (pathname !== "/product") {
+    return null;
+  }
 
   return (
     <div className="flex-1">
