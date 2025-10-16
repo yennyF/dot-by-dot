@@ -43,22 +43,24 @@ export default function CounterRowItem({ date }: { date: Date }) {
           }}
         />
       )}
-      {(isCurrentActive || isTodayDate) && (
-        <AppTooltip>
-          <AppTooltipTrigger className="flex cursor-default items-center justify-center">
-            <div
-              className={clsx(
-                "size-[10px] transform rounded-full",
-                isTodayDate && "border-[1px] border-[var(--green)]"
-              )}
-              style={{ backgroundColor: colorStart }}
-            />
-          </AppTooltipTrigger>
-          <AppContentTrigger side="top" align="center" sideOffset={10}>
-            {currentSize} dots
-          </AppContentTrigger>
-        </AppTooltip>
-      )}
+      <AppTooltip delayDuration={100}>
+        <AppTooltipTrigger className="flex cursor-default items-center justify-center">
+          <div
+            className={clsx(
+              "transform rounded-full",
+              isCurrentActive
+                ? "size-[10px] bg-[var(--green)]"
+                : "size-[4px] bg-[var(--gray)]"
+            )}
+            style={
+              isCurrentActive ? { backgroundColor: colorStart } : undefined
+            }
+          />
+        </AppTooltipTrigger>
+        <AppContentTrigger side="top" align="center" sideOffset={10}>
+          {currentSize}
+        </AppContentTrigger>
+      </AppTooltip>
     </div>
   );
 }

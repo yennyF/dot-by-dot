@@ -6,6 +6,11 @@ import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { getPercentage } from "@/app/utils/utils";
 import { useTaskStore } from "@/app/stores/taskStore";
+import {
+  AppContentTrigger,
+  AppTooltip,
+  AppTooltipTrigger,
+} from "@/app/components/AppTooltip";
 
 interface GroupItemProps {
   date: Date;
@@ -49,15 +54,24 @@ export default function GroupItem({ date, group }: GroupItemProps) {
           }}
         />
       )}
-      <div
-        className={clsx(
-          "transform rounded-full",
-          isCurrentActive
-            ? "size-[10px] bg-[var(--inverted)]"
-            : "size-[4px] bg-[var(--gray)]"
-        )}
-        style={isCurrentActive ? { backgroundColor: colorStart } : undefined}
-      />
+      <AppTooltip delayDuration={100}>
+        <AppTooltipTrigger className="flex cursor-default items-center justify-center">
+          <div
+            className={clsx(
+              "transform rounded-full",
+              isCurrentActive
+                ? "size-[10px] bg-[var(--inverted)]"
+                : "size-[4px] bg-[var(--gray)]"
+            )}
+            style={
+              isCurrentActive ? { backgroundColor: colorStart } : undefined
+            }
+          />
+        </AppTooltipTrigger>
+        <AppContentTrigger side="top" align="center" sideOffset={10}>
+          {currentSize}
+        </AppContentTrigger>
+      </AppTooltip>
     </div>
   );
 }

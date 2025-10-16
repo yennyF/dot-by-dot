@@ -1,8 +1,8 @@
 import { Tooltip } from "radix-ui";
 
-function AppTooltip({ children }: Tooltip.TooltipProps) {
+function AppTooltip({ children, ...props }: Tooltip.TooltipProps) {
   return (
-    <Tooltip.Provider>
+    <Tooltip.Provider {...props}>
       <Tooltip.Root>{children}</Tooltip.Root>
     </Tooltip.Provider>
   );
