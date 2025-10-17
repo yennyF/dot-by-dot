@@ -55,7 +55,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       set(() => ({
         tasksByDate: undefined,
         lock: false,
-        startDate: subMonths(startOfMonth(new Date()), 3),
+        startDate: subMonths(startOfMonth(new Date()), 1),
         endDate: new Date(),
         totalDate: [],
       }));
@@ -67,7 +67,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       localStorage.setItem("lock", lock ? "true" : "false");
     },
 
-    startDate: subMonths(startOfMonth(new Date()), 3),
+    startDate: subMonths(startOfMonth(new Date()), 1),
     endDate: new Date(),
     totalDate: [],
 

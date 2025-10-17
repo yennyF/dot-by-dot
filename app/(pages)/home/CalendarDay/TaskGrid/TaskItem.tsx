@@ -78,24 +78,24 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   );
 }
 
-interface DotProps extends React.ComponentProps<"button"> {
+interface DotProps extends React.ComponentProps<"div"> {
   isActive: boolean;
   isTodayDate: boolean;
 }
 
 function Dot({ isActive, isTodayDate, ...props }: DotProps) {
   return (
-    <button
+    <div
       {...props}
       className={clsx(
-        "box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-all duration-100",
+        "group box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-all duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
           ? "bg-[var(--accent)]"
           : isTodayDate
             ? "bg-[var(--background)] hover:bg-[var(--accent-5)]"
-            : "bg-[var(--gray)] hover:bg-[var(--accent-5)]",
+            : "bg-[var(--gray)]",
         isTodayDate && "border-[1px] border-black"
       )}
     >
@@ -103,11 +103,11 @@ function Dot({ isActive, isTodayDate, ...props }: DotProps) {
         <CheckIcon
           className={clsx(
             "size-3 text-black transition-opacity",
-            isActive ? "opacity-100" : "opacity-0 hover:opacity-100"
+            isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           )}
         />
       )}
-    </button>
+    </div>
   );
 }
 

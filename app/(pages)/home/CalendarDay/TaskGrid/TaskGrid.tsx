@@ -7,6 +7,7 @@ import { Group } from "@/app/types";
 import clsx from "clsx";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
+import { memo } from "react";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
@@ -41,7 +42,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
     <div className="app-group" key={group.id} data-name={group.name}>
       <GroupRow group={group} />
       <DummyTask groupId={group.id} />
-      <div className={clsx("overflow-hidden", !open && "h-0")}>
+      <div className={clsx(open ? "block" : "hidden")}>
         <TaskList groupId={group.id} />
       </div>
     </div>
@@ -58,11 +59,10 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   return <TaskRow task={dummyTask} />;
 }
 
-function TaskList({ groupId }: { groupId: string | null }) {
+function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
-  return (
-    <>{tasks?.map((task, index) => <TaskRow task={task} key={index} />)}</>
-  );
+  return <>{tasks?.map((task) => <TaskRow task={task} key={task.id} />)}</>;
 }
+const TaskList = memo(TaskListWrapper);
