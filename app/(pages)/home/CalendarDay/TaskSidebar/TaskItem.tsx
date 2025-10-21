@@ -8,17 +8,17 @@ import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
 import {
-  AppContent,
+  AppContentTrigger,
   AppTooltip,
-  AppTrigger,
+  AppTooltipTrigger,
 } from "@/app/components/AppTooltip";
 
-interface TaskRowProps {
+interface TaskItemProps {
   task: Task;
   isDummy?: boolean;
 }
 
-function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
+function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
   const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 
@@ -66,12 +66,12 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
             <TaskRenamePopover task={task} onOpenChange={setForceShow}>
               <span>
                 <AppTooltip>
-                  <AppTrigger asChild>
+                  <AppTooltipTrigger asChild>
                     <button className="button-icon-sheer">
                       <Pencil1Icon />
                     </button>
-                  </AppTrigger>
-                  <AppContent>Rename</AppContent>
+                  </AppTooltipTrigger>
+                  <AppContentTrigger>Rename</AppContentTrigger>
                 </AppTooltip>
               </span>
             </TaskRenamePopover>
@@ -79,12 +79,12 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
             <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
               <span>
                 <AppTooltip>
-                  <AppTrigger asChild>
+                  <AppTooltipTrigger asChild>
                     <button className="button-icon-sheer">
                       <TrashIcon />
                     </button>
-                  </AppTrigger>
-                  <AppContent>Delete</AppContent>
+                  </AppTooltipTrigger>
+                  <AppContentTrigger>Delete</AppContentTrigger>
                 </AppTooltip>
               </span>
             </TaskDeleteDialog>
@@ -95,5 +95,5 @@ function TaskRowWrapper({ task, isDummy }: TaskRowProps) {
   );
 }
 
-const TaskRow = memo(TaskRowWrapper);
-export default TaskRow;
+const TaskItem = memo(TaskItemWrapper);
+export default TaskItem;

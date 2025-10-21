@@ -1,18 +1,21 @@
 import { Tooltip } from "radix-ui";
 
-function AppTooltip({ children }: Tooltip.TooltipProps) {
+function AppTooltip({ children, ...props }: Tooltip.TooltipProps) {
   return (
-    <Tooltip.Provider>
+    <Tooltip.Provider {...props}>
       <Tooltip.Root>{children}</Tooltip.Root>
     </Tooltip.Provider>
   );
 }
 
-function AppTrigger({ children, ...props }: Tooltip.TooltipTriggerProps) {
+function AppTooltipTrigger({
+  children,
+  ...props
+}: Tooltip.TooltipTriggerProps) {
   return <Tooltip.Trigger {...props}>{children}</Tooltip.Trigger>;
 }
 
-function AppContent({
+function AppContentTrigger({
   children,
   className,
   side,
@@ -34,4 +37,4 @@ function AppContent({
   );
 }
 
-export { AppTooltip, AppTrigger, AppContent };
+export { AppTooltip, AppTooltipTrigger, AppContentTrigger };

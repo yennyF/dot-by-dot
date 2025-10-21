@@ -1,4 +1,4 @@
-import { toast, ToastOptions } from "react-toastify";
+import { Slide, toast, ToastOptions } from "react-toastify";
 import LoadingIcon from "./Loading/LoadingIcon";
 
 const baseOptions: ToastOptions = {
@@ -8,6 +8,8 @@ const baseOptions: ToastOptions = {
   // pauseOnHover: false,
   pauseOnFocusLoss: false,
   draggable: false,
+  delay: 0,
+  transition: Slide,
 };
 
 export const notifyUnexpectedError = () =>
@@ -39,3 +41,6 @@ export const notifyLoading = () =>
     </div>,
     { ...baseOptions, autoClose: false }
   );
+
+export const notifyDoubleClickUnlock = () =>
+  toast(<div>Click/tap twice to change the value</div>, baseOptions);

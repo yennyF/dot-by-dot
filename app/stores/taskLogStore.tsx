@@ -33,7 +33,6 @@ export type YearType = [Date, MonthType[]];
 type State = {
   // Store date strings for reliable value-based Set comparison
   tasksByDate: Record<string, Set<string>> | undefined;
-  lock: boolean;
   startDate: Date;
   endDate: Date;
   totalDate: YearType[];
@@ -41,7 +40,6 @@ type State = {
 
 type Action = {
   destroyTaskLogs: () => void;
-  setLock: (lock: boolean) => void;
   fetchTaskLogs: () => Promise<void>;
   fetchMoreTaskLogs: () => Promise<void>;
   insertTaskLog: (date: Date, taskId: string) => void;
@@ -55,19 +53,13 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       set(() => ({
         tasksByDate: undefined,
         lock: false,
-        startDate: subMonths(startOfMonth(new Date()), 3),
+        startDate: subMonths(startOfMonth(new Date()), 1),
         endDate: new Date(),
         totalDate: [],
       }));
     },
 
-    lock: false,
-    setLock: (lock: boolean) => {
-      set(() => ({ lock }));
-      localStorage.setItem("lock", lock ? "true" : "false");
-    },
-
-    startDate: subMonths(startOfMonth(new Date()), 3),
+    startDate: subMonths(startOfMonth(new Date()), 1),
     endDate: new Date(),
     totalDate: [],
 

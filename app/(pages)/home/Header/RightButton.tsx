@@ -3,8 +3,8 @@
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 
@@ -18,7 +18,7 @@ export default function RightButton() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button
           className="button-outline button-sm"
           disabled={isAtRight}
@@ -26,8 +26,8 @@ export default function RightButton() {
         >
           <ChevronRightIcon />
         </button>
-      </AppTrigger>
-      <AppContent align="center">Go next</AppContent>
+      </AppTooltipTrigger>
+      <AppContentTrigger align="center">Go next</AppContentTrigger>
     </AppTooltip>
   );
 }

@@ -1,7 +1,7 @@
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 
@@ -18,12 +18,12 @@ export default function TodayButton() {
 
   return (
     <AppTooltip>
-      <AppTrigger asChild>
+      <AppTooltipTrigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
           Today
         </button>
-      </AppTrigger>
-      <AppContent align="center">Go to most recent</AppContent>
+      </AppTooltipTrigger>
+      <AppContentTrigger align="center">Go to most recent</AppContentTrigger>
     </AppTooltip>
   );
 }

@@ -194,6 +194,16 @@ input {
       }
     }
 
+    .dropdown-item-icon {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      svg {
+        opacity: 0.6;
+      }
+    }
+
     .arrow {
       fill: var(--background);
     }
@@ -372,5 +382,20 @@ input {
 
   to {
     transform: translateX(100%);
+  }
+}
+
+
+.app-PreviousDotWrapper {
+  .app-LockClosedIcon {
+    display: none;
+  }
+}
+
+.app-PreviousDotWrapper  {
+  &:hover {
+    .app-LockClosedIcon {
+      display: block; 
+    }
   }
 }

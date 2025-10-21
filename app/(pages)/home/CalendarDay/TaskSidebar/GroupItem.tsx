@@ -16,26 +16,26 @@ import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
 import {
   AppTooltip,
-  AppTrigger,
-  AppContent,
+  AppTooltipTrigger,
+  AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
 
-interface GroupRowProps {
+interface GroupItemProps {
   group: Group;
   isDummy?: boolean;
 }
 
-function GroupRowWrapper({ group, isDummy }: GroupRowProps) {
+function GroupItemWrapper({ group, isDummy }: GroupItemProps) {
   return (
-    <GroupRowDraggable group={group}>
-      <GroupRowName group={group} />
-      <GroupRowOptions group={group} isDummy={isDummy} />
-    </GroupRowDraggable>
+    <GroupItemDraggable group={group}>
+      <GroupItemName group={group} />
+      <GroupItemOptions group={group} isDummy={isDummy} />
+    </GroupItemDraggable>
   );
 }
 
-function GroupRowDraggable({
+function GroupItemDraggable({
   group,
   children,
 }: {
@@ -67,7 +67,7 @@ function GroupRowDraggable({
   );
 }
 
-function GroupRowName({ group }: { group: Group }) {
+function GroupItemName({ group }: { group: Group }) {
   return (
     <div className="flex items-center gap-2 overflow-hidden">
       <CubeIcon className="size-[12px] shrink-0" />
@@ -78,7 +78,7 @@ function GroupRowName({ group }: { group: Group }) {
   );
 }
 
-function GroupRowOptions({
+function GroupItemOptions({
   group,
   isDummy,
 }: {
@@ -92,8 +92,15 @@ function GroupRowOptions({
   const open = useUIStore((s) =>
     s.collapsedGroups.includes(group.id) ? false : true
   );
+  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
 
-  const handleClickNew = () => {
+  const handleClickNew = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    if (!open) {
+      toggleCollapsedGroup(group.id);
+    }
+
     setDummyTask({
       id: uuidv4(),
       name: "(No name)",
@@ -118,36 +125,36 @@ function GroupRowOptions({
       ) : (
         <>
           <AppTooltip>
-            <AppTrigger asChild>
+            <AppTooltipTrigger asChild>
               <button className="button-icon-sheer" onClick={handleClickNew}>
                 <PlusIcon />
               </button>
-            </AppTrigger>
-            <AppContent>New task</AppContent>
+            </AppTooltipTrigger>
+            <AppContentTrigger>New task</AppContentTrigger>
           </AppTooltip>
 
           <GroupRenamePopover group={group} onOpenChange={setForceShow}>
-            <span>
+            <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
-                <AppTrigger asChild>
+                <AppTooltipTrigger asChild>
                   <button className="button-icon-sheer">
                     <Pencil1Icon />
                   </button>
-                </AppTrigger>
-                <AppContent>Rename</AppContent>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Rename</AppContentTrigger>
               </AppTooltip>
             </span>
           </GroupRenamePopover>
 
           <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
-            <span>
+            <span onClick={(e) => e.stopPropagation()}>
               <AppTooltip>
-                <AppTrigger asChild>
+                <AppTooltipTrigger asChild>
                   <button className="button-icon-sheer">
                     <TrashIcon />
                   </button>
-                </AppTrigger>
-                <AppContent>Delete</AppContent>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Delete</AppContentTrigger>
               </AppTooltip>
             </span>
           </GroupDeleteDialog>
@@ -159,5 +166,5 @@ function GroupRowOptions({
   );
 }
 
-const GroupRow = memo(GroupRowWrapper);
-export default GroupRow;
+const GroupItem = memo(GroupItemWrapper);
+export default GroupItem;
