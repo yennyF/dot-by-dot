@@ -392,12 +392,10 @@ input {
   }
 }
 
-.lock {
-  .app-PreviousDotWrapper  {
-    &:hover {
-      .app-LockClosedIcon {
-        display: block; 
-      }
+.app-PreviousDotWrapper  {
+  &:hover {
+    .app-LockClosedIcon {
+      display: block; 
     }
   }
 }

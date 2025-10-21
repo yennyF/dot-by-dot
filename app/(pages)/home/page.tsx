@@ -6,7 +6,6 @@ import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
 import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
-import LockButton from "./Header/LockButton";
 import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import TodayButton from "./Header/TodayButton";
@@ -18,7 +17,6 @@ import {
   AppTooltipTrigger,
 } from "../../components/AppTooltip";
 import { useRouter } from "next/navigation";
-import { useTaskLogStore } from "../../stores/taskLogStore";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 
@@ -51,13 +49,6 @@ export default function HomePage() {
 }
 
 function Content() {
-  const setLock = useTaskLogStore((s) => s.setLock);
-
-  useEffect(() => {
-    setLock(localStorage.getItem("lock") === "true" ? true : false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
       <AppHeader>
@@ -70,7 +61,6 @@ function Content() {
           <div className="flex gap-2">
             <ExpandAllButton />
             <CollapseAllButton />
-            <LockButton />
             <CreateDropdown>
               <span>
                 <AppTooltip>

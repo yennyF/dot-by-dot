@@ -4,13 +4,9 @@ import { addDays, isToday } from "date-fns";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
-import { useEffect, useState } from "react";
 import { Task, toApiDate } from "@/app/types";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import { useDoubleTap } from "use-double-tap";
+import { notifyDoubleClickUnlock } from "@/app/components/Notification";
 
 interface TaskItemProps {
   date: Date;
@@ -33,7 +29,7 @@ export default function TaskItem({ date, task }: TaskItemProps) {
 
   const isTodayDate = isToday(date);
 
-  const handleClick = () => {
+  const toggleLog = () => {
     if (isActive) {
       deleteTaskLog(date, task.id);
     } else {
@@ -67,22 +63,23 @@ export default function TaskItem({ date, task }: TaskItemProps) {
       )}
 
       {isTodayDate ? (
-        <Dot isActive={isActive} onClick={handleClick} />
+        <Dot isActive={isActive} toggleLog={toggleLog} />
       ) : (
-        <PreviousDot isActive={isActive} onClick={handleClick} />
+        <PreviousDot isActive={isActive} toggleLog={toggleLog} />
       )}
     </div>
   );
 }
 
-interface DotProps extends React.ComponentProps<"div"> {
+function Dot({
+  isActive,
+  toggleLog,
+}: {
   isActive: boolean;
-}
-
-function Dot({ isActive, ...props }: DotProps) {
+  toggleLog: () => void;
+}) {
   return (
     <div
-      {...props}
       data-task-id={"asdasd"}
       className={clsx(
         "app-Dot group box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full border-[1px] border-black transition-all duration-100",
@@ -92,6 +89,7 @@ function Dot({ isActive, ...props }: DotProps) {
           ? "bg-[var(--accent)]"
           : "bg-[var(--background)] hover:bg-[var(--accent-5)]"
       )}
+      onClick={toggleLog}
     >
       <CheckIcon
         className={clsx(
@@ -103,28 +101,36 @@ function Dot({ isActive, ...props }: DotProps) {
   );
 }
 
-function PreviousDot({ isActive, onClick, ...props }: DotProps) {
+function PreviousDot({
+  isActive,
+  toggleLog,
+}: {
+  isActive: boolean;
+  toggleLog: () => void;
+}) {
+  const bind = useDoubleTap(
+    () => {
+      toggleLog();
+    },
+    200,
+    {
+      onSingleTap: () => {
+        notifyDoubleClickUnlock();
+      },
+    }
+  );
+
   return (
-    <AppTooltip delayDuration={700}>
-      <AppTooltipTrigger className="flex cursor-default items-center justify-center">
-        <div className="app-PreviousDotWrapper relative flex justify-center">
-          <LockClosedIcon className="app-LockClosedIcon absolute -top-full h-[11px] w-[11px] text-gray-600" />
-          <div
-            {...props}
-            data-task-id={"asdasd"}
-            className={clsx(
-              "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full",
-              isActive ? "bg-[var(--accent)]" : "bg-[var(--gray)]"
-            )}
-            onDoubleClick={(e) => {
-              onClick?.(e);
-            }}
-          />
-        </div>
-      </AppTooltipTrigger>
-      <AppContentTrigger side="bottom" align="center" sideOffset={10}>
-        Double click to check/uncheck
-      </AppContentTrigger>
-    </AppTooltip>
+    <div className="app-PreviousDotWrapper relative flex justify-center">
+      <LockClosedIcon className="app-LockClosedIcon absolute -top-full h-[11px] w-[11px] text-gray-600" />
+      <div
+        {...bind}
+        data-task-id={"asdasd"}
+        className={clsx(
+          "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full",
+          isActive ? "bg-[var(--accent)]" : "bg-[var(--gray)]"
+        )}
+      />
+    </div>
   );
 }
