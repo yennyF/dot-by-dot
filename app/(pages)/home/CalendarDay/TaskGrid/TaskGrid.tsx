@@ -8,13 +8,25 @@ import clsx from "clsx";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
 import { memo } from "react";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
+  const lock = useTaskLogStore((s) => s.lock);
+
+  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+    const index = (e.target as HTMLElement).dataset.index;
+    console.log(index);
+    // if (index !== undefined) onToggle(Number(index));
+  }
+
   return (
-    <div className="app-Body flex flex-col gap-5">
+    <div
+      className={clsx("app-Body flex flex-col gap-5", lock ? "lock" : "unlock")}
+      onClick={handleClick}
+    >
       <div className="app-group">
         <DummyTask groupId={null} />
         <TaskList groupId={null} />

@@ -384,3 +384,20 @@ input {
     transform: translateX(100%);
   }
 }
+
+
+.app-PreviousDotWrapper {
+  .app-LockClosedIcon {
+    display: none;
+  }
+}
+
+.lock {
+  .app-PreviousDotWrapper  {
+    &:hover {
+      .app-LockClosedIcon {
+        display: block; 
+      }
+    }
+  }
+}

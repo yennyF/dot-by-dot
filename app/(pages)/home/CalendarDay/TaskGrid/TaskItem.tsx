@@ -6,6 +6,11 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import { Task, toApiDate } from "@/app/types";
+import {
+  AppTooltip,
+  AppTooltipTrigger,
+  AppContentTrigger,
+} from "@/app/components/AppTooltip";
 
 interface TaskItemProps {
   date: Date;
@@ -62,17 +67,9 @@ export default function TaskItem({ date, task }: TaskItemProps) {
       )}
 
       {isTodayDate ? (
-        <Dot
-          isActive={isActive}
-          isTodayDate={isTodayDate}
-          onClick={handleClick}
-        />
+        <Dot isActive={isActive} onClick={handleClick} />
       ) : (
-        <LockDot
-          isActive={isActive}
-          isTodayDate={isTodayDate}
-          onClick={handleClick}
-        />
+        <PreviousDot isActive={isActive} onClick={handleClick} />
       )}
     </div>
   );
@@ -80,62 +77,54 @@ export default function TaskItem({ date, task }: TaskItemProps) {
 
 interface DotProps extends React.ComponentProps<"div"> {
   isActive: boolean;
-  isTodayDate: boolean;
 }
 
-function Dot({ isActive, isTodayDate, ...props }: DotProps) {
+function Dot({ isActive, ...props }: DotProps) {
   return (
     <div
       {...props}
+      data-task-id={"asdasd"}
       className={clsx(
-        "group box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full transition-all duration-100",
+        "app-Dot group box-border flex size-[var(--dot-size)] transform items-center justify-center rounded-full border-[1px] border-black transition-all duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
           ? "bg-[var(--accent)]"
-          : isTodayDate
-            ? "bg-[var(--background)] hover:bg-[var(--accent-5)]"
-            : "bg-[var(--gray)]",
-        isTodayDate && "border-[1px] border-black"
+          : "bg-[var(--background)] hover:bg-[var(--accent-5)]"
       )}
     >
-      {isTodayDate && (
-        <CheckIcon
-          className={clsx(
-            "size-3 text-black transition-opacity",
-            isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          )}
-        />
-      )}
+      <CheckIcon
+        className={clsx(
+          "size-3 text-black transition-opacity",
+          isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        )}
+      />
     </div>
   );
 }
 
-function LockDot({ isActive, onClick, ...props }: DotProps) {
-  const [visible, setVisible] = useState<boolean>(true);
-
-  useEffect(() => {
-    return () => setVisible(false);
-  }, []);
-
+function PreviousDot({ isActive, onClick, ...props }: DotProps) {
   return (
-    <div className="group relative flex justify-center">
-      {visible === true && useTaskLogStore.getState().lock === true && (
-        <LockClosedIcon className="absolute -top-full h-[11px] w-[11px] text-gray-600 opacity-0 transition-opacity group-hover:opacity-100" />
-      )}
-      <Dot
-        {...props}
-        isActive={isActive}
-        onClick={(e) => {
-          if (useTaskLogStore.getState().lock === false) onClick?.(e);
-        }}
-        onMouseEnter={() => {
-          setVisible(true);
-        }}
-        onMouseLeave={() => {
-          setVisible(false);
-        }}
-      />
-    </div>
+    <AppTooltip delayDuration={700}>
+      <AppTooltipTrigger className="flex cursor-default items-center justify-center">
+        <div className="app-PreviousDotWrapper relative flex justify-center">
+          <LockClosedIcon className="app-LockClosedIcon absolute -top-full h-[11px] w-[11px] text-gray-600" />
+          <div
+            {...props}
+            data-task-id={"asdasd"}
+            className={clsx(
+              "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full",
+              isActive ? "bg-[var(--accent)]" : "bg-[var(--gray)]"
+            )}
+            onDoubleClick={(e) => {
+              onClick?.(e);
+            }}
+          />
+        </div>
+      </AppTooltipTrigger>
+      <AppContentTrigger side="bottom" align="center" sideOffset={10}>
+        Double click to check/uncheck
+      </AppContentTrigger>
+    </AppTooltip>
   );
 }
