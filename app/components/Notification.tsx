@@ -41,6 +41,3 @@ export const notifyLoading = () =>
     </div>,
     { ...baseOptions, autoClose: false }
   );
-
-export const notifyDoubleClickUnlock = () =>
-  toast(<div>Click/tap twice to change the value</div>, baseOptions);
