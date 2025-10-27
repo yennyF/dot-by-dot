@@ -8,7 +8,7 @@ import { useAppStore } from "../../stores/appStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import GoBackButton from "@/app/components/GoBackButton";
-import { PieChart, PieData } from "./Pie";
+import { PieChartRoot, PieData } from "./Pie";
 
 export default function HomePage() {
   const router = useRouter();
@@ -40,9 +40,9 @@ export default function HomePage() {
 
 function Content() {
   const data: PieData[] = [
-    { label: "Completed", value: 40, color: "#00C49F" },
-    { label: "In Progress", value: 30, color: "#FFBB28" },
-    { label: "Skipped", value: 30, color: "#FF8042" },
+    { label: "Completed", value: 40, color: "green" },
+    { label: "In Progress", value: 30, color: "red" },
+    { label: "Skipped", value: 10, color: "blue" },
   ];
 
   return (
@@ -55,7 +55,7 @@ function Content() {
           <h1 className="page-title-1">Stats</h1>
 
           <div className="flex flex-col gap-[50px]">
-            <PieChart data={data} />
+            <PieChartRoot data={data} />
           </div>
         </section>
       </main>
