@@ -29,7 +29,8 @@ const PieProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export interface PieData {
-  label: string;
+  id: string;
+  name: string;
   value: number;
   color: string;
 }
@@ -58,22 +59,22 @@ export function PieChar({ data }: { data: PieData[] }) {
     }, 0);
     setCumulative(array);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
 
   return (
     <svg width="200" height="200" viewBox="0 0 200 200">
-      <g transform="translate(200, 0) scale(-1, 1)">
-        {data.map((item, index) => {
-          return (
-            <PieChartItem
-              key={index}
-              value={item.value}
-              color={item.color}
-              index={index}
-            />
-          );
-        })}
-      </g>
+      {/* <g transform="translate(200, 0) scale(-1, 1)"> */}
+      {data.map((item, index) => {
+        return (
+          <PieChartItem
+            key={index}
+            value={item.value}
+            color={item.color}
+            index={index}
+          />
+        );
+      })}
+      {/* </g> */}
     </svg>
   );
 }
@@ -93,7 +94,7 @@ function PieChartItem({
   }
   const { center, radius, cumulative } = context;
 
-  const innerRadius = radius * 0.6; // adjust thickness (0.6 = 60% inner hole)
+  const innerRadius = radius * 0.5; // adjust thickness (0.6 = 60% inner hole)
   const start = cumulative[index] ?? 0;
   const startAngle = (start / 100) * 2 * Math.PI;
   const endAngle = ((start + value) / 100) * 2 * Math.PI;

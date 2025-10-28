@@ -45,6 +45,13 @@ type Action = {
   insertTaskLog: (date: Date, taskId: string) => void;
   deleteTaskLog: (date: Date, taskId: string) => void;
   deleteAllTaskLog: () => Promise<void>;
+  taskDone: (id: string) => Promise<
+    {
+      task_id: string;
+      name: string;
+      days_done: number;
+    }[]
+  >;
 };
 
 export const useTaskLogStore = create<State & Action>((set, get) => {
@@ -180,6 +187,13 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         console.error(error);
         throw error;
       }
+    },
+
+    taskDone: async (group_id: string) => {
+      const { data, error } = await supabase.rpc("task_days_done_last_30", {
+        p_group_id: group_id,
+      });
+      return data;
     },
   };
 });
