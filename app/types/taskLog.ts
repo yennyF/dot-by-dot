@@ -10,6 +10,12 @@ export type ApiTaskLog = {
   user_id?: string;
 };
 
+export type ApiTaskLogDone = {
+  id: string;
+  name: string;
+  days_done: number;
+};
+
 export function toApiDate(date: Date): string {
   return date.toISOString().split("T")[0];
 }

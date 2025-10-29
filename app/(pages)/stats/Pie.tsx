@@ -1,5 +1,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+export const colorPalette = [
+  "#0868ac",
+  "#2b8cbe",
+  "#4eb3d3",
+  "#7bccc4",
+  "#a8ddb5",
+  "#ccebc5",
+  "#e0f3db",
+  "#f7fcf0",
+];
+
+export interface PieData {
+  id: string;
+  name: string;
+  daysDone: number;
+  value: number;
+  color: string;
+}
+
 interface PieContextProps {
   radius: number;
   center: number;
@@ -27,13 +46,6 @@ const PieProvider = ({ children }: { children: React.ReactNode }) => {
     </PieContext.Provider>
   );
 };
-
-export interface PieData {
-  id: string;
-  name: string;
-  value: number;
-  color: string;
-}
 
 export function PieChartRoot({ data }: { data: PieData[] }) {
   return (
@@ -65,6 +77,7 @@ export function PieChar({ data }: { data: PieData[] }) {
     <svg width="200" height="200" viewBox="0 0 200 200">
       {/* <g transform="translate(200, 0) scale(-1, 1)"> */}
       {data.map((item, index) => {
+        if (item.value === 0) return null;
         return (
           <PieChartItem
             key={index}
@@ -98,6 +111,17 @@ function PieChartItem({
   const start = cumulative[index] ?? 0;
   const startAngle = (start / 100) * 2 * Math.PI;
   const endAngle = ((start + value) / 100) * 2 * Math.PI;
+  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
+
+  // Full circle special case
+  if (value >= 100) {
+    return (
+      <>
+        <circle cx={center} cy={center} r={radius} fill={color} />
+        <circle cx={center} cy={center} r={innerRadius} fill="white" />
+      </>
+    );
+  }
 
   // Outer arc coordinates
   const x1 = center + radius * Math.sin(startAngle);
@@ -110,8 +134,6 @@ function PieChartItem({
   const y3 = center - innerRadius * Math.cos(endAngle);
   const x4 = center + innerRadius * Math.sin(startAngle);
   const y4 = center - innerRadius * Math.cos(startAngle);
-
-  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
 
   // Build donut path
   const pathData = `
