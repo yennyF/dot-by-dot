@@ -48,39 +48,43 @@ export function PageSection() {
       </div>
 
       <div className="mt-[20px] flex flex-col gap-[20px]">
-        {result.pieData.map((item, index) => (
-          <div key={item.id} className="">
-            <div className="flex items-center gap-2 rounded-md">
-              <div className="flex w-full items-center justify-between gap-[20px]">
-                <div>{item.name}</div>
+        {result.pieData.map((item, index) => {
+          const percent = Math.round((item.value * 100) / result.total);
 
-                <div className="flex">
-                  <div className="w-[15 0px] text-right">
-                    {Math.round(item.daysDone)}{" "}
-                    <span className="text-xs text-[var(--gray-9)]">dots</span>
-                  </div>
-                  <div className="w-[150px] text-right">
-                    {Math.round(item.value)}%
-                    <span className="text-xs text-[var(--gray-9)]">
-                      {" "}
-                      of total
-                    </span>
+          return (
+            <div key={item.id} className="">
+              <div className="flex items-center gap-2 rounded-md">
+                <div className="flex w-full items-center justify-between gap-[20px]">
+                  <div>{item.name}</div>
+
+                  <div className="flex">
+                    <div className="w-[15 0px] text-right">
+                      {item.value}{" "}
+                      <span className="text-xs text-[var(--gray-9)]">dots</span>
+                    </div>
+                    <div className="w-[150px] text-right">
+                      {percent}%
+                      <span className="text-xs text-[var(--gray-9)]">
+                        {" "}
+                        of total
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="h-[10px] rounded-md bg-[#e0e0e0]">
-              <div
-                className="h-[10px] rounded-md"
-                style={{
-                  backgroundColor: colorPalette[index],
-                  width: `${item.value}%`,
-                }}
-              />
+              <div className="h-[10px] rounded-md bg-[#e0e0e0]">
+                <div
+                  className="h-[10px] rounded-md"
+                  style={{
+                    backgroundColor: colorPalette[index],
+                    width: `${percent}%`,
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -92,8 +96,7 @@ function mapApiTaskLogDoneArray(data: ApiTaskLogDone[]) {
   const pieData: PieData[] = data.map((r, index) => ({
     id: r.id,
     name: r.name,
-    daysDone: r.days_done,
-    value: total === 0 ? 0 : Number(((r.days_done / total) * 100).toFixed(2)),
+    value: r.days_done,
     color: colorPalette[index],
   }));
 

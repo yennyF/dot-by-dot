@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
-import { colorPalette, PieChartRoot, PieData } from "./Pie";
+import { colorPalette, PieData } from "./Pie";
 import { supabase } from "@/app/supabase/server";
 import { ApiTaskLogDone, Group } from "@/app/types";
 
@@ -41,7 +41,7 @@ export function GroupSection({ group }: { group: Pick<Group, "id" | "name"> }) {
       </div>
 
       <div className="mt-[10px] flex flex-col gap-[5px]">
-        {result.pieData.map((item, index) => (
+        {result.pieData.map((item) => (
           <div
             key={item.id}
             className="flex items-center gap-2 rounded-md p-[5px]"
@@ -50,7 +50,7 @@ export function GroupSection({ group }: { group: Pick<Group, "id" | "name"> }) {
               <div>{item.name}</div>
 
               <div className="text-right">
-                {Math.round(item.daysDone)}{" "}
+                {Math.round(item.value)}{" "}
                 <span className="text-xs text-[var(--gray-9)]">dots</span>
               </div>
             </div>

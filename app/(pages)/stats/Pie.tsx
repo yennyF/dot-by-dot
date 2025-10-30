@@ -14,7 +14,6 @@ export const colorPalette = [
 export interface PieData {
   id: string;
   name: string;
-  daysDone: number;
   value: number;
   color: string;
 }
@@ -23,8 +22,9 @@ interface PieContextProps {
   radius: number;
   center: number;
   size: number;
+  total: number;
+  data: PieData[];
   cumulative: number[];
-  setCumulative: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const PieContext = createContext<PieContextProps | undefined>(undefined);
@@ -32,13 +32,27 @@ const PieContext = createContext<PieContextProps | undefined>(undefined);
 const PieProvider = ({
   children,
   size,
+  data,
 }: {
   children: React.ReactNode;
   size: number;
+  data: PieData[];
 }) => {
   const [radius] = useState(size * 0.5);
   const [center] = useState(size * 0.5);
   const [cumulative, setCumulative] = useState<number[]>([]);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const array: number[] = [];
+    const total = data.reduce((sum, item) => {
+      array.push(sum);
+      sum += item.value;
+      return sum;
+    }, 0);
+    setTotal(total);
+    setCumulative(array);
+  }, [data]);
 
   return (
     <PieContext.Provider
@@ -46,8 +60,9 @@ const PieProvider = ({
         radius,
         center,
         size,
+        total,
+        data,
         cumulative,
-        setCumulative,
       }}
     >
       {children}
@@ -57,29 +72,18 @@ const PieProvider = ({
 
 export function PieChartRoot({ data }: { data: PieData[] }) {
   return (
-    <PieProvider size={280}>
-      <PieChar data={data} />
+    <PieProvider size={280} data={data}>
+      <PieChar />
     </PieProvider>
   );
 }
 
-export function PieChar({ data }: { data: PieData[] }) {
+export function PieChar() {
   const context = useContext(PieContext);
   if (!context) {
     throw new Error("PieChart must be used within PieProvider");
   }
-  const { setCumulative, size } = context;
-
-  useEffect(() => {
-    const array: number[] = [];
-    data.reduce((sum, item) => {
-      array.push(sum);
-      sum += item.value;
-      return sum;
-    }, 0);
-    setCumulative(array);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  const { size, data } = context;
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -113,12 +117,12 @@ function PieChartItem({
   if (!context) {
     throw new Error("PieChartItem must be used within PieProvider");
   }
-  const { center, radius, cumulative } = context;
+  const { center, radius, cumulative, total } = context;
 
   const innerRadius = radius * 0.5; // adjust thickness (0.6 = 60% inner hole)
   const start = cumulative[index] ?? 0;
-  const startAngle = (start / 100) * 2 * Math.PI;
-  const endAngle = ((start + value) / 100) * 2 * Math.PI;
+  const startAngle = (start / total) * 2 * Math.PI;
+  const endAngle = ((start + value) / total) * 2 * Math.PI;
   const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
 
   // Full circle special case
