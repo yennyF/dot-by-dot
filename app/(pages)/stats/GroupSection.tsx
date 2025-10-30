@@ -30,45 +30,28 @@ export function GroupSection({ group }: { group: Pick<Group, "id" | "name"> }) {
 
   return (
     <div>
-      <div className="flex items-center p-[20px]">
-        <div className="w-1/2">
+      <div className="flex items-center">
+        <div className="flex w-full justify-between">
           <h2 className="text-xl font-bold">{group.name}</h2>
           <div>
             <span className="text-lg">{result.total}</span>{" "}
             <span className="text-[var(--gray-9)]">total dots</span>
           </div>
         </div>
-
-        <div className="flex w-1/2 justify-end">
-          {result.total > 0 && <PieChartRoot data={result.pieData} />}
-        </div>
       </div>
 
-      <div className="flex flex-col gap-[5px]">
+      <div className="mt-[10px] flex flex-col gap-[5px]">
         {result.pieData.map((item, index) => (
           <div
             key={item.id}
-            className="flex items-center gap-2 rounded-md bg-[var(--gray)] p-[10px]"
+            className="flex items-center gap-2 rounded-md p-[5px]"
           >
-            <div
-              className="h-[10px] w-[10px] rounded-full"
-              style={{ backgroundColor: colorPalette[index] }}
-            ></div>
             <div className="flex w-full items-center justify-between gap-[20px]">
               <div>{item.name}</div>
 
-              <div className="flex">
-                <div className="w-[15 0px] text-right">
-                  {Math.round(item.daysDone)}{" "}
-                  <span className="text-xs text-[var(--gray-9)]">dots</span>
-                </div>
-                <div className="w-[150px] text-right">
-                  {Math.round(item.value)}%
-                  <span className="text-xs text-[var(--gray-9)]">
-                    {" "}
-                    of total
-                  </span>
-                </div>
+              <div className="text-right">
+                {Math.round(item.daysDone)}{" "}
+                <span className="text-xs text-[var(--gray-9)]">dots</span>
               </div>
             </div>
           </div>

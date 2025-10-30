@@ -72,9 +72,9 @@ function Content() {
 
         <PageSection />
 
-        {groups.map((group) => (
+        {/* {groups.map((group) => (
           <GroupSection key={group.id} group={group} />
-        ))}
+        ))} */}
       </main>
     </>
   );

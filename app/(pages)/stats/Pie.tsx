@@ -22,15 +22,22 @@ export interface PieData {
 interface PieContextProps {
   radius: number;
   center: number;
+  size: number;
   cumulative: number[];
   setCumulative: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const PieContext = createContext<PieContextProps | undefined>(undefined);
 
-const PieProvider = ({ children }: { children: React.ReactNode }) => {
-  const [radius] = useState(100);
-  const [center] = useState(100);
+const PieProvider = ({
+  children,
+  size,
+}: {
+  children: React.ReactNode;
+  size: number;
+}) => {
+  const [radius] = useState(size * 0.5);
+  const [center] = useState(size * 0.5);
   const [cumulative, setCumulative] = useState<number[]>([]);
 
   return (
@@ -38,6 +45,7 @@ const PieProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         radius,
         center,
+        size,
         cumulative,
         setCumulative,
       }}
@@ -49,7 +57,7 @@ const PieProvider = ({ children }: { children: React.ReactNode }) => {
 
 export function PieChartRoot({ data }: { data: PieData[] }) {
   return (
-    <PieProvider>
+    <PieProvider size={280}>
       <PieChar data={data} />
     </PieProvider>
   );
@@ -60,7 +68,7 @@ export function PieChar({ data }: { data: PieData[] }) {
   if (!context) {
     throw new Error("PieChart must be used within PieProvider");
   }
-  const { setCumulative } = context;
+  const { setCumulative, size } = context;
 
   useEffect(() => {
     const array: number[] = [];
@@ -74,8 +82,8 @@ export function PieChar({ data }: { data: PieData[] }) {
   }, [data]);
 
   return (
-    <svg width="200" height="200" viewBox="0 0 200 200">
-      {/* <g transform="translate(200, 0) scale(-1, 1)"> */}
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {/* <g transform="translate(250, 0) scale(-1, 1)"> */}
       {data.map((item, index) => {
         if (item.value === 0) return null;
         return (

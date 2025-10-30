@@ -47,32 +47,37 @@ export function PageSection() {
         <PieChartRoot data={result.pieData} />
       </div>
 
-      <div className="mt-[20px] flex flex-col gap-[5px]">
+      <div className="mt-[20px] flex flex-col gap-[20px]">
         {result.pieData.map((item, index) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-2 rounded-md bg-[var(--gray)] p-[10px]"
-          >
-            <div
-              className="h-[10px] w-[10px] rounded-full"
-              style={{ backgroundColor: colorPalette[index] }}
-            ></div>
-            <div className="flex w-full items-center justify-between gap-[20px]">
-              <div>{item.name}</div>
+          <div key={item.id} className="">
+            <div className="flex items-center gap-2 rounded-md">
+              <div className="flex w-full items-center justify-between gap-[20px]">
+                <div>{item.name}</div>
 
-              <div className="flex">
-                <div className="w-[15 0px] text-right">
-                  {Math.round(item.daysDone)}{" "}
-                  <span className="text-xs text-[var(--gray-9)]">dots</span>
-                </div>
-                <div className="w-[150px] text-right">
-                  {Math.round(item.value)}%
-                  <span className="text-xs text-[var(--gray-9)]">
-                    {" "}
-                    of total
-                  </span>
+                <div className="flex">
+                  <div className="w-[15 0px] text-right">
+                    {Math.round(item.daysDone)}{" "}
+                    <span className="text-xs text-[var(--gray-9)]">dots</span>
+                  </div>
+                  <div className="w-[150px] text-right">
+                    {Math.round(item.value)}%
+                    <span className="text-xs text-[var(--gray-9)]">
+                      {" "}
+                      of total
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div className="h-[10px] rounded-md bg-[#e0e0e0]">
+              <div
+                className="h-[10px] rounded-md"
+                style={{
+                  backgroundColor: colorPalette[index],
+                  width: `${item.value}%`,
+                }}
+              />
             </div>
           </div>
         ))}
