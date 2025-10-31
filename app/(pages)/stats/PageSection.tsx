@@ -36,11 +36,11 @@ export function PageSection() {
 
   return (
     <div>
+      <span className="text-xl">Last 30 days</span>
+
       <div>
-        <span className="text-lg">{result.total}</span>{" "}
-        <span className="text-[var(--gray-9)]">
-          total dots done in the last 30 days
-        </span>
+        <span className="text-2xl font-bold">{result.total}</span>{" "}
+        <span className="text-[var(--gray-9)]">total dots</span>
       </div>
 
       <div className="m-auto w-fit">
@@ -58,11 +58,11 @@ export function PageSection() {
                   <div>{item.name}</div>
 
                   <div className="flex">
-                    <div className="w-[15 0px] text-right">
+                    <div className="w-[120px] text-right">
                       {item.value}{" "}
                       <span className="text-xs text-[var(--gray-9)]">dots</span>
                     </div>
-                    <div className="w-[150px] text-right">
+                    <div className="w-[120px] text-right">
                       {percent}%
                       <span className="text-xs text-[var(--gray-9)]">
                         {" "}
