@@ -12,9 +12,6 @@ interface TaskItemProps {
 }
 
 export default function TaskItem({ date, task }: TaskItemProps) {
-  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
-  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
-
   const isActive = useTaskLogStore(
     (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
   );
@@ -26,14 +23,6 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   );
 
   const isTodayDate = isToday(date);
-
-  const toggleLog = async () => {
-    if (isActive) {
-      await deleteTaskLog(date, task.id);
-    } else {
-      await insertTaskLog(date, task.id);
-    }
-  };
 
   return (
     <div
@@ -59,71 +48,62 @@ export default function TaskItem({ date, task }: TaskItemProps) {
           )}
         />
       )}
-
-      {isTodayDate ? (
-        <Dot isActive={isActive} toggleLog={toggleLog} />
-      ) : (
-        <PreviousDot isActive={isActive} toggleLog={toggleLog} />
-      )}
+      <Dot
+        id={task.id}
+        date={date}
+        isActive={isActive}
+        isTodayDate={isTodayDate}
+      />
     </div>
   );
 }
 
 function Dot({
+  id,
+  date,
   isActive,
-  toggleLog,
+  isTodayDate,
 }: {
+  id: string;
+  date: Date;
   isActive: boolean;
-  toggleLog: () => void;
+  isTodayDate: boolean;
 }) {
-  return (
-    <div
-      data-task-id={"asdasd"}
-      className={clsx(
+  const className = isTodayDate
+    ? clsx(
         "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full border-[1px] border-black transition-all duration-100",
         "hover:scale-110",
         "active:scale-90",
         isActive
           ? "bg-[var(--accent)]"
           : "bg-[var(--background)] hover:bg-[var(--accent-5)]"
-      )}
-      onClick={toggleLog}
-    >
-      <CheckIcon
-        className={clsx(
-          "size-3 text-black transition-opacity",
-          isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-        )}
-      />
-    </div>
-  );
-}
-
-function PreviousDot({
-  isActive,
-  toggleLog,
-}: {
-  isActive: boolean;
-  toggleLog: () => void;
-}) {
-  return (
-    <div
-      data-task-id={"asdasd"}
-      className={clsx(
+      )
+    : clsx(
         "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-all duration-100",
         "hover:scale-110 hover:border-[1px] hover:border-black",
         isActive
           ? "bg-[var(--accent)]"
           : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-      )}
-      onClick={toggleLog}
+      );
+
+  const classNameIcon = isTodayDate
+    ? clsx(
+        "size-3 text-black transition-opacity",
+        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+      )
+    : clsx(
+        "size-3 text-black opacity-0 transition-opacity",
+        "group-hover:opacity-100"
+      );
+
+  return (
+    <div
+      data-task-id={id}
+      data-date={date}
+      data-active={isActive}
+      className={className}
     >
-      <CheckIcon
-        className={clsx(
-          "size-3 text-black opacity-0 transition-opacity",
-          "group-hover:opacity-100"
-        )}
-      />
+      <CheckIcon className={classNameIcon} />
     </div>
   );
 }
