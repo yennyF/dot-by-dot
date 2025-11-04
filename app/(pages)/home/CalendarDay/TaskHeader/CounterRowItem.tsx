@@ -58,7 +58,7 @@ export default function CounterRowItem({ date }: { date: Date }) {
           />
         </AppTooltipTrigger>
         <AppContentTrigger side="top" align="center" sideOffset={10}>
-          {currentSize}
+          {currentSize} {currentSize === 1 ? "dot" : "dots"}
         </AppContentTrigger>
       </AppTooltip>
     </div>

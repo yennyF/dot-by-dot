@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
+import Link from "next/link";
 
 export default function HomePage() {
   const router = useRouter();
@@ -57,6 +58,9 @@ function Content() {
             <LeftButton />
             <RightButton />
             <TodayButton />
+            <Link href="/stats" className="text-[var(--inverted)]">
+              Stats
+            </Link>
           </div>
           <div className="flex gap-2">
             <ExpandAllButton />

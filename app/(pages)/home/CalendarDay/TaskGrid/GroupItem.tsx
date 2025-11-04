@@ -69,7 +69,7 @@ export default function GroupItem({ date, group }: GroupItemProps) {
           />
         </AppTooltipTrigger>
         <AppContentTrigger side="top" align="center" sideOffset={10}>
-          {currentSize}
+          {currentSize} {currentSize === 1 ? "dot" : "dots"}
         </AppContentTrigger>
       </AppTooltip>
     </div>
