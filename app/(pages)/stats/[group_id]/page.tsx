@@ -5,7 +5,6 @@ import Loading from "../../../components/Loading/Loading";
 import { supabase } from "@/app/supabase/server";
 import { ApiTaskLogDone, Group, mapGroupResponse } from "@/app/types";
 import AppHeader from "@/app/components/AppHeader";
-import GoBackButton from "@/app/components/GoBackButton";
 import { CubeIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { notifyLoadError } from "@/app/components/Notification";
@@ -13,6 +12,7 @@ import { useAppStore } from "@/app/stores/appStore";
 import { useUserStore } from "@/app/stores/userStore";
 import { BarChart, BarChartItem, BarProvider } from "../Charts/Bar";
 import { colorPalette } from "../Charts/colors";
+import GoBackButton from "@/app/components/GoBackButton";
 
 interface ParamsType {
   params: Promise<{ group_id: string }>;

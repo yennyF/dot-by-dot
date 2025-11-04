@@ -13,7 +13,7 @@ export default function GoBackButton({ path, children }: GoBackButtonProps) {
     <button
       className="flex items-center gap-2"
       onClick={() => {
-        if (path) router.push(path);
+        if (path) router.replace(path);
         else router.back();
       }}
     >
