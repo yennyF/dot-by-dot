@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { notifyLoadError } from "@/app/components/Notification";
 import { useAppStore } from "@/app/stores/appStore";
 import { useUserStore } from "@/app/stores/userStore";
-import { BarChart, BarChartItem, BarProvider } from "../Charts/Bar";
+import { BarChart, BarChartData } from "../Charts/Bar";
 import { colorPalette } from "../Charts/colors";
 import GoBackButton from "@/app/components/GoBackButton";
 
@@ -50,8 +50,9 @@ function Content({ params }: ParamsType) {
   const { group_id } = use(params);
 
   const [group, setGroup] = useState<Group>();
-  const [data, setData] = useState<ApiTaskLogDone[]>();
+  const [data, setData] = useState<BarChartData[]>();
   const [total, setTotal] = useState<number>();
+  const [percentages, setPercentages] = useState<number[]>();
 
   useEffect(() => {
     (async () => {
@@ -73,14 +74,16 @@ function Content({ params }: ParamsType) {
 
       if (error) throw error;
 
-      const dataMaped = data as ApiTaskLogDone[];
+      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+        id: item.id,
+        name: item.name,
+        value: item.days_done,
+      }));
       setData(dataMaped);
-      const total = dataMaped.reduce((acc, r) => acc + r.days_done, 0);
-      setTotal(total);
     })();
   }, [group_id]);
 
-  if (!group || !data || total === undefined) {
+  if (!group || !data) {
     return <Loading />;
   }
 
@@ -98,53 +101,48 @@ function Content({ params }: ParamsType) {
             <CubeIcon className="size-[25px]" />
             <h2 className="flex-1 text-2xl font-bold">{group.name}</h2>
             <div>
-              <span className="text-2xl font-bold">{total}</span>{" "}
+              {total !== undefined && (
+                <span className="text-2xl font-bold">{total} </span>
+              )}
               <span className="text-[var(--gray-9)]">total dots</span>
             </div>
           </div>
 
-          <BarProvider total={total}>
-            <BarChart>
-              {data.map((item, index) => (
-                <BarChartItem
-                  key={item.id}
-                  value={item.days_done}
-                  color={colorPalette[index]}
-                />
-              ))}
-            </BarChart>
-          </BarProvider>
+          <BarChart
+            data={data}
+            onLoad={(total, percentages) => {
+              setTotal(total);
+              setPercentages(percentages);
+            }}
+          />
 
           <div className="mt-[20px] flex flex-col gap-[10px]">
-            {data.map((item, index) => {
-              const percent = Math.round((item.days_done * 100) / total);
-              return (
+            {data.map((item, index) => (
+              <div
+                key={item.id}
+                className="flex w-full shrink-0 items-center gap-[10px]"
+              >
                 <div
-                  key={item.id}
-                  className="flex w-full shrink-0 items-center gap-[10px]"
-                >
-                  <div
-                    className="h-[10px] w-[10px] rounded-full"
-                    style={{ backgroundColor: colorPalette[index] }}
-                  />
-                  <div className="flex-1">{item.name}</div>
+                  className="h-[10px] w-[10px] rounded-full"
+                  style={{ backgroundColor: colorPalette[index] }}
+                />
+                <div className="flex-1">{item.name}</div>
 
-                  <div className="flex">
-                    <div className="text-right">
-                      <span>{item.days_done} </span>
-                      <span className="text-xs text-[var(--gray-9)]">dots</span>
-                    </div>
-                    <span className="mx-[10px] text-[var(--gray-9)]">-</span>
-                    <div>
-                      <span>{percent}% </span>
-                      <span className="text-xs text-[var(--gray-9)]">
-                        of total
-                      </span>
-                    </div>
+                <div className="flex">
+                  <div className="text-right">
+                    <span>{item.value} </span>
+                    <span className="text-xs text-[var(--gray-9)]">dots</span>
+                  </div>
+                  <span className="mx-[10px] text-[var(--gray-9)]">-</span>
+                  <div>
+                    <span>{percentages?.[index]}% </span>
+                    <span className="text-xs text-[var(--gray-9)]">
+                      of total
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </main>
