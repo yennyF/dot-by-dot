@@ -9,11 +9,13 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import GoBackButton from "@/app/components/GoBackButton";
 import { supabase } from "@/app/supabase/server";
-import { Group } from "@/app/types";
-import { GroupSection } from "./GroupSection";
-import { PageSection } from "./PageSection";
+import { BarChart, BarChartItem, BarProvider } from "./Charts/Bar";
+import Link from "next/link";
+import { CubeIcon } from "@radix-ui/react-icons";
+import { ApiTaskLogDone } from "@/app/types";
+import { colorPalette } from "./Charts/colors";
 
-export default function HomePage() {
+export default function StatsPage() {
   const router = useRouter();
 
   const user = useUserStore((s) => s.user);
@@ -42,25 +44,33 @@ export default function HomePage() {
 }
 
 function Content() {
-  const [groups, setGroups] = useState<Pick<Group, "id" | "name">[]>([]);
+  const [data, setData] = useState<ApiTaskLogDone[]>();
+  const [total, setTotal] = useState<number>();
 
   useEffect(() => {
     (async () => {
-      try {
-        const { data, error } = await supabase
-          .from("groups")
-          .select("id, name")
-          .order("order", { ascending: true });
+      // supabase.functions
+      //   .invoke("hello-world", { body: { name: "React" } })
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      const { data, error } = await supabase.rpc("group_days_done_last_30");
 
-        if (error) throw error;
+      if (error) throw error;
 
-        setGroups(data || []);
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      const dataMaped = data as ApiTaskLogDone[];
+      setData(dataMaped);
+      const total = dataMaped.reduce((acc, r) => acc + r.days_done, 0);
+      setTotal(total);
     })();
   }, []);
+
+  if (!data || total === undefined) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -70,11 +80,70 @@ function Content() {
 
         <h1 className="page-title-1">Stats</h1>
 
-        <PageSection />
+        <div>
+          <span>Last 30 days</span>
 
-        {/* {groups.map((group) => (
-          <GroupSection key={group.id} group={group} />
-        ))} */}
+          <div className="mt-[30px] flex items-center gap-[10px]">
+            <CubeIcon className="size-[20px]" />
+            <h2 className="flex-1 text-xl font-bold">All Groups</h2>
+            <div>
+              <span className="text-xl font-bold">{total}</span>{" "}
+              <span className="text-sm text-[var(--gray-9)]">total dots</span>
+            </div>
+          </div>
+
+          <BarProvider total={total}>
+            <BarChart>
+              {data.map((item, index) => (
+                <BarChartItem
+                  key={item.id}
+                  value={item.days_done}
+                  color={colorPalette[index]}
+                />
+              ))}
+            </BarChart>
+          </BarProvider>
+
+          <div className="mt-[20px] flex flex-col gap-[10px]">
+            {data.map((item, index) => {
+              const percent = Math.round((item.days_done * 100) / total);
+              return (
+                <div key={item.id} className="flex flex-col">
+                  <div className="flex w-full shrink-0 items-center gap-[10px]">
+                    <div
+                      className="h-[10px] w-[10px] rounded-full"
+                      style={{ backgroundColor: colorPalette[index] }}
+                    />
+
+                    <div className="flex-1">{item.name}</div>
+
+                    <div className="flex">
+                      <div className="text-right">
+                        <span>{item.days_done} </span>
+                        <span className="text-xs text-[var(--gray-9)]">
+                          dots
+                        </span>
+                      </div>
+                      <span className="mx-[10px] text-[var(--gray-9)]">-</span>
+                      <div>
+                        <span>{percent}% </span>
+                        <span className="text-xs text-[var(--gray-9)]">
+                          of total
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/stats/${item.id}`}
+                    className="ml-[20px] text-xs text-[var(--inverted)]"
+                  >
+                    See details
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </main>
     </>
   );

@@ -1,0 +1,153 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
+import Loading from "../../../components/Loading/Loading";
+import { supabase } from "@/app/supabase/server";
+import { ApiTaskLogDone, Group, mapGroupResponse } from "@/app/types";
+import AppHeader from "@/app/components/AppHeader";
+import GoBackButton from "@/app/components/GoBackButton";
+import { CubeIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
+import { notifyLoadError } from "@/app/components/Notification";
+import { useAppStore } from "@/app/stores/appStore";
+import { useUserStore } from "@/app/stores/userStore";
+import { BarChart, BarChartItem, BarProvider } from "../Charts/Bar";
+import { colorPalette } from "../Charts/colors";
+
+interface ParamsType {
+  params: Promise<{ group_id: string }>;
+}
+
+export default function StatsGroupPage({ params }: ParamsType) {
+  const router = useRouter();
+
+  const user = useUserStore((s) => s.user);
+  const init = useAppStore((s) => s.init);
+  const isEmpty = useAppStore((s) => s.isEmpty);
+
+  useEffect(() => {
+    if (user === undefined) return;
+    if (user === null) {
+      router.replace("/product");
+    } else {
+      init().catch(() => {
+        notifyLoadError();
+      });
+    }
+  }, [user, init, router]);
+
+  useEffect(() => {
+    if (isEmpty === undefined) return;
+    if (isEmpty === true) {
+      router.replace("/start");
+    }
+  }, [isEmpty, router]);
+
+  return user && isEmpty === false ? <Content params={params} /> : <Loading />;
+}
+
+function Content({ params }: ParamsType) {
+  const { group_id } = use(params);
+
+  const [group, setGroup] = useState<Group>();
+  const [data, setData] = useState<ApiTaskLogDone[]>();
+  const [total, setTotal] = useState<number>();
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("groups")
+        .select("*")
+        .eq("id", group_id)
+        .single();
+
+      if (error) throw data;
+
+      setGroup(mapGroupResponse(data));
+    })();
+
+    (async () => {
+      const { data, error } = await supabase.rpc("task_days_done_last_30", {
+        p_group_id: group_id,
+      });
+
+      if (error) throw error;
+
+      const dataMaped = data as ApiTaskLogDone[];
+      setData(dataMaped);
+      const total = dataMaped.reduce((acc, r) => acc + r.days_done, 0);
+      setTotal(total);
+    })();
+  }, [group_id]);
+
+  if (!group || !data || total === undefined) {
+    return <Loading />;
+  }
+
+  return (
+    <>
+      <AppHeader></AppHeader>
+      <main className="page-main flex flex-col gap-[50px]">
+        <GoBackButton path="/stats">Go back to all group</GoBackButton>
+
+        <h1 className="page-title-1">Stats</h1>
+        <span>Last 30 days</span>
+
+        <div>
+          <div className="flex w-full items-center gap-[10px]">
+            <CubeIcon className="size-[25px]" />
+            <h2 className="flex-1 text-2xl font-bold">{group.name}</h2>
+            <div>
+              <span className="text-2xl font-bold">{total}</span>{" "}
+              <span className="text-[var(--gray-9)]">total dots</span>
+            </div>
+          </div>
+
+          <BarProvider total={total}>
+            <BarChart>
+              {data.map((item, index) => (
+                <BarChartItem
+                  key={item.id}
+                  value={item.days_done}
+                  color={colorPalette[index]}
+                />
+              ))}
+            </BarChart>
+          </BarProvider>
+
+          <div className="mt-[20px] flex flex-col gap-[10px]">
+            {data.map((item, index) => {
+              const percent = Math.round((item.days_done * 100) / total);
+              return (
+                <div
+                  key={item.id}
+                  className="flex w-full shrink-0 items-center gap-[10px]"
+                >
+                  <div
+                    className="h-[10px] w-[10px] rounded-full"
+                    style={{ backgroundColor: colorPalette[index] }}
+                  />
+                  <div className="flex-1">{item.name}</div>
+
+                  <div className="flex">
+                    <div className="text-right">
+                      <span>{item.days_done} </span>
+                      <span className="text-xs text-[var(--gray-9)]">dots</span>
+                    </div>
+                    <span className="mx-[10px] text-[var(--gray-9)]">-</span>
+                    <div>
+                      <span>{percent}% </span>
+                      <span className="text-xs text-[var(--gray-9)]">
+                        of total
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}

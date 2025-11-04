@@ -1,16 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-export const colorPalette = [
-  "#0868ac",
-  "#2b8cbe",
-  "#4eb3d3",
-  "#7bccc4",
-  "#a8ddb5",
-  "#ccebc5",
-  "#e0f3db",
-  "#f7fcf0",
-];
-
 export interface PieData {
   id: string;
   name: string;
@@ -27,14 +16,7 @@ interface PieContextProps {
 
 const PieContext = createContext<PieContextProps | undefined>(undefined);
 
-interface FocusContextProps {
-  focusData: PieData | undefined;
-  setFocusData: (focusData: PieData | undefined) => void;
-}
-
-const FocusContext = createContext<FocusContextProps | undefined>(undefined);
-
-const PieProvider = ({
+export function PieProvider({
   children,
   size,
   data,
@@ -42,7 +24,7 @@ const PieProvider = ({
   children: React.ReactNode;
   size: number;
   data: PieData[];
-}) => {
+}) {
   const [cumulative, setCumulative] = useState<number[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -68,22 +50,9 @@ const PieProvider = ({
       {children}
     </PieContext.Provider>
   );
-};
-
-export function PieChartRoot({ data }: { data: PieData[] }) {
-  const [focusData, setFocusData] = useState<PieData | undefined>(undefined);
-
-  return (
-    <PieProvider size={280} data={data}>
-      <FocusContext.Provider value={{ focusData, setFocusData }}>
-        <PieChar />
-        <Label />
-      </FocusContext.Provider>
-    </PieProvider>
-  );
 }
 
-function PieChar() {
+export function PieChar() {
   const context = useContext(PieContext);
   if (!context) {
     throw new Error("PieChart must be used within PieProvider");
@@ -108,27 +77,34 @@ function PieChar() {
       {/* <g transform="translate(250, 0) scale(-1, 1)"> */}
       {data.map((item, index) => {
         if (item.value === 0) return null;
-        return <PieChartItem key={index} data={item} index={index} />;
+        return (
+          <PieChartItem
+            key={index}
+            data={item}
+            color={colorPalette[index]}
+            index={index}
+          />
+        );
       })}
       {/* </g> */}
     </svg>
   );
 }
 
-function PieChartItem({ data, index }: { data: PieData; index: number }) {
+function PieChartItem({
+  value,
+  color,
+  index,
+}: {
+  value: number;
+  color: string;
+  index: number;
+}) {
   const context = useContext(PieContext);
   if (!context) {
     throw new Error("PieChartItem must be used within PieProvider");
   }
   const { size, cumulative, total } = context;
-
-  const focusContext = useContext(FocusContext);
-  if (!focusContext) {
-    throw new Error("PieChartItem must be used within focusContext");
-  }
-  const { setFocusData } = focusContext;
-
-  const { id, value, color } = data;
 
   const radius = size * 0.5;
   const center = size * 0.5;
@@ -168,44 +144,5 @@ function PieChartItem({ data, index }: { data: PieData; index: number }) {
     Z
   `;
 
-  return (
-    <path
-      d={pathData}
-      fill={color}
-      onPointerMove={() => {
-        console.log("id", id);
-        setFocusData(data);
-      }}
-    />
-  );
-}
-
-function Label() {
-  const context = useContext(PieContext);
-  if (!context) {
-    throw new Error("Label must be used within PieProvider");
-  }
-  const { total } = context;
-
-  const focusContext = useContext(FocusContext);
-  if (!focusContext) {
-    throw new Error("Label must be used within focusContext");
-  }
-  const { focusData } = focusContext;
-
-  if (!focusData) {
-    return null;
-  }
-
-  const percent = Math.round((focusData.value * 100) / total);
-
-  return (
-    <div>
-      <div>{focusData.name}</div>
-      <div className="flex gap-[10px]">
-        <div>{focusData.value}</div>
-        <div>{percent}%</div>
-      </div>
-    </div>
-  );
+  return <path d={pathData} fill={color} />;
 }

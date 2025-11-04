@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation";
 
 interface GoBackButtonProps {
   path?: string;
+  children?: React.ReactNode;
 }
 
-export default function GoBackButton({ path }: GoBackButtonProps) {
+export default function GoBackButton({ path, children }: GoBackButtonProps) {
   const router = useRouter();
 
   return (
@@ -17,7 +18,7 @@ export default function GoBackButton({ path }: GoBackButtonProps) {
       }}
     >
       <ArrowLeftIcon />
-      Go back
+      {children || "Go back"}
     </button>
   );
 }
