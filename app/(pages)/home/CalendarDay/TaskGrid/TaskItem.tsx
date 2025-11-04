@@ -69,32 +69,21 @@ function Dot({
   isActive: boolean;
   isTodayDate: boolean;
 }) {
-  const className = isTodayDate
-    ? clsx(
-        "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full border-[1px] border-black transition-all duration-100",
-        "hover:scale-110",
-        "active:scale-90",
-        isActive
-          ? "bg-[var(--accent)]"
-          : "bg-[var(--background)] hover:bg-[var(--accent-5)]"
-      )
-    : clsx(
-        "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-all duration-100",
-        "hover:scale-110 hover:border-[1px] hover:border-black",
-        isActive
-          ? "bg-[var(--accent)]"
-          : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-      );
+  const className = clsx(
+    "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
+    "hover:scale-110 hover:border-[1px] hover:border-black",
+    "active:scale-90",
+    isTodayDate
+      ? "bg-[var(--background)] border-[1px] border-black hover:bg-[var(--accent-5)]"
+      : "bg-[var(--gray)] hover:bg-[var(--accent-5)]",
+    isActive && "!bg-[var(--accent)]"
+  );
 
-  const classNameIcon = isTodayDate
-    ? clsx(
-        "size-3 text-black transition-opacity",
-        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-      )
-    : clsx(
-        "size-3 text-black opacity-0 transition-opacity",
-        "group-hover:opacity-100"
-      );
+  const classNameIcon = clsx(
+    "size-3 text-black opacity-0 ",
+    "group-hover:opacity-100",
+    isTodayDate && isActive && "opacity-100"
+  );
 
   return (
     <div
