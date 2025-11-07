@@ -11,8 +11,9 @@ import { notifyLoadError } from "@/app/components/Notification";
 import { useAppStore } from "@/app/stores/appStore";
 import { useUserStore } from "@/app/stores/userStore";
 import { BarChart, BarChartData } from "../Charts/Bar";
-import { colorPalette } from "../Charts/colors";
+
 import GoBackButton from "@/app/components/GoBackButton";
+import { palette } from "../Charts/colors";
 
 interface ParamsType {
   params: Promise<{ group_id: string }>;
@@ -110,6 +111,8 @@ function Content({ params }: ParamsType) {
 
           <BarChart
             data={data}
+            height="20px"
+            colors={palette.one}
             onLoad={(total, percentages) => {
               setTotal(total);
               setPercentages(percentages);
@@ -124,7 +127,7 @@ function Content({ params }: ParamsType) {
               >
                 <div
                   className="h-[10px] w-[10px] rounded-full"
-                  style={{ backgroundColor: colorPalette[index] }}
+                  style={{ backgroundColor: palette.two[index] }}
                 />
                 <div className="flex-1">{item.name}</div>
 

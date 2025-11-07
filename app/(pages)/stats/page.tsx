@@ -10,10 +10,10 @@ import { useUserStore } from "../../stores/userStore";
 import GoBackButton from "@/app/components/GoBackButton";
 import { supabase } from "@/app/supabase/server";
 import { BarChart, BarChartData } from "./Charts/Bar";
-import Link from "next/link";
 import { CubeIcon } from "@radix-ui/react-icons";
 import { ApiTaskLogDone } from "@/app/types";
-import { colorPalette } from "./Charts/colors";
+import { Accordion } from "radix-ui";
+import { palette } from "./Charts/colors";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -78,69 +78,182 @@ function Content() {
   return (
     <>
       <AppHeader></AppHeader>
-      <main className="page-main flex flex-col gap-[50px]">
+      <main className="page-main flex flex-col">
         <GoBackButton />
 
-        <h1 className="page-title-1">Stats</h1>
+        <h1 className="page-title-1 mt-[20px]">Stats</h1>
 
-        <div>
-          <span>Last 30 days</span>
+        <span className="mt-[10px]">Last 30 days</span>
 
-          <div className="mt-[30px] flex items-center gap-[10px]">
-            <CubeIcon className="size-[20px]" />
-            <h2 className="flex-1 text-xl font-bold">All Groups</h2>
-            <div>
-              {total !== undefined && (
-                <span className="text-xl font-bold">{total} </span>
-              )}
-              <span className="text-sm text-[var(--gray-9)]">total dots</span>
-            </div>
-          </div>
-
-          <BarChart
-            data={data}
-            onLoad={(total, percentages) => {
-              setTotal(total);
-              setPercentages(percentages);
-            }}
-          />
-
-          <div className="mt-[20px] flex flex-col gap-[10px]">
-            {data.map((item, index) => (
-              <div key={item.id} className="flex flex-col">
-                <div className="flex w-full shrink-0 items-center gap-[10px]">
-                  <div
-                    className="h-[10px] w-[10px] rounded-full"
-                    style={{ backgroundColor: colorPalette[index] }}
-                  />
-
-                  <div className="flex-1">{item.name}</div>
-
-                  <div className="flex">
-                    <div className="text-right">
-                      <span>{item.value} </span>
-                      <span className="text-xs text-[var(--gray-9)]">dots</span>
-                    </div>
-                    <span className="mx-[10px] text-[var(--gray-9)]">-</span>
-                    <div>
-                      <span>{percentages?.[index]}% </span>
-                      <span className="text-xs text-[var(--gray-9)]">
-                        of total
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <Link
-                  href={`/stats/${item.id}`}
-                  className="ml-[20px] text-xs text-[var(--inverted)]"
-                >
-                  See details
-                </Link>
-              </div>
-            ))}
-          </div>
+        <div className="mb-[20px] mt-[20px] flex items-center gap-[10px]">
+          <CubeIcon className="size-[20px]" />
+          <h2 className="flex-1 text-xl font-bold">All Groups</h2>
         </div>
+
+        <BarChart
+          data={data}
+          height="20px"
+          colors={palette.one}
+          onLoad={(total, percentages) => {
+            setTotal(total);
+            setPercentages(percentages);
+          }}
+        />
+
+        <Accordion.Root type="multiple" className="mt-[50px] flex flex-col">
+          {data.map((item, index) => (
+            <GroupSection
+              key={item.id}
+              item={item}
+              color={palette.one[index]}
+              percentage={percentages?.[index]}
+              allTotal={total}
+            />
+          ))}
+        </Accordion.Root>
       </main>
     </>
+  );
+}
+
+function GroupSection({
+  color,
+  item,
+  percentage,
+  allTotal,
+}: {
+  color: string;
+  item: BarChartData;
+  percentage?: number;
+  allTotal?: number;
+}) {
+  return (
+    <Accordion.Item
+      value={item.id}
+      className="border-b-[1px] border-[var(--gray-9)] p-[5px]"
+    >
+      <Accordion.Header>
+        <div className="flex flex-col">
+          <div className="flex w-full shrink-0 items-center gap-[10px]">
+            <div
+              className="h-[10px] w-[10px] rounded-full"
+              style={{ backgroundColor: color }}
+            />
+            <div className="flex-1">{item.name}</div>
+            <div className="flex">
+              <div className="w-[140px] text-right">
+                <span>{item.value} </span>
+                <span className="text-xs text-[var(--gray-9)]">days</span>
+              </div>
+              <div className="w-[140px] text-right">
+                <span>{percentage}% </span>
+                <span className="text-xs text-[var(--gray-9)]">
+                  of all group
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Accordion.Trigger>
+          <div className="ml-[20px] text-xs text-[var(--inverted)]">
+            See details
+          </div>
+        </Accordion.Trigger>
+      </Accordion.Header>
+
+      <Accordion.Content>
+        <GroupContent groupId={item.id} allTotal={allTotal} />
+      </Accordion.Content>
+    </Accordion.Item>
+  );
+}
+
+function GroupContent({
+  groupId,
+  allTotal,
+}: {
+  groupId: string;
+  allTotal?: number;
+}) {
+  const [data, setData] = useState<BarChartData[]>();
+  const [percentages, setPercentages] = useState<number[]>();
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.rpc("task_days_done_last_30", {
+        p_group_id: groupId,
+      });
+
+      if (error) throw error;
+
+      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+        id: item.id,
+        name: item.name,
+        value: item.days_done,
+      }));
+      setData(dataMaped);
+
+      const total = dataMaped.reduce((sum, item) => sum + item.value, 0);
+
+      const percentages = dataMaped.map((item) =>
+        Math.round((item.value * 100) / total)
+      );
+      setPercentages(percentages);
+    })();
+  }, [groupId]);
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <div className="flex gap-[40px] py-[20px] pl-[20px] text-xs">
+      {/* <PieChart
+        size={100}
+        data={data}
+        colors={palette.two}
+        onLoad={(total, percentages) => {
+          setTotal(total);
+          setPercentages(percentages);
+        }}
+      /> */}
+
+      <div className="flex flex-1 flex-col gap-[10px]">
+        {data.map((item, index) => (
+          <div
+            key={item.id}
+            className="flex w-full shrink-0 items-center gap-[10px]"
+          >
+            {/* <div
+              className="h-[10px] w-[10px] rounded-full"
+              style={{ backgroundColor: palette.two[index] }}
+            /> */}
+            <div className="flex-1">{item.name}</div>
+
+            <div className="flex">
+              <div className="w-[130px] text-right">
+                <span>{item.value} </span>
+                <span className="text-xs text-[var(--gray-9)]">days</span>
+              </div>
+              {percentages !== undefined && (
+                <div className="w-[130px] text-right">
+                  <span>{percentages[index]}% </span>
+                  <span className="text-xs text-[var(--gray-9)]">of group</span>
+                </div>
+              )}
+              {allTotal !== undefined && (
+                <div className="w-[140px] text-right">
+                  <span>{Math.round((item.value * 100) / allTotal)}% </span>
+                  <span className="text-xs text-[var(--gray-9)]">
+                    of all group
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
