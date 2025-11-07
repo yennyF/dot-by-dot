@@ -102,13 +102,28 @@ function Content() {
 
         <Accordion.Root type="multiple" className="mt-[50px] flex flex-col">
           {data.map((item, index) => (
-            <GroupSection
+            <Accordion.Item
               key={item.id}
-              item={item}
-              color={palette.one[index]}
-              percentage={percentages?.[index]}
-              allTotal={total}
-            />
+              value={item.id}
+              className="border-b-[1px] border-[var(--gray-9)] p-[5px]"
+            >
+              <Accordion.Header>
+                <GroupHeader
+                  item={item}
+                  color={palette.one[index]}
+                  percentage={percentages?.[index]}
+                />
+                <Accordion.Trigger>
+                  <div className="ml-[20px] text-xs text-[var(--inverted)]">
+                    See details
+                  </div>
+                </Accordion.Trigger>
+              </Accordion.Header>
+
+              <Accordion.Content>
+                <GroupContent groupId={item.id} allTotal={total} />
+              </Accordion.Content>
+            </Accordion.Item>
           ))}
         </Accordion.Root>
       </main>
@@ -116,56 +131,35 @@ function Content() {
   );
 }
 
-function GroupSection({
+function GroupHeader({
   color,
   item,
   percentage,
-  allTotal,
 }: {
   color: string;
   item: BarChartData;
   percentage?: number;
-  allTotal?: number;
 }) {
   return (
-    <Accordion.Item
-      value={item.id}
-      className="border-b-[1px] border-[var(--gray-9)] p-[5px]"
-    >
-      <Accordion.Header>
-        <div className="flex flex-col">
-          <div className="flex w-full shrink-0 items-center gap-[10px]">
-            <div
-              className="h-[10px] w-[10px] rounded-full"
-              style={{ backgroundColor: color }}
-            />
-            <div className="flex-1">{item.name}</div>
-            <div className="flex">
-              <div className="w-[140px] text-right">
-                <span>{item.value} </span>
-                <span className="text-xs text-[var(--gray-9)]">days</span>
-              </div>
-              <div className="w-[140px] text-right">
-                <span>{percentage}% </span>
-                <span className="text-xs text-[var(--gray-9)]">
-                  of all group
-                </span>
-              </div>
-            </div>
+    <div className="flex flex-col">
+      <div className="flex w-full shrink-0 items-center gap-[10px]">
+        <div
+          className="h-[10px] w-[10px] rounded-full"
+          style={{ backgroundColor: color }}
+        />
+        <div className="flex-1">{item.name}</div>
+        <div className="flex">
+          <div className="w-[140px] text-right">
+            <span>{item.value} </span>
+            <span className="text-xs text-[var(--gray-9)]">days</span>
+          </div>
+          <div className="w-[140px] text-right">
+            <span>{percentage}% </span>
+            <span className="text-xs text-[var(--gray-9)]">of all group</span>
           </div>
         </div>
-
-        <Accordion.Trigger>
-          <div className="ml-[20px] text-xs text-[var(--inverted)]">
-            See details
-          </div>
-        </Accordion.Trigger>
-      </Accordion.Header>
-
-      <Accordion.Content>
-        <GroupContent groupId={item.id} allTotal={allTotal} />
-      </Accordion.Content>
-    </Accordion.Item>
+      </div>
+    </div>
   );
 }
 
