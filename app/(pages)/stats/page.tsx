@@ -13,6 +13,8 @@ import { CubeIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import GroupDetail from "./GroupDetail";
 import GroupAll from "./GroupAll";
+import { Tabs } from "radix-ui";
+import { StatTabStatus } from "./utils";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -44,6 +46,7 @@ export default function StatsPage() {
 
 function Content() {
   const [selectedData, setSelectedData] = useState<BarChartData>();
+  const [activeTab, setActiveStatTab] = useState<StatTabStatus>();
 
   return (
     <>
@@ -61,11 +64,39 @@ function Content() {
           />
         </div>
 
-        {selectedData ? (
-          <GroupDetail groupId={selectedData.id} />
-        ) : (
-          <GroupAll setSelectedData={setSelectedData} />
-        )}
+        <Tabs.Root
+          defaultValue={activeTab}
+          onValueChange={(value) => {
+            if (value === StatTabStatus.howOften) {
+              setActiveStatTab(StatTabStatus.howOften);
+            } else {
+              setActiveStatTab(StatTabStatus.howEven);
+            }
+          }}
+        >
+          <Tabs.List
+            className="mb-[50px] flex gap-[10px]"
+            aria-label="Manage your account"
+          >
+            <Tabs.Trigger
+              value={StatTabStatus.howOften}
+              className="button-tab button-sm"
+            >
+              How often
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value={StatTabStatus.howEven}
+              className="button-tab button-sm"
+            >
+              How even
+            </Tabs.Trigger>
+          </Tabs.List>
+          {selectedData ? (
+            <GroupDetail groupId={selectedData.id} />
+          ) : (
+            <GroupAll setSelectedData={setSelectedData} />
+          )}
+        </Tabs.Root>
       </main>
     </>
   );

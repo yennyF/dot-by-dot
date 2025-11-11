@@ -8,7 +8,7 @@ import { ApiTaskLogDone } from "@/app/types";
 import { palette } from "./Charts/colors";
 import { ProgressBar } from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
-import { StatTabStatus, useUIStoreTab } from "@/app/stores/useUIStore";
+import { StatTabStatus } from "./utils";
 
 export default function GroupAll({
   setSelectedData,
@@ -16,9 +16,6 @@ export default function GroupAll({
   setSelectedData: Dispatch<SetStateAction<BarChartData | undefined>>;
 }) {
   const [data, setData] = useState<BarChartData[]>();
-
-  const activeTab = useUIStoreTab((s) => s.activeStatTab);
-  const setActiveStatTab = useUIStoreTab((s) => s.setActiveStatTab);
 
   useEffect(() => {
     (async () => {
@@ -46,40 +43,14 @@ export default function GroupAll({
   if (!data) return null;
 
   return (
-    <Tabs.Root
-      defaultValue={activeTab}
-      onValueChange={(value) => {
-        if (value === StatTabStatus.howOften) {
-          setActiveStatTab(StatTabStatus.howOften);
-        } else {
-          setActiveStatTab(StatTabStatus.howEven);
-        }
-      }}
-    >
-      <Tabs.List
-        className="mb-[50px] flex gap-[10px]"
-        aria-label="Manage your account"
-      >
-        <Tabs.Trigger
-          value={StatTabStatus.howOften}
-          className="button-tab button-sm"
-        >
-          How often
-        </Tabs.Trigger>
-        <Tabs.Trigger
-          value={StatTabStatus.howEven}
-          className="button-tab button-sm"
-        >
-          How even
-        </Tabs.Trigger>
-      </Tabs.List>
+    <>
       <Tabs.Content value={StatTabStatus.howOften}>
         <TabOneContent data={data} setSelectedData={setSelectedData} />
       </Tabs.Content>
       <Tabs.Content value={StatTabStatus.howEven}>
         <TabTwoContent data={data} setSelectedData={setSelectedData} />
       </Tabs.Content>
-    </Tabs.Root>
+    </>
   );
 }
 

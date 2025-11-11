@@ -34,17 +34,3 @@ export const useUIStore = create<Store>()(
     }
   )
 );
-
-export enum StatTabStatus {
-  howOften = "how_often",
-  howEven = "how_even",
-}
-type StoreUITab = {
-  activeStatTab: StatTabStatus;
-  setActiveStatTab: (statTab: StatTabStatus) => void;
-};
-
-export const useUIStoreTab = create<StoreUITab>()((set) => ({
-  activeStatTab: StatTabStatus.howOften,
-  setActiveStatTab: (activeStatTab) => set({ activeStatTab }),
-}));
