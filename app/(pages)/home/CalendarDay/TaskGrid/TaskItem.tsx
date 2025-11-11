@@ -1,6 +1,6 @@
 "use client";
 
-import { addDays, isToday } from "date-fns";
+import { addDays, isToday, isWeekend } from "date-fns";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon } from "@radix-ui/react-icons";
@@ -12,9 +12,6 @@ interface TaskItemProps {
 }
 
 export default function TaskItem({ date, task }: TaskItemProps) {
-  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
-  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
-
   const isActive = useTaskLogStore(
     (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
   );
@@ -26,22 +23,28 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   );
 
   const isTodayDate = isToday(date);
+  const isWeekendDate = isWeekend(date);
 
-  const toggleLog = async () => {
-    if (isActive) {
-      await deleteTaskLog(date, task.id);
-    } else {
-      await insertTaskLog(date, task.id);
-    }
-  };
+  const classNameDot = clsx(
+    "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
+    "hover:scale-110 hover:bg-[var(--accent-5)] hover:border-[1px] hover:border-black",
+    "active:scale-90",
+    isActive && "!bg-[var(--accent)]",
+    isTodayDate
+      ? "bg-[var(--background)] border-[1px] border-black "
+      : isWeekendDate
+        ? "bg-[var(--gray-5)]"
+        : "bg-[var(--gray)] "
+  );
+
+  const classNameIcon = clsx(
+    "size-3 text-black opacity-0 ",
+    "group-hover:opacity-100",
+    isTodayDate && isActive && "opacity-100"
+  );
 
   return (
-    <div
-      className={clsx(
-        "app-TaskRowItem relative flex h-row w-day items-center justify-center",
-        isTodayDate && "isToday"
-      )}
-    >
+    <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
       {isPrevActive && isActive && (
         <div
           className={clsx(
@@ -50,7 +53,6 @@ export default function TaskItem({ date, task }: TaskItemProps) {
           )}
         />
       )}
-
       {isNextActive && isActive && (
         <div
           className={clsx(
@@ -60,70 +62,14 @@ export default function TaskItem({ date, task }: TaskItemProps) {
         />
       )}
 
-      {isTodayDate ? (
-        <Dot isActive={isActive} toggleLog={toggleLog} />
-      ) : (
-        <PreviousDot isActive={isActive} toggleLog={toggleLog} />
-      )}
-    </div>
-  );
-}
-
-function Dot({
-  isActive,
-  toggleLog,
-}: {
-  isActive: boolean;
-  toggleLog: () => void;
-}) {
-  return (
-    <div
-      data-task-id={"asdasd"}
-      className={clsx(
-        "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full border-[1px] border-black transition-all duration-100",
-        "hover:scale-110",
-        "active:scale-90",
-        isActive
-          ? "bg-[var(--accent)]"
-          : "bg-[var(--background)] hover:bg-[var(--accent-5)]"
-      )}
-      onClick={toggleLog}
-    >
-      <CheckIcon
-        className={clsx(
-          "size-3 text-black transition-opacity",
-          isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-        )}
-      />
-    </div>
-  );
-}
-
-function PreviousDot({
-  isActive,
-  toggleLog,
-}: {
-  isActive: boolean;
-  toggleLog: () => void;
-}) {
-  return (
-    <div
-      data-task-id={"asdasd"}
-      className={clsx(
-        "app-PreviousDot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-all duration-100",
-        "hover:scale-110 hover:border-[1px] hover:border-black",
-        isActive
-          ? "bg-[var(--accent)]"
-          : "bg-[var(--gray)] hover:bg-[var(--accent-5)]"
-      )}
-      onClick={toggleLog}
-    >
-      <CheckIcon
-        className={clsx(
-          "size-3 text-black opacity-0 transition-opacity",
-          "group-hover:opacity-100"
-        )}
-      />
+      <div
+        data-task-id={task.id}
+        data-date={date}
+        data-active={isActive}
+        className={classNameDot}
+      >
+        <CheckIcon className={classNameIcon} />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,11 @@
 
 import { useEffect } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
-import { PlusIcon, TriangleDownIcon } from "@radix-ui/react-icons";
+import {
+  PieChartIcon,
+  PlusIcon,
+  TriangleDownIcon,
+} from "@radix-ui/react-icons";
 import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
 import LeftButton from "./Header/LeftButton";
@@ -58,8 +62,12 @@ function Content() {
             <LeftButton />
             <RightButton />
             <TodayButton />
+
             <Link href="/stats" className="text-[var(--inverted)]">
-              Stats
+              <button className="button-outline button-sm">
+                <PieChartIcon />
+                stats
+              </button>
             </Link>
           </div>
           <div className="flex gap-2">

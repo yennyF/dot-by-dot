@@ -1,29 +1,31 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
-export interface PieData {
+export interface PieChartData {
   id: string;
   name: string;
   value: number;
-  color: string;
 }
 
-interface PieContextProps {
-  data: PieData[];
-  size: number;
-  total: number;
-  cumulative: number[];
-}
+const PieChartContext = createContext<
+  | {
+      data: PieChartData[];
+      size: number;
+      total: number;
+      cumulative: number[];
+    }
+  | undefined
+>(undefined);
 
-const PieContext = createContext<PieContextProps | undefined>(undefined);
-
-export function PieProvider({
-  children,
+export function PieChart({
   size,
   data,
+  colors,
+  onLoad,
 }: {
-  children: React.ReactNode;
   size: number;
-  data: PieData[];
+  data: PieChartData[];
+  colors: string[];
+  onLoad?: (total: number, percentages: number[]) => void;
 }) {
   const [cumulative, setCumulative] = useState<number[]>([]);
   const [total, setTotal] = useState(0);
@@ -36,10 +38,17 @@ export function PieProvider({
     }, 0);
     setCumulative(cumulative);
     setTotal(total);
+
+    const percentages = data.map((item) =>
+      Math.round((item.value * 100) / total)
+    );
+
+    onLoad?.(total, percentages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
-    <PieContext.Provider
+    <PieChartContext.Provider
       value={{
         size,
         total,
@@ -47,79 +56,61 @@ export function PieProvider({
         cumulative,
       }}
     >
-      {children}
-    </PieContext.Provider>
-  );
-}
-
-export function PieChar() {
-  const context = useContext(PieContext);
-  if (!context) {
-    throw new Error("PieChart must be used within PieProvider");
-  }
-  const { size, data } = context;
-
-  const focusContext = useContext(FocusContext);
-  if (!focusContext) {
-    throw new Error("PieChartItem must be used within focusContext");
-  }
-  const { setFocusData } = focusContext;
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      onPointerLeave={() => {
-        setFocusData(undefined);
-      }}
-    >
-      {/* <g transform="translate(250, 0) scale(-1, 1)"> */}
-      {data.map((item, index) => {
-        if (item.value === 0) return null;
-        return (
-          <PieChartItem
-            key={index}
-            data={item}
-            color={colorPalette[index]}
-            index={index}
-          />
-        );
-      })}
-      {/* </g> */}
-    </svg>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {/* <g transform="translate(250, 0) scale(-1, 1)"> */}
+        {data.map((item, index) => {
+          if (item.value === 0) return null;
+          return (
+            <PieChartItem
+              key={index}
+              value={item.value}
+              color={colors[index]}
+              total={total}
+              size={size}
+              start={cumulative[index]}
+            />
+          );
+        })}
+        {/* </g> */}
+      </svg>
+    </PieChartContext.Provider>
   );
 }
 
 function PieChartItem({
   value,
   color,
-  index,
+  size,
+  total,
+  start,
 }: {
   value: number;
   color: string;
-  index: number;
+  size: number;
+  total: number;
+  start: number;
 }) {
-  const context = useContext(PieContext);
-  if (!context) {
-    throw new Error("PieChartItem must be used within PieProvider");
-  }
-  const { size, cumulative, total } = context;
-
   const radius = size * 0.5;
   const center = size * 0.5;
   const innerRadius = radius * 0.5; // adjust thickness (0.6 = 60% inner hole)
-  const startAngle = (cumulative[index] / total) * 2 * Math.PI;
-  const endAngle = ((cumulative[index] + value) / total) * 2 * Math.PI;
+
+  const fullCircle = 2 * Math.PI;
+  const startAngle = (start / total) * fullCircle;
+  const endAngle = ((start + value) / total) * fullCircle;
   const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
 
   // Full circle special case
-  if (value >= 100) {
+  if (value >= total) {
     return (
-      <>
-        <circle cx={center} cy={center} r={radius} fill={color} />
-        <circle cx={center} cy={center} r={innerRadius} fill="white" />
-      </>
+      <circle
+        cx={center}
+        cy={center}
+        r={(radius + innerRadius) / 2} // midline of the band
+        stroke={color}
+        strokeWidth={radius - innerRadius} // thickness of the donut
+        strokeLinecap="round"
+        fill="none" // transparent hole
+      />
     );
   }
 

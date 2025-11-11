@@ -59,7 +59,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }));
     },
 
-    startDate: subMonths(startOfMonth(new Date()), 1),
+    startDate: subMonths(new Date(), 1),
     endDate: new Date(),
     totalDate: [],
 

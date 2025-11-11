@@ -8,20 +8,36 @@ import clsx from "clsx";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
 import { memo } from "react";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
+  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
+  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
+
   function handleClick(e: React.MouseEvent<HTMLDivElement>) {
-    const index = (e.target as HTMLElement).dataset.index;
-    console.log(index);
-    // if (index !== undefined) onToggle(Number(index));
+    const element = (e.target as HTMLElement).closest("[data-task-id]");
+    if (!element) return;
+
+    const htmlElement = element as HTMLElement;
+    const taskId = htmlElement.dataset["taskId"];
+    const date = htmlElement.dataset["date"];
+    const active = htmlElement.dataset["active"];
+
+    if (!taskId || !date || active === undefined) return;
+
+    if (active === "true") {
+      deleteTaskLog(new Date(date), taskId);
+    } else {
+      insertTaskLog(new Date(date), taskId);
+    }
   }
 
   return (
     <div className={clsx("app-Body flex flex-col gap-5")} onClick={handleClick}>
-      <div className="app-group">
+      <div className="app-group" data-task={"id"}>
         <DummyTask groupId={null} />
         <TaskList groupId={null} />
       </div>
