@@ -1,0 +1,125 @@
+
+.button {
+  @apply w-fit h-fit flex justify-center items-center rounded-full cursor-pointer text-nowrap focus:outline-none disabled:pointer-events-none disabled:opacity-30;
+}
+
+.button-text {
+  @apply button gap-2 px-6 py-2;
+
+  &.button-sm {
+    @apply gap-1 px-3 h-[32px] text-sm;
+  }
+}
+
+.button-icon {
+  @apply button p-1;
+}
+
+.button-accent {
+  @apply button-text bg-[var(--accent)] text-[var(--white)];
+  
+  &:hover {
+    @apply bg-[var(--background)] text-[var(--accent)];  
+    outline-width: 1px;
+    outline-offset: -1px;
+    outline-style: solid;
+    outline-color: var(--accent);
+  }
+}
+
+.button-accept {
+  @apply button-text bg-[var(--accent)] text-[var(--white)];
+
+  &:hover {
+    @apply bg-[var(--black)];  
+  }
+}
+
+.button-cancel {
+  @apply button-text bg-[var(--gray-9)] text-[var(--white)];
+
+  &:hover {
+    @apply bg-[var(--black)];  
+  }
+}
+
+.button-sheer {
+  @apply button-text;
+  
+  &:hover {
+    @apply text-[var(--accent)];
+    outline-width: 1px;
+    outline-offset: -1px;
+    outline-style: solid;
+    outline-color: var(--accent);
+  }
+}
+
+.button-outline {
+  @apply button-text bg-[var(--background)] text-[var(--black)];
+  outline-width: 1px;
+  outline-offset: -1px;
+  outline-style: solid;
+  outline-color: var(--black);
+  
+  &:hover {
+    @apply  bg-[var(--black)] text-[var(--white)];
+  }
+}
+
+.button-accent-outline {
+  @apply button-text bg-[var(--background)] text-[var(--accent)];
+  outline-width: 1px;
+  outline-offset: -1px;
+  outline-style: solid;
+  outline-color: var(--accent);
+
+  &:hover {
+    @apply bg-[var(--black)] text-[var(--white)];
+    outline-color: var(--black);
+  }
+}
+
+.button-icon-sheer {
+  @apply button-icon;
+
+  &[data-state="open"], &:hover{
+    @apply bg-[var(--black)] text-[var(--white)];
+  }
+}
+
+[data-state="open"] > .button-icon-sheer {
+  @apply bg-[var(--black)] text-[var(--white)];
+}  
+
+.button-icon-accent {
+  @apply button-icon bg-[var(--accent)] hover:bg-[var(--black)];
+
+  svg {
+    @apply text-[var(--white)]
+  }
+
+  &:hover svg {
+    @apply text-[var(--white)];
+  }
+
+  &[data-state="open"] {
+    @apply bg-[var(--black)];
+
+    svg {
+      @apply text-[var(--white)];
+    }
+  }
+}
+
+.button-icon-inverted {
+  @apply button-icon bg-[var(--inverted)] hover:bg-[var(--black)];
+
+  svg {
+    @apply text-[var(--white)]
+  }
+
+  &:hover svg {
+    @apply text-[var(--white)];
+  }
+}

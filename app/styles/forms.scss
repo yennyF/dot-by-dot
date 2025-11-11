@@ -1,0 +1,84 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: black !important; /* Adjust text color if needed */
+    background-color: transparent !important; /* For other browsers */
+}
+
+input {
+  @apply rounded px-2 py-1 text-[var(--gray-9)] focus:outline-none;
+}
+
+.label-auth {
+  @apply mb-1 text-xs text-[var(--gray-9)] flex;
+
+  .required {
+    @apply relative -top-0.5;
+  }
+}
+
+.valid-required {
+  @apply text-xs text-[var(--red)];
+}
+
+.valid-email, .valid-length {
+  @apply text-xs text-[var(--gray-9)] mt-1;
+}
+
+.dropdown-content {
+  background: var(--background);
+  box-shadow:
+    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+
+    .dropdown-item {
+      padding: 10px 15px;
+      cursor: default;
+      outline: none;
+
+      &:hover {
+        background: var(--gray-9);
+        color: var(--white);
+      }
+    }
+
+    .dropdown-item-icon {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      svg {
+        opacity: 0.6;
+      }
+    }
+
+    .arrow {
+      fill: var(--background);
+    }
+}
+
+.checkbox {
+  @apply flex;
+
+  .checkbox-box {
+    @apply flex size-[14px] flex-shrink-0 appearance-none items-center justify-center rounded-sm outline-none outline-1 outline-offset-0 outline-[var(--black)];
+
+    &[data-state="checked"] {
+      @apply bg-[var(--accent)] outline-[var(--accent)];
+
+      svg {
+        @apply text-white
+      }
+    }
+  }
+
+  .checkbox-indicator-hover {
+    @apply hidden text-[var(--gray-9)];
+  }
+
+  .checkbox-label {
+    @apply hover:cursor-pointer pl-3;
+  }
+}

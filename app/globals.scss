@@ -259,16 +259,16 @@ input {
   scrollbar-width: none;  /* Firefox */
 }
 
-@layer components {
+
   .button {
-    @apply w-fit h-fit flex justify-center items-center rounded-full cursor-pointer text-nowrap transition-all focus:outline-none disabled:pointer-events-none disabled:opacity-30;
+    @apply w-fit h-fit flex justify-center items-center rounded-full cursor-pointer text-nowrap focus:outline-none disabled:pointer-events-none disabled:opacity-30;
   }
 
   .button-text {
     @apply button gap-2 px-6 py-2;
 
     &.button-sm {
-      @apply gap-1 px-3 h-[32px] text-sm border-[1px];
+      @apply gap-1 px-3 h-[32px] text-sm;
     }
   }
 
@@ -277,7 +277,7 @@ input {
   }
 
   .button-accent-outline {
-    @apply button-text border-2 border-[var(--accent)] bg-[var(--background)] text-[var(--accent)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
+    @apply button-text border-[1px] border-[var(--accent)] bg-[var(--background)] text-[var(--accent)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
   }
   
   .button-accent {
@@ -285,11 +285,21 @@ input {
   }
 
   .button-outline {
-    @apply button-text border-2 border-[var(--black)] bg-[var(--background)] text-[var(--black)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
+    @apply button-text border-[1px] border-[var(--black)] bg-[var(--background)] text-[var(--black)] hover:border-[var(--black)] hover:bg-[var(--black)] hover:text-[var(--white)];
+  }
 
-    // svg {
-    //   @apply h-[20px] w-[20px] shrink-0 m-[2px];
-    // }
+  .button-sheer {
+    @apply button-text;
+    
+    
+
+    &:hover {
+      // @apply outline-[1px] outline-[var(--accent)] text-[var(--accent)];
+      outline-width: 1px;
+      outline-style: solid;
+      outline-offset: -1px;
+      outline-color: #3b82f6; // Tailwind blue-500
+    }
   }
 
   .button-accept {
@@ -343,7 +353,7 @@ input {
       @apply text-[var(--white)];
     }
   }
-}
+
 
 @keyframes fadeIn {
   from {
