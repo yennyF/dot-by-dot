@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { palette } from "./colors";
+import { createContext, useEffect, useState } from "react";
 
 export interface PieChartData {
   id: string;

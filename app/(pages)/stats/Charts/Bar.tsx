@@ -66,11 +66,16 @@ export function BarChart({
                 <div className="font-bold">{item.name}</div>
                 <div>
                   <span>{item.value} </span>
-                  <span className="text-[var(--gray-9)]">dots</span>
+                  <span className="text-xs text-[var(--gray-9)]">
+                    {`${item.value > 1 ? "days" : "day"}`}
+                  </span>
                 </div>
                 <div>
                   <span>{percentages[index]}%</span>
-                  <span className="text-[var(--gray-9)]"> of total</span>
+                  <span className="text-xs text-[var(--gray-9)]">
+                    {" "}
+                    of total
+                  </span>
                 </div>
               </div>
             </AppContentTrigger>

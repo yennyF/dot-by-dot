@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
-import { PieChar } from "../stats/Charts/Pie";
 
 export default function HomePage() {
   const router = useRouter();
