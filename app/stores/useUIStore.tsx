@@ -7,7 +7,6 @@ type Store = {
   toggleCollapsedGroup: (id: string) => void;
   collapseAllGroups: () => void;
   expandAllGroups: () => void;
-  reset: () => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -29,10 +28,23 @@ export const useUIStore = create<Store>()(
       expandAllGroups: () => {
         set({ collapsedGroups: [] });
       },
-      reset: () => set({ collapsedGroups: [] }),
     }),
     {
       name: "ui-storage",
     }
   )
 );
+
+export enum StatTabStatus {
+  howOften = "how_often",
+  howEven = "how_even",
+}
+type StoreUITab = {
+  activeStatTab: StatTabStatus;
+  setActiveStatTab: (statTab: StatTabStatus) => void;
+};
+
+export const useUIStoreTab = create<StoreUITab>()((set) => ({
+  activeStatTab: StatTabStatus.howOften,
+  setActiveStatTab: (activeStatTab) => set({ activeStatTab }),
+}));

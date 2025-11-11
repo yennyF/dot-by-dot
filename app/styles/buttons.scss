@@ -47,18 +47,6 @@
   }
 }
 
-.button-sheer {
-  @apply button;
-  
-  &:hover {
-    @apply text-[var(--accent)];
-    outline-width: 1px;
-    outline-offset: -1px;
-    outline-style: solid;
-    outline-color: var(--accent);
-  }
-}
-
 .button-outline {
   @apply button bg-[var(--background)] text-[var(--black)];
   outline-width: 1px;
@@ -80,6 +68,22 @@
 
   &:hover {
     @apply bg-[var(--black)] text-[var(--white)];
+    outline-color: var(--black);
+  }
+}
+
+.button-tab {
+  @apply button text-[var(--black)];
+
+  &[data-state="active"] {
+    @apply bg-[var(--black)] text-[var(--white)];
+  }
+  
+  &:hover:not(&[data-state="active"]) {
+    @apply text-[var(--black)];
+    outline-width: 1px;
+    outline-offset: -1px;
+    outline-style: solid;
     outline-color: var(--black);
   }
 }
