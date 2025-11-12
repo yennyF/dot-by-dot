@@ -15,6 +15,12 @@ import GroupDetail from "./GroupDetail";
 import GroupAll from "./GroupAll";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
+import { subDays } from "date-fns";
+import {
+  AppTooltip,
+  AppTooltipTrigger,
+  AppContentTrigger,
+} from "@/app/components/AppTooltip";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -50,6 +56,13 @@ function Content() {
     StatTabStatus.howOften
   );
 
+  const fromDate = subDays(new Date(), 29);
+  const formattedFromDate = fromDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <>
       <AppHeader></AppHeader>
@@ -58,13 +71,10 @@ function Content() {
 
         <h1 className="page-title-1 mt-[20px]">Stats</h1>
 
-        <div className="sticky top-[60px] bg-[var(--background)] py-[50px]">
-          <span className="mt-[10px]">Last 30 days</span>
-          <Breadcrums
-            selectedData={selectedData}
-            setSelectedData={setSelectedData}
-          />
-        </div>
+        <Breadcrums
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
 
         <Tabs.Root
           defaultValue={activeTab}
@@ -76,23 +86,35 @@ function Content() {
             }
           }}
         >
-          <Tabs.List
-            className="mb-[50px] flex gap-[10px]"
-            aria-label="Manage your account"
-          >
-            <Tabs.Trigger
-              value={StatTabStatus.howOften}
-              className="button-tab button-sm"
+          <div className="tems-center my-[30px] flex items-center justify-between">
+            <Tabs.List
+              className="flex gap-[10px]"
+              aria-label="Manage your account"
             >
-              How often
-            </Tabs.Trigger>
-            <Tabs.Trigger
-              value={StatTabStatus.howEven}
-              className="button-tab button-sm"
-            >
-              How even
-            </Tabs.Trigger>
-          </Tabs.List>
+              <Tabs.Trigger
+                value={StatTabStatus.howOften}
+                className="button-tab button-sm"
+              >
+                How often
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value={StatTabStatus.howEven}
+                className="button-tab button-sm"
+              >
+                How even
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            <AppTooltip>
+              <AppTooltipTrigger className="cursor-default">
+                Last 30 days
+              </AppTooltipTrigger>
+              <AppContentTrigger side="top">
+                From {formattedFromDate} up today
+              </AppContentTrigger>
+            </AppTooltip>
+          </div>
+
           {selectedData ? (
             <GroupDetail groupId={selectedData.id} activeTab={activeTab} />
           ) : (

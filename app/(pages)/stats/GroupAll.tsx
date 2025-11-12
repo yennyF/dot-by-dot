@@ -6,7 +6,11 @@ import { BarChartData } from "./Charts/Bar";
 import { CubeIcon } from "@radix-ui/react-icons";
 import { ApiTaskLogDone } from "@/app/types";
 import { palette } from "./Charts/colors";
-import { ProgressBar } from "./Charts/ProgressBar";
+import {
+  ProgressBar,
+  ProgressBarLabelDay,
+  ProgressBarLabelPer,
+} from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 
@@ -103,44 +107,16 @@ function TabOneContent({
   setSelectedData: (value: SetStateAction<BarChartData | undefined>) => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-[10px]">
+    <div className="flex flex-1 flex-col gap-[5px]">
       {data.map((item, index) => {
-        const portion = (item.value * 100) / 30;
+        const portion = Math.round((item.value * 100) / 30);
         return (
-          <div
-            key={index}
-            className="flex w-full shrink-0 items-center gap-[10px]"
-          >
+          <div key={index} className="flex">
+            <Label item={item} setSelectedData={setSelectedData} />
             <div className="flex-1">
-              <div className="flex items-center gap-[10px]">
-                <CubeIcon className="text-[var(--gray-9)]" />
-                <div>{item.name}</div>
-              </div>
-              <div
-                className="ml-[20px] text-xs text-[var(--inverted)]"
-                onClick={() => {
-                  setSelectedData(item);
-                }}
-              >
-                See details
-              </div>
-            </div>
-
-            <div className="relative flex flex-col justify-center gap-[5px]">
-              <div
-                className="absolute flex w-fit flex-col gap-[2px] text-nowrap pl-[10px] text-xs"
-                style={{ left: portion + "%" }}
-              >
-                {item.value > 0 && (
-                  <div>
-                    <span>{item.value} </span>
-                    <span className="text-[var(--gray-9)]">
-                      {item.value > 1 ? "days" : "day"}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <ProgressBar value={portion} size={550} thickness={20} />
+              <ProgressBar value={portion} size={"100%"} thickness={20}>
+                <ProgressBarLabelDay value={item.value} />
+              </ProgressBar>
             </div>
           </div>
         );
@@ -158,71 +134,64 @@ function TabTwoContent({
   setSelectedData: (value: SetStateAction<BarChartData | undefined>) => void;
   daysDonePer: number;
 }) {
-  const total = useMemo(
-    () => data.reduce((sum, item) => sum + item.value, 0),
-    [data]
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  const portions = data.map((item) =>
+    Math.round((item.value * daysDonePer) / total)
   );
 
-  const portions = useMemo(
-    () => data.map((item) => Math.round((item.value * daysDonePer) / total)),
-    [data, total, daysDonePer]
-  );
-
-  const starts = useMemo(() => {
-    const starts: number[] = [];
-    portions.reduce((sum, p) => {
-      starts.push(sum);
-      return sum + p;
-    }, 0);
-    return starts;
-  }, [portions]);
+  let acc = 0;
+  const starts = portions.map((p) => {
+    const current = acc;
+    acc += p;
+    return current;
+  });
 
   return (
-    <div className="flex flex-1 flex-col gap-[10px]">
+    <div className="flex flex-1 flex-col gap-[5px]">
       {data.map((item, index) => (
-        <div
-          key={item.id}
-          className="flex w-full shrink-0 items-center gap-[10px]"
-        >
+        <div key={item.id} className="flex">
+          <Label item={item} setSelectedData={setSelectedData} />
           <div className="flex-1">
-            <div className="flex items-center gap-[10px]">
-              <CubeIcon className="text-[var(--gray-9)]" />
-              <div>{item.name}</div>
-            </div>
-            <div
-              className="ml-[20px] text-xs text-[var(--inverted)]"
-              onClick={() => {
-                setSelectedData(item);
-              }}
-            >
-              See details
-            </div>
-          </div>
-
-          <div className="relative flex flex-col justify-center gap-[5px]">
-            <div
-              className="absolute flex w-fit flex-col gap-[2px] text-nowrap pl-[10px] text-xs"
-              style={{
-                left: starts[index] + portions[index] + "%",
-              }}
-            >
-              {item.value > 0 && (
-                <div>
-                  <span>{portions[index]}</span>
-                  <span className="text-[var(--gray-9)]">% </span>
-                </div>
-              )}
-            </div>
             <ProgressBar
               value={portions[index]}
-              size={550}
+              size={"100%"}
               thickness={20}
               color={palette.one[index]}
               start={starts[index]}
-            />
+            >
+              <ProgressBarLabelPer value={item.value} />
+            </ProgressBar>
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function Label({
+  item,
+  setSelectedData,
+}: {
+  item: BarChartData;
+  setSelectedData: Dispatch<SetStateAction<BarChartData | undefined>>;
+}) {
+  return (
+    <div>
+      <div className="flex h-[20px] w-[250px] items-center gap-[10px]">
+        <CubeIcon className="text-[var(--gray-9)]" />
+        <span className="overflow-hidden text-ellipsis text-nowrap">
+          {item.name}
+        </span>
+      </div>
+      <button
+        className="ml-[25px] text-xs text-[var(--inverted)]"
+        onClick={() => {
+          setSelectedData(item);
+        }}
+      >
+        See details
+      </button>
     </div>
   );
 }

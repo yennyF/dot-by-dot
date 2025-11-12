@@ -26,7 +26,7 @@ function AppContentTrigger({
     <Tooltip.Portal>
       <Tooltip.Content
         {...props}
-        className={`tooltip-content z-50 ${className}`}
+        className={`tooltip-content z-50 ${className} `}
         side={side ?? "bottom"}
         sideOffset={sideOffset ?? 5}
       >

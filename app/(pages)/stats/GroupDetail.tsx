@@ -5,7 +5,11 @@ import { supabase } from "@/app/supabase/server";
 import { BarChartData } from "./Charts/Bar";
 import { ApiTaskLogDone } from "@/app/types";
 import { palette } from "./Charts/colors";
-import { ProgressBar } from "./Charts/ProgressBar";
+import {
+  ProgressBar,
+  ProgressBarLabelDay,
+  ProgressBarLabelPer,
+} from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 
@@ -99,23 +103,11 @@ function TabOneContent({ data }: { data: BarChartData[] }) {
             key={item.id}
             className="flex w-full shrink-0 items-center gap-[10px]"
           >
-            <div className="flex-1">{item.name}</div>
-
-            <div className="relative flex flex-col justify-center gap-[5px]">
-              <div
-                className="absolute flex w-fit flex-col gap-[2px] text-nowrap pl-[10px] text-xs"
-                style={{ left: portion + "%" }}
-              >
-                {item.value > 0 && (
-                  <div>
-                    <span>{item.value} </span>
-                    <span className="text-[var(--gray-9)]">
-                      {item.value > 1 ? "days" : "day"}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <ProgressBar value={portion} size={550} thickness={20} />
+            <Label item={item} />
+            <div className="flex-1">
+              <ProgressBar value={portion} size={"100%"} thickness={20}>
+                <ProgressBarLabelDay value={item.value} />
+              </ProgressBar>
             </div>
           </div>
         );
@@ -131,24 +123,18 @@ function TabTwoContent({
   data: BarChartData[];
   daysDonePer: number;
 }) {
-  const total = useMemo(
-    () => data.reduce((sum, item) => sum + item.value, 0),
-    [data]
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  const portions = data.map((item) =>
+    Math.round((item.value * daysDonePer) / total)
   );
 
-  const portions = useMemo(
-    () => data.map((item) => Math.round((item.value * daysDonePer) / total)),
-    [data, total, daysDonePer]
-  );
-
-  const starts = useMemo(() => {
-    const starts: number[] = [];
-    portions.reduce((sum, p) => {
-      starts.push(sum);
-      return sum + p;
-    }, 0);
-    return starts;
-  }, [portions]);
+  let acc = 0;
+  const starts = portions.map((p) => {
+    const current = acc;
+    acc += p;
+    return current;
+  });
 
   return (
     <div className="flex flex-1 flex-col gap-[10px]">
@@ -157,32 +143,30 @@ function TabTwoContent({
           key={item.id}
           className="flex w-full shrink-0 items-center gap-[10px]"
         >
-          <div className="flex-1">{item.name}</div>
-
-          <div className="relative flex flex-col justify-center gap-[5px]">
-            <div
-              className="absolute flex w-fit flex-col gap-[2px] text-nowrap pl-[10px] text-xs"
-              style={{
-                left: starts[index] + portions[index] + "%",
-              }}
-            >
-              {item.value > 0 && (
-                <div>
-                  <span>{portions[index]}</span>
-                  <span className="text-[var(--gray-9)]">% </span>
-                </div>
-              )}
-            </div>
+          <Label item={item} />
+          <div className="flex-1">
             <ProgressBar
               value={portions[index]}
-              size={550}
+              size={"100%"}
               thickness={20}
               color={palette.one[index]}
               start={starts[index]}
-            />
+            >
+              <ProgressBarLabelPer value={item.value} />
+            </ProgressBar>
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function Label({ item }: { item: BarChartData }) {
+  return (
+    <div className="flex h-[20px] w-[250px] items-center gap-[10px]">
+      <span className="overflow-hidden text-ellipsis text-nowrap">
+        {item.name}
+      </span>
     </div>
   );
 }
