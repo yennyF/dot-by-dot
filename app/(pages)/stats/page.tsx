@@ -46,7 +46,9 @@ export default function StatsPage() {
 
 function Content() {
   const [selectedData, setSelectedData] = useState<BarChartData>();
-  const [activeTab, setActiveStatTab] = useState<StatTabStatus>();
+  const [activeTab, setActiveStatTab] = useState<StatTabStatus>(
+    StatTabStatus.howOften
+  );
 
   return (
     <>
@@ -92,7 +94,7 @@ function Content() {
             </Tabs.Trigger>
           </Tabs.List>
           {selectedData ? (
-            <GroupDetail groupId={selectedData.id} />
+            <GroupDetail groupId={selectedData.id} activeTab={activeTab} />
           ) : (
             <GroupAll setSelectedData={setSelectedData} />
           )}

@@ -15,7 +15,7 @@ import {
   isBefore,
   startOfMonth,
   startOfYear,
-  subMonths,
+  subDays,
 } from "date-fns";
 import { toast } from "react-toastify";
 import { supabase } from "../supabase/server";
@@ -53,13 +53,13 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       set(() => ({
         tasksByDate: undefined,
         lock: false,
-        startDate: subMonths(startOfMonth(new Date()), 1),
+        startDate: subDays(startOfMonth(new Date()), 30),
         endDate: new Date(),
         totalDate: [],
       }));
     },
 
-    startDate: subMonths(new Date(), 1),
+    startDate: subDays(new Date(), 30),
     endDate: new Date(),
     totalDate: [],
 
@@ -93,7 +93,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }
     },
     fetchMoreTaskLogs: async () => {
-      const startDate = subMonths(get().startDate, 1);
+      const startDate = subDays(get().startDate, 30);
       const endDate = get().endDate;
       const totalDate = getTotalDate(startDate, endDate);
       const tasksByDate = { ...get().tasksByDate };

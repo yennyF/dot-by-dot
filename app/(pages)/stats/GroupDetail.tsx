@@ -9,8 +9,16 @@ import { ProgressBar } from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 
-export default function GroupDetail({ groupId }: { groupId: string }) {
+export default function GroupDetail({
+  groupId,
+  activeTab,
+}: {
+  groupId: string;
+  activeTab: StatTabStatus;
+}) {
   const [data, setData] = useState<BarChartData[]>();
+  const [daysDone, setDaysDone] = useState<number>();
+  const [daysEmpty, setDaysEmpty] = useState<number>();
 
   useEffect(() => {
     (async () => {
@@ -27,19 +35,54 @@ export default function GroupDetail({ groupId }: { groupId: string }) {
       }));
       setData(dataMaped);
     })();
+
+    (async () => {
+      const { data, error } = await supabase.rpc("task_days_last_30", {
+        p_group_id: groupId,
+      });
+
+      if (error) throw error;
+
+      setDaysDone(data[0]["days_done"]);
+      setDaysEmpty(data[0]["empty_days"]);
+    })();
   }, [groupId]);
 
-  if (!data) {
+  if (!data || !daysDone || !daysEmpty) {
     return null;
   }
 
+  const daysDonePer = Math.round((daysDone * 100) / 30);
+  const daysEmptyPer = Math.round((daysEmpty * 100) / 30);
+
   return (
     <>
+      <div className="mb-[20px] flex justify-end gap-[40px]">
+        <div>
+          <span className="text-[var(--gray-9)]">Progress days: </span>
+          <span>
+            {activeTab === StatTabStatus.howOften
+              ? daysDone
+              : daysDonePer + "%"}
+          </span>
+        </div>
+        <div>
+          <span className="text-[var(--gray-9)]">Rest days: </span>
+          <span>
+            {activeTab === StatTabStatus.howOften
+              ? daysEmpty
+              : daysEmptyPer + "%"}
+          </span>
+        </div>
+      </div>
+
       <Tabs.Content value={StatTabStatus.howOften}>
         {data && <TabOneContent data={data} />}
       </Tabs.Content>
       <Tabs.Content value={StatTabStatus.howEven}>
-        {data && <TabTwoContent data={data} />}
+        {data && daysEmpty && (
+          <TabTwoContent data={data} daysDonePer={daysDonePer} />
+        )}
       </Tabs.Content>
     </>
   );
@@ -50,6 +93,7 @@ function TabOneContent({ data }: { data: BarChartData[] }) {
     <div className="flex flex-1 flex-col gap-[10px]">
       {data.map((item) => {
         const portion = Math.round((item.value * 100) / 30);
+
         return (
           <div
             key={item.id}
@@ -80,15 +124,21 @@ function TabOneContent({ data }: { data: BarChartData[] }) {
   );
 }
 
-function TabTwoContent({ data }: { data: BarChartData[] }) {
+function TabTwoContent({
+  data,
+  daysDonePer,
+}: {
+  data: BarChartData[];
+  daysDonePer: number;
+}) {
   const total = useMemo(
     () => data.reduce((sum, item) => sum + item.value, 0),
     [data]
   );
 
   const portions = useMemo(
-    () => data.map((item) => Math.round((item.value * 100) / total)),
-    [data, total]
+    () => data.map((item) => Math.round((item.value * daysDonePer) / total)),
+    [data, total, daysDonePer]
   );
 
   const starts = useMemo(() => {
