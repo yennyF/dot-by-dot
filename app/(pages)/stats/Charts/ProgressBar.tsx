@@ -18,11 +18,11 @@ export function ProgressBar({
   return (
     <div className="relative flex items-center">
       <div
-        className="rounded-full bg-[var(--gray-5)]"
+        className="relative rounded-full bg-[var(--gray-5)]"
         style={{ width, height: thickness + "px" }}
       >
         <div
-          className="relative h-full rounded-full"
+          className="absolute h-full rounded-full"
           style={{
             left: start + "%",
             width: value + "%",
@@ -32,7 +32,7 @@ export function ProgressBar({
       </div>
       {children && (
         <div
-          className="absolute ml-[10px] text-nowrap text-xs"
+          className="absolute mx-[10px] text-nowrap text-xs"
           style={{ left: start + value + "%" }}
         >
           {children}

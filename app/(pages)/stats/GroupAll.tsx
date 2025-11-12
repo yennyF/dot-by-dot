@@ -111,7 +111,7 @@ function TabOneContent({
       {data.map((item, index) => {
         const portion = Math.round((item.value * 100) / 30);
         return (
-          <div key={index} className="flex">
+          <div key={index} className="flex gap-[10px]">
             <Label item={item} setSelectedData={setSelectedData} />
             <div className="flex-1">
               <ProgressBar value={portion} size={"100%"} thickness={20}>
@@ -150,7 +150,7 @@ function TabTwoContent({
   return (
     <div className="flex flex-1 flex-col gap-[5px]">
       {data.map((item, index) => (
-        <div key={item.id} className="flex">
+        <div key={item.id} className="flex gap-[10px]">
           <Label item={item} setSelectedData={setSelectedData} />
           <div className="flex-1">
             <ProgressBar

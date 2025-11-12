@@ -99,10 +99,7 @@ function TabOneContent({ data }: { data: BarChartData[] }) {
         const portion = Math.round((item.value * 100) / 30);
 
         return (
-          <div
-            key={item.id}
-            className="flex w-full shrink-0 items-center gap-[10px]"
-          >
+          <div key={item.id} className="flex items-center gap-[10px]">
             <Label item={item} />
             <div className="flex-1">
               <ProgressBar value={portion} size={"100%"} thickness={20}>
@@ -139,10 +136,7 @@ function TabTwoContent({
   return (
     <div className="flex flex-1 flex-col gap-[10px]">
       {data.map((item, index) => (
-        <div
-          key={item.id}
-          className="flex w-full shrink-0 items-center gap-[10px]"
-        >
+        <div key={item.id} className="flex items-center gap-[10px]">
           <Label item={item} />
           <div className="flex-1">
             <ProgressBar
