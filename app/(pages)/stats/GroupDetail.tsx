@@ -48,7 +48,7 @@ export default function GroupDetail({
     })();
   }, [groupId]);
 
-  if (!data || !daysDone || !daysEmpty) {
+  if (!data || daysDone === undefined || daysEmpty === undefined) {
     return null;
   }
 

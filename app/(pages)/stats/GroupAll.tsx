@@ -12,10 +12,14 @@ import { StatTabStatus } from "./utils";
 
 export default function GroupAll({
   setSelectedData,
+  activeTab,
 }: {
   setSelectedData: Dispatch<SetStateAction<BarChartData | undefined>>;
+  activeTab: StatTabStatus;
 }) {
   const [data, setData] = useState<BarChartData[]>();
+  const [daysDone, setDaysDone] = useState<number>();
+  const [daysEmpty, setDaysEmpty] = useState<number>();
 
   useEffect(() => {
     (async () => {
@@ -38,17 +42,54 @@ export default function GroupAll({
       }));
       setData(dataMaped);
     })();
+
+    (async () => {
+      const { data, error } = await supabase.rpc("group_days_last_30");
+
+      if (error) throw error;
+
+      setDaysDone(data[0]["days_done"]);
+      setDaysEmpty(data[0]["empty_days"]);
+    })();
   }, []);
 
-  if (!data) return null;
+  if (!data || daysDone === undefined || daysEmpty === undefined) {
+    return null;
+  }
+
+  const daysDonePer = Math.round((daysDone * 100) / 30);
+  const daysEmptyPer = Math.round((daysEmpty * 100) / 30);
 
   return (
     <>
+      <div className="mb-[20px] flex justify-end gap-[40px]">
+        <div>
+          <span className="text-[var(--gray-9)]">Progress days: </span>
+          <span>
+            {activeTab === StatTabStatus.howOften
+              ? daysDone
+              : daysDonePer + "%"}
+          </span>
+        </div>
+        <div>
+          <span className="text-[var(--gray-9)]">Rest days: </span>
+          <span>
+            {activeTab === StatTabStatus.howOften
+              ? daysEmpty
+              : daysEmptyPer + "%"}
+          </span>
+        </div>
+      </div>
+
       <Tabs.Content value={StatTabStatus.howOften}>
         <TabOneContent data={data} setSelectedData={setSelectedData} />
       </Tabs.Content>
       <Tabs.Content value={StatTabStatus.howEven}>
-        <TabTwoContent data={data} setSelectedData={setSelectedData} />
+        <TabTwoContent
+          data={data}
+          setSelectedData={setSelectedData}
+          daysDonePer={daysDonePer}
+        />
       </Tabs.Content>
     </>
   );
@@ -111,9 +152,11 @@ function TabOneContent({
 function TabTwoContent({
   data,
   setSelectedData,
+  daysDonePer,
 }: {
   data: BarChartData[];
   setSelectedData: (value: SetStateAction<BarChartData | undefined>) => void;
+  daysDonePer: number;
 }) {
   const total = useMemo(
     () => data.reduce((sum, item) => sum + item.value, 0),
@@ -121,8 +164,8 @@ function TabTwoContent({
   );
 
   const portions = useMemo(
-    () => data.map((item) => Math.round((item.value * 100) / total)),
-    [data, total]
+    () => data.map((item) => Math.round((item.value * daysDonePer) / total)),
+    [data, total, daysDonePer]
   );
 
   const starts = useMemo(() => {

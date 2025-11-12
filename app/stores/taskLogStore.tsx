@@ -47,19 +47,21 @@ type Action = {
   deleteAllTaskLog: () => Promise<void>;
 };
 
+const rangeDays = 29;
+
 export const useTaskLogStore = create<State & Action>((set, get) => {
   return {
     destroyTaskLogs: async () => {
       set(() => ({
         tasksByDate: undefined,
         lock: false,
-        startDate: subDays(startOfMonth(new Date()), 30),
+        startDate: subDays(startOfMonth(new Date()), rangeDays),
         endDate: new Date(),
         totalDate: [],
       }));
     },
 
-    startDate: subDays(new Date(), 30),
+    startDate: subDays(new Date(), rangeDays),
     endDate: new Date(),
     totalDate: [],
 
@@ -93,7 +95,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }
     },
     fetchMoreTaskLogs: async () => {
-      const startDate = subDays(get().startDate, 30);
+      const startDate = subDays(get().startDate, rangeDays);
       const endDate = get().endDate;
       const totalDate = getTotalDate(startDate, endDate);
       const tasksByDate = { ...get().tasksByDate };

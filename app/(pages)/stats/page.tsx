@@ -96,7 +96,7 @@ function Content() {
           {selectedData ? (
             <GroupDetail groupId={selectedData.id} activeTab={activeTab} />
           ) : (
-            <GroupAll setSelectedData={setSelectedData} />
+            <GroupAll setSelectedData={setSelectedData} activeTab={activeTab} />
           )}
         </Tabs.Root>
       </main>
