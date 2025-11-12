@@ -2,10 +2,6 @@
 .button-base {
   @apply w-fit h-fit flex justify-center items-center rounded-full cursor-pointer text-nowrap;
 
-  &:focus {
-    @apply outline-none;
-  }
-
   &:disabled {
     @apply pointer-events-none opacity-30;
   }
