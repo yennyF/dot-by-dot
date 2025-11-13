@@ -4,7 +4,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import AppHeader from "../../components/AppHeader";
 import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
-import { useAppStore } from "../../stores/appStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import GoBackButton from "@/app/components/GoBackButton";
@@ -21,33 +20,38 @@ import {
   AppTooltipTrigger,
   AppContentTrigger,
 } from "@/app/components/AppTooltip";
+import { supabase } from "@/app/supabase/server";
 
 export default function StatsPage() {
   const router = useRouter();
-
   const user = useUserStore((s) => s.user);
-  const init = useAppStore((s) => s.init);
-  const isEmpty = useAppStore((s) => s.isEmpty);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else {
-      init().catch(() => {
-        notifyLoadError();
-      });
+      return;
     }
-  }, [user, init, router]);
 
-  useEffect(() => {
-    if (isEmpty === undefined) return;
-    if (isEmpty === true) {
-      router.replace("/start");
+    try {
+      (async () => {
+        const { data, error } = await supabase.rpc("user_has_group_or_task");
+
+        if (error) throw error;
+        if (data === false) {
+          router.replace("/product");
+          return;
+        }
+
+        setLoading(false);
+      })();
+    } catch {
+      notifyLoadError();
     }
-  }, [isEmpty, router]);
+  }, [user, router]);
 
-  return user && isEmpty === false ? <Content /> : <Loading />;
+  return loading ? <Loading /> : <Content />;
 }
 
 function Content() {

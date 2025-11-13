@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
   PieChartIcon,
@@ -24,24 +24,37 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskStore } from "@/app/stores/taskStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function HomePage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   const user = useUserStore((s) => s.user);
-  const init = useAppStore((s) => s.init);
   const isEmpty = useAppStore((s) => s.isEmpty);
 
   useEffect(() => {
     if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else {
-      init().catch(() => {
-        notifyLoadError();
-      });
+      return;
     }
-  }, [user, init, router]);
+
+    try {
+      (async () => {
+        await Promise.all([
+          useGroupStore.getState().fetchGroups(),
+          useTaskStore.getState().fetchTasks(),
+          useTaskLogStore.getState().fetchTaskLogs(),
+        ]);
+        setLoading(false);
+      })();
+    } catch {
+      notifyLoadError();
+    }
+  }, [user, router]);
 
   useEffect(() => {
     if (isEmpty === undefined) return;
@@ -50,7 +63,7 @@ export default function HomePage() {
     }
   }, [isEmpty, router]);
 
-  return user && isEmpty === false ? <Content /> : <Loading />;
+  return loading || isEmpty === undefined ? <Loading /> : <Content />;
 }
 
 function Content() {

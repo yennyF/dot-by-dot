@@ -23,33 +23,38 @@ import {
   AppContentTrigger,
 } from "../../components/AppTooltip";
 import { useUserStore } from "../../stores/userStore";
+import { supabase } from "@/app/supabase/server";
 
 export default function StartPage() {
   const router = useRouter();
-
   const user = useUserStore((s) => s.user);
-  const init = useAppStore((s) => s.init);
-  const isEmpty = useAppStore((s) => s.isEmpty);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else {
-      init().catch(() => {
-        notifyLoadError();
-      });
+      return;
     }
-  }, [user, router, init, isEmpty]);
 
-  useEffect(() => {
-    if (isEmpty === undefined) return;
-    if (isEmpty === false) {
-      router.replace("/home");
+    try {
+      (async () => {
+        const { data, error } = await supabase.rpc("user_has_group_or_task");
+
+        if (error) throw error;
+        if (data === true) {
+          router.replace("/home");
+          return;
+        }
+
+        setLoading(false);
+      })();
+    } catch {
+      notifyLoadError();
     }
-  }, [isEmpty, router]);
+  }, [user, router]);
 
-  return user && isEmpty === true ? <Content /> : <Loading />;
+  return loading ? <Loading /> : <Content />;
 }
 
 function Content() {
