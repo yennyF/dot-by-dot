@@ -1,12 +1,12 @@
+@use './variables';
+@use './buttons';
+@use './dialog';
+@use './forms';
+@use './popover';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './variables';
-@import './buttons';
-@import './dialog';
-@import './forms';
-@import './popover';
 
 * {
   box-sizing: border-box;
