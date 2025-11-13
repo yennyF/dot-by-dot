@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './variables';
+@import './buttons';
+@import './dialog';
+@import './forms';
+@import './popover';
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overscroll-behavior: none;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-size: 14px;
+  @apply font-mono tracking-wide leading-relaxed;
+}
+
+.page-main {
+  @apply m-auto w-[88vw] max-w-[800px] py-[100px]; 
+}
+
+.page-title-1 {
+  @apply text-4xl font-bold mb-[30px];
+}
+
+.page-title-2 {
+  @apply text-lg font-bold mb-[10px];
+}
+
+.warning-xs {
+  @apply text-xs text-red-500;
+}
+
+.warning-sm {
+  @apply text-sm text-red-500;
+}
+
+[draggable="true"] {
+  /* To prevent user selecting inside the drag source */
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.draggable {
+  @apply active:cursor-grabbing  focus:cursor-grab;
+}
+
+.overlay {
+  background: rgba(0 0 0 / 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: end;
+  z-index: 100;
+
+  &[data-state="open"] {
+    animation: fadeIn 100ms ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation: fadeOut 100ms ease-in;
+  }
+}
+
+.tooltip-content {
+  @apply 
+  select-none 
+  rounded 
+  bg-[var(--gray)] 
+  px-[10px] py-2
+  text-xs 
+  text-black
+  leading-none 
+  // shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] 
+  will-change-[transform,opacity];
+}
+
+.tooltip-arrow {
+  @apply fill-[var(--gray)] 
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}

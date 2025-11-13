@@ -1,0 +1,97 @@
+
+.button-base {
+  @apply w-fit h-fit flex justify-center items-center rounded-full cursor-pointer text-nowrap;
+
+  &:disabled {
+    @apply pointer-events-none opacity-30;
+  }
+}
+
+.button {
+  @apply button-base gap-2 px-6 py-2;
+
+  &.button-sm {
+    @apply gap-1 px-3 h-[32px] text-sm;
+  }
+}
+
+.button-accent {
+  @apply button bg-[var(--accent)] text-[var(--white)];
+  
+  &:hover {
+    @apply bg-[var(--background)] text-[var(--accent)];  
+    outline-width: 1px;
+    outline-offset: -1px;
+    outline-style: solid;
+    outline-color: var(--accent);
+  }
+}
+
+.button-accept {
+  @apply button bg-[var(--accent)] text-[var(--white)];
+
+  &:hover {
+    @apply bg-[var(--black)];  
+  }
+}
+
+.button-cancel {
+  @apply button bg-[var(--gray-9)] text-[var(--white)];
+
+  &:hover {
+    @apply bg-[var(--black)];  
+  }
+}
+
+.button-outline {
+  @apply button bg-[var(--background)] text-[var(--black)];
+  outline-width: 1px;
+  outline-offset: -1px;
+  outline-style: solid;
+  outline-color: var(--black);
+  
+  &:hover {
+    @apply  bg-[var(--black)] text-[var(--white)];
+  }
+}
+
+.button-accent-outline {
+  @apply button bg-[var(--background)] text-[var(--accent)];
+  outline-width: 1px;
+  outline-offset: -1px;
+  outline-style: solid;
+  outline-color: var(--accent);
+
+  &:hover {
+    @apply bg-[var(--black)] text-[var(--white)];
+    outline-color: var(--black);
+  }
+}
+
+.button-tab {
+  @apply button text-[var(--black)];
+
+  &[data-state="active"] {
+    @apply bg-[var(--black)] text-[var(--white)];
+  }
+  
+  &:hover:not(&[data-state="active"]) {
+    @apply text-[var(--black)];
+    outline-width: 1px;
+    outline-offset: -1px;
+    outline-style: solid;
+    outline-color: var(--black);
+  }
+}
+
+.button-icon-sheer {
+  @apply button-base p-1;
+
+  &[data-state="open"], &:hover{
+    @apply bg-[var(--black)] text-[var(--white)];
+  }
+}
+
+[data-state="open"] > .button-icon-sheer {
+  @apply bg-[var(--black)] text-[var(--white)];
+}  

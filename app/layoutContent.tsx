@@ -1,6 +1,6 @@
 "use client";
 
-import "./globals.scss";
+import "./styles/globals.scss";
 import { ToastContainer } from "react-toastify";
 import { useEffect } from "react";
 import { supabase } from "./supabase/server";

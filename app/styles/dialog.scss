@@ -1,0 +1,31 @@
+.dialog-content {
+  outline: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 580px;
+  max-height: 90vh;
+  padding: 30px;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .dialog-title {
+    @apply text-xl;
+    font-weight: bold;
+  }
+
+  .dialog-description {
+      margin-top: 50px;
+  }
+
+  .dialog-bottom {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    @apply gap-3;
+  }
+}

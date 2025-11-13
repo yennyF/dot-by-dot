@@ -7,7 +7,6 @@ type Store = {
   toggleCollapsedGroup: (id: string) => void;
   collapseAllGroups: () => void;
   expandAllGroups: () => void;
-  reset: () => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -29,7 +28,6 @@ export const useUIStore = create<Store>()(
       expandAllGroups: () => {
         set({ collapsedGroups: [] });
       },
-      reset: () => set({ collapsedGroups: [] }),
     }),
     {
       name: "ui-storage",
