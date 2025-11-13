@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { supabase } from "@/app/supabase/server";
 import { BarChartData } from "./Charts/Bar";
 import { CubeIcon } from "@radix-ui/react-icons";
@@ -11,7 +11,7 @@ import {
   ProgressBarLabelDay,
   ProgressBarLabelPer,
 } from "./Charts/ProgressBar";
-import { Tabs } from "radix-ui";
+import { Separator, Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 
 export default function GroupAll({
@@ -22,6 +22,7 @@ export default function GroupAll({
   activeTab: StatTabStatus;
 }) {
   const [data, setData] = useState<BarChartData[]>();
+  const [dataUngrouped, setDataUngrouped] = useState<BarChartData[]>();
   const [daysDone, setDaysDone] = useState<number>();
   const [daysEmpty, setDaysEmpty] = useState<number>();
 
@@ -48,6 +49,21 @@ export default function GroupAll({
     })();
 
     (async () => {
+      const { data, error } = await supabase.rpc("task_days_done_last_30", {
+        p_group_id: null,
+      });
+
+      if (error) throw error;
+
+      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+        id: item.id,
+        name: item.name,
+        value: item.days_done,
+      }));
+      setDataUngrouped(dataMaped);
+    })();
+
+    (async () => {
       const { data, error } = await supabase.rpc("group_days_last_30");
 
       if (error) throw error;
@@ -57,7 +73,12 @@ export default function GroupAll({
     })();
   }, []);
 
-  if (!data || daysDone === undefined || daysEmpty === undefined) {
+  if (
+    !data ||
+    !dataUngrouped ||
+    daysDone === undefined ||
+    daysEmpty === undefined
+  ) {
     return null;
   }
 
@@ -86,11 +107,16 @@ export default function GroupAll({
       </div>
 
       <Tabs.Content value={StatTabStatus.howOften}>
-        <TabOneContent data={data} setSelectedData={setSelectedData} />
+        <TabOneContent
+          data={data}
+          dataUngrouped={dataUngrouped}
+          setSelectedData={setSelectedData}
+        />
       </Tabs.Content>
       <Tabs.Content value={StatTabStatus.howEven}>
         <TabTwoContent
           data={data}
+          dataUngrouped={dataUngrouped}
           setSelectedData={setSelectedData}
           daysDonePer={daysDonePer}
         />
@@ -101,42 +127,66 @@ export default function GroupAll({
 
 function TabOneContent({
   data,
+  dataUngrouped,
   setSelectedData,
 }: {
   data: BarChartData[];
+  dataUngrouped: BarChartData[];
   setSelectedData: (value: SetStateAction<BarChartData | undefined>) => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-[5px]">
-      {data.map((item, index) => {
-        const portion = Math.round((item.value * 100) / 30);
-        return (
-          <div key={index} className="flex gap-[10px]">
-            <Label item={item} setSelectedData={setSelectedData} />
-            <div className="flex-1">
-              <ProgressBar value={portion} size={"100%"} thickness={20}>
-                <ProgressBarLabelDay value={item.value} />
-              </ProgressBar>
+    <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-1 flex-col gap-[10px]">
+        {dataUngrouped.map((item) => {
+          const portion = Math.round((item.value * 100) / 30);
+          return (
+            <div key={item.id} className="flex gap-[10px]">
+              <LabelUngrouped item={item} />
+              <div className="flex-1">
+                <ProgressBar value={portion} size={"100%"} thickness={20}>
+                  <ProgressBarLabelDay value={item.value} />
+                </ProgressBar>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-[10px]">
+        {data.map((item) => {
+          const portion = Math.round((item.value * 100) / 30);
+          return (
+            <div key={item.id} className="flex gap-[10px]">
+              <Label item={item} setSelectedData={setSelectedData} />
+              <div className="flex-1">
+                <ProgressBar value={portion} size={"100%"} thickness={20}>
+                  <ProgressBarLabelDay value={item.value} />
+                </ProgressBar>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
 function TabTwoContent({
   data,
+  dataUngrouped,
   setSelectedData,
   daysDonePer,
 }: {
   data: BarChartData[];
+  dataUngrouped: BarChartData[];
   setSelectedData: (value: SetStateAction<BarChartData | undefined>) => void;
   daysDonePer: number;
 }) {
-  const total = data.reduce((sum, item) => sum + item.value, 0);
+  const totalData = [...dataUngrouped, ...data];
 
-  const portions = data.map((item) =>
+  const total = totalData.reduce((sum, item) => sum + item.value, 0);
+
+  const portions = totalData.map((item) =>
     Math.round((item.value * daysDonePer) / total)
   );
 
@@ -148,23 +198,49 @@ function TabTwoContent({
   });
 
   return (
-    <div className="flex flex-1 flex-col gap-[5px]">
-      {data.map((item, index) => (
-        <div key={item.id} className="flex gap-[10px]">
-          <Label item={item} setSelectedData={setSelectedData} />
-          <div className="flex-1">
-            <ProgressBar
-              value={portions[index]}
-              size={"100%"}
-              thickness={20}
-              color={palette.one[index]}
-              start={starts[index]}
-            >
-              <ProgressBarLabelPer value={item.value} />
-            </ProgressBar>
-          </div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-1 flex-col gap-[10px]">
+        {dataUngrouped.map((item, index) => {
+          return (
+            <div key={item.id} className="flex gap-[10px]">
+              <LabelUngrouped item={item} />
+              <div className="flex-1">
+                <ProgressBar
+                  value={portions[index]}
+                  size={"100%"}
+                  thickness={20}
+                  color={palette.one[index]}
+                  start={starts[index]}
+                >
+                  <ProgressBarLabelPer value={item.value} />
+                </ProgressBar>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-[10px]">
+        {data.map((item, index) => {
+          const shiftedIndex = index + dataUngrouped.length;
+          return (
+            <div key={item.id} className="flex gap-[10px]">
+              <Label item={item} setSelectedData={setSelectedData} />
+              <div className="flex-1">
+                <ProgressBar
+                  value={portions[shiftedIndex]}
+                  size={"100%"}
+                  thickness={20}
+                  color={palette.one[shiftedIndex]}
+                  start={starts[shiftedIndex]}
+                >
+                  <ProgressBarLabelPer value={item.value} />
+                </ProgressBar>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -178,20 +254,30 @@ function Label({
 }) {
   return (
     <div>
-      <div className="flex h-[20px] w-[250px] items-center gap-[10px]">
-        <CubeIcon className="text-[var(--gray-9)]" />
-        <span className="overflow-hidden text-ellipsis text-nowrap">
-          {item.name}
-        </span>
-      </div>
       <button
-        className="ml-[25px] text-xs text-[var(--inverted)]"
+        className="flex h-[20px] w-[250px] items-center gap-[10px]"
         onClick={() => {
           setSelectedData(item);
         }}
       >
-        See details
+        <CubeIcon className="text-[var(--gray-9)]" />
+        <span className="overflow-hidden text-ellipsis text-nowrap">
+          {item.name}
+        </span>
       </button>
+    </div>
+  );
+}
+
+function LabelUngrouped({ item }: { item: BarChartData }) {
+  return (
+    <div>
+      <div className="flex h-[20px] w-[250px] items-center gap-[10px]">
+        <CubeIcon className="invisible text-[var(--gray-9)]" />
+        <span className="overflow-hidden text-ellipsis text-nowrap">
+          {item.name}
+        </span>
+      </div>
     </div>
   );
 }

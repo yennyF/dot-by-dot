@@ -16,20 +16,18 @@ export function ProgressBar({
   const width = typeof size === "string" ? size : size + "px";
 
   return (
-    <div className="relative flex items-center">
+    <div
+      className="relative flex items-center rounded-full bg-[var(--gray-5)]"
+      style={{ width, height: thickness + "px" }}
+    >
       <div
-        className="relative rounded-full bg-[var(--gray-5)]"
-        style={{ width, height: thickness + "px" }}
-      >
-        <div
-          className="absolute h-full rounded-full"
-          style={{
-            left: start + "%",
-            width: value + "%",
-            backgroundColor: color,
-          }}
-        />
-      </div>
+        className="absolute h-full rounded-full"
+        style={{
+          left: start + "%",
+          width: value + "%",
+          backgroundColor: color,
+        }}
+      />
       {children && (
         <div
           className="absolute mx-[10px] text-nowrap text-xs"

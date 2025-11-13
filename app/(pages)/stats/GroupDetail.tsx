@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/app/supabase/server";
 import { BarChartData } from "./Charts/Bar";
 import { ApiTaskLogDone } from "@/app/types";
