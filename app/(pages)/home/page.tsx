@@ -14,7 +14,6 @@ import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import { useAppStore } from "../../stores/appStore";
 import {
   AppContentTrigger,
   AppTooltip,
@@ -26,14 +25,13 @@ import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskStore } from "@/app/stores/taskStore";
-import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import { supabase } from "@/app/supabase/server";
 
 export default function HomePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   const user = useUserStore((s) => s.user);
-  const isEmpty = useAppStore((s) => s.isEmpty);
 
   useEffect(() => {
     if (user === undefined) return;
@@ -44,29 +42,38 @@ export default function HomePage() {
 
     try {
       (async () => {
-        await Promise.all([
-          useGroupStore.getState().fetchGroups(),
-          useTaskStore.getState().fetchTasks(),
-          useTaskLogStore.getState().fetchTaskLogs(),
-        ]);
-        setLoading(false);
+        const { data, error } = await supabase.rpc("user_has_group_or_task");
+
+        if (error) throw error;
+        if (data === false) {
+          router.replace("/product");
+          return;
+        }
       })();
+
+      setLoading(false);
     } catch {
       notifyLoadError();
     }
   }, [user, router]);
 
-  useEffect(() => {
-    if (isEmpty === undefined) return;
-    if (isEmpty === true) {
-      router.replace("/start");
-    }
-  }, [isEmpty, router]);
-
-  return loading || isEmpty === undefined ? <Loading /> : <Content />;
+  return loading ? <Loading /> : <Content />;
 }
 
 function Content() {
+  useEffect(() => {
+    try {
+      (async () => {
+        await Promise.all([
+          useGroupStore.getState().fetchGroups(),
+          useTaskStore.getState().fetchTasks(),
+        ]);
+      })();
+    } catch {
+      notifyLoadError();
+    }
+  }, []);
+
   return (
     <>
       <AppHeader>

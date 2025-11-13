@@ -26,6 +26,8 @@ export default function TaskSidebar() {
     }
   }, [dummyGroup]);
 
+  if (!groups) return null;
+
   return (
     <SortableContainer className="sticky right-0 z-10">
       <div
@@ -44,7 +46,7 @@ export default function TaskSidebar() {
           </div>
         )}
 
-        {groups?.map((group) => (
+        {groups.map((group) => (
           <CollapsibleGroup key={group.id} group={group} />
         ))}
 
@@ -118,9 +120,11 @@ function TaskList({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
   const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
 
+  if (!tasks) return null;
+
   return (
     <>
-      {tasks?.map((task) => (
+      {tasks.map((task) => (
         <Fragment key={task.id}>
           <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
           <TaskItem key={task.id} task={task} />

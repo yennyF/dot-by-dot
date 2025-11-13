@@ -50,6 +50,10 @@ type Action = {
 const rangeDays = 29;
 
 export const useTaskLogStore = create<State & Action>((set, get) => {
+  const startDate = subDays(new Date(), rangeDays);
+  const endDate = new Date();
+  const totalDate = getTotalDate(startDate, endDate);
+
   return {
     destroyTaskLogs: async () => {
       set(() => ({
@@ -61,15 +65,14 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }));
     },
 
-    startDate: subDays(new Date(), rangeDays),
-    endDate: new Date(),
-    totalDate: [],
+    startDate,
+    endDate,
+    totalDate,
 
     tasksByDate: undefined,
     fetchTaskLogs: async () => {
       const startDate = get().startDate;
       const endDate = get().endDate;
-      const totalDate = getTotalDate(startDate, endDate);
       const tasksByDate: Record<string, Set<string>> = {};
 
       try {
@@ -88,7 +91,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
           });
         }
 
-        set(() => ({ tasksByDate, totalDate }));
+        set(() => ({ tasksByDate }));
       } catch (error) {
         console.error(error);
         throw error;
