@@ -72,8 +72,6 @@ export const useAppStore = create<State & Action>((set, get) => {
           await supabase
             .from("task_logs")
             .insert(mapTaskLogRequestArray(taskLogs));
-
-        get().init();
       } catch (error) {
         console.error(error);
         throw error;
