@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
   PieChartIcon,
@@ -14,7 +14,6 @@ import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import { useAppStore } from "../../stores/appStore";
 import {
   AppContentTrigger,
   AppTooltip,
@@ -24,36 +23,57 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskStore } from "@/app/stores/taskStore";
+import { supabase } from "@/app/supabase/server";
 
 export default function HomePage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   const user = useUserStore((s) => s.user);
-  const init = useAppStore((s) => s.init);
-  const isEmpty = useAppStore((s) => s.isEmpty);
 
   useEffect(() => {
     if (user === undefined) return;
     if (user === null) {
       router.replace("/product");
-    } else {
-      init().catch(() => {
-        notifyLoadError();
-      });
+      return;
     }
-  }, [user, init, router]);
 
-  useEffect(() => {
-    if (isEmpty === undefined) return;
-    if (isEmpty === true) {
-      router.replace("/start");
+    try {
+      (async () => {
+        const { data, error } = await supabase.rpc("user_has_group_or_task");
+
+        if (error) throw error;
+        if (data === false) {
+          router.replace("/product");
+          return;
+        }
+      })();
+
+      setLoading(false);
+    } catch {
+      notifyLoadError();
     }
-  }, [isEmpty, router]);
+  }, [user, router]);
 
-  return user && isEmpty === false ? <Content /> : <Loading />;
+  return loading ? <Loading /> : <Content />;
 }
 
 function Content() {
+  useEffect(() => {
+    try {
+      (async () => {
+        await Promise.all([
+          useGroupStore.getState().fetchGroups(),
+          useTaskStore.getState().fetchTasks(),
+        ]);
+      })();
+    } catch {
+      notifyLoadError();
+    }
+  }, []);
+
   return (
     <>
       <AppHeader>

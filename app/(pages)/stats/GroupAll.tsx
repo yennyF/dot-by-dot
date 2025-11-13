@@ -13,6 +13,7 @@ import {
 } from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
+import { notifyLoadError } from "@/app/components/Notification";
 
 export default function GroupAll({
   setSelectedData,
@@ -27,50 +28,54 @@ export default function GroupAll({
   const [daysEmpty, setDaysEmpty] = useState<number>();
 
   useEffect(() => {
-    (async () => {
-      // supabase.functions
-      //   .invoke("hello-world", { body: { name: "React" } })
-      //   .then((response) => {
-      //     console.log(response);
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-      const { data, error } = await supabase.rpc("group_days_done_last_30");
+    try {
+      (async () => {
+        // supabase.functions
+        //   .invoke("hello-world", { body: { name: "React" } })
+        //   .then((response) => {
+        //     console.log(response);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
+        const { data, error } = await supabase.rpc("group_days_done_last_30");
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
-        id: item.id,
-        name: item.name,
-        value: item.days_done,
-      }));
-      setData(dataMaped);
-    })();
+        const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+          id: item.id,
+          name: item.name,
+          value: item.days_done,
+        }));
+        setData(dataMaped);
+      })();
 
-    (async () => {
-      const { data, error } = await supabase.rpc("task_days_done_last_30", {
-        p_group_id: null,
-      });
+      (async () => {
+        const { data, error } = await supabase.rpc("task_days_done_last_30", {
+          p_group_id: null,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
-        id: item.id,
-        name: item.name,
-        value: item.days_done,
-      }));
-      setDataUngrouped(dataMaped);
-    })();
+        const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+          id: item.id,
+          name: item.name,
+          value: item.days_done,
+        }));
+        setDataUngrouped(dataMaped);
+      })();
 
-    (async () => {
-      const { data, error } = await supabase.rpc("group_days_last_30");
+      (async () => {
+        const { data, error } = await supabase.rpc("group_days_last_30");
 
-      if (error) throw error;
+        if (error) throw error;
 
-      setDaysDone(data[0]["days_done"]);
-      setDaysEmpty(data[0]["empty_days"]);
-    })();
+        setDaysDone(data[0]["days_done"]);
+        setDaysEmpty(data[0]["empty_days"]);
+      })();
+    } catch {
+      notifyLoadError();
+    }
   }, []);
 
   if (

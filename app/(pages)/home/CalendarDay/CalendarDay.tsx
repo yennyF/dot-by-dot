@@ -25,7 +25,7 @@ export default function CalendarDay() {
             <CounterRow />
           </div>
           <ShadowRight />
-          <div className="sticky right-0 z-10 flex w-name shrink-0 items-end bg-[var(--background)]"></div>
+          <div className="sticky right-0 z-10 w-name bg-[var(--background)]"></div>
         </div>
         <ShadowTop />
       </div>

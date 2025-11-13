@@ -7,8 +7,9 @@ import { Group } from "@/app/types";
 import clsx from "clsx";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import { notifyLoadError } from "@/app/components/Notification";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
@@ -16,6 +17,16 @@ export default function TaskGrid() {
 
   const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
   const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
+
+  useEffect(() => {
+    try {
+      (async () => {
+        await Promise.all([useTaskLogStore.getState().fetchTaskLogs()]);
+      })();
+    } catch {
+      notifyLoadError();
+    }
+  }, []);
 
   function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     const element = (e.target as HTMLElement).closest("[data-task-id]");
@@ -36,7 +47,7 @@ export default function TaskGrid() {
   }
 
   return (
-    <div className={clsx("app-Body flex flex-col gap-5")} onClick={handleClick}>
+    <div className="app-TaskGrid flex flex-col gap-5" onClick={handleClick}>
       <div className="app-group" data-task={"id"}>
         <DummyTask groupId={null} />
         <TaskList groupId={null} />

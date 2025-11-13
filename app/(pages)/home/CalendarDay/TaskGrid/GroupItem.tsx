@@ -46,14 +46,6 @@ export default function GroupItem({ date, group }: GroupItemProps) {
         isTodayDate && "isToday"
       )}
     >
-      {isCurrentActive && isNextActive && (
-        <div
-          className="absolute left-[calc(50%+5px)] right-[calc(-50%+5px)] h-[1px] animate-fade-in"
-          style={{
-            background: `linear-gradient(to right, ${colorStart}, ${colorEnd})`,
-          }}
-        />
-      )}
       <AppTooltip delayDuration={100}>
         <AppTooltipTrigger className="flex cursor-default items-center justify-center">
           <div
@@ -72,6 +64,14 @@ export default function GroupItem({ date, group }: GroupItemProps) {
           {currentSize} {currentSize === 1 ? "dot" : "dots"}
         </AppContentTrigger>
       </AppTooltip>
+      {isCurrentActive && isNextActive && (
+        <div
+          className="absolute left-[calc(50%+5px)] right-[calc(-50%+5px)] h-[1px] animate-fade-in"
+          style={{
+            background: `linear-gradient(to right, ${colorStart}, ${colorEnd})`,
+          }}
+        />
+      )}
     </div>
   );
 }

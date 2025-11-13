@@ -25,7 +25,6 @@ type State = {
 
 type Action = {
   setIsEmpty: (isEmpty: boolean | undefined) => void;
-  init: () => Promise<void>;
   reset: () => Promise<void>;
   start: (
     groups: Group[],
@@ -40,18 +39,6 @@ export const useAppStore = create<State & Action>((set, get) => {
     isEmpty: undefined,
     setIsEmpty: (isEmpty) => set({ isEmpty }),
 
-    init: async () => {
-      try {
-        await Promise.all([
-          useGroupStore.getState().fetchGroups(),
-          useTaskStore.getState().fetchTasks(),
-          useTaskLogStore.getState().fetchTaskLogs(),
-        ]);
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
     reset: async () => {
       try {
         // TODO single trasaction
@@ -85,8 +72,6 @@ export const useAppStore = create<State & Action>((set, get) => {
           await supabase
             .from("task_logs")
             .insert(mapTaskLogRequestArray(taskLogs));
-
-        get().init();
       } catch (error) {
         console.error(error);
         throw error;

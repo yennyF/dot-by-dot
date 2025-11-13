@@ -12,6 +12,7 @@ import {
 } from "./Charts/ProgressBar";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
+import { notifyLoadError } from "@/app/components/Notification";
 
 export default function GroupDetail({
   groupId,
@@ -25,31 +26,35 @@ export default function GroupDetail({
   const [daysEmpty, setDaysEmpty] = useState<number>();
 
   useEffect(() => {
-    (async () => {
-      const { data, error } = await supabase.rpc("task_days_done_last_30", {
-        p_group_id: groupId,
-      });
+    try {
+      (async () => {
+        const { data, error } = await supabase.rpc("task_days_done_last_30", {
+          p_group_id: groupId,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
-        id: item.id,
-        name: item.name,
-        value: item.days_done,
-      }));
-      setData(dataMaped);
-    })();
+        const dataMaped = (data as ApiTaskLogDone[]).map((item) => ({
+          id: item.id,
+          name: item.name,
+          value: item.days_done,
+        }));
+        setData(dataMaped);
+      })();
 
-    (async () => {
-      const { data, error } = await supabase.rpc("task_days_last_30", {
-        p_group_id: groupId,
-      });
+      (async () => {
+        const { data, error } = await supabase.rpc("task_days_last_30", {
+          p_group_id: groupId,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      setDaysDone(data[0]["days_done"]);
-      setDaysEmpty(data[0]["empty_days"]);
-    })();
+        setDaysDone(data[0]["days_done"]);
+        setDaysEmpty(data[0]["empty_days"]);
+      })();
+    } catch {
+      notifyLoadError();
+    }
   }, [groupId]);
 
   if (!data || daysDone === undefined || daysEmpty === undefined) {
