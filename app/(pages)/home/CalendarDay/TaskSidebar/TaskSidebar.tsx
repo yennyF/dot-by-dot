@@ -7,7 +7,7 @@ import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
 import GroupItem from "./GroupItem";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
-import TaskRow from "./TaskItem";
+import TaskItem from "./TaskItem";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
@@ -27,7 +27,7 @@ export default function TaskSidebar() {
   }, [dummyGroup]);
 
   return (
-    <SortableContainer className="sticky right-0">
+    <SortableContainer className="sticky right-0 z-10">
       <div
         ref={headerRowRef}
         className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
@@ -109,7 +109,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
         groupId={groupId}
         beforeId={dummyTask.id}
       />
-      <TaskRow task={dummyTask} isDummy={true} />
+      <TaskItem task={dummyTask} isDummy={true} />
     </>
   );
 }
@@ -123,7 +123,7 @@ function TaskList({ groupId }: { groupId: string | null }) {
       {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
-          <TaskRow key={task.id} task={task} />
+          <TaskItem key={task.id} task={task} />
         </Fragment>
       ))}
       <DropIndicatorTask groupId={groupId} />

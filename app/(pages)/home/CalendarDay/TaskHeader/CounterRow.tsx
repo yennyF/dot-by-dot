@@ -1,6 +1,6 @@
 "use client";
 
-import { DayType, MonthType, useTaskLogStore } from "@/app/stores/taskLogStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import CounterRowItem from "./CounterRowItem";
 
 export default function CounterRow() {
@@ -8,29 +8,13 @@ export default function CounterRow() {
 
   return (
     <div className="app-CounterRow flex w-fit bg-[var(--background)]">
-      {totalDate.map(([, months], index) => (
-        <YearItem key={index} months={months} />
-      ))}
+      {totalDate.map(([, months]) =>
+        months.map(([, days]) =>
+          days.map((date) => (
+            <CounterRowItem key={date.toDateString()} date={date} />
+          ))
+        )
+      )}
     </div>
-  );
-}
-
-function YearItem({ months }: { months: MonthType[] }) {
-  return (
-    <>
-      {months.map(([, days], index) => (
-        <MonthItem key={index} days={days} />
-      ))}
-    </>
-  );
-}
-
-function MonthItem({ days }: { days: DayType[] }) {
-  return (
-    <>
-      {days.map((date, index) => (
-        <CounterRowItem key={index} date={date} />
-      ))}
-    </>
   );
 }

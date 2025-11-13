@@ -15,9 +15,6 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   const isActive = useTaskLogStore(
     (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
   );
-  const isPrevActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[toApiDate(addDays(date, -1))]?.has(task.id) ?? false
-  );
   const isNextActive = useTaskLogStore(
     (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(task.id) ?? false
   );
@@ -45,23 +42,6 @@ export default function TaskItem({ date, task }: TaskItemProps) {
 
   return (
     <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
-      {isPrevActive && isActive && (
-        <div
-          className={clsx(
-            "absolute left-0 right-[50%] z-[-1] h-3.5 animate-fade-in",
-            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
-          )}
-        />
-      )}
-      {isNextActive && isActive && (
-        <div
-          className={clsx(
-            "absolute left-[50%] right-0 z-[-1] h-3.5 animate-fade-in",
-            task.groupId ? "bg-[var(--accent-4)]" : "bg-[var(--accent-4)]"
-          )}
-        />
-      )}
-
       <div
         data-task-id={task.id}
         data-date={date}
@@ -70,6 +50,9 @@ export default function TaskItem({ date, task }: TaskItemProps) {
       >
         <CheckIcon className={classNameIcon} />
       </div>
+      {isNextActive && isActive && (
+        <div className="absolute -right-1/2 left-1/2 z-[-1] h-3.5 animate-fade-in bg-[var(--accent-4)]" />
+      )}
     </div>
   );
 }

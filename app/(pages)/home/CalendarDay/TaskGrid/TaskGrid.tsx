@@ -36,7 +36,7 @@ export default function TaskGrid() {
   }
 
   return (
-    <div className={clsx("app-Body flex flex-col gap-5")} onClick={handleClick}>
+    <div className="app-TaskGrid flex flex-col gap-5" onClick={handleClick}>
       <div className="app-group" data-task={"id"}>
         <DummyTask groupId={null} />
         <TaskList groupId={null} />
