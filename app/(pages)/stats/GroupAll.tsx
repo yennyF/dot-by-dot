@@ -11,7 +11,7 @@ import {
   ProgressBarLabelDay,
   ProgressBarLabelPer,
 } from "./Charts/ProgressBar";
-import { Separator, Tabs } from "radix-ui";
+import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 
 export default function GroupAll({
