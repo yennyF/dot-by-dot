@@ -43,7 +43,7 @@ function Content({ task }: { task: Task }) {
   const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
   const handleDeleteConfirm = async () => {
-    deleteTask(task.id);
+    deleteTask(task.id, task.groupId);
   };
 
   return (
