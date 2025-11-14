@@ -48,12 +48,13 @@ type Action = {
   deleteAllTaskLog: () => Promise<void>;
 };
 
-const rangeDays = 49;
+const rangeDays = 29;
 
 export const useTaskLogStore = create<State & Action>()(
   subscribeWithSelector((set, get) => {
-    const startDate = subDays(new Date("11/01/2025"), rangeDays);
-    const endDate = new Date("11/01/2025");
+    const today = new Date();
+    const startDate = subDays(today, rangeDays);
+    const endDate = today;
     const totalDate = getTotalDate(startDate, endDate);
 
     return {
