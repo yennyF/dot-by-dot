@@ -25,6 +25,7 @@ import {
   mapTaskLogRequest,
   toApiDate,
 } from "../types";
+import { subscribeWithSelector } from "zustand/middleware";
 
 export type DayType = Date;
 export type MonthType = [Date, DayType[]];
@@ -47,151 +48,175 @@ type Action = {
   deleteAllTaskLog: () => Promise<void>;
 };
 
-const rangeDays = 29;
+const rangeDays = 49;
 
-export const useTaskLogStore = create<State & Action>((set, get) => {
-  const startDate = subDays(new Date(), rangeDays);
-  const endDate = new Date();
-  const totalDate = getTotalDate(startDate, endDate);
+export const useTaskLogStore = create<State & Action>()(
+  subscribeWithSelector((set, get) => {
+    const startDate = subDays(new Date("11/01/2025"), rangeDays);
+    const endDate = new Date("11/01/2025");
+    const totalDate = getTotalDate(startDate, endDate);
 
-  return {
-    startDate,
-    endDate,
-    totalDate,
-    tasksByDate: undefined,
+    return {
+      startDate,
+      endDate,
+      totalDate,
+      tasksByDate: undefined,
 
-    destroyTaskLogs: async () => {
-      set(() => ({
-        tasksByDate: undefined,
-        lock: false,
-        startDate: subDays(startOfMonth(new Date()), rangeDays),
-        endDate: new Date(),
-        totalDate: [],
-      }));
-    },
+      destroyTaskLogs: async () => {
+        set(() => ({
+          tasksByDate: undefined,
+          lock: false,
+          startDate: subDays(startOfMonth(new Date()), rangeDays),
+          endDate: new Date(),
+          totalDate: [],
+        }));
+      },
 
-    fetchTaskLogs: async () => {
-      const startDate = get().startDate;
-      const endDate = get().endDate;
-      const tasksByDate: Record<string, Set<string>> = {};
+      fetchTaskLogs: async () => {
+        const startDate = get().startDate;
+        const endDate = get().endDate;
+        const tasksByDate: Record<string, Set<string>> = {};
 
-      try {
-        const { data, error } = await supabase
-          .from("task_logs")
-          .select("date, task_id")
-          .gte("date", toApiDate(startDate))
-          .lte("date", toApiDate(endDate));
-        if (error) throw error;
+        try {
+          const { data, error } = await supabase
+            .from("task_logs")
+            .select("date, task_id")
+            .gte("date", toApiDate(startDate))
+            .lte("date", toApiDate(endDate));
+          if (error) throw error;
 
-        if (data) {
-          mapTaskLogResponseArray(data).forEach((taskLog) => {
-            (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
-              taskLog.taskId
-            );
-          });
+          if (data) {
+            mapTaskLogResponseArray(data).forEach((taskLog) => {
+              (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
+                taskLog.taskId
+              );
+            });
+          }
+
+          set(() => ({ tasksByDate }));
+        } catch (error) {
+          console.error(error);
+          throw error;
         }
+      },
 
-        set(() => ({ tasksByDate }));
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
+      fetchMoreTaskLogs: async () => {
+        const startDate = subDays(get().startDate, rangeDays);
+        const endDate = get().endDate;
+        // const totalDate = getTotalDate(startDate, endDate);
+        const tasksByDate = { ...get().tasksByDate };
+        const tastId = notifyLoading();
 
-    fetchMoreTaskLogs: async () => {
-      const startDate = subDays(get().startDate, rangeDays);
-      const endDate = get().endDate;
-      const totalDate = getTotalDate(startDate, endDate);
-      const tasksByDate = { ...get().tasksByDate };
-      const tastId = notifyLoading();
+        try {
+          const { data, error } = await supabase
+            .from("task_logs")
+            .select("date, task_id")
+            .gte("created_at", toApiDate(startDate))
+            .lte("created_at", toApiDate(endDate));
+          if (error) throw error;
 
-      try {
-        const { data, error } = await supabase
-          .from("task_logs")
-          .select("date, task_id")
-          .gte("created_at", toApiDate(startDate))
-          .lte("created_at", toApiDate(endDate));
-        if (error) throw error;
+          if (data) {
+            mapTaskLogResponseArray(data).forEach((taskLog) => {
+              (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
+                taskLog.taskId
+              );
+            });
+          }
 
-        if (data) {
-          mapTaskLogResponseArray(data).forEach((taskLog) => {
-            (tasksByDate[toApiDate(taskLog.date)] ??= new Set()).add(
-              taskLog.taskId
-            );
-          });
+          set(() => ({ tasksByDate, startDate }));
+
+          toast.dismiss(tastId);
+        } catch (error) {
+          console.error(error);
+          toast.dismiss(tastId);
+          notifyLoadError();
         }
+      },
 
-        set(() => ({ tasksByDate, startDate, totalDate }));
+      insertTaskLog: async (date: Date, taskId: string) => {
+        const dateString = toApiDate(date);
 
-        toast.dismiss(tastId);
-      } catch (error) {
-        console.error(error);
-        toast.dismiss(tastId);
-        notifyLoadError();
-      }
-    },
+        set((state) => {
+          const tasksByDate = { ...state.tasksByDate };
+          tasksByDate[dateString] = new Set(tasksByDate[dateString]);
+          tasksByDate[dateString].add(taskId);
+          return { tasksByDate };
+        });
 
-    insertTaskLog: async (date: Date, taskId: string) => {
-      const dateString = toApiDate(date);
+        try {
+          const { error } = await supabase
+            .from("task_logs")
+            .insert(mapTaskLogRequest({ taskId, date }));
+          if (error) throw error;
+        } catch (error) {
+          console.error(error);
+          notifyCreateError();
+        }
+      },
 
-      set((state) => {
-        const tasksByDate = { ...state.tasksByDate };
-        tasksByDate[dateString] = new Set(tasksByDate[dateString]);
-        tasksByDate[dateString].add(taskId);
-        return { tasksByDate };
-      });
+      deleteTaskLog: async (date: Date, taskId: string) => {
+        const dateString = toApiDate(date);
 
-      try {
-        const { error } = await supabase
-          .from("task_logs")
-          .insert(mapTaskLogRequest({ taskId, date }));
-        if (error) throw error;
-      } catch (error) {
-        console.error(error);
-        notifyCreateError();
-      }
-    },
+        set((state) => {
+          if (!state.tasksByDate) return {};
 
-    deleteTaskLog: async (date: Date, taskId: string) => {
-      const dateString = toApiDate(date);
+          const tasksByDate = { ...state.tasksByDate };
+          tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
+          tasksByDate[dateString].delete(taskId);
+          return { tasksByDate };
+        });
 
-      set((state) => {
-        if (!state.tasksByDate) return {};
+        try {
+          const { error } = await supabase
+            .from("task_logs")
+            .delete()
+            .eq("date", dateString)
+            .eq("task_id", taskId);
+          if (error) throw error;
+        } catch (error) {
+          console.error(error);
+          notifyDeleteError();
+        }
+      },
 
-        const tasksByDate = { ...state.tasksByDate };
-        tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
-        tasksByDate[dateString].delete(taskId);
-        return { tasksByDate };
-      });
+      deleteAllTaskLog: async () => {
+        try {
+          set(() => ({ tasksByDate: {} }));
+          const { error } = await supabase
+            .from("task_logs")
+            .delete()
+            .neq("task_id", uuidv4());
+          if (error) throw error;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      },
+    };
+  })
+);
 
-      try {
-        const { error } = await supabase
-          .from("task_logs")
-          .delete()
-          .eq("date", dateString)
-          .eq("task_id", taskId);
-        if (error) throw error;
-      } catch (error) {
-        console.error(error);
-        notifyDeleteError();
-      }
-    },
+useTaskLogStore.subscribe(
+  (state) => state.startDate,
+  (startDate) => {
+    const totalDate = getTotalDate(
+      startDate,
+      useTaskLogStore.getState().endDate
+    );
+    useTaskLogStore.setState({ totalDate });
+  }
+);
 
-    deleteAllTaskLog: async () => {
-      try {
-        set(() => ({ tasksByDate: {} }));
-        const { error } = await supabase
-          .from("task_logs")
-          .delete()
-          .neq("task_id", uuidv4());
-        if (error) throw error;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-  };
-});
+useTaskLogStore.subscribe(
+  (state) => state.endDate,
+  (endDate) => {
+    const totalDate = getTotalDate(
+      useTaskLogStore.getState().startDate,
+      endDate
+    );
+    useTaskLogStore.setState({ totalDate });
+  }
+);
 
 function getTotalDate(startDate: Date, endDate: Date) {
   const totalYears = eachYearOfInterval({

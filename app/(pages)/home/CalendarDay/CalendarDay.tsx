@@ -20,15 +20,25 @@ export default function CalendarDay() {
   const fetchGroups = useGroupStore((s) => s.fetchGroups);
   const fetchTasks = useTaskStore((s) => s.fetchTasks);
   const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
+  const totalDate = useTaskLogStore((s) => s.totalDate);
 
   useEffect(() => {
     try {
-      Promise.all([fetchGroups(), fetchTasks(), fetchTaskLogs()]);
+      Promise.all([fetchGroups(), fetchTasks()]);
     } catch {
       notifyLoadError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    try {
+      fetchTaskLogs();
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalDate]);
 
   return (
     <HorizontalDragScroll
