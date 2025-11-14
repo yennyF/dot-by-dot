@@ -89,15 +89,13 @@ function GroupItemOptions({
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
-  const open = useUIStore((s) =>
-    s.collapsedGroups.includes(group.id) ? false : true
-  );
+  const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
   const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
 
   const handleClickNew = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!open) {
+    if (!isOpen) {
       toggleCollapsedGroup(group.id);
     }
 
@@ -159,7 +157,7 @@ function GroupItemOptions({
             </span>
           </GroupDeleteDialog>
 
-          {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
         </>
       )}
     </div>

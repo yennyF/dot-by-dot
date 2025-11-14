@@ -35,6 +35,8 @@ export default function TaskGrid() {
     }
   }
 
+  if (!groups) return null;
+
   return (
     <div className="app-TaskGrid flex flex-col gap-5" onClick={handleClick}>
       <div className="app-group" data-task={"id"}>
@@ -48,7 +50,7 @@ export default function TaskGrid() {
         </div>
       )}
 
-      {groups?.map((group) => (
+      {groups.map((group) => (
         <CollapsibleGroup key={group.id} group={group} />
       ))}
     </div>
@@ -56,15 +58,13 @@ export default function TaskGrid() {
 }
 
 function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useUIStore((s) =>
-    s.collapsedGroups.includes(group.id) ? false : true
-  );
+  const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
 
   return (
     <div className="app-group" key={group.id} data-name={group.name}>
       <GroupRow group={group} />
       <DummyTask groupId={group.id} />
-      <div className={clsx(open ? "block" : "hidden")}>
+      <div className={clsx(isOpen ? "block" : "hidden")}>
         <TaskList groupId={group.id} />
       </div>
     </div>
