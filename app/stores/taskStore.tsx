@@ -11,19 +11,15 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
-import { useGroupStore } from "./groupStore";
-import { useAppStore } from "./appStore";
 
 export const UNGROUPED_KEY = "_ungrouped";
 
 type State = {
   dummyTask: Task | undefined;
   tasksByGroup: Record<string, Task[]> | undefined;
-  ungroupTotal: number | undefined;
 };
 
 type Action = {
-  setUngroupTotal: (ungroupTotal: number | undefined) => void;
   destroyTasks: () => void;
   setDummyTask: (task: Task | undefined) => void;
   fetchTasks: () => Promise<void>;
@@ -45,9 +41,11 @@ type Action = {
 export const useTaskStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
-      ungroupTotal: undefined,
-      setUngroupTotal: (ungroupTotal: number | undefined) =>
-        set(() => ({ ungroupTotal })),
+      dummyTask: undefined,
+      setDummyTask: (task: Task | undefined) =>
+        set(() => ({ dummyTask: task })),
+
+      tasksByGroup: undefined,
 
       destroyTasks: async () => {
         set(() => ({
@@ -56,11 +54,6 @@ export const useTaskStore = create<State & Action>()(
         }));
       },
 
-      dummyTask: undefined,
-      setDummyTask: (task: Task | undefined) =>
-        set(() => ({ dummyTask: task })),
-
-      tasksByGroup: undefined,
       fetchTasks: async () => {
         try {
           const { data, error } = await supabase
@@ -84,6 +77,7 @@ export const useTaskStore = create<State & Action>()(
           throw error;
         }
       },
+
       insertTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
         try {
           const key = props.groupId ?? UNGROUPED_KEY;
@@ -114,6 +108,7 @@ export const useTaskStore = create<State & Action>()(
           notifyCreateError();
         }
       },
+
       updateTask: async (id: string, props: Pick<ApiTask, "name">) => {
         try {
           // update in local
@@ -138,6 +133,7 @@ export const useTaskStore = create<State & Action>()(
           notifyUpdateError();
         }
       },
+
       moveTaskBefore: async (
         id: string,
         beforeId: string,
@@ -195,6 +191,7 @@ export const useTaskStore = create<State & Action>()(
           notifyMoveError();
         }
       },
+
       moveTaskAfter: async (
         id: string,
         afterId: string | null,
@@ -266,6 +263,7 @@ export const useTaskStore = create<State & Action>()(
           notifyMoveError();
         }
       },
+
       deleteTask: async (id: string) => {
         try {
           // delete taskLog state
@@ -308,30 +306,3 @@ function locateTask(
   }
   return null;
 }
-
-useTaskStore.subscribe(
-  (state) => state.tasksByGroup,
-  (tasksByGroup) => {
-    if (tasksByGroup === undefined) {
-      useTaskStore.getState().setUngroupTotal(undefined);
-    } else {
-      useTaskStore
-        .getState()
-        .setUngroupTotal(tasksByGroup[UNGROUPED_KEY]?.length ?? 0);
-    }
-  }
-);
-
-useTaskStore.subscribe(
-  (state) => state.ungroupTotal,
-  (ungroupTotal) => {
-    const groupTotal = useGroupStore.getState().groupTotal;
-    if (ungroupTotal !== undefined && groupTotal !== undefined) {
-      useAppStore.setState(() => ({
-        isEmpty: ungroupTotal === 0 && groupTotal === 0,
-      }));
-    } else {
-      useAppStore.setState({ isEmpty: undefined });
-    }
-  }
-);

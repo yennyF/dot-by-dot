@@ -15,6 +15,7 @@ export const useUserStore = create<State & Action>((set) => {
   return {
     user: undefined,
     setUser: (user) => set({ user }),
+
     email: undefined,
     setEmail: (email) => set({ email }),
   };

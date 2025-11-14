@@ -55,6 +55,11 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
   const totalDate = getTotalDate(startDate, endDate);
 
   return {
+    startDate,
+    endDate,
+    totalDate,
+    tasksByDate: undefined,
+
     destroyTaskLogs: async () => {
       set(() => ({
         tasksByDate: undefined,
@@ -65,11 +70,6 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
       }));
     },
 
-    startDate,
-    endDate,
-    totalDate,
-
-    tasksByDate: undefined,
     fetchTaskLogs: async () => {
       const startDate = get().startDate;
       const endDate = get().endDate;
@@ -97,6 +97,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         throw error;
       }
     },
+
     fetchMoreTaskLogs: async () => {
       const startDate = subDays(get().startDate, rangeDays);
       const endDate = get().endDate;
@@ -129,6 +130,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         notifyLoadError();
       }
     },
+
     insertTaskLog: async (date: Date, taskId: string) => {
       const dateString = toApiDate(date);
 
@@ -149,6 +151,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         notifyCreateError();
       }
     },
+
     deleteTaskLog: async (date: Date, taskId: string) => {
       const dateString = toApiDate(date);
 
@@ -173,6 +176,7 @@ export const useTaskLogStore = create<State & Action>((set, get) => {
         notifyDeleteError();
       }
     },
+
     deleteAllTaskLog: async () => {
       try {
         set(() => ({ tasksByDate: {} }));

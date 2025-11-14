@@ -19,12 +19,7 @@ import {
 } from "../utils/generateData";
 import { v4 as uuidv4 } from "uuid";
 
-type State = {
-  isEmpty: boolean | undefined;
-};
-
 type Action = {
-  setIsEmpty: (isEmpty: boolean | undefined) => void;
   reset: () => Promise<void>;
   start: (
     groups: Group[],
@@ -34,11 +29,8 @@ type Action = {
   startMock: () => Promise<void>;
 };
 
-export const useAppStore = create<State & Action>((set, get) => {
+export const useAppStore = create<Action>((set, get) => {
   return {
-    isEmpty: undefined,
-    setIsEmpty: (isEmpty) => set({ isEmpty }),
-
     reset: async () => {
       try {
         // TODO single trasaction
@@ -56,6 +48,7 @@ export const useAppStore = create<State & Action>((set, get) => {
         notifyDeleteError();
       }
     },
+
     start: async (groups: Group[], tasks: Task[], taskLogs?: TaskLog[]) => {
       try {
         const { error: errorGroup } = await supabase
@@ -77,6 +70,7 @@ export const useAppStore = create<State & Action>((set, get) => {
         throw error;
       }
     },
+
     startMock: async () => {
       const groups: Group[] = [];
       const tasks: Task[] = generateTasks();
