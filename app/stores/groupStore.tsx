@@ -17,16 +17,13 @@ import {
   notifyUpdateError,
 } from "../components/Notification";
 import { subscribeWithSelector } from "zustand/middleware";
-import { useAppStore } from "./appStore";
 
 type State = {
   dummyGroup: Group | undefined;
   groups: Group[] | undefined;
-  groupTotal: number | undefined;
 };
 
 type Action = {
-  setTotal: (groupTotal: number | undefined) => void;
   destroyGroups: () => void;
   setDummyGroup: (group: Group | undefined) => void;
   fetchGroups: () => Promise<void>;
@@ -40,18 +37,16 @@ type Action = {
 export const useGroupStore = create<State & Action>()(
   subscribeWithSelector(
     immer((set, get) => ({
-      groupTotal: undefined,
-      setTotal: (groupTotal: number | undefined) => set(() => ({ groupTotal })),
-
-      destroyGroups: async () => {
-        set(() => ({ dummyGroup: undefined, groups: undefined }));
-      },
-
       dummyGroup: undefined,
       setDummyGroup: (group: Group | undefined) =>
         set(() => ({ dummyGroup: group })),
 
       groups: undefined,
+
+      destroyGroups: async () => {
+        set(() => ({ dummyGroup: undefined, groups: undefined }));
+      },
+
       fetchGroups: async () => {
         try {
           const { data, error } = await supabase
@@ -66,29 +61,29 @@ export const useGroupStore = create<State & Action>()(
           throw error;
         }
       },
+
       insertGroup: async (props: Pick<Group, "id" | "name">) => {
         try {
           const key = props.id ?? UNGROUPED_KEY;
 
           const firstOrder = get().groups?.[0]?.order;
-          const order = firstOrder
-            ? LexoRank.parse(firstOrder).genPrev().toString()
-            : LexoRank.middle().toString();
+          const rank = firstOrder
+            ? LexoRank.parse(firstOrder).genPrev()
+            : LexoRank.middle();
 
           const group: Group = {
             ...props,
-            order,
+            order: rank.toString(),
           };
 
           // Add group
           set(({ groups }) => {
-            if (!groups) return;
-            groups.unshift(group);
+            (groups ??= []).unshift(group);
           });
 
           // Init empty task for group
           useTaskStore.setState(({ tasksByGroup }) => {
-            if (!tasksByGroup) return;
+            if (!tasksByGroup) tasksByGroup = {};
             tasksByGroup[key] = [];
           });
 
@@ -102,6 +97,7 @@ export const useGroupStore = create<State & Action>()(
           notifyCreateError();
         }
       },
+
       updateGroup: async (id: string, props: Pick<ApiGroup, "name">) => {
         try {
           set(({ groups }) => {
@@ -124,6 +120,7 @@ export const useGroupStore = create<State & Action>()(
           notifyUpdateError();
         }
       },
+
       moveGroupBefore: async (id: string, beforeId: string) => {
         if (beforeId === id) return;
 
@@ -169,6 +166,7 @@ export const useGroupStore = create<State & Action>()(
           notifyMoveError();
         }
       },
+
       moveGroupAfter: async (id: string, afterId: string | null) => {
         if (afterId === id) return;
 
@@ -227,6 +225,7 @@ export const useGroupStore = create<State & Action>()(
           notifyMoveError();
         }
       },
+
       deleteGroup: async (id: string) => {
         try {
           // delete taskLog state
@@ -276,25 +275,4 @@ export const useGroupStore = create<State & Action>()(
       },
     }))
   )
-);
-
-useGroupStore.subscribe(
-  (state) => state.groups,
-  (groups) => {
-    useGroupStore.getState().setTotal(groups?.length);
-  }
-);
-
-useGroupStore.subscribe(
-  (state) => state.groupTotal,
-  (groupTotal) => {
-    const ungroupTotal = useTaskStore.getState().ungroupTotal;
-    if (ungroupTotal !== undefined && groupTotal !== undefined) {
-      useAppStore.setState(() => ({
-        isEmpty: ungroupTotal === 0 && groupTotal === 0,
-      }));
-    } else {
-      useAppStore.setState({ isEmpty: undefined });
-    }
-  }
 );

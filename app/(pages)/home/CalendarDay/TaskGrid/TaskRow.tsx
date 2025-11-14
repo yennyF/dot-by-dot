@@ -11,11 +11,13 @@ function TaskRowWrapper({ task }: { task: Task }) {
   return (
     <div className="app-TaskList flex">
       {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
-          days.map((date, index) => (
-            <TaskItem key={index} date={date} task={task} />
-          ))
-        )
+        months.map(([date, days]) => (
+          <div key={date.toDateString()} className="flex min-w-[150px]">
+            {days.map((date) => (
+              <TaskItem key={date.toDateString()} date={date} task={task} />
+            ))}
+          </div>
+        ))
       )}
     </div>
   );

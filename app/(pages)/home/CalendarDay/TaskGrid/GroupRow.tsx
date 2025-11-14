@@ -11,11 +11,13 @@ function GroupRowWrapper({ group }: { group: Group }) {
   return (
     <div className="app-GroupRow flex">
       {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
-          days.map((date, index) => (
-            <GroupItem key={index} date={date} group={group} />
-          ))
-        )
+        months.map(([date, days]) => (
+          <div key={date.toDateString()} className="flex min-w-[150px]">
+            {days.map((date) => (
+              <GroupItem key={date.toDateString()} date={date} group={group} />
+            ))}
+          </div>
+        ))
       )}
     </div>
   );

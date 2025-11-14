@@ -57,17 +57,16 @@ export default function TaskSidebar() {
 }
 
 function CollapsibleGroup({ group }: { group: Group }) {
-  const open = useUIStore((s) =>
-    s.collapsedGroups.includes(group.id) ? false : true
-  );
+  const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
   const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
+
   const setOpen = () => {
     toggleCollapsedGroup(group.id);
   };
 
   return (
     <div className="app-group">
-      <Collapsible.Root open={open} onOpenChange={setOpen}>
+      <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
         <DropIndicatorGroup beforeId={group.id} />
 
         <Collapsible.Trigger asChild>
@@ -83,6 +82,25 @@ function CollapsibleGroup({ group }: { group: Group }) {
         </Collapsible.Content>
       </Collapsible.Root>
     </div>
+  );
+}
+
+function TaskList({ groupId }: { groupId: string | null }) {
+  const key = groupId ?? UNGROUPED_KEY;
+  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+
+  if (!tasks) return null;
+
+  return (
+    <>
+      {tasks.map((task) => (
+        <Fragment key={task.id}>
+          <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
+          <TaskItem key={task.id} task={task} />
+        </Fragment>
+      ))}
+      <DropIndicatorTask groupId={groupId} />
+    </>
   );
 }
 
@@ -112,25 +130,6 @@ function DummyTask({ groupId }: { groupId: string | null }) {
         beforeId={dummyTask.id}
       />
       <TaskItem task={dummyTask} isDummy={true} />
-    </>
-  );
-}
-
-function TaskList({ groupId }: { groupId: string | null }) {
-  const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
-
-  if (!tasks) return null;
-
-  return (
-    <>
-      {tasks.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
-          <TaskItem key={task.id} task={task} />
-        </Fragment>
-      ))}
-      <DropIndicatorTask groupId={groupId} />
     </>
   );
 }

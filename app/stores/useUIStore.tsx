@@ -4,7 +4,8 @@ import { useGroupStore } from "./groupStore";
 
 type Store = {
   collapsedGroups: string[];
-  toggleCollapsedGroup: (id: string) => void;
+  isGroupOpen: (groupId: string) => boolean;
+  toggleCollapsedGroup: (groupId: string) => void;
   collapseAllGroups: () => void;
   expandAllGroups: () => void;
 };
@@ -13,18 +14,27 @@ export const useUIStore = create<Store>()(
   persist(
     (set, get) => ({
       collapsedGroups: [],
-      toggleCollapsedGroup: (id: string) => {
-        const collapsedGroups = get().collapsedGroups;
-        set({
-          collapsedGroups: collapsedGroups.includes(id)
-            ? collapsedGroups.filter((x) => x !== id)
-            : [...collapsedGroups, id],
+
+      isGroupOpen: (groupId: string) => {
+        return !get().collapsedGroups.includes(groupId);
+      },
+
+      toggleCollapsedGroup: (groupId: string) => {
+        set((s) => {
+          const isCollapsed = s.collapsedGroups.includes(groupId);
+          return {
+            collapsedGroups: isCollapsed
+              ? s.collapsedGroups.filter((id) => id !== groupId)
+              : [...s.collapsedGroups, groupId],
+          };
         });
       },
+
       collapseAllGroups: () => {
-        const groups = useGroupStore.getState().groups;
-        set({ collapsedGroups: groups?.map((g) => g.id) || [] });
+        const groups = useGroupStore.getState().groups || [];
+        set({ collapsedGroups: groups.map((g) => g.id) });
       },
+
       expandAllGroups: () => {
         set({ collapsedGroups: [] });
       },

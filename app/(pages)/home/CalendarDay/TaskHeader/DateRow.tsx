@@ -10,7 +10,7 @@ export default function DateRow() {
       {totalDate.map(([date, months]) => (
         <div key={date.getFullYear()} className="flex">
           {months.map(([date, days]) => (
-            <div key={date.getMonth()} className="w-fit">
+            <div key={date.getMonth()} className="w-fit min-w-[150px]">
               <div className="sticky left-0 w-fit px-3 font-bold">
                 {format(date, "MMMM") + " " + format(date, "yyyy")}
               </div>

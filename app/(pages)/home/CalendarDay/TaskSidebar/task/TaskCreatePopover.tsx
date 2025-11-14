@@ -46,7 +46,7 @@ function Content({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   const handleSaveClick = () => {
     if (!dummyTask) return;
-    insertTask({ id: dummyTask.id, name, groupId: dummyTask.groupId });
+    insertTask({ id: dummyTask.id, name }, dummyTask.groupId);
     setOpen(false);
   };
 

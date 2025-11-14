@@ -23,8 +23,6 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
-import { useGroupStore } from "@/app/stores/groupStore";
-import { useTaskStore } from "@/app/stores/taskStore";
 import { supabase } from "@/app/supabase/server";
 
 export default function HomePage() {
@@ -46,7 +44,7 @@ export default function HomePage() {
 
         if (error) throw error;
         if (data === false) {
-          router.replace("/product");
+          router.replace("/start");
           return;
         }
       })();
@@ -61,19 +59,6 @@ export default function HomePage() {
 }
 
 function Content() {
-  useEffect(() => {
-    try {
-      (async () => {
-        await Promise.all([
-          useGroupStore.getState().fetchGroups(),
-          useTaskStore.getState().fetchTasks(),
-        ]);
-      })();
-    } catch {
-      notifyLoadError();
-    }
-  }, []);
-
   return (
     <>
       <AppHeader>

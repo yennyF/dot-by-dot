@@ -8,13 +8,19 @@ export default function CounterRow() {
 
   return (
     <div className="app-CounterRow flex w-fit bg-[var(--background)]">
-      {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
-          days.map((date) => (
-            <CounterRowItem key={date.toDateString()} date={date} />
-          ))
-        )
-      )}
+      {totalDate.map(([date, months]) => (
+        <div key={date.getFullYear()} className="flex">
+          {months.map(([date, days]) => (
+            <div key={date.getMonth()} className="w-fit min-w-[150px]">
+              <div className="flex">
+                {days.map((date) => (
+                  <CounterRowItem key={date.toDateString()} date={date} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

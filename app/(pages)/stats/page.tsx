@@ -40,7 +40,7 @@ export default function StatsPage() {
 
         if (error) throw error;
         if (data === false) {
-          router.replace("/product");
+          router.replace("/start");
           return;
         }
 
