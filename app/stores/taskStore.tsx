@@ -23,8 +23,15 @@ type Action = {
   destroyTasks: () => void;
   setDummyTask: (task: Task | undefined) => void;
   fetchTasks: () => Promise<void>;
-  insertTask: (props: Pick<Task, "id" | "name" | "groupId">) => void;
-  updateTask: (id: string, task: Pick<Task, "name">) => void;
+  insertTask: (
+    props: Pick<Task, "id" | "name">,
+    groupId: string | null
+  ) => void;
+  updateTask: (
+    id: string,
+    task: Pick<Task, "name">,
+    groupId: string | null
+  ) => void;
   moveTaskBefore: (
     id: string,
     beforeId: string,
@@ -35,7 +42,7 @@ type Action = {
     afterId: string | null,
     groupId: string | null
   ) => void;
-  deleteTask: (id: string) => void;
+  deleteTask: (id: string, groupId: string | null) => void;
 };
 
 export const useTaskStore = create<State & Action>()(
@@ -78,9 +85,12 @@ export const useTaskStore = create<State & Action>()(
         }
       },
 
-      insertTask: async (props: Pick<Task, "id" | "name" | "groupId">) => {
+      insertTask: async (
+        props: Pick<Task, "id" | "name">,
+        groupId: string | null
+      ) => {
         try {
-          const key = props.groupId ?? UNGROUPED_KEY;
+          const key = groupId ?? UNGROUPED_KEY;
 
           const firstOrder = get().tasksByGroup?.[key]?.[0]?.order;
           const order = firstOrder
@@ -89,12 +99,13 @@ export const useTaskStore = create<State & Action>()(
 
           const task: Task = {
             ...props,
+            groupId,
             order,
           };
 
           // insert in local
           set(({ tasksByGroup }) => {
-            if (!tasksByGroup) return;
+            if (!tasksByGroup) tasksByGroup = {};
             (tasksByGroup[key] ??= []).unshift(task);
           });
 
@@ -109,14 +120,19 @@ export const useTaskStore = create<State & Action>()(
         }
       },
 
-      updateTask: async (id: string, props: Pick<ApiTask, "name">) => {
+      updateTask: async (
+        id: string,
+        props: Pick<ApiTask, "name">,
+        groupId: string | null
+      ) => {
+        const key = groupId ?? UNGROUPED_KEY;
+
         try {
           // update in local
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
 
-            const allTasks = Object.values(tasksByGroup).flat();
-            const task = allTasks.find((t) => t.id === id);
+            const task = tasksByGroup[key].find((t) => t.id === id);
             if (!task) throw Error();
 
             task.name = props.name;
@@ -151,10 +167,10 @@ export const useTaskStore = create<State & Action>()(
             if (!tasksByGroup[key]) tasksByGroup[key] = [];
 
             // Remove from current position
-            const loc = locateTask(id, tasksByGroup);
-            if (!loc) throw Error();
-            const task = tasksByGroup[loc.key][loc.index];
-            tasksByGroup[loc.key].splice(loc.index, 1);
+            const index = tasksByGroup[key].findIndex((t) => t.id === id);
+            if (index < 0) throw Error();
+            const task = tasksByGroup[key][index];
+            tasksByGroup[key].splice(index, 1);
 
             // Add to new position
             const newIndex = tasksByGroup[key].findIndex(
@@ -207,10 +223,10 @@ export const useTaskStore = create<State & Action>()(
             if (!tasksByGroup[key]) tasksByGroup[key] = [];
 
             // Remove from current position
-            const loc = locateTask(id, tasksByGroup);
-            if (!loc) throw Error();
-            const task = tasksByGroup[loc.key][loc.index];
-            tasksByGroup[loc.key].splice(loc.index, 1);
+            const index = tasksByGroup[key].findIndex((t) => t.id === id);
+            if (index < 0) throw Error();
+            const task = tasksByGroup[key][index];
+            tasksByGroup[key].splice(index, 1);
 
             if (afterId) {
               // Add to new position
@@ -264,7 +280,9 @@ export const useTaskStore = create<State & Action>()(
         }
       },
 
-      deleteTask: async (id: string) => {
+      deleteTask: async (id: string, groupId: string | null) => {
+        const key = groupId ?? UNGROUPED_KEY;
+
         try {
           // delete taskLog state
           useTaskLogStore.setState(({ tasksByDate }) => {
@@ -279,9 +297,10 @@ export const useTaskStore = create<State & Action>()(
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
 
-            const loc = locateTask(id, tasksByGroup);
-            if (!loc) return;
-            tasksByGroup[loc.key].splice(loc.index, 1);
+            const index = tasksByGroup[key].findIndex((h) => h.id === id);
+            if (index < 0) return;
+
+            tasksByGroup[key].splice(index, 1);
           });
 
           // delete from db
@@ -295,14 +314,3 @@ export const useTaskStore = create<State & Action>()(
     }))
   )
 );
-
-function locateTask(
-  id: string,
-  tasksByGroup: Record<string, Task[]>
-): { key: string; index: number } | null {
-  for (const [key, tasks] of Object.entries(tasksByGroup)) {
-    const index = tasks.findIndex((task) => task.id === id);
-    if (index > -1) return { key, index };
-  }
-  return null;
-}

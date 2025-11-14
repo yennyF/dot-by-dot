@@ -67,24 +67,23 @@ export const useGroupStore = create<State & Action>()(
           const key = props.id ?? UNGROUPED_KEY;
 
           const firstOrder = get().groups?.[0]?.order;
-          const order = firstOrder
-            ? LexoRank.parse(firstOrder).genPrev().toString()
-            : LexoRank.middle().toString();
+          const rank = firstOrder
+            ? LexoRank.parse(firstOrder).genPrev()
+            : LexoRank.middle();
 
           const group: Group = {
             ...props,
-            order,
+            order: rank.toString(),
           };
 
           // Add group
           set(({ groups }) => {
-            if (!groups) return;
-            groups.unshift(group);
+            (groups ??= []).unshift(group);
           });
 
           // Init empty task for group
           useTaskStore.setState(({ tasksByGroup }) => {
-            if (!tasksByGroup) return;
+            if (!tasksByGroup) tasksByGroup = {};
             tasksByGroup[key] = [];
           });
 
