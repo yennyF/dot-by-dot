@@ -7,10 +7,28 @@ import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import CounterRow from "./TaskHeader/CounterRow";
 import DateRow from "./TaskHeader/DateRow";
+import { notifyLoadError } from "@/app/components/Notification";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskStore } from "@/app/stores/taskStore";
+import { useEffect } from "react";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function CalendarDay() {
   const contentRef = useScrollStore((s) => s.contentRef);
   const headerColRef = useScrollStore((s) => s.headerColRef);
+
+  const fetchGroups = useGroupStore((s) => s.fetchGroups);
+  const fetchTasks = useTaskStore((s) => s.fetchTasks);
+  const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
+
+  useEffect(() => {
+    try {
+      Promise.all([fetchGroups(), fetchTasks(), fetchTaskLogs()]);
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <HorizontalDragScroll
