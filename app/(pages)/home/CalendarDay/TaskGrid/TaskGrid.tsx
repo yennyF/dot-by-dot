@@ -62,7 +62,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
 
   return (
     <div className="app-group" key={group.id} data-name={group.name}>
-      <GroupRow group={group} />
+      {isOpen ? <div className="h-row" /> : <GroupRow group={group} />}
       <DummyTask groupId={group.id} />
       <div className={clsx(isOpen ? "block" : "hidden")}>
         <TaskList groupId={group.id} />

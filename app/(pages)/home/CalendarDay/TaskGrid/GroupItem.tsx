@@ -2,9 +2,9 @@
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { Group, toApiDate } from "@/app/types";
-import { addDays, isToday } from "date-fns";
+import { addDays, isToday, isWeekend } from "date-fns";
 import clsx from "clsx";
-import { getPercentage } from "@/app/utils/utils";
+// import { getPercentage } from "@/app/utils/utils";
 import { useTaskStore } from "@/app/stores/taskStore";
 import {
   AppContentTrigger,
@@ -19,6 +19,7 @@ interface GroupItemProps {
 
 export default function GroupItem({ date, group }: GroupItemProps) {
   const isTodayDate = isToday(date);
+  const isWeekendDate = isWeekend(date);
 
   const tasks = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
   const taskIdSet = new Set(tasks.map((t) => t.id));
@@ -33,11 +34,11 @@ export default function GroupItem({ date, group }: GroupItemProps) {
     (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size ?? 0
   );
 
-  const isCurrentActive = currentSize > 0;
+  const isActive = currentSize > 0;
   const isNextActive = nextSize > 0;
 
-  const colorStart = getColor(getPercentage(currentSize, tasks.length));
-  const colorEnd = getColor(getPercentage(nextSize, tasks.length));
+  // const colorStart = getColor(getPercentage(currentSize, tasks.length));
+  // const colorEnd = getColor(getPercentage(nextSize, tasks.length));
 
   return (
     <div
@@ -46,36 +47,37 @@ export default function GroupItem({ date, group }: GroupItemProps) {
         isTodayDate && "isToday"
       )}
     >
+      {isActive && isNextActive && (
+        <div
+          className="absolute left-[calc(50%-7px)] right-[calc(-50%-7px)] h-[var(--dot-size)] animate-fade-in rounded-full bg-[var(--inverted-5)]"
+          // style={{
+          //   background: `linear-gradient(to right, ${colorStart}, ${colorEnd})`,
+          // }}
+        />
+      )}
       <AppTooltip delayDuration={100}>
         <AppTooltipTrigger className="flex cursor-default items-center justify-center">
           <div
             className={clsx(
               "transform rounded-full",
-              isCurrentActive
-                ? "size-[10px] bg-[var(--inverted)]"
-                : "size-[4px] bg-[var(--gray)]"
+              isActive ? "size-[var(--dot-size)]" : "size-[5px]",
+              isActive
+                ? "bg-[var(--inverted)]"
+                : isWeekendDate
+                  ? "bg-[var(--gray-5)]"
+                  : "bg-[var(--gray)]"
             )}
-            style={
-              isCurrentActive ? { backgroundColor: colorStart } : undefined
-            }
+            // style={isActive ? { backgroundColor: colorStart } : undefined}
           />
         </AppTooltipTrigger>
         <AppContentTrigger side="top" align="center" sideOffset={10}>
           {currentSize} {currentSize === 1 ? "dot" : "dots"}
         </AppContentTrigger>
       </AppTooltip>
-      {isCurrentActive && isNextActive && (
-        <div
-          className="absolute left-[calc(50%+5px)] right-[calc(-50%+5px)] h-[1px] animate-fade-in"
-          style={{
-            background: `linear-gradient(to right, ${colorStart}, ${colorEnd})`,
-          }}
-        />
-      )}
     </div>
   );
 }
 
-function getColor(alpha: number) {
-  return `rgba(88, 160, 192, ${alpha})`;
-}
+// function getColor(alpha: number) {
+//   return `rgba(88, 160, 192, ${alpha})`;
+// }

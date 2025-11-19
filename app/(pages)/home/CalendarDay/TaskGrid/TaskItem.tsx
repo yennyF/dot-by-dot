@@ -22,33 +22,33 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);
 
-  const classNameDot = clsx(
-    "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
-    "hover:scale-110 hover:bg-[var(--accent-5)] hover:border-[1px] hover:border-black",
-    "active:scale-90",
-    isActive && "!bg-[var(--accent)]",
-    isTodayDate
-      ? "bg-[var(--background)] border-[1px] border-black "
-      : isWeekendDate
-        ? "bg-[var(--gray-5)]"
-        : "bg-[var(--gray)] "
-  );
-
-  const classNameIcon = clsx(
-    "size-3 text-black opacity-0 ",
-    "group-hover:opacity-100",
-    isTodayDate && isActive && "opacity-100"
-  );
-
   return (
     <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
       <div
         data-task-id={task.id}
         data-date={date}
         data-active={isActive}
-        className={classNameDot}
+        className={clsx(
+          "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
+          "hover:scale-110 hover:border-[1px] hover:border-black hover:bg-[var(--accent-5)]",
+          "active:scale-90",
+          isActive
+            ? "bg-[var(--accent)]"
+            : isTodayDate
+              ? "bg-[var(--background)]"
+              : isWeekendDate
+                ? "bg-[var(--gray-5)]"
+                : "bg-[var(--gray)]",
+          isTodayDate && "border-[1px] border-black"
+        )}
       >
-        <CheckIcon className={classNameIcon} />
+        <CheckIcon
+          className={clsx(
+            "size-3 text-black opacity-0",
+            "group-hover:opacity-100",
+            isTodayDate && isActive && "opacity-100"
+          )}
+        />
       </div>
       {isNextActive && isActive && (
         <div className="absolute -right-1/2 left-1/2 z-[-1] h-3.5 animate-fade-in bg-[var(--accent-4)]" />
