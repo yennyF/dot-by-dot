@@ -29,8 +29,7 @@ type Action = {
   fetchGroups: () => Promise<void>;
   insertGroup: (props: Pick<Group, "id" | "name">) => void;
   updateGroup: (id: string, props: Pick<Group, "name">) => void;
-  moveGroupBefore: (id: string, beforeId: string) => void;
-  moveGroupAfter: (id: string, afterId: string | null) => void;
+  moveGroupBefore: (id: string, beforeId: string | null) => void;
   deleteGroup: (id: string) => void;
 };
 
@@ -121,7 +120,7 @@ export const useGroupStore = create<State & Action>()(
         }
       },
 
-      moveGroupBefore: async (id: string, beforeId: string) => {
+      moveGroupBefore: async (id: string, beforeId: string | null) => {
         if (beforeId === id) return;
 
         let order: string | undefined;
@@ -136,64 +135,18 @@ export const useGroupStore = create<State & Action>()(
             const group = groups[index];
             groups.splice(index, 1);
 
-            // Add to new position
-            const newIndex = groups.findIndex((g) => g.id === beforeId);
-            if (newIndex < 0) return Error();
-            groups.splice(newIndex, 0, group);
-
-            // Calculate new order
-            const prev = groups[newIndex - 1];
-            const next = groups[newIndex + 1]; // beforeId
-            const rank = prev
-              ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
-              : LexoRank.parse(next.order).genPrev();
-
-            // Update group
-            order = rank.toString();
-            groups[index].order = order;
-          });
-
-          if (!order) throw Error();
-
-          // update in db
-          const { error } = await supabase
-            .from("groups")
-            .update({ order })
-            .eq("id", id);
-          if (error) throw error;
-        } catch (error) {
-          console.error(error);
-          notifyMoveError();
-        }
-      },
-
-      moveGroupAfter: async (id: string, afterId: string | null) => {
-        if (afterId === id) return;
-
-        let order: string | undefined;
-
-        try {
-          set(({ groups }) => {
-            if (!groups) return;
-
-            // Remove from current position
-            const index = groups.findIndex((g) => g.id === id);
-            if (index < 0) return Error();
-            const group = groups[index];
-            groups.splice(index, 1);
-
-            if (afterId) {
+            if (beforeId) {
               // Add to new position
-              const newIndex = groups.findIndex((g) => g.id === afterId);
+              const newIndex = groups.findIndex((g) => g.id === beforeId);
               if (newIndex < 0) return Error();
-              groups.splice(newIndex + 1, 0, group);
+              groups.splice(newIndex, 0, group);
 
               // Calculate new order
-              const prev = groups[newIndex - 1]; // afterId
-              const next = groups[newIndex + 1];
-              const rank = next
+              const prev = groups[newIndex - 1];
+              const next = groups[newIndex + 1]; // beforeId
+              const rank = prev
                 ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
-                : LexoRank.parse(prev.order).genPrev();
+                : LexoRank.parse(next.order).genPrev();
               order = rank.toString();
             } else {
               // Add to new position
@@ -209,7 +162,7 @@ export const useGroupStore = create<State & Action>()(
             }
 
             // Update group
-            group.order = order;
+            groups[index].order = order;
           });
 
           if (!order) throw Error();
