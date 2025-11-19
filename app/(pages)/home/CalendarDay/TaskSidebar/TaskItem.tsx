@@ -2,7 +2,6 @@
 
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { DragEvent, memo, useState } from "react";
-import { Task } from "@/app/types";
 import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
@@ -12,13 +11,16 @@ import {
   AppTooltip,
   AppTooltipTrigger,
 } from "@/app/components/AppTooltip";
+import { useTaskStore } from "@/app/stores/taskStore";
 
 interface TaskItemProps {
-  task: Task;
+  taskId: string;
   isDummy?: boolean;
 }
 
-function TaskItemWrapper({ task, isDummy }: TaskItemProps) {
+function TaskItemWrapper({ taskId, isDummy }: TaskItemProps) {
+  const task = useTaskStore((s) => s.dummyTask ?? s.taskCache[taskId]);
+
   const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 

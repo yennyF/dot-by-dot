@@ -4,19 +4,19 @@ import { addDays, isToday, isWeekend } from "date-fns";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { CheckIcon } from "@radix-ui/react-icons";
-import { Task, toApiDate } from "@/app/types";
+import { toApiDate } from "@/app/types";
 
 interface TaskItemProps {
   date: Date;
-  task: Task;
+  taskId: string;
 }
 
-export default function TaskItem({ date, task }: TaskItemProps) {
+export default function TaskItem({ date, taskId }: TaskItemProps) {
   const isActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[toApiDate(date)]?.has(task.id) ?? false
+    (s) => s.tasksByDate?.[toApiDate(date)]?.has(taskId) ?? false
   );
   const isNextActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(task.id) ?? false
+    (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(taskId) ?? false
   );
 
   const isTodayDate = isToday(date);
@@ -25,7 +25,7 @@ export default function TaskItem({ date, task }: TaskItemProps) {
   return (
     <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
       <div
-        data-task-id={task.id}
+        data-task-id={taskId}
         data-date={date}
         data-active={isActive}
         className={clsx(

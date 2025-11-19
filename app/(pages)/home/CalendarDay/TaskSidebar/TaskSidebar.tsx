@@ -87,16 +87,16 @@ function CollapsibleGroup({ group }: { group: Group }) {
 
 function TaskList({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+  const taskIds = useTaskStore((s) => s.tasksByGroup?.[key]);
 
-  if (!tasks) return null;
+  if (!taskIds) return null;
 
   return (
     <>
-      {tasks.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
-          <TaskItem key={task.id} task={task} />
+      {taskIds.map((id) => (
+        <Fragment key={id}>
+          <DropIndicatorTask groupId={groupId ?? null} beforeId={id} />
+          <TaskItem key={id} taskId={id} />
         </Fragment>
       ))}
       <DropIndicatorTask groupId={groupId} />
@@ -129,7 +129,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
         groupId={groupId}
         beforeId={dummyTask.id}
       />
-      <TaskItem task={dummyTask} isDummy={true} />
+      <TaskItem taskId={dummyTask.id} isDummy={true} />
     </>
   );
 }

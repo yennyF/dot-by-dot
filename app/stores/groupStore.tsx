@@ -195,7 +195,7 @@ export const useGroupStore = create<State & Action>()(
                   state.tasksByDate
                 )) {
                   const newTaskSet = new Set(taskSet);
-                  tasks.forEach((t) => newTaskSet.delete(t.id));
+                  tasks.forEach((t) => newTaskSet.delete(t));
                   newTasksByDate[date] = newTaskSet;
                 }
 

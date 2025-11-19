@@ -78,13 +78,13 @@ function DummyTask({ groupId }: { groupId: string | null }) {
 
   if (!dummyTask) return null;
 
-  return <TaskRow task={dummyTask} />;
+  return <TaskRow taskId={dummyTask.id} />;
 }
 
 function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
+  const taskIds = useTaskStore((s) => s.tasksByGroup?.[key]);
 
-  return <>{tasks?.map((task) => <TaskRow task={task} key={task.id} />)}</>;
+  return <>{taskIds?.map((id) => <TaskRow taskId={id} key={id} />)}</>;
 }
 const TaskList = memo(TaskListWrapper);

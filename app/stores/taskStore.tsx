@@ -17,7 +17,7 @@ export const UNGROUPED_KEY = "_ungrouped";
 type State = {
   dummyTask: Task | undefined;
   taskCache: Record<string, Task>;
-  tasksByGroup: Record<string, Task[]> | undefined;
+  tasksByGroup: Record<string, string[]> | undefined;
 };
 
 type Action = {
@@ -28,11 +28,7 @@ type Action = {
     props: Pick<Task, "id" | "name">,
     groupId: string | null
   ) => void;
-  updateTask: (
-    id: string,
-    task: Pick<Task, "name">,
-    groupId: string | null
-  ) => void;
+  updateTask: (id: string, task: Pick<Task, "name">) => void;
   moveTaskBefore: (id: string, beforeId: string) => void;
   moveTask: (id: string, groupId: string | null) => void;
   deleteTask: (id: string, groupId: string | null) => void;
@@ -66,13 +62,13 @@ export const useTaskStore = create<State & Action>()(
           if (error) throw error;
 
           const taskCache: Record<string, Task> = {};
-          const tasksByGroup: Record<string, Task[]> = {};
+          const tasksByGroup: Record<string, string[]> = {};
           if (data) {
             mapTaskResponseArray(data).forEach((task) => {
               taskCache[task.id] = task;
 
               const key = task.groupId ?? UNGROUPED_KEY;
-              (tasksByGroup[key] ??= []).push(task);
+              (tasksByGroup[key] ??= []).push(task.id);
             });
           }
 
@@ -90,24 +86,26 @@ export const useTaskStore = create<State & Action>()(
         try {
           const key = groupId ?? UNGROUPED_KEY;
 
-          const firstOrder = get().tasksByGroup?.[key]?.[0]?.order;
-          const order = firstOrder
-            ? LexoRank.parse(firstOrder).genPrev().toString()
-            : LexoRank.middle().toString();
+          // Calculate new order
+          function getRank() {
+            const tasks = get().tasksByGroup?.[key];
+            if (!tasks || tasks.length === 0) return LexoRank.middle();
+
+            const firstTask = get().taskCache[tasks[0]];
+            return LexoRank.parse(firstTask.order).genPrev();
+          }
 
           const task: Task = {
             ...props,
             groupId,
-            order,
+            order: getRank().toString(),
           };
 
           // insert in local
-          set(({ taskCache }) => {
+          set(({ taskCache, tasksByGroup }) => {
             taskCache[task.id] = task;
-          });
-          set(({ tasksByGroup }) => {
             if (!tasksByGroup) tasksByGroup = {};
-            (tasksByGroup[key] ??= []).unshift(task);
+            (tasksByGroup[key] ??= []).unshift(task.id);
           });
 
           // insert in db
@@ -121,25 +119,11 @@ export const useTaskStore = create<State & Action>()(
         }
       },
 
-      updateTask: async (
-        id: string,
-        props: Pick<ApiTask, "name">,
-        groupId: string | null
-      ) => {
-        const key = groupId ?? UNGROUPED_KEY;
-
+      updateTask: async (id: string, props: Pick<ApiTask, "name">) => {
         try {
           // update in local
           set(({ taskCache }) => {
             taskCache[id].name = props.name;
-          });
-          set(({ tasksByGroup }) => {
-            if (!tasksByGroup) return;
-
-            const task = tasksByGroup[key].find((t) => t.id === id);
-            if (!task) throw Error();
-
-            task.name = props.name;
           });
 
           // update in db
@@ -169,20 +153,20 @@ export const useTaskStore = create<State & Action>()(
             const newKey = beforeTask.groupId ?? UNGROUPED_KEY;
 
             // Remove from current position
-            const index = tasksByGroup[key].findIndex((t) => t.id === id);
+            const index = tasksByGroup[key].findIndex((t) => t === id);
             if (index < 0) throw Error();
             tasksByGroup[key].splice(index, 1);
 
             // Add to new position
             const newIndex = tasksByGroup[newKey].findIndex(
-              (t) => t.id === beforeId
+              (t) => t === beforeId
             );
             if (newIndex < 0) throw Error();
-            tasksByGroup[newKey].splice(newIndex, 0, task);
+            tasksByGroup[newKey].splice(newIndex, 0, task.id);
 
             // Calculate new order
-            const prev = tasksByGroup[newKey][newIndex - 1];
-            const next = tasksByGroup[newKey][newIndex + 1]; // beforeId
+            const prev = taskCache[tasksByGroup[newKey][newIndex - 1]];
+            const next = taskCache[tasksByGroup[newKey][newIndex + 1]]; // beforeId
             const rank = prev
               ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
               : LexoRank.parse(next.order).genPrev();
@@ -222,16 +206,16 @@ export const useTaskStore = create<State & Action>()(
             const newKey = groupId ?? UNGROUPED_KEY;
 
             // Remove from current position
-            const index = tasksByGroup[key].findIndex((t) => t.id === id);
+            const index = tasksByGroup[key].findIndex((t) => t === id);
             if (index < 0) throw Error();
             tasksByGroup[key].splice(index, 1);
 
             // Add to new position
             const newIndex = tasksByGroup[newKey].length;
-            tasksByGroup[newKey].push(task);
+            tasksByGroup[newKey].push(task.id);
 
             // Calculate new order
-            const prev = tasksByGroup[newKey][newIndex - 1];
+            const prev = taskCache[tasksByGroup[newKey][newIndex - 1]];
             const rank = prev
               ? LexoRank.parse(prev.order).genNext()
               : LexoRank.middle();
@@ -279,9 +263,8 @@ export const useTaskStore = create<State & Action>()(
           set(({ tasksByGroup }) => {
             if (!tasksByGroup) return;
 
-            const index = tasksByGroup[key].findIndex((h) => h.id === id);
+            const index = tasksByGroup[key].findIndex((t) => t === id);
             if (index < 0) return;
-
             tasksByGroup[key].splice(index, 1);
           });
 

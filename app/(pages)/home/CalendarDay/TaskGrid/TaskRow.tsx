@@ -1,11 +1,10 @@
 "use client";
 
-import { Task } from "@/app/types";
 import { memo } from "react";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import TaskItem from "./TaskItem";
 
-function TaskRowWrapper({ task }: { task: Task }) {
+function TaskRowWrapper({ taskId }: { taskId: string }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
@@ -14,7 +13,7 @@ function TaskRowWrapper({ task }: { task: Task }) {
         months.map(([date, days]) => (
           <div key={date.toDateString()} className="flex min-w-[150px]">
             {days.map((date) => (
-              <TaskItem key={date.toDateString()} date={date} task={task} />
+              <TaskItem key={date.toDateString()} date={date} taskId={taskId} />
             ))}
           </div>
         ))
