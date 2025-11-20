@@ -28,10 +28,10 @@ export default function GroupItem({ date, group }: GroupItemProps) {
   const nextKey = toApiDate(addDays(date, 1));
 
   const currentSize = useTaskLogStore(
-    (s) => s.tasksByDate?.[currentKey]?.intersection(taskIdSet).size ?? 0
+    (s) => s.tasksByDate[currentKey]?.intersection(taskIdSet).size ?? 0
   );
   const nextSize = useTaskLogStore(
-    (s) => s.tasksByDate?.[nextKey]?.intersection(taskIdSet).size ?? 0
+    (s) => s.tasksByDate[nextKey]?.intersection(taskIdSet).size ?? 0
   );
 
   const isActive = currentSize > 0;

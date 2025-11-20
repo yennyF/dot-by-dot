@@ -26,8 +26,6 @@ export default function TaskSidebar() {
     }
   }, [dummyGroup]);
 
-  if (!groups) return null;
-
   return (
     <SortableContainer className="sticky right-0 z-10">
       <div

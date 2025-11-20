@@ -7,7 +7,7 @@ import {
   mapGroupResponseArray,
 } from "../types";
 import { immer } from "zustand/middleware/immer";
-import { UNGROUPED_KEY, useTaskStore } from "./taskStore";
+import { useTaskStore } from "./taskStore";
 import { useTaskLogStore } from "./taskLogStore";
 import { LexoRank } from "lexorank";
 import {
@@ -20,7 +20,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 
 type State = {
   dummyGroup: Group | undefined;
-  groups: Group[] | undefined;
+  groups: Group[];
 };
 
 type Action = {
@@ -40,10 +40,10 @@ export const useGroupStore = create<State & Action>()(
       setDummyGroup: (group: Group | undefined) =>
         set(() => ({ dummyGroup: group })),
 
-      groups: undefined,
+      groups: [],
 
       destroyGroups: async () => {
-        set(() => ({ dummyGroup: undefined, groups: undefined }) as State);
+        set(() => ({ dummyGroup: undefined, groups: [] }) as State);
       },
 
       fetchGroups: async () => {
@@ -63,9 +63,7 @@ export const useGroupStore = create<State & Action>()(
 
       insertGroup: async (props: Pick<Group, "id" | "name">) => {
         try {
-          const key = props.id ?? UNGROUPED_KEY;
-
-          const firstOrder = get().groups?.[0]?.order;
+          const firstOrder = get().groups[0]?.order;
           const rank = firstOrder
             ? LexoRank.parse(firstOrder).genPrev()
             : LexoRank.middle();
@@ -77,7 +75,7 @@ export const useGroupStore = create<State & Action>()(
 
           // Add group
           set(({ groups }) => {
-            (groups ??= []).unshift(group);
+            groups.unshift(group);
           });
 
           // insert in db;
@@ -94,8 +92,6 @@ export const useGroupStore = create<State & Action>()(
       updateGroup: async (id: string, props: Pick<ApiGroup, "name">) => {
         try {
           set(({ groups }) => {
-            if (!groups) return;
-
             const group = groups.find((g) => g.id === id);
             if (!group) throw Error();
 
@@ -121,8 +117,6 @@ export const useGroupStore = create<State & Action>()(
 
         try {
           set(({ groups }) => {
-            if (!groups) return;
-
             // Remove from current position
             const index = groups.findIndex((g) => g.id === id);
             if (index < 0) return Error();
@@ -179,8 +173,6 @@ export const useGroupStore = create<State & Action>()(
           const tasks = useTaskStore.getState().tasksByGroup[id];
           if (tasks && tasks.length > 0) {
             useTaskLogStore.setState((state) => {
-              if (!state.tasksByDate) return {};
-
               const newTasksByDate = { ...state.tasksByDate };
 
               for (const [date, taskSet] of Object.entries(state.tasksByDate)) {
@@ -200,11 +192,8 @@ export const useGroupStore = create<State & Action>()(
 
           // delete group state
           set(({ groups }) => {
-            if (!groups) return;
-
             const index = groups.findIndex((h) => h.id === id);
             if (index < 0) return;
-
             groups.splice(index, 1);
           });
 

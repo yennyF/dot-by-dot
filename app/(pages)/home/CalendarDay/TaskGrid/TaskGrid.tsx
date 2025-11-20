@@ -35,8 +35,6 @@ export default function TaskGrid() {
     }
   }
 
-  if (!groups) return null;
-
   return (
     <div className="app-TaskGrid flex flex-col gap-5" onClick={handleClick}>
       <div className="app-group" data-task={"id"}>
