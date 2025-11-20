@@ -13,10 +13,10 @@ interface TaskItemProps {
 
 export default function TaskItem({ date, taskId }: TaskItemProps) {
   const isActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[toApiDate(date)]?.has(taskId) ?? false
+    (s) => s.tasksByDate[toApiDate(date)]?.has(taskId) ?? false
   );
   const isNextActive = useTaskLogStore(
-    (s) => s.tasksByDate?.[toApiDate(addDays(date, 1))]?.has(taskId) ?? false
+    (s) => s.tasksByDate[toApiDate(addDays(date, 1))]?.has(taskId) ?? false
   );
 
   const isTodayDate = isToday(date);

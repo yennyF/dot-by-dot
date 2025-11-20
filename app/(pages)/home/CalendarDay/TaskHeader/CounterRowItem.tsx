@@ -18,9 +18,9 @@ export default function CounterRowItem({ date }: { date: Date }) {
   const nextKey = toApiDate(addDays(date, 1));
 
   const currentSize = useTaskLogStore(
-    (s) => s.tasksByDate?.[currentKey]?.size ?? 0
+    (s) => s.tasksByDate[currentKey]?.size ?? 0
   );
-  const nextSize = useTaskLogStore((s) => s.tasksByDate?.[nextKey]?.size ?? 0);
+  const nextSize = useTaskLogStore((s) => s.tasksByDate[nextKey]?.size ?? 0);
 
   const isCurrentActive = currentSize > 0;
   const isNextActive = nextSize > 0;

@@ -25,6 +25,7 @@ export default function DropIndicatorGroup({
       )}
       data-sort="group"
       data-before-id={beforeId}
+      data-after-id={afterId}
     >
       <div className="h-2 w-2 rounded-full bg-[var(--black)]"></div>
       <div className="h-0.5 flex-1 bg-[var(--black)]" />

@@ -15,6 +15,7 @@ export default function DropIndicatorTask({
   ref,
   groupId,
   beforeId,
+  afterId,
   className,
 }: DropIndicatorProps) {
   return (
@@ -27,6 +28,7 @@ export default function DropIndicatorTask({
       data-sort="task"
       data-group-id={groupId}
       data-before-id={beforeId}
+      data-after-id={afterId}
     >
       <div className="h-2 w-2 rounded-full bg-[var(--gray-9)]" />
       <div className="h-0.5 flex-1 bg-[var(--gray-9)]" />
