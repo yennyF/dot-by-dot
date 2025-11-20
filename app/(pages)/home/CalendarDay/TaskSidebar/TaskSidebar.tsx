@@ -35,6 +35,7 @@ export default function TaskSidebar() {
         <div className="app-group">
           <DummyTask groupId={null} />
           <TaskList groupId={null} />
+          <DropIndicatorTask groupId={null} />
         </div>
 
         {dummyGroup && (
@@ -45,7 +46,11 @@ export default function TaskSidebar() {
         )}
 
         {groups.map((group) => (
-          <CollapsibleGroup key={group.id} group={group} />
+          <div key={group.id} className="app-group">
+            <DropIndicatorGroup beforeId={group.id} />
+            <CollapsibleGroup group={group} />
+            <DropIndicatorTask groupId={group.id} />
+          </div>
         ))}
 
         <DropIndicatorGroup />
@@ -63,23 +68,19 @@ function CollapsibleGroup({ group }: { group: Group }) {
   };
 
   return (
-    <div className="app-group">
-      <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
-        <DropIndicatorGroup beforeId={group.id} />
+    <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
+      <Collapsible.Trigger asChild>
+        <span className="w-full">
+          <GroupItem group={group} />
+        </span>
+      </Collapsible.Trigger>
 
-        <Collapsible.Trigger asChild>
-          <span className="w-full">
-            <GroupItem group={group} />
-          </span>
-        </Collapsible.Trigger>
+      <DummyTask groupId={group.id} />
 
-        <DummyTask groupId={group.id} />
-
-        <Collapsible.Content>
-          <TaskList groupId={group.id} />
-        </Collapsible.Content>
-      </Collapsible.Root>
-    </div>
+      <Collapsible.Content>
+        <TaskList groupId={group.id} />
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 }
 
@@ -91,11 +92,10 @@ function TaskList({ groupId }: { groupId: string | null }) {
     <>
       {taskIds?.map((id) => (
         <Fragment key={id}>
-          <DropIndicatorTask groupId={groupId ?? null} beforeId={id} />
+          <DropIndicatorTask groupId={groupId ?? null} afterId={id} />
           <TaskItem key={id} taskId={id} />
         </Fragment>
       ))}
-      <DropIndicatorTask groupId={groupId} />
     </>
   );
 }

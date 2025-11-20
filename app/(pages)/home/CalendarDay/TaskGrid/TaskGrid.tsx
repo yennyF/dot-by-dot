@@ -49,7 +49,9 @@ export default function TaskGrid() {
       )}
 
       {groups.map((group) => (
-        <CollapsibleGroup key={group.id} group={group} />
+        <div className="app-group" key={group.id} data-name={group.name}>
+          <CollapsibleGroup key={group.id} group={group} />
+        </div>
       ))}
     </div>
   );
@@ -59,13 +61,13 @@ function CollapsibleGroup({ group }: { group: Group }) {
   const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
 
   return (
-    <div className="app-group" key={group.id} data-name={group.name}>
+    <>
       {isOpen ? <div className="h-row" /> : <GroupRow group={group} />}
       <DummyTask groupId={group.id} />
       <div className={clsx(isOpen ? "block" : "hidden")}>
         <TaskList groupId={group.id} />
       </div>
-    </div>
+    </>
   );
 }
 
