@@ -52,9 +52,10 @@ export const useGroupStore = create<State & Action>()(
             .from("groups")
             .select("id, name, order, user_id")
             .order("order", { ascending: true });
+
           if (error) throw error;
 
-          set(() => ({ groups: mapGroupResponseArray(data ?? []) }));
+          set(() => ({ groups: data ? mapGroupResponseArray(data) : [] }));
         } catch (error) {
           console.error(error);
           throw error;
@@ -94,7 +95,6 @@ export const useGroupStore = create<State & Action>()(
           set(({ groups }) => {
             const group = groups.find((g) => g.id === id);
             if (!group) throw Error();
-
             group.name = props.name;
           });
 
@@ -131,7 +131,7 @@ export const useGroupStore = create<State & Action>()(
 
               // Calculate new order
               const prev = groups[newIndex - 1];
-              const next = groups[newIndex + 1]; // beforeId
+              const next = groups[newIndex + 1]; // asume it always exists
               const rank = prev
                 ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
                 : LexoRank.parse(next.order).genPrev();
@@ -177,7 +177,7 @@ export const useGroupStore = create<State & Action>()(
 
               for (const [date, taskSet] of Object.entries(state.tasksByDate)) {
                 const newTaskSet = new Set(taskSet);
-                tasks.forEach((t) => newTaskSet.delete(t));
+                tasks.forEach((t) => newTaskSet.delete(t.id));
                 newTasksByDate[date] = newTaskSet;
               }
 
@@ -186,9 +186,9 @@ export const useGroupStore = create<State & Action>()(
           }
 
           // delete tasks state
-          useTaskStore.setState(({ tasksByGroup }) => {
-            delete tasksByGroup[id];
-          });
+          useTaskStore.setState(({ tasks }) => ({
+            tasks: tasks.filter((t) => t.groupId !== id),
+          }));
 
           // delete group state
           set(({ groups }) => {

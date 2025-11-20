@@ -18,20 +18,20 @@ interface GroupItemProps {
 }
 
 export default function GroupItem({ date, group }: GroupItemProps) {
-  const taskIds = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
+  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
 
   const currentSize = useTaskLogStore(
-    (s) => s.getTasksDone(date, taskIds).length
+    (s) => s.getTasksDone(date, tasks).length
   );
   const nextSize = useTaskLogStore(
-    (s) => s.getTasksDone(addDays(date, 1), taskIds).length
+    (s) => s.getTasksDone(addDays(date, 1), tasks).length
   );
 
   const isActive = currentSize > 0;
   const isNextActive = nextSize > 0;
 
-  // const colorStart = getColor(getPercentage(currentSize, tasks.length));
-  // const colorEnd = getColor(getPercentage(nextSize, tasks.length));
+  // const colorStart = getColor(getPercentage(currentSize, taskIds.length));
+  // const colorEnd = getColor(getPercentage(nextSize, taskIds.length));
 
   const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);

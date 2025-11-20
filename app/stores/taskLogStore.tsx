@@ -24,6 +24,7 @@ import {
   mapTaskLogResponseArray,
   mapTaskLogRequest,
   toApiDate,
+  Task,
 } from "../types";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -46,7 +47,7 @@ type Action = {
   insertTaskLog: (date: Date, taskId: string) => void;
   deleteTaskLog: (date: Date, taskId: string) => void;
   deleteAllTaskLog: () => Promise<void>;
-  getTasksDone: (date: Date, taskIds: string[]) => string[];
+  getTasksDone: (date: Date, tasks: Task[]) => Task[];
 };
 
 const rangeDays = 29;
@@ -196,9 +197,9 @@ export const useTaskLogStore = create<State & Action>()(
         }
       },
 
-      getTasksDone: (date: Date, taskIds: string[]) => {
-        const tasks = get().tasksByDate[toApiDate(date)];
-        return tasks ? taskIds.filter((t) => tasks.has(t)) : [];
+      getTasksDone: (date: Date, tasks: Task[]) => {
+        const allTasks = get().tasksByDate[toApiDate(date)];
+        return allTasks ? tasks.filter((t) => allTasks.has(t.id)) : [];
       },
     };
   })

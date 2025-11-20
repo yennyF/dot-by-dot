@@ -11,16 +11,13 @@ import {
   AppTooltip,
   AppTooltipTrigger,
 } from "@/app/components/AppTooltip";
-import { useTaskStore } from "@/app/stores/taskStore";
 import { Task } from "@/app/types";
 
 interface TaskItemProps {
-  taskId: string;
+  task: Task;
 }
 
-function TaskItemWrapper({ taskId }: TaskItemProps) {
-  const task = useTaskStore((s) => s.taskCache[taskId]);
-
+function TaskItemWrapper({ task }: TaskItemProps) {
   const [forceShow, setForceShow] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {

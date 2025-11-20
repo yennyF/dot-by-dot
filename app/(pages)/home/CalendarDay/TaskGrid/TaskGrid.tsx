@@ -7,7 +7,6 @@ import { Group } from "@/app/types";
 import clsx from "clsx";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
-import { memo } from "react";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function TaskGrid() {
@@ -81,10 +80,11 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   return <TaskRow taskId={dummyTask.id} />;
 }
 
-function TaskListWrapper({ groupId }: { groupId: string | null }) {
+function TaskList({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
-  const taskIds = useTaskStore((s) => s.tasksByGroup[key]);
+  const tasks = useTaskStore((s) => s.tasksByGroup[key]);
 
-  return <>{taskIds?.map((id) => <TaskRow taskId={id} key={id} />)}</>;
+  return (
+    <>{tasks?.map((task) => <TaskRow taskId={task.id} key={task.id} />)}</>
+  );
 }
-const TaskList = memo(TaskListWrapper);
