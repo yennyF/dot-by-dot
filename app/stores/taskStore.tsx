@@ -17,7 +17,7 @@ export const UNGROUPED_KEY = "_ungrouped";
 type State = {
   dummyTask: Task | undefined;
   taskCache: Record<string, Task>;
-  tasksByGroup: Record<string, string[]> | undefined;
+  tasksByGroup: Record<string, string[]>;
 };
 
 type Action = {
@@ -42,14 +42,17 @@ export const useTaskStore = create<State & Action>()(
         set(() => ({ dummyTask: task })),
 
       taskCache: {},
-      tasksByGroup: undefined,
+      tasksByGroup: {},
 
       destroyTasks: async () => {
-        set(() => ({
-          dummyTask: undefined,
-          taskCache: {},
-          tasksByGroup: undefined,
-        }));
+        set(
+          () =>
+            ({
+              dummyTask: undefined,
+              taskCache: {},
+              tasksByGroup: {},
+            }) as State
+        );
       },
 
       fetchTasks: async () => {
@@ -88,7 +91,7 @@ export const useTaskStore = create<State & Action>()(
 
           // Calculate new order
           function getRank() {
-            const tasks = get().tasksByGroup?.[key];
+            const tasks = get().tasksByGroup[key];
             if (!tasks || tasks.length === 0) return LexoRank.middle();
 
             const firstTask = get().taskCache[tasks[0]];
@@ -104,7 +107,6 @@ export const useTaskStore = create<State & Action>()(
           // insert in local
           set(({ taskCache, tasksByGroup }) => {
             taskCache[task.id] = task;
-            if (!tasksByGroup) tasksByGroup = {};
             (tasksByGroup[key] ??= []).unshift(task.id);
           });
 
@@ -145,8 +147,6 @@ export const useTaskStore = create<State & Action>()(
 
         try {
           set(({ taskCache, tasksByGroup }) => {
-            if (!tasksByGroup) return;
-
             const task = taskCache[id];
             const beforeTask = taskCache[beforeId];
             const key = task.groupId ?? UNGROUPED_KEY;
@@ -199,8 +199,6 @@ export const useTaskStore = create<State & Action>()(
           let props: Pick<ApiTask, "group_id" | "order"> | undefined;
 
           set(({ taskCache, tasksByGroup }) => {
-            if (!tasksByGroup) return;
-
             const task = taskCache[id];
             const key = task.groupId ?? UNGROUPED_KEY;
             const newKey = groupId ?? UNGROUPED_KEY;
@@ -261,8 +259,6 @@ export const useTaskStore = create<State & Action>()(
             delete taskCache[id];
           });
           set(({ tasksByGroup }) => {
-            if (!tasksByGroup) return;
-
             const index = tasksByGroup[key].findIndex((t) => t === id);
             if (index < 0) return;
             tasksByGroup[key].splice(index, 1);

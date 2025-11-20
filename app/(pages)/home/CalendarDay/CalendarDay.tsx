@@ -5,7 +5,6 @@ import TaskSidebar from "./TaskSidebar/TaskSidebar";
 import TaskGrid from "./TaskGrid/TaskGrid";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { useScrollStore } from "@/app/stores/scrollStore";
-import CounterRow from "./TaskHeader/CounterRow";
 import DateRow from "./TaskHeader/DateRow";
 import { notifyLoadError } from "@/app/components/Notification";
 import { useGroupStore } from "@/app/stores/groupStore";

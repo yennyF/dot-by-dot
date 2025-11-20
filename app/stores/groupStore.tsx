@@ -43,7 +43,7 @@ export const useGroupStore = create<State & Action>()(
       groups: undefined,
 
       destroyGroups: async () => {
-        set(() => ({ dummyGroup: undefined, groups: undefined }));
+        set(() => ({ dummyGroup: undefined, groups: undefined }) as State);
       },
 
       fetchGroups: async () => {
@@ -78,12 +78,6 @@ export const useGroupStore = create<State & Action>()(
           // Add group
           set(({ groups }) => {
             (groups ??= []).unshift(group);
-          });
-
-          // Init empty task for group
-          useTaskStore.setState(({ tasksByGroup }) => {
-            if (!tasksByGroup) tasksByGroup = {};
-            tasksByGroup[key] = [];
           });
 
           // insert in db;
@@ -182,31 +176,26 @@ export const useGroupStore = create<State & Action>()(
       deleteGroup: async (id: string) => {
         try {
           // delete taskLog state
-          const tasksByGroup = useTaskStore.getState().tasksByGroup;
-          if (tasksByGroup) {
-            const tasks = tasksByGroup[id];
-            if (tasks && tasks.length > 0) {
-              useTaskLogStore.setState((state) => {
-                if (!state.tasksByDate) return {};
+          const tasks = useTaskStore.getState().tasksByGroup[id];
+          if (tasks && tasks.length > 0) {
+            useTaskLogStore.setState((state) => {
+              if (!state.tasksByDate) return {};
 
-                const newTasksByDate = { ...state.tasksByDate };
+              const newTasksByDate = { ...state.tasksByDate };
 
-                for (const [date, taskSet] of Object.entries(
-                  state.tasksByDate
-                )) {
-                  const newTaskSet = new Set(taskSet);
-                  tasks.forEach((t) => newTaskSet.delete(t));
-                  newTasksByDate[date] = newTaskSet;
-                }
+              for (const [date, taskSet] of Object.entries(state.tasksByDate)) {
+                const newTaskSet = new Set(taskSet);
+                tasks.forEach((t) => newTaskSet.delete(t));
+                newTasksByDate[date] = newTaskSet;
+              }
 
-                return { tasksByDate: newTasksByDate };
-              });
-            }
+              return { tasksByDate: newTasksByDate };
+            });
           }
 
           // delete tasks state
           useTaskStore.setState(({ tasksByGroup }) => {
-            delete tasksByGroup?.[id];
+            delete tasksByGroup[id];
           });
 
           // delete group state

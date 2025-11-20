@@ -21,7 +21,7 @@ export default function GroupItem({ date, group }: GroupItemProps) {
   const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);
 
-  const taskIds = useTaskStore((s) => s.tasksByGroup?.[group.id]) || [];
+  const taskIds = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
   const taskIdSet = new Set(taskIds);
 
   const currentKey = toApiDate(date);

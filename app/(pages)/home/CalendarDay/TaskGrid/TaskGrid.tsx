@@ -83,7 +83,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
 
 function TaskListWrapper({ groupId }: { groupId: string | null }) {
   const key = groupId ?? UNGROUPED_KEY;
-  const taskIds = useTaskStore((s) => s.tasksByGroup?.[key]);
+  const taskIds = useTaskStore((s) => s.tasksByGroup[key]);
 
   return <>{taskIds?.map((id) => <TaskRow taskId={id} key={id} />)}</>;
 }
