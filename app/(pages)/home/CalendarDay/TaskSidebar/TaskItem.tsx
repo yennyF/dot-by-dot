@@ -12,16 +12,15 @@ import {
   AppTooltipTrigger,
 } from "@/app/components/AppTooltip";
 import { useTaskStore } from "@/app/stores/taskStore";
+import { Task } from "@/app/types";
 
 interface TaskItemProps {
   taskId: string;
-  isDummy?: boolean;
 }
 
-function TaskItemWrapper({ taskId, isDummy }: TaskItemProps) {
-  const task = useTaskStore((s) => s.dummyTask ?? s.taskCache[taskId]);
+function TaskItemWrapper({ taskId }: TaskItemProps) {
+  const task = useTaskStore((s) => s.taskCache[taskId]);
 
-  const draggable = isDummy ? false : true;
   const [forceShow, setForceShow] = useState(false);
 
   const handleDragStart = (e: DragEvent) => {
@@ -33,65 +32,73 @@ function TaskItemWrapper({ taskId, isDummy }: TaskItemProps) {
     e.preventDefault();
   };
 
+  if (!task) return null;
+
   return (
     <div
-      className={clsx(
-        "app-TaskRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
-        draggable && "draggable active:cursor-grabbing"
-      )}
-      draggable={draggable}
+      className="draggable active:cursor-grabbing"
+      draggable={true}
       data-id={task.id}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
+      <div className="app-TaskItem group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]">
+        <div className="ml-[22px] overflow-hidden text-ellipsis text-nowrap">
+          {task.name}
+        </div>
+
+        <div
+          className={clsx(
+            "gap-1",
+            forceShow ? "flex" : "hidden group-hover/name:flex"
+          )}
+        >
+          <TaskRenamePopover task={task} onOpenChange={setForceShow}>
+            <span>
+              <AppTooltip>
+                <AppTooltipTrigger asChild>
+                  <button className="button-icon-sheer">
+                    <Pencil1Icon />
+                  </button>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Rename</AppContentTrigger>
+              </AppTooltip>
+            </span>
+          </TaskRenamePopover>
+
+          <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
+            <span>
+              <AppTooltip>
+                <AppTooltipTrigger asChild>
+                  <button className="button-icon-sheer">
+                    <TrashIcon />
+                  </button>
+                </AppTooltipTrigger>
+                <AppContentTrigger>Delete</AppContentTrigger>
+              </AppTooltip>
+            </span>
+          </TaskDeleteDialog>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TaskItemDummy({ task }: { task: Task }) {
+  return (
+    <div className="app-TaskItem group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]">
       <div className="flex items-center gap-2 overflow-hidden">
-        <div className="h-[12px] w-[12px] shrink-0" />
-        <div className="overflow-hidden text-ellipsis text-nowrap">
+        <div className="ml-[12px] overflow-hidden text-ellipsis text-nowrap">
           {task.name}
         </div>
       </div>
 
-      <div
-        className={clsx(
-          "action-buttons gap-1",
-          forceShow || isDummy ? "flex" : "hidden group-hover/name:flex"
-        )}
-      >
-        {isDummy ? (
-          <TaskCreatePopover>
-            <button className="button-icon-sheer">
-              <Pencil1Icon />
-            </button>
-          </TaskCreatePopover>
-        ) : (
-          <>
-            <TaskRenamePopover task={task} onOpenChange={setForceShow}>
-              <span>
-                <AppTooltip>
-                  <AppTooltipTrigger asChild>
-                    <button className="button-icon-sheer">
-                      <Pencil1Icon />
-                    </button>
-                  </AppTooltipTrigger>
-                  <AppContentTrigger>Rename</AppContentTrigger>
-                </AppTooltip>
-              </span>
-            </TaskRenamePopover>
-
-            <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
-              <span>
-                <AppTooltip>
-                  <AppTooltipTrigger asChild>
-                    <button className="button-icon-sheer">
-                      <TrashIcon />
-                    </button>
-                  </AppTooltipTrigger>
-                  <AppContentTrigger>Delete</AppContentTrigger>
-                </AppTooltip>
-              </span>
-            </TaskDeleteDialog>
-          </>
-        )}
+      <div>
+        <TaskCreatePopover>
+          <button className="button-icon-sheer">
+            <Pencil1Icon />
+          </button>
+        </TaskCreatePopover>
       </div>
     </div>
   );

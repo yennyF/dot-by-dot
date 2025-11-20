@@ -4,10 +4,10 @@ import { Fragment, useEffect, useRef } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/groupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
-import GroupItem from "./GroupItem";
+import GroupItem, { GroupItemDummy } from "./GroupItem";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
-import TaskItem from "./TaskItem";
+import TaskItem, { TaskItemDummy } from "./TaskItem";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
@@ -42,7 +42,7 @@ export default function TaskSidebar() {
         {dummyGroup && (
           <div className="app-group" ref={topGroupRef}>
             <DropIndicatorGroup />
-            <GroupItem group={dummyGroup} isDummy={true} />
+            <GroupItemDummy group={dummyGroup} />
           </div>
         )}
 
@@ -129,7 +129,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
         groupId={groupId}
         beforeId={dummyTask.id}
       />
-      <TaskItem taskId={dummyTask.id} isDummy={true} />
+      <TaskItemDummy task={dummyTask} />
     </>
   );
 }
