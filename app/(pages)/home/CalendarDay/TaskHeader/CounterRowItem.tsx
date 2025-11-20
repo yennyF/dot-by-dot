@@ -12,21 +12,20 @@ import clsx from "clsx";
 import { toApiDate } from "@/app/types";
 
 export default function CounterRowItem({ date }: { date: Date }) {
-  const isTodayDate = isToday(date);
-
-  const currentKey = toApiDate(date);
-  const nextKey = toApiDate(addDays(date, 1));
-
   const currentSize = useTaskLogStore(
-    (s) => s.tasksByDate[currentKey]?.size ?? 0
+    (s) => s.tasksByDate[toApiDate(date)]?.size ?? 0
   );
-  const nextSize = useTaskLogStore((s) => s.tasksByDate[nextKey]?.size ?? 0);
+  const nextSize = useTaskLogStore(
+    (s) => s.tasksByDate[toApiDate(addDays(date, 1))]?.size ?? 0
+  );
 
   const isCurrentActive = currentSize > 0;
   const isNextActive = nextSize > 0;
 
   const colorStart = getColor(getSnappedPercentage(currentSize));
   const colorEnd = getColor(getSnappedPercentage(nextSize));
+
+  const isTodayDate = isToday(date);
 
   return (
     <div

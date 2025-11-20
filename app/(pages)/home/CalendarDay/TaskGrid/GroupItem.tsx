@@ -1,7 +1,7 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import { Group, toApiDate } from "@/app/types";
+import { Group } from "@/app/types";
 import { addDays, isToday, isWeekend } from "date-fns";
 import clsx from "clsx";
 // import { getPercentage } from "@/app/utils/utils";
@@ -18,20 +18,13 @@ interface GroupItemProps {
 }
 
 export default function GroupItem({ date, group }: GroupItemProps) {
-  const isTodayDate = isToday(date);
-  const isWeekendDate = isWeekend(date);
-
   const taskIds = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
-  const taskIdSet = new Set(taskIds);
-
-  const currentKey = toApiDate(date);
-  const nextKey = toApiDate(addDays(date, 1));
 
   const currentSize = useTaskLogStore(
-    (s) => s.tasksByDate[currentKey]?.intersection(taskIdSet).size ?? 0
+    (s) => s.getTasksDone(date, taskIds).length
   );
   const nextSize = useTaskLogStore(
-    (s) => s.tasksByDate[nextKey]?.intersection(taskIdSet).size ?? 0
+    (s) => s.getTasksDone(addDays(date, 1), taskIds).length
   );
 
   const isActive = currentSize > 0;
@@ -39,6 +32,9 @@ export default function GroupItem({ date, group }: GroupItemProps) {
 
   // const colorStart = getColor(getPercentage(currentSize, tasks.length));
   // const colorEnd = getColor(getPercentage(nextSize, tasks.length));
+
+  const isTodayDate = isToday(date);
+  const isWeekendDate = isWeekend(date);
 
   return (
     <div

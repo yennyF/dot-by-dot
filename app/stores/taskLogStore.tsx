@@ -46,6 +46,7 @@ type Action = {
   insertTaskLog: (date: Date, taskId: string) => void;
   deleteTaskLog: (date: Date, taskId: string) => void;
   deleteAllTaskLog: () => Promise<void>;
+  getTasksDone: (date: Date, taskIds: string[]) => string[];
 };
 
 const rangeDays = 29;
@@ -193,6 +194,11 @@ export const useTaskLogStore = create<State & Action>()(
           console.error(error);
           throw error;
         }
+      },
+
+      getTasksDone: (date: Date, taskIds: string[]) => {
+        const tasks = get().tasksByDate[toApiDate(date)];
+        return tasks ? taskIds.filter((t) => tasks.has(t)) : [];
       },
     };
   })
