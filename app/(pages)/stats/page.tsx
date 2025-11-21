@@ -19,7 +19,7 @@ import {
   AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { supabase } from "@/app/supabase/server";
-import Breadcrumbs from "@/app/components/Breadcrums";
+import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -73,15 +73,21 @@ function Content() {
         <h1 className="page-title-1 mt-[20px]">Stats</h1>
 
         <div className="mb-[20px] mt-[20px]">
-          <Breadcrumbs>
-            <button onClick={() => setSelectedData(undefined)}>
+          <Breadcrumbs value={selectedData?.id ?? "-1"}>
+            <BreadcrumbsItem
+              value={"-1"}
+              onClick={() => setSelectedData(undefined)}
+            >
               All groups
-            </button>
+            </BreadcrumbsItem>
             {selectedData && (
-              <button className="flex items-center gap-[10px]">
+              <BreadcrumbsItem
+                value={selectedData.id}
+                className="flex items-center gap-[10px]"
+              >
                 <CubeIcon className="size-[20px]" />
                 <span className="font-bold">{selectedData.name}</span>
-              </button>
+              </BreadcrumbsItem>
             )}
           </Breadcrumbs>
         </div>

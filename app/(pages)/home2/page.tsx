@@ -15,7 +15,7 @@ import GroupItem from "./GroupItem";
 import TaskItem from "./TaskItem";
 import { Group } from "@/app/types";
 import { CubeIcon } from "@radix-ui/react-icons";
-import Breadcrumbs from "@/app/components/Breadcrums";
+import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 
 export default function HomePage() {
   const router = useRouter();
@@ -79,18 +79,27 @@ function Content() {
     <>
       <AppHeader></AppHeader>
       <main className="mx-[100px] mt-[100px]">
-        <Breadcrumbs>
-          <button onClick={() => setSelectedGroup(undefined)}>
-            All groups
-          </button>
-          {selectedGroup && (
-            <button className="flex items-center gap-[10px]">
-              <CubeIcon className="size-[20px]" />
-              <span className="font-bold">{selectedGroup.name}</span>
-            </button>
-          )}
-        </Breadcrumbs>
-        <div className="flex flex-wrap gap-[60px]">
+        <div className="mt-[20px]">
+          <Breadcrumbs value={selectedGroup?.id ?? "-1"}>
+            <BreadcrumbsItem
+              value={"-1"}
+              onClick={() => setSelectedGroup(undefined)}
+            >
+              All groups
+            </BreadcrumbsItem>
+            {selectedGroup && (
+              <BreadcrumbsItem
+                value={selectedGroup.id}
+                className="flex items-center gap-[10px]"
+              >
+                <CubeIcon className="size-[20px]" />
+                <span>{selectedGroup.name}</span>
+              </BreadcrumbsItem>
+            )}
+          </Breadcrumbs>
+        </div>
+
+        <div className="mt-[50px] flex flex-wrap gap-[60px]">
           {selectedGroup ? (
             <GroupDetail groupId={selectedGroup.id} />
           ) : (
@@ -117,7 +126,7 @@ function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
       {tasks.map((task) => (
         <div key={task.id}>
           <div>{task.name}</div>
-          <div className="app-GroupRow grid grid-cols-7">
+          <div className="grid grid-cols-7">
             {totalDate.map(([, months]) =>
               months.map(([, days]) =>
                 days.map((date) => (
@@ -145,7 +154,7 @@ function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
               {group.name}
             </span>
           </button>
-          <div className="app-GroupRow grid grid-cols-7">
+          <div className="grid grid-cols-7">
             {totalDate.map(([, months]) =>
               months.map(([, days]) =>
                 days.map((date) => (

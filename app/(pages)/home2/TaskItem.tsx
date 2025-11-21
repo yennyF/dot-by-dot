@@ -33,7 +33,7 @@ export default function TaskItem({ date, taskId }: TaskItemProps) {
               ? "bg-[var(--background)]"
               : isWeekendDate
                 ? "bg-[var(--gray-5)]"
-                : "bg-[var(--gray)]",
+                : "bg-[var(--gray-5)]",
           isTodayDate && "border-[1px] border-black"
         )}
       >
