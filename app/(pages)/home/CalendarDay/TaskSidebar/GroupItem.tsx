@@ -14,11 +14,7 @@ import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";
 import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
 
 interface GroupItemProps {
@@ -75,38 +71,38 @@ function GroupItemWrapper({ group }: GroupItemProps) {
           forceShow ? "flex" : "hidden group-hover/name:flex"
         )}
       >
-        <AppTooltip>
-          <AppTooltipTrigger asChild>
+        <AppTooltip.Root>
+          <AppTooltip.Trigger asChild>
             <button className="button-icon-sheer" onClick={handleClickNew}>
               <PlusIcon />
             </button>
-          </AppTooltipTrigger>
-          <AppContentTrigger>New task</AppContentTrigger>
-        </AppTooltip>
+          </AppTooltip.Trigger>
+          <AppTooltip.Content>New task</AppTooltip.Content>
+        </AppTooltip.Root>
 
         <GroupRenamePopover group={group} onOpenChange={setForceShow}>
           <span onClick={(e) => e.stopPropagation()}>
-            <AppTooltip>
-              <AppTooltipTrigger asChild>
+            <AppTooltip.Root>
+              <AppTooltip.Trigger asChild>
                 <button className="button-icon-sheer">
                   <Pencil1Icon />
                 </button>
-              </AppTooltipTrigger>
-              <AppContentTrigger>Rename</AppContentTrigger>
-            </AppTooltip>
+              </AppTooltip.Trigger>
+              <AppTooltip.Content>Rename</AppTooltip.Content>
+            </AppTooltip.Root>
           </span>
         </GroupRenamePopover>
 
         <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
           <span onClick={(e) => e.stopPropagation()}>
-            <AppTooltip>
-              <AppTooltipTrigger asChild>
+            <AppTooltip.Root>
+              <AppTooltip.Trigger asChild>
                 <button className="button-icon-sheer">
                   <TrashIcon />
                 </button>
-              </AppTooltipTrigger>
-              <AppContentTrigger>Delete</AppContentTrigger>
-            </AppTooltip>
+              </AppTooltip.Trigger>
+              <AppTooltip.Content>Delete</AppTooltip.Content>
+            </AppTooltip.Root>
           </span>
         </GroupDeleteDialog>
 

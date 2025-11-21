@@ -13,11 +13,7 @@ import GroupAll from "./GroupAll";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 import { subDays } from "date-fns";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { supabase } from "@/app/supabase/server";
 import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 
@@ -121,14 +117,14 @@ function Content() {
               </Tabs.Trigger>
             </Tabs.List>
 
-            <AppTooltip>
-              <AppTooltipTrigger className="cursor-default">
+            <AppTooltip.Root>
+              <AppTooltip.Trigger className="cursor-default">
                 Last 30 days
-              </AppTooltipTrigger>
-              <AppContentTrigger side="top">
+              </AppTooltip.Trigger>
+              <AppTooltip.Content side="top">
                 From {formattedFromDate} up today
-              </AppContentTrigger>
-            </AppTooltip>
+              </AppTooltip.Content>
+            </AppTooltip.Root>
           </div>
 
           {selectedData ? (

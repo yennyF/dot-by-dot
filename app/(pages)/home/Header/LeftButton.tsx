@@ -1,11 +1,7 @@
 "use client";
 
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { useRef } from "react";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
@@ -24,14 +20,14 @@ function LeftButtonContent() {
   };
 
   return (
-    <AppTooltip>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root>
+      <AppTooltip.Trigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
           <ChevronLeftIcon />
         </button>
-      </AppTooltipTrigger>
-      <AppContentTrigger>Go previous</AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content>Go previous</AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }
 
@@ -62,14 +58,14 @@ function LoadMoreButton() {
   };
 
   return (
-    <AppTooltip>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root>
+      <AppTooltip.Trigger asChild>
         <button className="button-outline button-sm" onClick={handleClick}>
           <ChevronLeftIcon />
           More
         </button>
-      </AppTooltipTrigger>
-      <AppContentTrigger align="center">Load more</AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content align="center">Load more</AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }

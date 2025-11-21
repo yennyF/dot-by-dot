@@ -6,11 +6,7 @@ import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
-import {
-  AppContentTrigger,
-  AppTooltip,
-  AppTooltipTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { Task } from "@/app/types";
 
 interface TaskItemProps {
@@ -52,27 +48,27 @@ function TaskItemWrapper({ task }: TaskItemProps) {
         >
           <TaskRenamePopover task={task} onOpenChange={setForceShow}>
             <span>
-              <AppTooltip>
-                <AppTooltipTrigger asChild>
+              <AppTooltip.Root>
+                <AppTooltip.Trigger asChild>
                   <button className="button-icon-sheer">
                     <Pencil1Icon />
                   </button>
-                </AppTooltipTrigger>
-                <AppContentTrigger>Rename</AppContentTrigger>
-              </AppTooltip>
+                </AppTooltip.Trigger>
+                <AppTooltip.Content>Rename</AppTooltip.Content>
+              </AppTooltip.Root>
             </span>
           </TaskRenamePopover>
 
           <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
             <span>
-              <AppTooltip>
-                <AppTooltipTrigger asChild>
+              <AppTooltip.Root>
+                <AppTooltip.Trigger asChild>
                   <button className="button-icon-sheer">
                     <TrashIcon />
                   </button>
-                </AppTooltipTrigger>
-                <AppContentTrigger>Delete</AppContentTrigger>
-              </AppTooltip>
+                </AppTooltip.Trigger>
+                <AppTooltip.Content>Delete</AppTooltip.Content>
+              </AppTooltip.Root>
             </span>
           </TaskDeleteDialog>
         </div>

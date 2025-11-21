@@ -1,13 +1,9 @@
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { useTaskStore } from "@/app/stores/taskStore";
 import clsx from "clsx";
 import { isWeekend } from "date-fns";
 import styles from "./dot.module.scss";
+import AppTooltip from "@/app/components/AppTooltip";
 
 interface GroupItemProps {
   date: Date;
@@ -34,8 +30,8 @@ export default function GroupItem({ date, groupId }: GroupItemProps) {
     <div className={"relative flex h-row w-day items-center justify-center"}>
       <span className={styles.date}>{date.getDate()}</span>
 
-      <AppTooltip delayDuration={100}>
-        <AppTooltipTrigger
+      <AppTooltip.Root delayDuration={100}>
+        <AppTooltip.Trigger
           className="flex cursor-default items-center justify-center"
           asChild
         >
@@ -52,11 +48,11 @@ export default function GroupItem({ date, groupId }: GroupItemProps) {
             )}
             // style={isActive ? { backgroundColor: colorStart } : undefined}
           />
-        </AppTooltipTrigger>
-        <AppContentTrigger side="bottom" align="center" sideOffset={10}>
+        </AppTooltip.Trigger>
+        <AppTooltip.Content side="bottom" align="center" sideOffset={10}>
           {currentSize} {currentSize === 1 ? "dot" : "dots"}
-        </AppContentTrigger>
-      </AppTooltip>
+        </AppTooltip.Content>
+      </AppTooltip.Root>
     </div>
   );
 }
