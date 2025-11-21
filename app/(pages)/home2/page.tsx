@@ -16,6 +16,8 @@ import TaskItem from "./TaskItem";
 import { Group } from "@/app/types";
 import { CubeIcon } from "@radix-ui/react-icons";
 import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
+import styles from "./dot.module.scss";
+import useClickLog from "@/app/hooks/useClickLog";
 
 export default function HomePage() {
   const router = useRouter();
@@ -54,6 +56,7 @@ function Content() {
   const fetchGroups = useGroupStore((s) => s.fetchGroups);
   const fetchTasks = useTaskStore((s) => s.fetchTasks);
   const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
+  const totalDate = useTaskLogStore((s) => s.totalDate);
 
   const [selectedGroup, setSelectedGroup] = useState<Group>();
 
@@ -73,7 +76,7 @@ function Content() {
       notifyLoadError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [totalDate]);
 
   return (
     <>
@@ -116,33 +119,19 @@ function Content() {
 }
 
 function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
-  const totalDate = useTaskLogStore((s) => s.totalDate);
-
   const groups = useGroupStore((s) => s.groups);
   const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]) || [];
 
   return (
     <>
       {tasks.map((task) => (
-        <div key={task.id}>
+        <div key={task.id} className="flex flex-col gap-[15px]">
           <div>{task.name}</div>
-          <div className="grid grid-cols-7">
-            {totalDate.map(([, months]) =>
-              months.map(([, days]) =>
-                days.map((date) => (
-                  <TaskItem
-                    key={date.toDateString()}
-                    date={date}
-                    taskId={task.id}
-                  />
-                ))
-              )
-            )}
-          </div>
+          <TaskGrid taskId={task.id} />
         </div>
       ))}
       {groups.map((group) => (
-        <div key={group.id}>
+        <div key={group.id} className="flex flex-col gap-[15px]">
           <button
             className="flex items-center gap-2 overflow-hidden"
             onClick={() => {
@@ -154,19 +143,7 @@ function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
               {group.name}
             </span>
           </button>
-          <div className="grid grid-cols-7">
-            {totalDate.map(([, months]) =>
-              months.map(([, days]) =>
-                days.map((date) => (
-                  <GroupItem
-                    key={date.toDateString()}
-                    date={date}
-                    group={group}
-                  />
-                ))
-              )
-            )}
-          </div>
+          <GroupGrid groupId={group.id} />
         </div>
       ))}
     </>
@@ -174,31 +151,54 @@ function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
 }
 
 function GroupDetail({ groupId }: { groupId: string }) {
-  const totalDate = useTaskLogStore((s) => s.totalDate);
-
   const tasks =
     useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]) || [];
 
   return (
     <>
       {tasks.map((task) => (
-        <div key={task.id}>
+        <div key={task.id} className="flex flex-col gap-[15px]">
           <div>{task.name}</div>
-          <div className="app-GroupRow grid grid-cols-7">
-            {totalDate.map(([, months]) =>
-              months.map(([, days]) =>
-                days.map((date) => (
-                  <TaskItem
-                    key={date.toDateString()}
-                    date={date}
-                    taskId={task.id}
-                  />
-                ))
-              )
-            )}
-          </div>
+          <TaskGrid taskId={task.id} />
         </div>
       ))}
     </>
+  );
+}
+
+function TaskGrid({ taskId }: { taskId: string }) {
+  const totalDate = useTaskLogStore((s) => s.totalDate);
+  const handleClick = useClickLog();
+
+  return (
+    <div className={styles.log} onClick={handleClick}>
+      {totalDate.map(([, months]) =>
+        months.map(([, days]) =>
+          days.map((date) => (
+            <TaskItem key={date.toDateString()} date={date} taskId={taskId} />
+          ))
+        )
+      )}
+    </div>
+  );
+}
+
+function GroupGrid({ groupId }: { groupId: string }) {
+  const totalDate = useTaskLogStore((s) => s.totalDate);
+
+  return (
+    <div className={styles.log}>
+      {totalDate.map(([, months]) =>
+        months.map(([, days]) =>
+          days.map((date) => (
+            <GroupItem
+              key={date.toDateString()}
+              date={date}
+              groupId={groupId}
+            />
+          ))
+        )
+      )}
+    </div>
   );
 }

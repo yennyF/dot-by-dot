@@ -9,31 +9,13 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import GroupItem from "./GroupItem";
 import TaskItem from "./TaskItem";
 import { memo } from "react";
+import useClickLog from "@/app/hooks/useClickLog";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
-  const insertTaskLog = useTaskLogStore((s) => s.insertTaskLog);
-  const deleteTaskLog = useTaskLogStore((s) => s.deleteTaskLog);
-
-  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
-    const element = (e.target as HTMLElement).closest("[data-task-id]");
-    if (!element) return;
-
-    const htmlElement = element as HTMLElement;
-    const taskId = htmlElement.dataset["taskId"];
-    const date = htmlElement.dataset["date"];
-    const active = htmlElement.dataset["active"];
-
-    if (!taskId || !date || active === undefined) return;
-
-    if (active === "true") {
-      deleteTaskLog(new Date(date), taskId);
-    } else {
-      insertTaskLog(new Date(date), taskId);
-    }
-  }
+  const handleClick = useClickLog();
 
   return (
     <div className="app-TaskGrid flex flex-col gap-5" onClick={handleClick}>

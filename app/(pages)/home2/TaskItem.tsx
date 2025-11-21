@@ -3,6 +3,7 @@ import { toApiDate } from "@/app/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import { isToday, isWeekend } from "date-fns";
+import styles from "./dot.module.scss";
 
 interface TaskItemProps {
   date: Date;
@@ -18,15 +19,18 @@ export default function TaskItem({ date, taskId }: TaskItemProps) {
   const isWeekendDate = isWeekend(date);
 
   return (
-    <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
+    <div className="relative flex h-row w-day items-center justify-center">
+      <span className={styles.date}>{date.getDate()}</span>
       <div
         data-task-id={taskId}
         data-date={date}
         data-active={isActive}
         className={clsx(
-          "app-Dot group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
-          "hover:scale-110 hover:border-[1px] hover:border-black hover:bg-[var(--accent-5)]",
+          styles.dot,
+          "group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
+          "hover:scale-110 hover:border-[1px] hover:border-black",
           "active:scale-90",
+          !isActive && "hover:bg-[var(--accent-5)]",
           isActive
             ? "bg-[var(--accent)]"
             : isTodayDate

@@ -1,0 +1,13 @@
+.log {
+  @apply grid grid-cols-7;
+
+  &:hover {
+    .date {
+      @apply opacity-100;
+    }
+  }
+}
+
+.date {
+  @apply absolute -top-[5px] text-[10px] text-[var(--gray-9)] transition-opacity opacity-0 cursor-default;
+}

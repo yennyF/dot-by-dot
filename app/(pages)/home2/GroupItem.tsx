@@ -5,17 +5,17 @@ import {
 } from "@/app/components/AppTooltip";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { useTaskStore } from "@/app/stores/taskStore";
-import { Group } from "@/app/types";
 import clsx from "clsx";
-import { isToday, isWeekend } from "date-fns";
+import { isWeekend } from "date-fns";
+import styles from "./dot.module.scss";
 
 interface GroupItemProps {
   date: Date;
-  group: Group;
+  groupId: string;
 }
 
-export default function GroupItem({ date, group }: GroupItemProps) {
-  const tasks = useTaskStore((s) => s.tasksByGroup[group.id]) || [];
+export default function GroupItem({ date, groupId }: GroupItemProps) {
+  const tasks = useTaskStore((s) => s.tasksByGroup[groupId]) || [];
 
   const currentSize = useTaskLogStore(
     (s) => s.getTasksDone(date, tasks).length
@@ -27,20 +27,22 @@ export default function GroupItem({ date, group }: GroupItemProps) {
   // );
   // const colorEnd = getColor(getPercentage(nextSize, taskIds.length));
 
-  const isTodayDate = isToday(date);
+  // const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);
 
   return (
-    <div
-      className={clsx(
-        "app-GroupRowItem relative flex h-row w-day items-center justify-center",
-        isTodayDate && "isToday"
-      )}
-    >
+    <div className={"relative flex h-row w-day items-center justify-center"}>
+      <span className={styles.date}>{date.getDate()}</span>
+
       <AppTooltip delayDuration={100}>
-        <AppTooltipTrigger className="flex cursor-default items-center justify-center">
+        <AppTooltipTrigger
+          className="flex cursor-default items-center justify-center"
+          asChild
+        >
           <div
+            data-active={isActive}
             className={clsx(
+              styles.dot,
               "size-[var(--dot-size)] transform rounded-full",
               isActive
                 ? "bg-[var(--inverted)]"
@@ -51,7 +53,7 @@ export default function GroupItem({ date, group }: GroupItemProps) {
             // style={isActive ? { backgroundColor: colorStart } : undefined}
           />
         </AppTooltipTrigger>
-        <AppContentTrigger side="top" align="center" sideOffset={10}>
+        <AppContentTrigger side="bottom" align="center" sideOffset={10}>
           {currentSize} {currentSize === 1 ? "dot" : "dots"}
         </AppContentTrigger>
       </AppTooltip>
@@ -59,6 +61,6 @@ export default function GroupItem({ date, group }: GroupItemProps) {
   );
 }
 
-function getColor(alpha: number) {
-  return `rgba(88, 160, 192, ${alpha})`;
-}
+// function getColor(alpha: number) {
+//   return `rgba(88, 160, 192, ${alpha})`;
+// }
