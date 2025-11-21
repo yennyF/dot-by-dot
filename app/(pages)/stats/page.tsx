@@ -1,15 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AppHeader from "../../components/AppHeader";
 import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
-import GoBackButton from "@/app/components/GoBackButton";
 import { BarChartData } from "./Charts/Bar";
 import { CubeIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import GroupDetail from "./GroupDetail";
 import GroupAll from "./GroupAll";
 import { Tabs } from "radix-ui";
@@ -21,6 +19,7 @@ import {
   AppContentTrigger,
 } from "@/app/components/AppTooltip";
 import { supabase } from "@/app/supabase/server";
+import Breadcrumbs from "@/app/components/Breadcrums";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -71,14 +70,21 @@ function Content() {
     <>
       <AppHeader></AppHeader>
       <main className="page-main flex flex-col">
-        <GoBackButton />
-
         <h1 className="page-title-1 mt-[20px]">Stats</h1>
 
-        <Breadcrums
-          selectedData={selectedData}
-          setSelectedData={setSelectedData}
-        />
+        <div className="mb-[20px] mt-[20px]">
+          <Breadcrumbs>
+            <button onClick={() => setSelectedData(undefined)}>
+              All groups
+            </button>
+            {selectedData && (
+              <button className="flex items-center gap-[10px]">
+                <CubeIcon className="size-[20px]" />
+                <span className="font-bold">{selectedData.name}</span>
+              </button>
+            )}
+          </Breadcrumbs>
+        </div>
 
         <Tabs.Root
           defaultValue={activeTab}
@@ -127,39 +133,5 @@ function Content() {
         </Tabs.Root>
       </main>
     </>
-  );
-}
-
-function Breadcrums({
-  selectedData,
-  setSelectedData,
-}: {
-  selectedData: BarChartData | undefined;
-  setSelectedData: Dispatch<SetStateAction<BarChartData | undefined>>;
-}) {
-  return (
-    <div className="mb-[20px] mt-[20px] flex gap-[10px] text-xl">
-      <button
-        onClick={() => {
-          setSelectedData(undefined);
-        }}
-        className={clsx(
-          selectedData
-            ? "font-normal underline decoration-1 underline-offset-8"
-            : "font-bold"
-        )}
-      >
-        All groups
-      </button>
-      {selectedData && (
-        <>
-          <span> / </span>
-          <span className="flex items-center gap-[10px]">
-            <CubeIcon className="size-[20px]" />
-            <span className="font-bold">{selectedData.name}</span>
-          </span>
-        </>
-      )}
-    </div>
   );
 }

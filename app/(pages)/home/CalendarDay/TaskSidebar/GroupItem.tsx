@@ -135,9 +135,9 @@ function GroupItemName({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-2 overflow-hidden">
       <CubeIcon className="size-[12px] shrink-0" />
-      <div className="overflow-hidden text-ellipsis text-nowrap font-bold">
+      <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
         {name}
-      </div>
+      </span>
     </div>
   );
 }
