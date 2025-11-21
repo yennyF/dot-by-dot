@@ -85,8 +85,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
 }
 
 function TaskList({ groupId }: { groupId: string | null }) {
-  const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup[key]);
+  const tasks = useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]);
 
   return (
     <>
