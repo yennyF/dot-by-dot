@@ -146,9 +146,11 @@ export const useTaskStore = create<State & Action>()(
             // Calculate new order
             const prev = tasks[newIndex - 1];
             const next = tasks[newIndex + 1]; // asume it always exists
-            const rank = prev
-              ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
-              : LexoRank.parse(next.order).genPrev();
+
+            const rank =
+              prev && prev.groupId === next.groupId
+                ? LexoRank.parse(prev.order).between(LexoRank.parse(next.order))
+                : LexoRank.parse(next.order).genPrev();
 
             // Update in local
             props = {
@@ -188,7 +190,7 @@ export const useTaskStore = create<State & Action>()(
             tasks.push(task);
 
             // Calculate new order
-            const last = get().tasks[tasks.length - 1];
+            const last = get().tasks.findLast((t) => t.groupId === groupId);
             const rank = last
               ? LexoRank.parse(last.order).genNext()
               : LexoRank.middle();
