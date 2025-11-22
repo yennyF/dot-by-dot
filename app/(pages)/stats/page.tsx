@@ -1,26 +1,21 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AppHeader from "../../components/AppHeader";
 import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
-import GoBackButton from "@/app/components/GoBackButton";
 import { BarChartData } from "./Charts/Bar";
 import { CubeIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import GroupDetail from "./GroupDetail";
 import GroupAll from "./GroupAll";
 import { Tabs } from "radix-ui";
 import { StatTabStatus } from "./utils";
 import { subDays } from "date-fns";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { supabase } from "@/app/supabase/server";
+import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 
 export default function StatsPage() {
   const router = useRouter();
@@ -71,14 +66,27 @@ function Content() {
     <>
       <AppHeader></AppHeader>
       <main className="page-main flex flex-col">
-        <GoBackButton />
-
         <h1 className="page-title-1 mt-[20px]">Stats</h1>
 
-        <Breadcrums
-          selectedData={selectedData}
-          setSelectedData={setSelectedData}
-        />
+        <div className="mb-[20px] mt-[20px]">
+          <Breadcrumbs value={selectedData?.id ?? "-1"}>
+            <BreadcrumbsItem
+              value={"-1"}
+              onClick={() => setSelectedData(undefined)}
+            >
+              All groups
+            </BreadcrumbsItem>
+            {selectedData && (
+              <BreadcrumbsItem
+                value={selectedData.id}
+                className="flex items-center gap-[10px]"
+              >
+                <CubeIcon className="size-[20px]" />
+                <span className="font-bold">{selectedData.name}</span>
+              </BreadcrumbsItem>
+            )}
+          </Breadcrumbs>
+        </div>
 
         <Tabs.Root
           defaultValue={activeTab}
@@ -109,14 +117,14 @@ function Content() {
               </Tabs.Trigger>
             </Tabs.List>
 
-            <AppTooltip>
-              <AppTooltipTrigger className="cursor-default">
+            <AppTooltip.Root>
+              <AppTooltip.Trigger className="cursor-default">
                 Last 30 days
-              </AppTooltipTrigger>
-              <AppContentTrigger side="top">
+              </AppTooltip.Trigger>
+              <AppTooltip.Content side="top">
                 From {formattedFromDate} up today
-              </AppContentTrigger>
-            </AppTooltip>
+              </AppTooltip.Content>
+            </AppTooltip.Root>
           </div>
 
           {selectedData ? (
@@ -127,39 +135,5 @@ function Content() {
         </Tabs.Root>
       </main>
     </>
-  );
-}
-
-function Breadcrums({
-  selectedData,
-  setSelectedData,
-}: {
-  selectedData: BarChartData | undefined;
-  setSelectedData: Dispatch<SetStateAction<BarChartData | undefined>>;
-}) {
-  return (
-    <div className="mb-[20px] mt-[20px] flex gap-[10px] text-xl">
-      <button
-        onClick={() => {
-          setSelectedData(undefined);
-        }}
-        className={clsx(
-          selectedData
-            ? "font-normal underline decoration-1 underline-offset-8"
-            : "font-bold"
-        )}
-      >
-        All groups
-      </button>
-      {selectedData && (
-        <>
-          <span> / </span>
-          <span className="flex items-center gap-[10px]">
-            <CubeIcon className="size-[20px]" />
-            <span className="font-bold">{selectedData.name}</span>
-          </span>
-        </>
-      )}
-    </div>
   );
 }

@@ -49,7 +49,7 @@ function Content({ setOpen, task }: ContentProps) {
   };
 
   const handleSaveClick = async () => {
-    updateTask(task.id, { name }, task.groupId);
+    updateTask(task.id, { name });
     setOpen(false);
   };
 

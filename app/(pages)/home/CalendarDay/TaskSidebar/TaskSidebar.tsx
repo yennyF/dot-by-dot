@@ -4,10 +4,10 @@ import { Fragment, useEffect, useRef } from "react";
 import SortableContainer from "../SortableContainer/SortableContainer";
 import { useGroupStore } from "@/app/stores/groupStore";
 import DropIndicatorGroup from "../SortableContainer/DropIndicatorGroup";
-import GroupItem from "./GroupItem";
+import GroupItem, { GroupItemDummy } from "./GroupItem";
 import { useTaskStore, UNGROUPED_KEY } from "@/app/stores/taskStore";
 import DropIndicatorTask from "../SortableContainer/DropIndicatorTask";
-import TaskItem from "./TaskItem";
+import TaskItem, { TaskItemDummy } from "./TaskItem";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
@@ -26,8 +26,6 @@ export default function TaskSidebar() {
     }
   }, [dummyGroup]);
 
-  if (!groups) return null;
-
   return (
     <SortableContainer className="sticky right-0 z-10">
       <div
@@ -37,17 +35,22 @@ export default function TaskSidebar() {
         <div className="app-group">
           <DummyTask groupId={null} />
           <TaskList groupId={null} />
+          <DropIndicatorTask groupId={null} />
         </div>
 
         {dummyGroup && (
           <div className="app-group" ref={topGroupRef}>
             <DropIndicatorGroup />
-            <GroupItem group={dummyGroup} isDummy={true} />
+            <GroupItemDummy group={dummyGroup} />
           </div>
         )}
 
         {groups.map((group) => (
-          <CollapsibleGroup key={group.id} group={group} />
+          <div key={group.id} className="app-group">
+            <DropIndicatorGroup beforeId={group.id} />
+            <CollapsibleGroup group={group} />
+            <DropIndicatorTask groupId={group.id} />
+          </div>
         ))}
 
         <DropIndicatorGroup />
@@ -65,41 +68,33 @@ function CollapsibleGroup({ group }: { group: Group }) {
   };
 
   return (
-    <div className="app-group">
-      <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
-        <DropIndicatorGroup beforeId={group.id} />
+    <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
+      <Collapsible.Trigger asChild>
+        <span className="w-full">
+          <GroupItem group={group} />
+        </span>
+      </Collapsible.Trigger>
 
-        <Collapsible.Trigger asChild>
-          <span className="w-full">
-            <GroupItem group={group} />
-          </span>
-        </Collapsible.Trigger>
+      <DummyTask groupId={group.id} />
 
-        <DummyTask groupId={group.id} />
-
-        <Collapsible.Content>
-          <TaskList groupId={group.id} />
-        </Collapsible.Content>
-      </Collapsible.Root>
-    </div>
+      <Collapsible.Content>
+        <TaskList groupId={group.id} />
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 }
 
 function TaskList({ groupId }: { groupId: string | null }) {
-  const key = groupId ?? UNGROUPED_KEY;
-  const tasks = useTaskStore((s) => s.tasksByGroup?.[key]);
-
-  if (!tasks) return null;
+  const tasks = useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]);
 
   return (
     <>
-      {tasks.map((task) => (
+      {tasks?.map((task) => (
         <Fragment key={task.id}>
           <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
-          <TaskItem key={task.id} task={task} />
+          <TaskItem task={task} />
         </Fragment>
       ))}
-      <DropIndicatorTask groupId={groupId} />
     </>
   );
 }
@@ -129,7 +124,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
         groupId={groupId}
         beforeId={dummyTask.id}
       />
-      <TaskItem task={dummyTask} isDummy={true} />
+      <TaskItemDummy task={dummyTask} />
     </>
   );
 }

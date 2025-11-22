@@ -20,9 +20,8 @@ export default function SortableContainer({
   const contentRef = useScrollStore((s) => s.contentRef);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
-  const moveTaskAfter = useTaskStore((s) => s.moveTaskAfter);
+  const moveTask = useTaskStore((s) => s.moveTask);
   const moveGroupBefore = useGroupStore((s) => s.moveGroupBefore);
-  const moveGroupAfter = useGroupStore((s) => s.moveGroupAfter);
 
   const getIndicators = () => {
     if (!dataSort.current) return [];
@@ -88,18 +87,14 @@ export default function SortableContainer({
       const groupId = el.element.dataset.groupId;
       const beforeId = el.element.dataset.beforeId;
       if (beforeId) {
-        moveTaskBefore(taskId, beforeId, groupId ?? null);
+        moveTaskBefore(taskId, beforeId);
       } else {
-        moveTaskAfter(taskId, null, groupId ?? null);
+        moveTask(taskId, groupId ?? null);
       }
     } else if (dataSort.current === "group") {
       const groupId = e.dataTransfer.getData("groupId");
       const beforeId = el.element.dataset.beforeId;
-      if (beforeId) {
-        moveGroupBefore(groupId, beforeId);
-      } else {
-        moveGroupAfter(groupId, null);
-      }
+      moveGroupBefore(groupId, beforeId ?? null);
     }
   };
 

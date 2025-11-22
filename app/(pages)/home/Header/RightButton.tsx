@@ -1,11 +1,7 @@
 "use client";
 
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { useScrollStore } from "@/app/stores/scrollStore";
 
 export default function RightButton() {
@@ -17,8 +13,8 @@ export default function RightButton() {
   };
 
   return (
-    <AppTooltip>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root>
+      <AppTooltip.Trigger asChild>
         <button
           className="button-outline button-sm"
           disabled={isAtRight}
@@ -26,8 +22,8 @@ export default function RightButton() {
         >
           <ChevronRightIcon />
         </button>
-      </AppTooltipTrigger>
-      <AppContentTrigger align="center">Go next</AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content align="center">Go next</AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }

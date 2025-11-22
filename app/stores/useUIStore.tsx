@@ -31,7 +31,7 @@ export const useUIStore = create<Store>()(
       },
 
       collapseAllGroups: () => {
-        const groups = useGroupStore.getState().groups || [];
+        const groups = useGroupStore.getState().groups;
         set({ collapsedGroups: groups.map((g) => g.id) });
       },
 

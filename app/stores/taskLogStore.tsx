@@ -24,6 +24,7 @@ import {
   mapTaskLogResponseArray,
   mapTaskLogRequest,
   toApiDate,
+  Task,
 } from "../types";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -33,7 +34,7 @@ export type YearType = [Date, MonthType[]];
 
 type State = {
   // Store date strings for reliable value-based Set comparison
-  tasksByDate: Record<string, Set<string>> | undefined;
+  tasksByDate: Record<string, Set<string>>;
   startDate: Date;
   endDate: Date;
   totalDate: YearType[];
@@ -46,6 +47,7 @@ type Action = {
   insertTaskLog: (date: Date, taskId: string) => void;
   deleteTaskLog: (date: Date, taskId: string) => void;
   deleteAllTaskLog: () => Promise<void>;
+  getTasksDone: (date: Date, tasks: Task[]) => Task[];
 };
 
 const rangeDays = 29;
@@ -61,16 +63,19 @@ export const useTaskLogStore = create<State & Action>()(
       startDate,
       endDate,
       totalDate,
-      tasksByDate: undefined,
+      tasksByDate: {},
 
       destroyTaskLogs: async () => {
-        set(() => ({
-          tasksByDate: undefined,
-          lock: false,
-          startDate: subDays(startOfMonth(new Date()), rangeDays),
-          endDate: new Date(),
-          totalDate: [],
-        }));
+        set(
+          () =>
+            ({
+              tasksByDate: {},
+              lock: false,
+              startDate: subDays(startOfMonth(new Date()), rangeDays),
+              endDate: new Date(),
+              totalDate: [],
+            }) as State
+        );
       },
 
       fetchTaskLogs: async () => {
@@ -159,8 +164,6 @@ export const useTaskLogStore = create<State & Action>()(
         const dateString = toApiDate(date);
 
         set((state) => {
-          if (!state.tasksByDate) return {};
-
           const tasksByDate = { ...state.tasksByDate };
           tasksByDate[dateString] = new Set(state.tasksByDate[dateString]);
           tasksByDate[dateString].delete(taskId);
@@ -192,6 +195,11 @@ export const useTaskLogStore = create<State & Action>()(
           console.error(error);
           throw error;
         }
+      },
+
+      getTasksDone: (date: Date, tasks: Task[]) => {
+        const allTasks = get().tasksByDate[toApiDate(date)];
+        return allTasks ? tasks.filter((t) => allTasks.has(t.id)) : [];
       },
     };
   })

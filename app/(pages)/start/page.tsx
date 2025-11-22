@@ -17,11 +17,7 @@ import Loading from "../../components/Loading/Loading";
 import GoBackButton from "../../components/GoBackButton";
 import { useAppStore } from "../../stores/appStore";
 import clsx from "clsx";
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "../../components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { useUserStore } from "../../stores/userStore";
 import { supabase } from "@/app/supabase/server";
 
@@ -195,8 +191,8 @@ function Content() {
           <span>Let&apos;s begin </span>
           <ArrowRightIcon />
         </button>
-        <AppTooltip>
-          <AppTooltipTrigger asChild>
+        <AppTooltip.Root>
+          <AppTooltip.Trigger asChild>
             <button
               className={clsx(
                 "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
@@ -208,8 +204,8 @@ function Content() {
             >
               Only here for testing
             </button>
-          </AppTooltipTrigger>
-          <AppContentTrigger className="p-2" side="right" sideOffset={10}>
+          </AppTooltip.Trigger>
+          <AppTooltip.Content className="p-2" side="right" sideOffset={10}>
             <h2 className="text-sm font-bold">Want a quick preview?</h2>
 
             <p className="mt-[10px] leading-relaxed">
@@ -217,8 +213,8 @@ function Content() {
               <br />
               You can reset the data anytime from Settings.
             </p>
-          </AppContentTrigger>
-        </AppTooltip>
+          </AppTooltip.Content>
+        </AppTooltip.Root>
       </main>
     </>
   );

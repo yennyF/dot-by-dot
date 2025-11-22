@@ -1,8 +1,4 @@
-import {
-  AppContentTrigger,
-  AppTooltip,
-  AppTooltipTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import React, { createContext, useEffect, useState } from "react";
 import { palette } from "./colors";
 
@@ -53,15 +49,15 @@ export function BarChart({
     <BarChartContext.Provider value={{ height, data, total, percentages }}>
       <div className="flex gap-[2px]">
         {data.map((item, index) => (
-          <AppTooltip key={item.id} delayDuration={100}>
-            <AppTooltipTrigger asChild>
+          <AppTooltip.Root key={item.id} delayDuration={100}>
+            <AppTooltip.Trigger asChild>
               <BarChartItem
                 width={percentages[index]}
                 color={colors[index]}
                 height={height}
               />
-            </AppTooltipTrigger>
-            <AppContentTrigger side="top" align="center" sideOffset={5}>
+            </AppTooltip.Trigger>
+            <AppTooltip.Content side="top" align="center" sideOffset={5}>
               <div className="flex flex-col items-end gap-[10px]">
                 <div className="font-bold">{item.name}</div>
                 <div>
@@ -78,8 +74,8 @@ export function BarChart({
                   </span>
                 </div>
               </div>
-            </AppContentTrigger>
-          </AppTooltip>
+            </AppTooltip.Content>
+          </AppTooltip.Root>
         ))}
       </div>
     </BarChartContext.Provider>
@@ -100,15 +96,15 @@ export function BarChartTooltipItem({
   const width = Math.round((item.value * 100) / total);
 
   return (
-    <AppTooltip key={item.id} delayDuration={100}>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root key={item.id} delayDuration={100}>
+      <AppTooltip.Trigger asChild>
         <BarChartItem
           width={width}
           color={palette.one[index]}
           height={height}
         />
-      </AppTooltipTrigger>
-      <AppContentTrigger side="top" align="center" sideOffset={5}>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content side="top" align="center" sideOffset={5}>
         <div className="flex flex-col items-end gap-[10px]">
           <div>{item.name}</div>
           <div>
@@ -116,8 +112,8 @@ export function BarChartTooltipItem({
             <span className="text-[var(--gray-9)]">dots</span>
           </div>
         </div>
-      </AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }
 

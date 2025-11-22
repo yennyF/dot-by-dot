@@ -1,8 +1,4 @@
-import {
-  AppTooltip,
-  AppTooltipTrigger,
-  AppContentTrigger,
-} from "@/app/components/AppTooltip";
+import AppTooltip from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { TextAlignMiddleIcon, LineHeightIcon } from "@radix-ui/react-icons";
 
@@ -10,8 +6,8 @@ export function CollapseAllButton() {
   const collapseAllGroups = useUIStore((s) => s.collapseAllGroups);
 
   return (
-    <AppTooltip>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root>
+      <AppTooltip.Trigger asChild>
         <button
           className="button-outline button-sm"
           onClick={() => {
@@ -20,9 +16,9 @@ export function CollapseAllButton() {
         >
           <TextAlignMiddleIcon />
         </button>
-      </AppTooltipTrigger>
-      <AppContentTrigger align="center">Collapse all</AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content align="center">Collapse all</AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }
 
@@ -30,8 +26,8 @@ export function ExpandAllButton() {
   const expandAllGroups = useUIStore((s) => s.expandAllGroups);
 
   return (
-    <AppTooltip>
-      <AppTooltipTrigger asChild>
+    <AppTooltip.Root>
+      <AppTooltip.Trigger asChild>
         <button
           className="button-outline button-sm"
           onClick={() => {
@@ -40,8 +36,8 @@ export function ExpandAllButton() {
         >
           <LineHeightIcon />
         </button>
-      </AppTooltipTrigger>
-      <AppContentTrigger align="center">Expand all</AppContentTrigger>
-    </AppTooltip>
+      </AppTooltip.Trigger>
+      <AppTooltip.Content align="center">Expand all</AppTooltip.Content>
+    </AppTooltip.Root>
   );
 }

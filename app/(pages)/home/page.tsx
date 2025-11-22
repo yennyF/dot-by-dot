@@ -14,16 +14,12 @@ import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
 import TodayButton from "./Header/TodayButton";
 import RightButton from "./Header/RightButton";
-import {
-  AppContentTrigger,
-  AppTooltip,
-  AppTooltipTrigger,
-} from "../../components/AppTooltip";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import Link from "next/link";
 import { supabase } from "@/app/supabase/server";
+import AppTooltip from "@/app/components/AppTooltip";
 
 export default function HomePage() {
   const router = useRouter();
@@ -80,15 +76,15 @@ function Content() {
             <CollapseAllButton />
             <CreateDropdown>
               <span>
-                <AppTooltip>
-                  <AppTooltipTrigger asChild>
+                <AppTooltip.Root>
+                  <AppTooltip.Trigger asChild>
                     <button className="button-accent button-sm">
                       <PlusIcon />
                       <TriangleDownIcon />
                     </button>
-                  </AppTooltipTrigger>
-                  <AppContentTrigger>Create new...</AppContentTrigger>
-                </AppTooltip>
+                  </AppTooltip.Trigger>
+                  <AppTooltip.Content>Create new...</AppTooltip.Content>
+                </AppTooltip.Root>
               </span>
             </CreateDropdown>
           </div>
