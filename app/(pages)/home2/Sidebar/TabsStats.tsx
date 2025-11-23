@@ -1,18 +1,22 @@
 "use client";
 
 import { Tabs } from "radix-ui";
-import { BarChartData } from "../../stats/Charts/Bar";
-import { palette } from "../../stats/Charts/colors";
+import { BarChartData } from "../Charts/Bar";
+import { palette } from "../Charts/colors";
 import {
   ProgressBar,
   ProgressBarLabelDay,
   ProgressBarLabelPer,
-} from "../../stats/Charts/ProgressBar";
-import { StatTabStatus } from "../../stats/utils";
+} from "../Charts/ProgressBar";
 import AppTooltip from "@/app/components/AppTooltip";
 import { subDays } from "date-fns";
 import { CubeIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
+
+export enum StatTabStatus {
+  howOften = "how_often",
+  howEven = "how_even",
+}
 
 export default function TabsStats({
   value,
@@ -102,7 +106,7 @@ export function TabsContentOne({
         const portion = Math.round((item.value * 100) / 30);
         return (
           <div key={item.id} className="flex gap-[10px]">
-            <Label>{item.name}</Label>
+            <TaskLabel>{item.name}</TaskLabel>
             <div className="flex-1">
               <ProgressBar value={portion} size={"100%"} thickness={20}>
                 <ProgressBarLabelDay value={item.value} />
@@ -115,7 +119,7 @@ export function TabsContentOne({
         const portion = Math.round((item.value * 100) / 30);
         return (
           <div key={item.id} className="flex gap-[10px]">
-            <Label isGroup={true}>{item.name}</Label>
+            <GroupLabel>{item.name}</GroupLabel>
             <div className="flex-1">
               <ProgressBar value={portion} size={"100%"} thickness={20}>
                 <ProgressBarLabelDay value={item.value} />
@@ -157,7 +161,7 @@ export function TabsContentTwo({
       {dataTasks.map((item, index) => {
         return (
           <div key={item.id} className="flex gap-[10px]">
-            <Label>{item.name}</Label>
+            <TaskLabel>{item.name}</TaskLabel>
             <div className="flex-1">
               <ProgressBar
                 value={portions[index]}
@@ -176,7 +180,7 @@ export function TabsContentTwo({
         const shiftedIndex = index + dataTasks.length;
         return (
           <div key={item.id} className="flex gap-[10px]">
-            <Label isGroup={true}>{item.name}</Label>
+            <GroupLabel>{item.name}</GroupLabel>
             <div className="flex-1">
               <ProgressBar
                 value={portions[shiftedIndex]}
@@ -195,18 +199,20 @@ export function TabsContentTwo({
   );
 }
 
-function Label({
-  children,
-  isGroup,
-}: {
-  children: React.ReactNode;
-  isGroup?: boolean;
-}) {
+function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-[20px] w-[200px] items-center gap-[10px]">
-      <CubeIcon
-        className={clsx(!isGroup && "invisible", "text-[var(--gray-9)]")}
-      />
+      <CubeIcon className="text-[var(--gray-9)]" />
+      <span className="overflow-hidden text-ellipsis text-nowrap">
+        {children}
+      </span>
+    </div>
+  );
+}
+
+function TaskLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-[20px] w-[200px] items-center gap-[10px]">
       <span className="overflow-hidden text-ellipsis text-nowrap">
         {children}
       </span>

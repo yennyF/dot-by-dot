@@ -3,15 +3,14 @@ import { HomePageContext } from "../HomePageContext";
 import { notifyLoadError } from "@/app/components/Notification";
 import { supabase } from "@/app/supabase/server";
 import { ApiTaskLogDone } from "@/app/types";
-import { BarChartData } from "../../stats/Charts/Bar";
-import { StatTabStatus } from "../../stats/utils";
-import TabsStats from "./TabsStats";
+import { BarChartData } from "../Charts/Bar";
+import TabsStats, { StatTabStatus } from "./TabsStats";
 
 export default function Sidebar() {
   const { selectedGroup } = React.use(HomePageContext);
 
   return (
-    <div className="sticky top-0 h-[100vh] w-[450px] shrink-0 border-l-2 border-solid border-[var(--gray-5)] px-[30px] pt-[100px]">
+    <div className="sticky top-[0px] h-[100vh] w-[450px] shrink-0 border-r-2 border-solid border-[var(--gray-5)] px-[50px] pt-[100px]">
       {selectedGroup ? (
         <GroupDetail groupId={selectedGroup.id} />
       ) : (

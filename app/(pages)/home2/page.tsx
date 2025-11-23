@@ -83,8 +83,9 @@ function Content() {
       <AppHeader></AppHeader>
       <HomePageContext value={{ selectedGroup, setSelectedGroup }}>
         <main className="flex">
-          <div className="mx-[100px] my-[100px]">
-            <div className="mt-[20px]">
+          <Sidebar />
+          <div className="my-[100px] flex-1 px-[50px]">
+            <div className="my-[20px]">
               <Breadcrumbs value={selectedGroup?.id ?? "-1"}>
                 <BreadcrumbsItem
                   value={"-1"}
@@ -110,8 +111,6 @@ function Content() {
               <GroupAll />
             )}
           </div>
-
-          <Sidebar />
         </main>
       </HomePageContext>
     </>
@@ -136,7 +135,7 @@ function Grid({ tasks, groups }: { tasks: Task[]; groups: Group[] }) {
   const { setSelectedGroup } = use(HomePageContext);
 
   return (
-    <div className="mt-[50px] flex flex-wrap gap-[80px]">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-[40px]">
       {tasks.map((task) => (
         <div key={task.id} className="flex flex-col items-center gap-[15px]">
           <TaskLabel>{task.name}</TaskLabel>

@@ -64,7 +64,7 @@ function Content() {
             <RightButton />
             <TodayButton />
 
-            <Link href="/stats" className="text-[var(--inverted)]">
+            <Link href="/home2" className="text-[var(--inverted)]">
               <button className="button-outline button-sm">
                 <PieChartIcon />
                 stats
