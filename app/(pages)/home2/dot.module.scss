@@ -1,4 +1,5 @@
 .log {
+  // @apply flex flex-wrap flex-col h-[calc(var(--height-row)*7)];
   @apply grid grid-cols-7;
 
   &:hover {
@@ -8,6 +9,16 @@
   }
 }
 
+.dot {
+  
+
+  &[data-active="true"] {
+    .date {
+      color: #fff;
+    }
+  }
+}
+
 .date {
-  @apply absolute -top-[5px] text-[10px] text-[var(--gray-9)] transition-opacity opacity-0 cursor-default;
+  @apply absolute text-[9px] text-[var(--gray-9)] transition-opacity opacity-0 cursor-default;
 }

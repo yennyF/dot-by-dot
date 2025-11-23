@@ -9,7 +9,7 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import GroupItem from "./GroupItem";
 import TaskItem from "./TaskItem";
 import { memo } from "react";
-import useClickLog from "@/app/hooks/useClickLog";
+import useClickLog from "@/app/hooks/useLog";
 
 export default function TaskGrid() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);

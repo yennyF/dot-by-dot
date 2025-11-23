@@ -2,7 +2,7 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { toApiDate } from "@/app/types";
 import { CheckIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
-import { isToday, isWeekend } from "date-fns";
+import { isToday } from "date-fns";
 import styles from "./dot.module.scss";
 
 interface TaskItemProps {
@@ -16,11 +16,9 @@ export default function TaskItem({ date, taskId }: TaskItemProps) {
   );
 
   const isTodayDate = isToday(date);
-  const isWeekendDate = isWeekend(date);
 
   return (
     <div className="relative flex h-row w-day items-center justify-center">
-      <span className={styles.date}>{date.getDate()}</span>
       <div
         data-task-id={taskId}
         data-date={date}
@@ -35,12 +33,11 @@ export default function TaskItem({ date, taskId }: TaskItemProps) {
             ? "bg-[var(--accent)]"
             : isTodayDate
               ? "bg-[var(--background)]"
-              : isWeekendDate
-                ? "bg-[var(--gray-5)]"
-                : "bg-[var(--gray-5)]",
+              : "bg-[var(--gray-5)]",
           isTodayDate && "border-[1px] border-black"
         )}
       >
+        <span className={styles.date}>{date.getDate()}</span>
         <CheckIcon
           className={clsx(
             "size-3 text-black opacity-0",

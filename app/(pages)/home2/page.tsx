@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import AppHeader from "../../components/AppHeader";
 
 import Loading from "../../components/Loading/Loading";
@@ -11,13 +11,13 @@ import { supabase } from "@/app/supabase/server";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
-import GroupItem from "./GroupItem";
-import TaskItem from "./TaskItem";
-import { Group } from "@/app/types";
+import { Group, Task } from "@/app/types";
 import { CubeIcon } from "@radix-ui/react-icons";
 import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
-import styles from "./dot.module.scss";
-import useClickLog from "@/app/hooks/useClickLog";
+import TaskGrid from "./TaskGrid";
+import GroupGrid from "./GroupGrid";
+import { HomePageContext } from "./HomePageContext";
+import Sidebar from "./Sidebar/Sidebar";
 
 export default function HomePage() {
   const router = useRouter();
@@ -81,124 +81,106 @@ function Content() {
   return (
     <>
       <AppHeader></AppHeader>
-      <main className="mx-[100px] mt-[100px]">
-        <div className="mt-[20px]">
-          <Breadcrumbs value={selectedGroup?.id ?? "-1"}>
-            <BreadcrumbsItem
-              value={"-1"}
-              onClick={() => setSelectedGroup(undefined)}
-            >
-              All groups
-            </BreadcrumbsItem>
-            {selectedGroup && (
-              <BreadcrumbsItem
-                value={selectedGroup.id}
-                className="flex items-center gap-[10px]"
-              >
-                <CubeIcon className="size-[20px]" />
-                <span>{selectedGroup.name}</span>
-              </BreadcrumbsItem>
-            )}
-          </Breadcrumbs>
-        </div>
+      <HomePageContext value={{ selectedGroup, setSelectedGroup }}>
+        <main className="flex">
+          <div className="mx-[100px] my-[100px]">
+            <div className="mt-[20px]">
+              <Breadcrumbs value={selectedGroup?.id ?? "-1"}>
+                <BreadcrumbsItem
+                  value={"-1"}
+                  onClick={() => setSelectedGroup(undefined)}
+                >
+                  All groups
+                </BreadcrumbsItem>
+                {selectedGroup && (
+                  <BreadcrumbsItem
+                    value={selectedGroup.id}
+                    className="flex items-center gap-[10px]"
+                  >
+                    <CubeIcon className="size-[20px]" />
+                    <span>{selectedGroup.name}</span>
+                  </BreadcrumbsItem>
+                )}
+              </Breadcrumbs>
+            </div>
 
-        <div className="mt-[50px] flex flex-wrap gap-[60px]">
-          {selectedGroup ? (
-            <GroupDetail groupId={selectedGroup.id} />
-          ) : (
-            <GroupAll
-              onSelect={(group) => {
-                setSelectedGroup(group);
-              }}
-            />
-          )}
-        </div>
-      </main>
+            {selectedGroup ? (
+              <GroupDetail groupId={selectedGroup.id} />
+            ) : (
+              <GroupAll />
+            )}
+          </div>
+
+          <Sidebar />
+        </main>
+      </HomePageContext>
     </>
   );
 }
 
-function GroupAll({ onSelect }: { onSelect: (group: Group) => void }) {
-  const groups = useGroupStore((s) => s.groups);
+function GroupAll() {
   const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]) || [];
+  const groups = useGroupStore((s) => s.groups);
 
-  return (
-    <>
-      {tasks.map((task) => (
-        <div key={task.id} className="flex flex-col gap-[15px]">
-          <div>{task.name}</div>
-          <TaskGrid taskId={task.id} />
-        </div>
-      ))}
-      {groups.map((group) => (
-        <div key={group.id} className="flex flex-col gap-[15px]">
-          <button
-            className="flex items-center gap-2 overflow-hidden"
-            onClick={() => {
-              onSelect(group);
-            }}
-          >
-            <CubeIcon className="size-[12px] shrink-0" />
-            <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
-              {group.name}
-            </span>
-          </button>
-          <GroupGrid groupId={group.id} />
-        </div>
-      ))}
-    </>
-  );
+  return <Grid tasks={tasks} groups={groups} />;
 }
 
 function GroupDetail({ groupId }: { groupId: string }) {
   const tasks =
     useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]) || [];
 
+  return <Grid tasks={tasks} groups={[]} />;
+}
+
+function Grid({ tasks, groups }: { tasks: Task[]; groups: Group[] }) {
+  const { setSelectedGroup } = use(HomePageContext);
+
   return (
-    <>
+    <div className="mt-[50px] flex flex-wrap gap-[80px]">
       {tasks.map((task) => (
-        <div key={task.id} className="flex flex-col gap-[15px]">
-          <div>{task.name}</div>
+        <div key={task.id} className="flex flex-col items-center gap-[15px]">
+          <TaskLabel>{task.name}</TaskLabel>
           <TaskGrid taskId={task.id} />
         </div>
       ))}
-    </>
-  );
-}
-
-function TaskGrid({ taskId }: { taskId: string }) {
-  const totalDate = useTaskLogStore((s) => s.totalDate);
-  const handleClick = useClickLog();
-
-  return (
-    <div className={styles.log} onClick={handleClick}>
-      {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
-          days.map((date) => (
-            <TaskItem key={date.toDateString()} date={date} taskId={taskId} />
-          ))
-        )
-      )}
+      {groups.map((group) => (
+        <div key={group.id} className="flex flex-col gap-[15px]">
+          <GroupLabel
+            onClick={() => {
+              setSelectedGroup(group);
+            }}
+          >
+            {group.name}
+          </GroupLabel>
+          <GroupGrid groupId={group.id} />
+        </div>
+      ))}
     </div>
   );
 }
 
-function GroupGrid({ groupId }: { groupId: string }) {
-  const totalDate = useTaskLogStore((s) => s.totalDate);
-
+function GroupLabel({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
   return (
-    <div className={styles.log}>
-      {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
-          days.map((date) => (
-            <GroupItem
-              key={date.toDateString()}
-              date={date}
-              groupId={groupId}
-            />
-          ))
-        )
-      )}
-    </div>
+    <button
+      className="flex items-center justify-center gap-[10px]"
+      onClick={onClick}
+    >
+      <CubeIcon className="text-[var(--gray-9)]" />
+      <TaskLabel>{children}</TaskLabel>
+    </button>
+  );
+}
+
+function TaskLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="overflow-hidden text-ellipsis text-nowrap">
+      {children}
+    </span>
   );
 }
