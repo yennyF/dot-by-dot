@@ -10,7 +10,7 @@ export default function Sidebar() {
   const { selectedGroup } = React.use(HomePageContext);
 
   return (
-    <div className="sticky top-[0px] h-[100vh] w-[450px] shrink-0 border-r-2 border-solid border-[var(--gray-5)] px-[50px] pt-[100px]">
+    <div className="sticky top-[0px] h-[100vh] w-[450px] shrink-0 border-r-2 border-solid border-[var(--gray-5)] px-[40px] pt-[100px]">
       {selectedGroup ? (
         <GroupDetail groupId={selectedGroup.id} />
       ) : (

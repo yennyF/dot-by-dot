@@ -101,16 +101,19 @@ export function TabsContentOne({
   dataTasks: BarChartData[];
 }) {
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-[15px]">
       {dataTasks.map((item) => {
         const portion = Math.round((item.value * 100) / 30);
         return (
-          <div key={item.id} className="flex gap-[10px]">
-            <TaskLabel>{item.name}</TaskLabel>
+          <div key={item.id} className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <TaskLabel>{item.name}</TaskLabel>
+              <span className="text-xs text-[var(--gray-9)]">
+                {item.value} days
+              </span>
+            </div>
             <div className="flex-1">
-              <ProgressBar value={portion} size={"100%"} thickness={20}>
-                <ProgressBarLabelDay value={item.value} />
-              </ProgressBar>
+              <ProgressBar value={portion} size={"100%"} thickness={15} />
             </div>
           </div>
         );
@@ -118,12 +121,15 @@ export function TabsContentOne({
       {dataGroups.map((item) => {
         const portion = Math.round((item.value * 100) / 30);
         return (
-          <div key={item.id} className="flex gap-[10px]">
-            <GroupLabel>{item.name}</GroupLabel>
+          <div key={item.id} className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <GroupLabel>{item.name}</GroupLabel>
+              <span className="text-xs text-[var(--gray-9)]">
+                {item.value} days
+              </span>
+            </div>
             <div className="flex-1">
-              <ProgressBar value={portion} size={"100%"} thickness={20}>
-                <ProgressBarLabelDay value={item.value} />
-              </ProgressBar>
+              <ProgressBar value={portion} size={"100%"} thickness={15} />
             </div>
           </div>
         );
@@ -157,21 +163,24 @@ export function TabsContentTwo({
   });
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-[15px]">
       {dataTasks.map((item, index) => {
         return (
-          <div key={item.id} className="flex gap-[10px]">
-            <TaskLabel>{item.name}</TaskLabel>
+          <div key={item.id} className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <TaskLabel>{item.name}</TaskLabel>
+              <span className="text-xs text-[var(--gray-9)]">
+                {portions[index]}%
+              </span>
+            </div>
             <div className="flex-1">
               <ProgressBar
                 value={portions[index]}
                 size={"100%"}
-                thickness={20}
+                thickness={15}
                 color={palette.one[index]}
                 start={starts[index]}
-              >
-                <ProgressBarLabelPer value={item.value} />
-              </ProgressBar>
+              />
             </div>
           </div>
         );
@@ -179,18 +188,21 @@ export function TabsContentTwo({
       {dataGroups.map((item, index) => {
         const shiftedIndex = index + dataTasks.length;
         return (
-          <div key={item.id} className="flex gap-[10px]">
-            <GroupLabel>{item.name}</GroupLabel>
+          <div key={item.id} className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <GroupLabel>{item.name}</GroupLabel>
+              <span className="text-xs text-[var(--gray-9)]">
+                {portions[index]}%
+              </span>
+            </div>
             <div className="flex-1">
               <ProgressBar
                 value={portions[shiftedIndex]}
                 size={"100%"}
-                thickness={20}
+                thickness={15}
                 color={palette.one[shiftedIndex]}
                 start={starts[shiftedIndex]}
-              >
-                <ProgressBarLabelPer value={item.value} />
-              </ProgressBar>
+              />
             </div>
           </div>
         );
@@ -201,21 +213,17 @@ export function TabsContentTwo({
 
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-[20px] w-[200px] items-center gap-[10px]">
+    <div className="flex items-center gap-[10px]">
       <CubeIcon className="text-[var(--gray-9)]" />
-      <span className="overflow-hidden text-ellipsis text-nowrap">
-        {children}
-      </span>
+      <TaskLabel>{children}</TaskLabel>
     </div>
   );
 }
 
 function TaskLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-[20px] w-[200px] items-center gap-[10px]">
-      <span className="overflow-hidden text-ellipsis text-nowrap">
-        {children}
-      </span>
-    </div>
+    <span className="overflow-hidden text-ellipsis text-nowrap">
+      {children}
+    </span>
   );
 }
