@@ -28,9 +28,8 @@ import {
 } from "../types";
 import { subscribeWithSelector } from "zustand/middleware";
 
-export type DayType = Date;
-export type MonthType = [Date, DayType[]];
-export type YearType = [Date, MonthType[]];
+type MonthType = { month: number; days: Date[] };
+type YearType = { year: number; months: MonthType[] };
 
 type State = {
   // Store date strings for reliable value-based Set comparison
@@ -38,6 +37,7 @@ type State = {
   startDate: Date;
   endDate: Date;
   totalDate: YearType[];
+  paddingDays: boolean[];
 };
 
 type Action = {
@@ -59,9 +59,13 @@ export const useTaskLogStore = create<State & Action>()(
     const endDate = today;
     const totalDate = getTotalDate(startDate, endDate);
 
+    const ghostCount = totalDate[0].months[0].days[0].getDay();
+    const paddingDays = Array(ghostCount).fill(false);
+
     return {
       startDate,
       endDate,
+      paddingDays,
       totalDate,
       tasksByDate: {},
 
@@ -74,6 +78,7 @@ export const useTaskLogStore = create<State & Action>()(
               startDate: subDays(startOfMonth(new Date()), rangeDays),
               endDate: new Date(),
               totalDate: [],
+              paddingDays: [],
             }) as State
         );
       },
@@ -227,6 +232,15 @@ useTaskLogStore.subscribe(
   }
 );
 
+useTaskLogStore.subscribe(
+  (state) => state.totalDate,
+  (totalDate) => {
+    const ghostCount = totalDate[0].months[0].days[0].getDay();
+    const paddingDays = Array(ghostCount).fill(false);
+    useTaskLogStore.setState({ paddingDays });
+  }
+);
+
 function getTotalDate(startDate: Date, endDate: Date) {
   const totalYears = eachYearOfInterval({
     start: startDate,
@@ -242,16 +256,16 @@ function getTotalDate(startDate: Date, endDate: Date) {
     });
 
     const months: MonthType[] = totalMonths.map((date) => {
-      const totalDays = eachDayOfInterval({
+      const days = eachDayOfInterval({
         start: isAfter(startOfMonth(date), startDate)
           ? startOfMonth(date)
           : startDate,
         end: isBefore(endOfMonth(date), endDate) ? endOfMonth(date) : endDate,
       });
-      return [date, totalDays];
+      return { month: date.getMonth(), days };
     });
 
-    return [date, months];
+    return { year: date.getFullYear(), months };
   });
 
   return years;

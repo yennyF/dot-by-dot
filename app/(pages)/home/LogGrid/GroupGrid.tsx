@@ -6,17 +6,15 @@ import styles from "./dot.module.scss";
 
 export default function GroupGrid({ groupId }: { groupId: string }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
-
-  const ghostCount = totalDate[0][0].getDay();
-  const pad = Array(ghostCount).fill(null).concat(ghostCount);
+  const paddingDays = useTaskLogStore((s) => s.paddingDays);
 
   return (
     <div className={styles.log}>
-      {pad.map((_, index) => (
-        <div key={index} className="h-row w-day"></div>
+      {paddingDays.map((_, index) => (
+        <div key={index} className="h-row w-day" />
       ))}
-      {totalDate.map(([, months]) =>
-        months.map(([, days]) =>
+      {totalDate.map(({ months }) =>
+        months.map(({ days }) =>
           days.map((date) => (
             <GroupItem
               key={date.toDateString()}

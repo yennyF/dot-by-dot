@@ -5,7 +5,7 @@ import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { Group } from "@/app/types";
 import clsx from "clsx";
-import useClickLog from "@/app/hooks/useLog";
+import useClickLog from "@/app/hooks/useClickLog";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
 

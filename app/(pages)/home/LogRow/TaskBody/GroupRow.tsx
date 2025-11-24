@@ -8,9 +8,9 @@ function GroupRowWrapper({ group }: { group: Group }) {
 
   return (
     <div className="app-GroupRow flex">
-      {totalDate.map(([, months]) =>
-        months.map(([date, days]) => (
-          <div key={date.toDateString()} className="flex min-w-[150px]">
+      {totalDate.map(({ year, months }) =>
+        months.map(({ month, days }) => (
+          <div key={`${year}-${month}`} className="flex min-w-[150px]">
             {days.map((date) => (
               <GroupItem key={date.toDateString()} date={date} group={group} />
             ))}

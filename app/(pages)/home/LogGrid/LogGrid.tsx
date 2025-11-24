@@ -10,7 +10,7 @@ import TaskGrid from "./TaskGrid";
 import GroupGrid from "./GroupGrid";
 import { useUIStore } from "@/app/stores/useUIStore";
 
-export default function LogGrid() {
+export default function LogGrid({}) {
   const selectedGroup = useUIStore((s) => s.selectedGroup);
   const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
 

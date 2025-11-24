@@ -7,9 +7,9 @@ function TaskRowWrapper({ taskId }: { taskId: string }) {
 
   return (
     <div className="app-TaskList flex">
-      {totalDate.map(([, months]) =>
-        months.map(([date, days]) => (
-          <div key={date.toDateString()} className="flex min-w-[150px]">
+      {totalDate.map(({ year, months }) =>
+        months.map(({ month, days }) => (
+          <div key={`${year}-${month}`} className="flex min-w-[150px]">
             {days.map((date) => (
               <TaskItem key={date.toDateString()} date={date} taskId={taskId} />
             ))}
