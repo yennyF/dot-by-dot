@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
+  GridIcon,
+  LayoutIcon,
   PieChartIcon,
   PlusIcon,
   TriangleDownIcon,
@@ -57,16 +59,14 @@ export default function HomePage() {
 
 function Content() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const dotLayout = useUIStore((s) => s.dotLayout);
+  const setDotLayout = useUIStore((s) => s.setDotLayout);
 
   return (
     <>
       <AppHeader>
         <div className="flex flex-1 items-center justify-between gap-10">
           <div className="flex gap-2">
-            <LeftButton />
-            <RightButton />
-            <TodayButton />
-
             <button
               className="button-outline button-sm"
               onClick={() => {
@@ -76,8 +76,29 @@ function Content() {
               <PieChartIcon />
               Stats
             </button>
+            <button
+              data-state={dotLayout === "grid" ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => {
+                setDotLayout("grid");
+              }}
+            >
+              <GridIcon />
+            </button>
+            <button
+              data-state={dotLayout === "horizontal" ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => {
+                setDotLayout("horizontal");
+              }}
+            >
+              <LayoutIcon />
+            </button>
           </div>
           <div className="flex gap-2">
+            <LeftButton />
+            <RightButton />
+            <TodayButton />
             <ExpandAllButton />
             <CollapseAllButton />
             <CreateDropdown>

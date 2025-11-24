@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useGroupStore } from "./groupStore";
 
+type DotLayoutType = "grid" | "horizontal";
+
 type Store = {
   closedGroups: string[];
   isGroupOpen: (groupId: string) => boolean;
@@ -11,6 +13,9 @@ type Store = {
 
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
+
+  dotLayout: DotLayoutType;
+  setDotLayout: (dotLayout: DotLayoutType) => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -48,6 +53,12 @@ export const useUIStore = create<Store>()(
         set(({ isSidebarOpen }) => {
           return { isSidebarOpen: !isSidebarOpen };
         });
+      },
+
+      dotLayout: "grid",
+
+      setDotLayout: (dotLayout: DotLayoutType) => {
+        set({ dotLayout });
       },
     }),
     {
