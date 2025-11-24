@@ -61,10 +61,10 @@ export default function TaskSidebar() {
 
 function CollapsibleGroup({ group }: { group: Group }) {
   const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
-  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
+  const toggleGroup = useUIStore((s) => s.toggleGroup);
 
   const setOpen = () => {
-    toggleCollapsedGroup(group.id);
+    toggleGroup(group.id);
   };
 
   return (
