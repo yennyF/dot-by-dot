@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LogHorizontal from "./LogHorizontal/LogHorizontal";
 import {
-  GridIcon,
-  LayoutIcon,
   PieChartIcon,
   PlusIcon,
   TriangleDownIcon,
+  ViewGridIcon,
+  ViewHorizontalIcon,
 } from "@radix-ui/react-icons";
 import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
@@ -27,6 +26,7 @@ import LogGrid from "./LogGrid/LogGrid";
 import { useTaskStore } from "@/app/stores/taskStore";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import LogRow from "./LogRow/LogRow";
 
 export default function HomePage() {
   const router = useRouter();
@@ -110,20 +110,20 @@ function Content() {
                 setDotLayout("grid");
               }}
             >
-              <GridIcon />
+              <ViewGridIcon />
             </button>
             <button
-              data-state={dotLayout === "horizontal" ? "active" : undefined}
+              data-state={dotLayout === "row" ? "active" : undefined}
               className="button-outline button-sm"
               onClick={() => {
-                setDotLayout("horizontal");
+                setDotLayout("row");
               }}
             >
-              <LayoutIcon />
+              <ViewHorizontalIcon />
             </button>
           </div>
           <div className="flex gap-2">
-            {dotLayout === "horizontal" && (
+            {dotLayout === "row" && (
               <>
                 <LeftButton />
                 <RightButton />
@@ -150,7 +150,7 @@ function Content() {
       </AppHeader>
       <main className="flex">
         <Sidebar />
-        {dotLayout === "grid" ? <LogGrid /> : <LogHorizontal />}
+        {dotLayout === "grid" ? <LogGrid /> : <LogRow />}
       </main>
     </>
   );

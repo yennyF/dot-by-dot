@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { useGroupStore } from "./groupStore";
 import { Group } from "../types";
 
-type DotLayoutType = "grid" | "horizontal";
+type DotLayoutType = "grid" | "row";
 
 type Store = {
   closedGroups: string[];

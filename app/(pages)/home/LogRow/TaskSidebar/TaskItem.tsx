@@ -36,9 +36,9 @@ function TaskItemWrapper({ task }: TaskItemProps) {
       onDragEnd={handleDragEnd}
     >
       <div className="app-TaskItem group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]">
-        <div className="ml-[22px] overflow-hidden text-ellipsis text-nowrap">
+        <span className="ml-[22px] overflow-hidden text-ellipsis text-nowrap">
           {task.name}
-        </div>
+        </span>
 
         <div
           className={clsx(
@@ -80,11 +80,9 @@ function TaskItemWrapper({ task }: TaskItemProps) {
 export function TaskItemDummy({ task }: { task: Task }) {
   return (
     <div className="app-TaskItem group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]">
-      <div className="flex items-center gap-2 overflow-hidden">
-        <div className="ml-[12px] overflow-hidden text-ellipsis text-nowrap">
-          {task.name}
-        </div>
-      </div>
+      <span className="ml-[12px] overflow-hidden text-ellipsis text-nowrap">
+        {task.name}
+      </span>
 
       <div>
         <TaskCreatePopover>

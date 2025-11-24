@@ -17,7 +17,7 @@ export default function SortableContainer({
   const dataSort = useRef<"task" | "group">(null);
   const ref = useRef<HTMLDivElement>(null);
 
-  const contentRef = useScrollStore((s) => s.contentRef);
+  const taskLogRef = useScrollStore((s) => s.taskLogRef);
 
   const moveTaskBefore = useTaskStore((s) => s.moveTaskBefore);
   const moveTask = useTaskStore((s) => s.moveTask);
@@ -112,7 +112,7 @@ export default function SortableContainer({
   };
 
   const handlePointerMove = (e: DragEvent) => {
-    const scrollEl = contentRef.current;
+    const scrollEl = taskLogRef.current;
     if (!scrollEl) return;
 
     const scrollSpeed = 5;
