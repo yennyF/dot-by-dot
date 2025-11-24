@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CalendarDay from "./CalendarDay/CalendarDay";
+import LogHorizontal from "./LogHorizontal/LogHorizontal";
 import {
   GridIcon,
   LayoutIcon,
@@ -22,7 +22,11 @@ import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import { supabase } from "@/app/supabase/server";
 import AppTooltip from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
-import Sidebar from "@/app/components/Sidebar/Sidebar";
+import Sidebar from "@/app/(pages)/home/Sidebar/Sidebar";
+import LogGrid from "./LogGrid/LogGrid";
+import { useTaskStore } from "@/app/stores/taskStore";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 export default function HomePage() {
   const router = useRouter();
@@ -62,6 +66,29 @@ function Content() {
   const dotLayout = useUIStore((s) => s.dotLayout);
   const setDotLayout = useUIStore((s) => s.setDotLayout);
 
+  const fetchGroups = useGroupStore((s) => s.fetchGroups);
+  const fetchTasks = useTaskStore((s) => s.fetchTasks);
+  const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
+  const totalDate = useTaskLogStore((s) => s.totalDate);
+
+  useEffect(() => {
+    try {
+      Promise.all([fetchGroups(), fetchTasks()]);
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      fetchTaskLogs();
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalDate]);
+
   return (
     <>
       <AppHeader>
@@ -96,30 +123,34 @@ function Content() {
             </button>
           </div>
           <div className="flex gap-2">
-            <LeftButton />
-            <RightButton />
-            <TodayButton />
-            <ExpandAllButton />
-            <CollapseAllButton />
-            <CreateDropdown>
-              <span>
-                <AppTooltip.Root>
-                  <AppTooltip.Trigger asChild>
-                    <button className="button-accent button-sm">
-                      <PlusIcon />
-                      <TriangleDownIcon />
-                    </button>
-                  </AppTooltip.Trigger>
-                  <AppTooltip.Content>Create new...</AppTooltip.Content>
-                </AppTooltip.Root>
-              </span>
-            </CreateDropdown>
+            {dotLayout === "horizontal" && (
+              <>
+                <LeftButton />
+                <RightButton />
+                <TodayButton />
+                <ExpandAllButton />
+                <CollapseAllButton />
+                <CreateDropdown>
+                  <span>
+                    <AppTooltip.Root>
+                      <AppTooltip.Trigger asChild>
+                        <button className="button-accent button-sm">
+                          <PlusIcon />
+                          <TriangleDownIcon />
+                        </button>
+                      </AppTooltip.Trigger>
+                      <AppTooltip.Content>Create new...</AppTooltip.Content>
+                    </AppTooltip.Root>
+                  </span>
+                </CreateDropdown>
+              </>
+            )}
           </div>
         </div>
       </AppHeader>
       <main className="flex">
         <Sidebar />
-        <CalendarDay />
+        {dotLayout === "grid" ? <LogGrid /> : <LogHorizontal />}
       </main>
     </>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { HomePageContext } from "../../(pages)/home2/HomePageContext";
 import { notifyLoadError } from "@/app/components/Notification";
 import { supabase } from "@/app/supabase/server";
 import { ApiTaskLogDone } from "@/app/types";
@@ -9,7 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function Sidebar() {
-  const { selectedGroup } = React.use(HomePageContext);
+  const selectedGroup = useUIStore((s) => s.selectedGroup);
   const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
 
   return (

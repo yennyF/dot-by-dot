@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useGroupStore } from "./groupStore";
+import { Group } from "../types";
 
 type DotLayoutType = "grid" | "horizontal";
 
@@ -16,6 +17,9 @@ type Store = {
 
   dotLayout: DotLayoutType;
   setDotLayout: (dotLayout: DotLayoutType) => void;
+
+  selectedGroup: Group | undefined;
+  setSelectedGroup: (group: Group | undefined) => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -59,6 +63,12 @@ export const useUIStore = create<Store>()(
 
       setDotLayout: (dotLayout: DotLayoutType) => {
         set({ dotLayout });
+      },
+
+      selectedGroup: undefined,
+
+      setSelectedGroup: (selectedGroup: Group | undefined) => {
+        set({ selectedGroup });
       },
     }),
     {
