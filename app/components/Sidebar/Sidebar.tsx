@@ -1,22 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { HomePageContext } from "../HomePageContext";
+import { HomePageContext } from "../../(pages)/home2/HomePageContext";
 import { notifyLoadError } from "@/app/components/Notification";
 import { supabase } from "@/app/supabase/server";
 import { ApiTaskLogDone } from "@/app/types";
-import { BarChartData } from "../Charts/Bar";
+import { BarChartData } from "./Charts/Bar";
 import TabsStats, { StatTabStatus } from "./TabsStats";
+import { AnimatePresence, motion } from "motion/react";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function Sidebar() {
   const { selectedGroup } = React.use(HomePageContext);
+  const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
 
   return (
-    <div className="sticky top-[0px] h-[100vh] w-[450px] shrink-0 border-r-2 border-solid border-[var(--gray-5)] px-[40px] pt-[100px]">
-      {selectedGroup ? (
-        <GroupDetail groupId={selectedGroup.id} />
-      ) : (
-        <GroupAll />
-      )}
-    </div>
+    <motion.div
+      animate={{ width: isSidebarOpen ? "fit-content" : 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            className="sticky top-0 h-screen w-[420px] shrink-0 overflow-scroll border-r-2 border-solid border-[var(--gray-5)] px-[40px] pt-[100px]"
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* <div className="mb-[50px] flex w-full items-center justify-center">
+              <CalendarMonth />
+            </div> */}
+            {selectedGroup ? (
+              <GroupDetail groupId={selectedGroup.id} />
+            ) : (
+              <GroupAll />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 

@@ -17,9 +17,10 @@ import RightButton from "./Header/RightButton";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
-import Link from "next/link";
 import { supabase } from "@/app/supabase/server";
 import AppTooltip from "@/app/components/AppTooltip";
+import { useUIStore } from "@/app/stores/useUIStore";
+import Sidebar from "@/app/components/Sidebar/Sidebar";
 
 export default function HomePage() {
   const router = useRouter();
@@ -55,6 +56,8 @@ export default function HomePage() {
 }
 
 function Content() {
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+
   return (
     <>
       <AppHeader>
@@ -64,12 +67,15 @@ function Content() {
             <RightButton />
             <TodayButton />
 
-            <Link href="/home2" className="text-[var(--inverted)]">
-              <button className="button-outline button-sm">
-                <PieChartIcon />
-                stats
-              </button>
-            </Link>
+            <button
+              className="button-outline button-sm"
+              onClick={() => {
+                toggleSidebar();
+              }}
+            >
+              <PieChartIcon />
+              Stats
+            </button>
           </div>
           <div className="flex gap-2">
             <ExpandAllButton />
@@ -90,7 +96,8 @@ function Content() {
           </div>
         </div>
       </AppHeader>
-      <main>
+      <main className="flex">
+        <Sidebar />
         <CalendarDay />
       </main>
     </>

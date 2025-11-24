@@ -8,6 +8,9 @@ type Store = {
   toggleCollapsedGroup: (groupId: string) => void;
   collapseAllGroups: () => void;
   expandAllGroups: () => void;
+
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -37,6 +40,14 @@ export const useUIStore = create<Store>()(
 
       expandAllGroups: () => {
         set({ collapsedGroups: [] });
+      },
+
+      isSidebarOpen: false,
+
+      toggleSidebar: () => {
+        set(({ isSidebarOpen }) => {
+          return { isSidebarOpen: !isSidebarOpen };
+        });
       },
     }),
     {

@@ -1,17 +1,12 @@
 "use client";
 
 import { Tabs } from "radix-ui";
-import { BarChartData } from "../Charts/Bar";
-import { palette } from "../Charts/colors";
-import {
-  ProgressBar,
-  ProgressBarLabelDay,
-  ProgressBarLabelPer,
-} from "../Charts/ProgressBar";
+import { BarChartData } from "./Charts/Bar";
+import { palette } from "./Charts/colors";
+import { ProgressBar } from "./Charts/ProgressBar";
 import AppTooltip from "@/app/components/AppTooltip";
 import { subDays } from "date-fns";
 import { CubeIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
 
 export enum StatTabStatus {
   howOften = "how_often",
@@ -113,7 +108,12 @@ export function TabsContentOne({
               </span>
             </div>
             <div className="flex-1">
-              <ProgressBar value={portion} size={"100%"} thickness={15} />
+              <ProgressBar
+                value={portion}
+                size={"100%"}
+                thickness={15}
+                color="var(--accent)"
+              />
             </div>
           </div>
         );
@@ -129,7 +129,12 @@ export function TabsContentOne({
               </span>
             </div>
             <div className="flex-1">
-              <ProgressBar value={portion} size={"100%"} thickness={15} />
+              <ProgressBar
+                value={portion}
+                size={"100%"}
+                thickness={15}
+                color="var(--inverted)"
+              />
             </div>
           </div>
         );

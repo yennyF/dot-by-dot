@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "dist/types/**/*.ts"
-, "app/(pages)/home2/Charts/colors.js"  ],
+, "app/components/Sidebar/Charts/colors.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -12,12 +12,13 @@ import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import { Group, Task } from "@/app/types";
-import { CubeIcon } from "@radix-ui/react-icons";
+import { CubeIcon, PieChartIcon } from "@radix-ui/react-icons";
 import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 import TaskGrid from "./TaskGrid";
 import GroupGrid from "./GroupGrid";
 import { HomePageContext } from "./HomePageContext";
-import Sidebar from "./Sidebar/Sidebar";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function HomePage() {
   const router = useRouter();
@@ -53,6 +54,8 @@ export default function HomePage() {
 }
 
 function Content() {
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+
   const fetchGroups = useGroupStore((s) => s.fetchGroups);
   const fetchTasks = useTaskStore((s) => s.fetchTasks);
   const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
@@ -80,7 +83,19 @@ function Content() {
 
   return (
     <>
-      <AppHeader></AppHeader>
+      <AppHeader>
+        <div className="flex flex-1 items-center gap-10">
+          <button
+            className="button-outline button-sm"
+            onClick={() => {
+              toggleSidebar();
+            }}
+          >
+            <PieChartIcon />
+            Stats
+          </button>
+        </div>
+      </AppHeader>
       <HomePageContext value={{ selectedGroup, setSelectedGroup }}>
         <main className="flex">
           <Sidebar />
