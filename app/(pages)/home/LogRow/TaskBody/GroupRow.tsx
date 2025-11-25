@@ -12,7 +12,11 @@ function GroupRowWrapper({ group }: { group: Group }) {
         months.map(({ month, days }) => (
           <div key={`${year}-${month}`} className="flex min-w-[150px]">
             {days.map((date) => (
-              <GroupItem key={date.toDateString()} date={date} group={group} />
+              <GroupItem
+                key={date.toDateString()}
+                date={date}
+                groupId={group.id}
+              />
             ))}
           </div>
         ))
