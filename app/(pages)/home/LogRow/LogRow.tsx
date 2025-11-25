@@ -5,7 +5,7 @@ import TaskSidebar from "./TaskSidebar/TaskSidebar";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import DateRow from "./TaskHeader/DateRow";
-import TaskBody from "./TaskBody/TaskBody";
+import TaskContent from "./TaskContent/TaskContent";
 
 export default function LogRow() {
   const taskLogRef = useScrollStore((s) => s.taskLogRef);
@@ -26,7 +26,7 @@ export default function LogRow() {
       </div>
       <div className="flex w-fit">
         <ShadowLeft />
-        <TaskBody />
+        <TaskContent />
         <ShadowRight />
         <TaskSidebar />
       </div>

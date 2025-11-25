@@ -1,17 +1,36 @@
-"use client";
-
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import { addDays } from "date-fns";
-import clsx from "clsx";
+import { Group } from "@/app/types";
+import { memo } from "react";
 import { useTaskStore } from "@/app/stores/taskStore";
+import clsx from "clsx";
+import { addDays } from "date-fns";
 import GroupDot from "../../dots/GroupDot";
 
-interface GroupItemProps {
-  date: Date;
-  groupId: string;
-}
+function GroupRowWrapper({ group }: { group: Group }) {
+  const totalDate = useTaskLogStore((s) => s.totalDate);
 
-export default function GroupItem({ date, groupId }: GroupItemProps) {
+  return (
+    <div className="app-GroupRow flex">
+      {totalDate.map(({ year, months }) =>
+        months.map(({ month, days }) => (
+          <div key={`${year}-${month}`} className="flex min-w-[150px]">
+            {days.map((date) => (
+              <GroupItem
+                key={date.toDateString()}
+                date={date}
+                groupId={group.id}
+              />
+            ))}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+const GroupRow = memo(GroupRowWrapper);
+export default GroupRow;
+
+function GroupItem({ date, groupId }: { date: Date; groupId: string }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[groupId]) || [];
 
   const count = useTaskLogStore((s) => s.getTasksDone(date, tasks).length);

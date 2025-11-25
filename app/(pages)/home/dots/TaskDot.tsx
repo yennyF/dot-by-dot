@@ -20,7 +20,7 @@ export default function TaskDot({ date, taskId, isActive }: TaskItemProps) {
       data-date={date}
       data-active={isActive}
       className={clsx(
-        "group box-border flex size-[var(--dot-size)] items-center justify-center rounded-full transition-transform duration-100",
+        "group box-border flex size-[var(--dot-size)] shrink-0 items-center justify-center rounded-full transition-transform duration-100",
         "hover:scale-110 hover:border-[1px] hover:border-black",
         "active:scale-90",
         !isActive && "hover:bg-[var(--accent-5)]",

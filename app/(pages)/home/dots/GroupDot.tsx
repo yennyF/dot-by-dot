@@ -17,7 +17,7 @@ export default function GroupDot({ date, count }: TaskItemProps) {
 
   return (
     <AppTooltip.Root delayDuration={100}>
-      <AppTooltip.Trigger className="flex cursor-default items-center justify-center">
+      <AppTooltip.Trigger className="flex shrink-0 cursor-default items-center justify-center">
         <div
           className={clsx(
             "transform rounded-full",

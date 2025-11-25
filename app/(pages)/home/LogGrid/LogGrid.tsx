@@ -3,7 +3,6 @@
 import React from "react";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
-import { Group, Task } from "@/app/types";
 import { CubeIcon } from "@radix-ui/react-icons";
 import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 import TaskGrid from "./TaskGrid";
@@ -36,6 +35,8 @@ export default function LogGrid({}) {
         </Breadcrumbs>
       </div>
 
+      {/* <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-[40px]"> */}
+
       {selectedGroup ? (
         <GroupDetail groupId={selectedGroup.id} />
       ) : (
@@ -46,40 +47,39 @@ export default function LogGrid({}) {
 }
 
 function GroupAll() {
-  const tasks = useTaskStore((s) => s.tasksByGroup[UNGROUPED_KEY]) || [];
   const groups = useGroupStore((s) => s.groups);
-
-  return <Grid tasks={tasks} groups={groups} />;
-}
-
-function GroupDetail({ groupId }: { groupId: string }) {
-  const tasks =
-    useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]) || [];
-
-  return <Grid tasks={tasks} groups={[]} />;
-}
-
-function Grid({ tasks, groups }: { tasks: Task[]; groups: Group[] }) {
   const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-[40px]">
-      {tasks.map((task) => (
+    <div>
+      <GroupDetail groupId={null} />
+      <div className="mt-[80px] flex flex-wrap justify-start gap-[80px]">
+        {groups.map((group) => (
+          <div key={group.id} className="flex flex-col gap-[15px]">
+            <GroupLabel
+              onClick={() => {
+                setSelectedGroup(group);
+              }}
+            >
+              {group.name}
+            </GroupLabel>
+            <GroupGrid groupId={group.id} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GroupDetail({ groupId }: { groupId: string | null }) {
+  const tasks = useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]);
+
+  return (
+    <div className="flex flex-wrap justify-start gap-[80px]">
+      {tasks?.map((task) => (
         <div key={task.id} className="flex flex-col items-center gap-[15px]">
           <TaskLabel>{task.name}</TaskLabel>
           <TaskGrid taskId={task.id} />
-        </div>
-      ))}
-      {groups.map((group) => (
-        <div key={group.id} className="flex flex-col gap-[15px]">
-          <GroupLabel
-            onClick={() => {
-              setSelectedGroup(group);
-            }}
-          >
-            {group.name}
-          </GroupLabel>
-          <GroupGrid groupId={group.id} />
         </div>
       ))}
     </div>
