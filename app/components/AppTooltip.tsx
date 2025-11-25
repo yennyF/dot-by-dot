@@ -34,5 +34,25 @@ function Content({
   );
 }
 
-const AppTooltip = { Root, Trigger, Content };
+function ContentNonPortal({
+  children,
+  className,
+  side,
+  sideOffset,
+  ...props
+}: Tooltip.TooltipContentProps) {
+  return (
+    <Tooltip.Content
+      {...props}
+      className={`tooltip-content z-50 ${className} `}
+      side={side ?? "bottom"}
+      sideOffset={sideOffset ?? 5}
+    >
+      {children}
+      <Tooltip.Arrow className="tooltip-arrow" />
+    </Tooltip.Content>
+  );
+}
+
+const AppTooltip = { Root, Trigger, Content, ContentNonPortal };
 export default AppTooltip;

@@ -27,13 +27,13 @@ function GroupItemWrapper({ group }: GroupItemProps) {
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
   const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
-  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
+  const toggleGroup = useUIStore((s) => s.toggleGroup);
 
   const handleClickNew = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     if (!isOpen) {
-      toggleCollapsedGroup(group.id);
+      toggleGroup(group.id);
     }
 
     setDummyTask({

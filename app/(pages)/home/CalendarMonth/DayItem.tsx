@@ -11,9 +11,11 @@ interface DayItemProps {
 }
 
 export default function DayItem({ date }: DayItemProps) {
-  const tasks = useTaskLogStore((s) => s.tasksByDate[toApiDate(date)]);
+  const tasks = useTaskLogStore(
+    (s) => s.tasksByDate[toApiDate(date)]?.size ?? 0
+  );
 
-  const percentage = Math.min(tasks?.size ?? 0, MAX_TASK_SIZE) / MAX_TASK_SIZE;
+  const percentage = Math.min(tasks, MAX_TASK_SIZE) / MAX_TASK_SIZE;
 
   return (
     <div

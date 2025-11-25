@@ -33,14 +33,14 @@ function LeftButtonContent() {
 
 function LoadMoreButton() {
   const fetchMoreTaskLogs = useTaskLogStore((s) => s.fetchMoreTaskLogs);
-  const contentRef = useScrollStore((s) => s.contentRef);
+  const taskLogRef = useScrollStore((s) => s.taskLogRef);
   const scrollToLeft = useScrollStore((s) => s.scrollToLeft);
 
   const prevScrollLeft = useRef<number>(0);
   const prevScrollWidth = useRef<number>(0);
 
   const handleClick = async () => {
-    const el = contentRef.current;
+    const el = taskLogRef.current;
     if (!el) return;
 
     prevScrollWidth.current = el.scrollWidth;

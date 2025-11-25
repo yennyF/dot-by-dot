@@ -30,34 +30,12 @@ export function ProgressBar({
       />
       {children && (
         <div
-          className="absolute mx-[10px] text-nowrap text-xs"
+          className="absolute mx-[10px]"
           style={{ left: start + value + "%" }}
         >
           {children}
         </div>
       )}
     </div>
-  );
-}
-
-export function ProgressBarLabelDay({ value }: { value: number }) {
-  if (value === 0) return null;
-
-  return (
-    <>
-      <span>{value}</span>
-      <span className="text-[var(--gray-9)]"> days</span>
-    </>
-  );
-}
-
-export function ProgressBarLabelPer({ value }: { value: number }) {
-  if (value === 0) return null;
-
-  return (
-    <>
-      <span>{value}</span>
-      <span className="text-[var(--gray-9)]">%</span>
-    </>
   );
 }

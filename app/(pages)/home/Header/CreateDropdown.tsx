@@ -4,7 +4,7 @@ import { DropdownMenu } from "radix-ui";
 import { useGroupStore } from "../../../stores/groupStore";
 import { useTaskStore } from "../../../stores/taskStore";
 import { v4 as uuidv4 } from "uuid";
-import { CheckCircledIcon, CubeIcon } from "@radix-ui/react-icons";
+import { CircleIcon, CubeIcon } from "@radix-ui/react-icons";
 
 export default function CreateDropdown({
   children,
@@ -43,7 +43,7 @@ export default function CreateDropdown({
               });
             }}
           >
-            <CheckCircledIcon />
+            <CircleIcon />
             New task
           </DropdownMenu.Item>
           <DropdownMenu.Arrow className="arrow" />

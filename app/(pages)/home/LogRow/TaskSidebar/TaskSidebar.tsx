@@ -14,7 +14,7 @@ import { Collapsible } from "radix-ui";
 import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function TaskSidebar() {
-  const headerRowRef = useScrollStore((s) => s.headerRowRef);
+  const taskSidebarRef = useScrollStore((s) => s.taskSidebarRef);
   const topGroupRef = useRef<HTMLDivElement>(null);
 
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
@@ -29,7 +29,7 @@ export default function TaskSidebar() {
   return (
     <SortableContainer className="sticky right-0 z-10">
       <div
-        ref={headerRowRef}
+        ref={taskSidebarRef}
         className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
       >
         <div className="app-group">
@@ -61,14 +61,15 @@ export default function TaskSidebar() {
 
 function CollapsibleGroup({ group }: { group: Group }) {
   const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
-  const toggleCollapsedGroup = useUIStore((s) => s.toggleCollapsedGroup);
-
-  const setOpen = () => {
-    toggleCollapsedGroup(group.id);
-  };
+  const toggleGroup = useUIStore((s) => s.toggleGroup);
 
   return (
-    <Collapsible.Root open={isOpen} onOpenChange={setOpen}>
+    <Collapsible.Root
+      open={isOpen}
+      onOpenChange={() => {
+        toggleGroup(group.id);
+      }}
+    >
       <Collapsible.Trigger asChild>
         <span className="w-full">
           <GroupItem group={group} />
@@ -103,9 +104,7 @@ function DummyTask({ groupId }: { groupId: string | null }) {
   const topTaskRef = useRef<HTMLDivElement>(null);
 
   const dummyTask = useTaskStore((s) => {
-    if (groupId === s.dummyTask?.groupId) {
-      return s.dummyTask;
-    }
+    if (groupId === s.dummyTask?.groupId) return s.dummyTask;
     return null;
   });
 
@@ -117,14 +116,5 @@ function DummyTask({ groupId }: { groupId: string | null }) {
 
   if (!dummyTask) return null;
 
-  return (
-    <>
-      <DropIndicatorTask
-        ref={topTaskRef}
-        groupId={groupId}
-        beforeId={dummyTask.id}
-      />
-      <TaskItemDummy task={dummyTask} />
-    </>
-  );
+  return <TaskItemDummy task={dummyTask} />;
 }

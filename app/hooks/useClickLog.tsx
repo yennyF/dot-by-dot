@@ -6,7 +6,6 @@ export default function useClickLog() {
 
   function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     const element = (e.target as HTMLElement).closest("[data-task-id]");
-    console.log(element);
     if (!element) return;
 
     const htmlElement = element as HTMLElement;

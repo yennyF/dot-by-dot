@@ -1,42 +1,74 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useGroupStore } from "./groupStore";
+import { Group } from "../types";
+
+type DotLayoutType = "grid" | "row";
 
 type Store = {
-  collapsedGroups: string[];
+  closedGroups: string[];
   isGroupOpen: (groupId: string) => boolean;
-  toggleCollapsedGroup: (groupId: string) => void;
-  collapseAllGroups: () => void;
-  expandAllGroups: () => void;
+  toggleGroup: (groupId: string) => void;
+  closeAllGroups: () => void;
+  openAllGroups: () => void;
+
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+
+  dotLayout: DotLayoutType;
+  setDotLayout: (dotLayout: DotLayoutType) => void;
+
+  selectedGroup: Group | undefined;
+  setSelectedGroup: (group: Group | undefined) => void;
 };
 
 export const useUIStore = create<Store>()(
   persist(
     (set, get) => ({
-      collapsedGroups: [],
+      closedGroups: [],
 
       isGroupOpen: (groupId: string) => {
-        return !get().collapsedGroups.includes(groupId);
+        return !get().closedGroups.includes(groupId);
       },
 
-      toggleCollapsedGroup: (groupId: string) => {
+      toggleGroup: (groupId: string) => {
         set((s) => {
-          const isCollapsed = s.collapsedGroups.includes(groupId);
+          const isCollapsed = s.closedGroups.includes(groupId);
           return {
-            collapsedGroups: isCollapsed
-              ? s.collapsedGroups.filter((id) => id !== groupId)
-              : [...s.collapsedGroups, groupId],
+            closedGroups: isCollapsed
+              ? s.closedGroups.filter((id) => id !== groupId)
+              : [...s.closedGroups, groupId],
           };
         });
       },
 
-      collapseAllGroups: () => {
+      closeAllGroups: () => {
         const groups = useGroupStore.getState().groups;
-        set({ collapsedGroups: groups.map((g) => g.id) });
+        set({ closedGroups: groups.map((g) => g.id) });
       },
 
-      expandAllGroups: () => {
-        set({ collapsedGroups: [] });
+      openAllGroups: () => {
+        set({ closedGroups: [] });
+      },
+
+      isSidebarOpen: false,
+
+      toggleSidebar: () => {
+        set(({ isSidebarOpen }) => {
+          return { isSidebarOpen: !isSidebarOpen };
+        });
+      },
+
+      dotLayout: "grid",
+
+      setDotLayout: (dotLayout: DotLayoutType) => {
+        set({ dotLayout });
+      },
+
+      selectedGroup: undefined,
+
+      setSelectedGroup: (selectedGroup: Group | undefined) => {
+        set({ selectedGroup });
       },
     }),
     {

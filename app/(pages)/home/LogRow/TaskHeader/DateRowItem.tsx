@@ -19,7 +19,7 @@ export default function DateRowItem({ date }: DayItemProps) {
       requestAnimationFrame(() => {
         todayRef.current?.scrollIntoView({
           block: "end",
-          behavior: "smooth",
+          // behavior: "smooth",
           inline: "start",
         });
       });

@@ -3,7 +3,7 @@ import { useUIStore } from "@/app/stores/useUIStore";
 import { TextAlignMiddleIcon, LineHeightIcon } from "@radix-ui/react-icons";
 
 export function CollapseAllButton() {
-  const collapseAllGroups = useUIStore((s) => s.collapseAllGroups);
+  const closeAllGroups = useUIStore((s) => s.closeAllGroups);
 
   return (
     <AppTooltip.Root>
@@ -11,7 +11,7 @@ export function CollapseAllButton() {
         <button
           className="button-outline button-sm"
           onClick={() => {
-            collapseAllGroups();
+            closeAllGroups();
           }}
         >
           <TextAlignMiddleIcon />
@@ -23,7 +23,7 @@ export function CollapseAllButton() {
 }
 
 export function ExpandAllButton() {
-  const expandAllGroups = useUIStore((s) => s.expandAllGroups);
+  const openAllGroups = useUIStore((s) => s.openAllGroups);
 
   return (
     <AppTooltip.Root>
@@ -31,7 +31,7 @@ export function ExpandAllButton() {
         <button
           className="button-outline button-sm"
           onClick={() => {
-            expandAllGroups();
+            openAllGroups();
           }}
         >
           <LineHeightIcon />

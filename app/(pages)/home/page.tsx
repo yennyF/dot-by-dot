@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CalendarDay from "./CalendarDay/CalendarDay";
 import {
   PieChartIcon,
   PlusIcon,
   TriangleDownIcon,
+  ViewGridIcon,
+  ViewHorizontalIcon,
 } from "@radix-ui/react-icons";
 import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
@@ -17,9 +18,15 @@ import RightButton from "./Header/RightButton";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
-import Link from "next/link";
 import { supabase } from "@/app/supabase/server";
 import AppTooltip from "@/app/components/AppTooltip";
+import { useUIStore } from "@/app/stores/useUIStore";
+import Sidebar from "@/app/(pages)/home/Sidebar/Sidebar";
+import LogGrid from "./LogGrid/LogGrid";
+import { useTaskStore } from "@/app/stores/taskStore";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import LogRow from "./LogRow/LogRow";
 
 export default function HomePage() {
   const router = useRouter();
@@ -55,43 +62,95 @@ export default function HomePage() {
 }
 
 function Content() {
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const dotLayout = useUIStore((s) => s.dotLayout);
+  const setDotLayout = useUIStore((s) => s.setDotLayout);
+
+  const fetchGroups = useGroupStore((s) => s.fetchGroups);
+  const fetchTasks = useTaskStore((s) => s.fetchTasks);
+  const fetchTaskLogs = useTaskLogStore((s) => s.fetchTaskLogs);
+  const totalDate = useTaskLogStore((s) => s.totalDate);
+
+  useEffect(() => {
+    try {
+      Promise.all([fetchGroups(), fetchTasks()]);
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      fetchTaskLogs();
+    } catch {
+      notifyLoadError();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalDate]);
+
   return (
     <>
       <AppHeader>
         <div className="flex flex-1 items-center justify-between gap-10">
           <div className="flex gap-2">
-            <LeftButton />
-            <RightButton />
-            <TodayButton />
-
-            <Link href="/stats" className="text-[var(--inverted)]">
-              <button className="button-outline button-sm">
-                <PieChartIcon />
-                stats
-              </button>
-            </Link>
+            <button
+              className="button-outline button-sm"
+              onClick={() => {
+                toggleSidebar();
+              }}
+            >
+              <PieChartIcon />
+              Stats
+            </button>
+            <button
+              data-state={dotLayout === "grid" ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => {
+                setDotLayout("grid");
+              }}
+            >
+              <ViewGridIcon />
+            </button>
+            <button
+              data-state={dotLayout === "row" ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => {
+                setDotLayout("row");
+              }}
+            >
+              <ViewHorizontalIcon />
+            </button>
           </div>
           <div className="flex gap-2">
-            <ExpandAllButton />
-            <CollapseAllButton />
-            <CreateDropdown>
-              <span>
-                <AppTooltip.Root>
-                  <AppTooltip.Trigger asChild>
-                    <button className="button-accent button-sm">
-                      <PlusIcon />
-                      <TriangleDownIcon />
-                    </button>
-                  </AppTooltip.Trigger>
-                  <AppTooltip.Content>Create new...</AppTooltip.Content>
-                </AppTooltip.Root>
-              </span>
-            </CreateDropdown>
+            {dotLayout === "row" && (
+              <>
+                <LeftButton />
+                <RightButton />
+                <TodayButton />
+                <ExpandAllButton />
+                <CollapseAllButton />
+                <CreateDropdown>
+                  <span>
+                    <AppTooltip.Root>
+                      <AppTooltip.Trigger asChild>
+                        <button className="button-accent button-sm">
+                          <PlusIcon />
+                          <TriangleDownIcon />
+                        </button>
+                      </AppTooltip.Trigger>
+                      <AppTooltip.Content>Create new...</AppTooltip.Content>
+                    </AppTooltip.Root>
+                  </span>
+                </CreateDropdown>
+              </>
+            )}
           </div>
         </div>
       </AppHeader>
-      <main>
-        <CalendarDay />
+      <main className="flex">
+        <Sidebar />
+        {dotLayout === "grid" ? <LogGrid /> : <LogRow />}
       </main>
     </>
   );

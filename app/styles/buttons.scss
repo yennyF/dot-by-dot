@@ -50,6 +50,10 @@
   outline-style: solid;
   outline-color: var(--black);
   
+  &[data-state="active"] {
+    @apply bg-[var(--black)] text-[var(--white)];
+  }
+
   &:hover {
     @apply  bg-[var(--black)] text-[var(--white)];
   }

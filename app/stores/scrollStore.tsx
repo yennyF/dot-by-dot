@@ -3,9 +3,8 @@ import { createRef, RefObject } from "react";
 
 type State = {
   todayRef: RefObject<HTMLDivElement | null>;
-  headerColRef: RefObject<HTMLDivElement | null>;
-  headerRowRef: RefObject<HTMLDivElement | null>;
-  contentRef: RefObject<HTMLDivElement | null>;
+  taskSidebarRef: RefObject<HTMLDivElement | null>;
+  taskLogRef: RefObject<HTMLDivElement | null>;
 
   isAtLeft: boolean;
   isAtRight: boolean;
@@ -27,9 +26,8 @@ type Action = {
 
 export const useScrollStore = create<Action & State>((set, get) => ({
   todayRef: createRef<HTMLDivElement>(),
-  headerColRef: createRef<HTMLDivElement>(),
-  headerRowRef: createRef<HTMLDivElement>(),
-  contentRef: createRef<HTMLDivElement>(),
+  taskSidebarRef: createRef<HTMLDivElement>(),
+  taskLogRef: createRef<HTMLDivElement>(),
 
   isAtLeft: false,
   isAtRight: false,
@@ -37,7 +35,7 @@ export const useScrollStore = create<Action & State>((set, get) => ({
   isAtBottom: false,
 
   setIsAtLeft: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
 
     const { scrollLeft } = el;
@@ -45,7 +43,7 @@ export const useScrollStore = create<Action & State>((set, get) => ({
     set({ isAtLeft });
   },
   setIsAtRight: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
 
     const { scrollLeft, clientWidth, scrollWidth } = el;
@@ -53,7 +51,7 @@ export const useScrollStore = create<Action & State>((set, get) => ({
     set({ isAtRight });
   },
   setIsAtTop: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
 
     const { scrollTop } = el;
@@ -61,7 +59,7 @@ export const useScrollStore = create<Action & State>((set, get) => ({
     set({ isAtTop });
   },
   setIsAtBottom: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
 
     const { scrollTop, scrollHeight, clientHeight } = el;
@@ -70,8 +68,8 @@ export const useScrollStore = create<Action & State>((set, get) => ({
   },
 
   scrollToLeft: (forceToEnd: boolean = false) => {
-    const el = get().contentRef.current;
-    const headerRowEl = get().headerRowRef.current;
+    const el = get().taskLogRef.current;
+    const headerRowEl = get().taskSidebarRef.current;
     if (!el || !headerRowEl) return;
 
     if (forceToEnd) {
@@ -82,8 +80,8 @@ export const useScrollStore = create<Action & State>((set, get) => ({
     }
   },
   scrollToRight: (forceToEnd: boolean = false) => {
-    const el = get().contentRef.current;
-    const headerRowEl = get().headerRowRef.current;
+    const el = get().taskLogRef.current;
+    const headerRowEl = get().taskSidebarRef.current;
     if (!el || !headerRowEl) return;
 
     if (forceToEnd) {
@@ -94,12 +92,12 @@ export const useScrollStore = create<Action & State>((set, get) => ({
     }
   },
   scrollToTop: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
     el.scrollTo({ left: 0, behavior: "smooth" });
   },
   scrollToBottom: () => {
-    const el = get().contentRef.current;
+    const el = get().taskLogRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   },
