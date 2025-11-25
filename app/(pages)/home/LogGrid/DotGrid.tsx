@@ -53,7 +53,7 @@ export function Content({
       <div
         className={clsx(
           styles.week,
-          "mb-[15px] flex items-center justify-around"
+          "my-[15px] flex items-center justify-around"
         )}
       >
         {WEEK_DAYS.map((name, index) => (

@@ -21,7 +21,7 @@ export default function GroupDot({ date, count }: GroupDotProps) {
         <div
           className={clsx(
             "transform rounded-full",
-            isActive ? "size-[var(--dot-size)]" : "size-[5px]",
+            isActive ? "size-[var(--dot-size)]" : "size-[6px]",
             isActive
               ? "bg-[var(--inverted)]"
               : isWeekendDate

@@ -35,10 +35,10 @@ export default function LogGrid() {
         </Breadcrumbs>
       </div>
 
-      {/* <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-[40px]"> */}
-
-      <TaskList groupId={selectedGroup?.id || null} />
-      {!selectedGroup && <GroupList />}
+      <>
+        <TaskList groupId={selectedGroup?.id || null} />
+        {!selectedGroup && <GroupList />}
+      </>
     </div>
   );
 }
@@ -46,8 +46,13 @@ export default function LogGrid() {
 function GroupList() {
   const groups = useGroupStore((s) => s.groups);
 
+  if (groups.length === 0) return;
+
   return (
-    <div className="mt-[80px] flex flex-wrap gap-[100px]">
+    <div
+      className="mt-[80px] grid justify-center gap-[60px]"
+      style={{ gridTemplateColumns: "repeat(auto-fill, 250px)" }}
+    >
       {groups.map((group) => (
         <GroupGrid key={group.id} group={group} />
       ))}
@@ -58,9 +63,16 @@ function GroupList() {
 function TaskList({ groupId }: { groupId: string | null }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]);
 
+  if (!tasks || tasks.length === 0) return;
+
   return (
-    <div className="flex flex-wrap gap-[100px]">
-      {tasks?.map((task) => <TaskGrid key={task.id} task={task} />)}
+    <div
+      className="mt-[80px] grid justify-center gap-[60px]"
+      style={{ gridTemplateColumns: "repeat(auto-fill, 250px)" }}
+    >
+      {tasks.map((task) => (
+        <TaskGrid key={task.id} task={task} />
+      ))}
     </div>
   );
 }
