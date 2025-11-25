@@ -22,7 +22,7 @@ export function LabelGroup({
       onClick={onClick}
     >
       <CubeIcon className="text-[var(--gray-9)]" />
-      <span className="overflow-hidden text-ellipsis text-nowrap">
+      <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
         {children}
       </span>
     </button>

@@ -1,11 +1,11 @@
 "use client";
 
 import { ShadowBottom, ShadowLeft, ShadowRight, ShadowTop } from "./shadows";
-import TaskSidebar from "./TaskSidebar/TaskSidebar";
+import LogSidebar from "./LogSidebar/LogSidebar";
 import HorizontalDragScroll from "@/app/components/HorizontalDragScroll";
 import { useScrollStore } from "@/app/stores/scrollStore";
-import DateRow from "./TaskHeader/DateRow";
-import TaskContent from "./TaskContent/TaskContent";
+import DateRow from "./LogHeader/DateRow";
+import LogContent from "./LogContent/LogContent";
 
 export default function LogRow() {
   const taskLogRef = useScrollStore((s) => s.taskLogRef);
@@ -26,9 +26,9 @@ export default function LogRow() {
       </div>
       <div className="flex w-fit">
         <ShadowLeft />
-        <TaskContent />
+        <LogContent />
         <ShadowRight />
-        <TaskSidebar />
+        <LogSidebar />
       </div>
       <ShadowBottom />
     </HorizontalDragScroll>

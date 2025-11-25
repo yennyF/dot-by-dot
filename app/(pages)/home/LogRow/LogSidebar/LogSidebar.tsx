@@ -13,7 +13,7 @@ import { Group } from "@/app/types";
 import { Collapsible } from "radix-ui";
 import { useUIStore } from "@/app/stores/useUIStore";
 
-export default function TaskSidebar() {
+export default function LogSidebar() {
   const taskSidebarRef = useScrollStore((s) => s.taskSidebarRef);
   const topGroupRef = useRef<HTMLDivElement>(null);
 
