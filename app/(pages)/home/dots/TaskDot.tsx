@@ -4,13 +4,13 @@ import { isToday, isWeekend } from "date-fns";
 import clsx from "clsx";
 import { CheckIcon } from "@radix-ui/react-icons";
 
-interface TaskItemProps {
+interface TaskDotProps {
   date: Date;
   taskId: string;
   isActive: boolean;
 }
 
-export default function TaskDot({ date, taskId, isActive }: TaskItemProps) {
+export default function TaskDot({ date, taskId, isActive }: TaskDotProps) {
   const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);
 

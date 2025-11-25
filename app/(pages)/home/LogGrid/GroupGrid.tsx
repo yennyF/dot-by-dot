@@ -1,35 +1,33 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import styles from "./styles.module.scss";
 import GroupDot from "../dots/GroupDot";
 import { useTaskStore } from "@/app/stores/taskStore";
-import GridHeader from "./GridHeader";
+import { useUIStore } from "@/app/stores/useUIStore";
+import DotGrid from "./DotGrid";
+import { Group } from "@/app/types";
 
-export default function GroupGrid({ groupId }: { groupId: string }) {
+export default function GroupGrid({ group }: { group: Group }) {
+  const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
   const totalDate = useTaskLogStore((s) => s.totalDate);
-  const paddingDays = useTaskLogStore((s) => s.paddingDays);
 
   return (
-    <div className={styles.grid}>
-      <GridHeader />
-      <div className={styles.log}>
-        {paddingDays.map((day) => (
-          <div key={day.toDateString()} className="size-[var(--dot-size)]" />
-        ))}
+    <DotGrid.Root>
+      <DotGrid.LabelGroup onClick={() => setSelectedGroup(group)}>
+        {group.name}
+      </DotGrid.LabelGroup>
+      <DotGrid.Content>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <GroupItem
-                key={date.toDateString()}
-                date={date}
-                groupId={groupId}
-              />
+              <DotGrid.Item key={date.toDateString()} date={date}>
+                <GroupItem date={date} groupId={group.id} />
+              </DotGrid.Item>
             ))
           )
         )}
-      </div>
-    </div>
+      </DotGrid.Content>
+    </DotGrid.Root>
   );
 }
 
@@ -37,10 +35,5 @@ function GroupItem({ date, groupId }: { date: Date; groupId: string }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[groupId]) || [];
   const count = useTaskLogStore((s) => s.getTasksDone(date, tasks).length);
 
-  return (
-    <div className={"relative flex items-center justify-center"}>
-      <GroupDot date={date} count={count} />
-      <span className={styles.date}>{date.getDate()}</span>
-    </div>
-  );
+  return <GroupDot date={date} count={count} />;
 }

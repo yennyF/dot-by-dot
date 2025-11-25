@@ -1,33 +1,30 @@
 "use client";
 
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import styles from "./styles.module.scss";
-import useClickLog from "@/app/hooks/useClickLog";
-import { toApiDate } from "@/app/types";
+import { Task, toApiDate } from "@/app/types";
 import TaskDot from "../dots/TaskDot";
-import GridHeader from "./GridHeader";
+import DotGrid from "./DotGrid";
+import useClickLog from "@/app/hooks/useClickLog";
 
-export default function TaskGrid({ taskId }: { taskId: string }) {
+export default function TaskGrid({ task }: { task: Task }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
-  const paddingDays = useTaskLogStore((s) => s.paddingDays);
   const handleClick = useClickLog();
 
   return (
-    <div className={styles.grid}>
-      <GridHeader />
-      <div className={styles.log} onClick={handleClick}>
-        {paddingDays.map((day) => (
-          <div key={day.toDateString()} className="size-[var(--dot-size)]" />
-        ))}
+    <DotGrid.Root key={task.id}>
+      <DotGrid.LabelTask>{task.name}</DotGrid.LabelTask>
+      <DotGrid.Content onClick={handleClick}>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <TaskItem key={date.toDateString()} date={date} taskId={taskId} />
+              <DotGrid.Item key={date.toDateString()} date={date}>
+                <TaskItem date={date} taskId={task.id} />
+              </DotGrid.Item>
             ))
           )
         )}
-      </div>
-    </div>
+      </DotGrid.Content>
+    </DotGrid.Root>
   );
 }
 
@@ -36,10 +33,5 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
     (s) => s.tasksByDate[toApiDate(date)]?.has(taskId) ?? false
   );
 
-  return (
-    <div className="relative flex shrink-0 items-center justify-center">
-      <span className={styles.date}>{date.getDate()}</span>
-      <TaskDot date={date} taskId={taskId} isActive={isActive} />
-    </div>
-  );
+  return <TaskDot date={date} taskId={taskId} isActive={isActive} />;
 }

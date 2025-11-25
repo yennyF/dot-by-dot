@@ -4,12 +4,12 @@ import { isWeekend } from "date-fns";
 import clsx from "clsx";
 import AppTooltip from "@/app/components/AppTooltip";
 
-interface TaskItemProps {
+interface GroupDotProps {
   date: Date;
   count: number;
 }
 
-export default function GroupDot({ date, count }: TaskItemProps) {
+export default function GroupDot({ date, count }: GroupDotProps) {
   const isWeekendDate = isWeekend(date);
   const isActive = count > 0;
 
@@ -17,7 +17,7 @@ export default function GroupDot({ date, count }: TaskItemProps) {
 
   return (
     <AppTooltip.Root delayDuration={100}>
-      <AppTooltip.Trigger className="flex shrink-0 cursor-default items-center justify-center">
+      <AppTooltip.Trigger className="flex size-[var(--dot-size)] shrink-0 cursor-default items-center justify-center">
         <div
           className={clsx(
             "transform rounded-full",

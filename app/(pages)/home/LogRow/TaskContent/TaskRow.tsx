@@ -3,12 +3,13 @@ import { memo } from "react";
 import { toApiDate } from "@/app/types";
 import { addDays } from "date-fns";
 import TaskDot from "../../dots/TaskDot";
+import DotRow from "./DotRow";
 
 function TaskRowWrapper({ taskId }: { taskId: string }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <div className="app-TaskList flex">
+    <DotRow.Root>
       {totalDate.map(({ year, months }) =>
         months.map(({ month, days }) => (
           <div key={`${year}-${month}`} className="flex min-w-[150px]">
@@ -18,7 +19,7 @@ function TaskRowWrapper({ taskId }: { taskId: string }) {
           </div>
         ))
       )}
-    </div>
+    </DotRow.Root>
   );
 }
 const TaskRow = memo(TaskRowWrapper);
@@ -33,11 +34,12 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
   );
 
   return (
-    <div className="app-TaskRowItem relative flex h-row w-day items-center justify-center">
-      {isNextActive && isActive && (
-        <div className="absolute -right-1/2 left-1/2 z-[-1] h-[var(--dot-size)] animate-fade-in bg-[var(--accent-4)]" />
-      )}
+    <DotRow.Item
+      isActive={isActive}
+      isNextActive={isNextActive}
+      color="bg-[var(--accent-4)]"
+    >
       <TaskDot date={date} taskId={taskId} isActive={isActive} />
-    </div>
+    </DotRow.Item>
   );
 }
