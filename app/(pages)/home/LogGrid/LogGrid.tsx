@@ -18,18 +18,18 @@ export default function LogGrid() {
       <div className="sticky top-[100px] z-10 mb-[60px]">
         <div className="flex flex-wrap gap-[10px]">
           <button
-            data-state={selectedGroup === undefined ? "active" : undefined}
+            data-state={selectedGroup === null ? "active" : undefined}
             className="button-outline button-sm"
-            onClick={() => setSelectedGroup(undefined)}
+            onClick={() => setSelectedGroup(null)}
           >
             <HomeIcon />
           </button>
           {groups.map((group) => (
             <button
               key={group.id}
-              data-state={selectedGroup?.id === group.id ? "active" : undefined}
+              data-state={selectedGroup === group.id ? "active" : undefined}
               className="button-outline button-sm"
-              onClick={() => setSelectedGroup(group)}
+              onClick={() => setSelectedGroup(group.id)}
             >
               {group.name}
             </button>
@@ -44,7 +44,7 @@ export default function LogGrid() {
         }}
       >
         {selectedGroup ? (
-          <TaskList groupId={selectedGroup.id} />
+          <TaskList groupId={selectedGroup} />
         ) : (
           <>
             <TaskList groupId={null} />

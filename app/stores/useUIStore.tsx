@@ -18,8 +18,8 @@ type Store = {
   dotLayout: DotLayoutType;
   setDotLayout: (dotLayout: DotLayoutType) => void;
 
-  selectedGroup: Group | undefined;
-  setSelectedGroup: (group: Group | undefined) => void;
+  selectedGroup: string | null;
+  setSelectedGroup: (group: string | null) => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -65,9 +65,9 @@ export const useUIStore = create<Store>()(
         set({ dotLayout });
       },
 
-      selectedGroup: undefined,
+      selectedGroup: null,
 
-      setSelectedGroup: (selectedGroup: Group | undefined) => {
+      setSelectedGroup: (selectedGroup: Store["selectedGroup"]) => {
         set({ selectedGroup });
       },
     }),

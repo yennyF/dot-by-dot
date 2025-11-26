@@ -29,7 +29,7 @@ export default function Sidebar() {
               <CalendarMonth />
             </div> */}
             {selectedGroup ? (
-              <GroupDetail groupId={selectedGroup.id} />
+              <GroupDetail groupId={selectedGroup} />
             ) : (
               <GroupAll />
             )}
