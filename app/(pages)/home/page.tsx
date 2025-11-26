@@ -22,11 +22,11 @@ import { supabase } from "@/app/supabase/server";
 import AppTooltip from "@/app/components/AppTooltip";
 import { useUIStore } from "@/app/stores/useUIStore";
 import Sidebar from "@/app/(pages)/home/Sidebar/Sidebar";
-import LogGrid from "./LogGrid/LogGrid";
+import ViewGrid from "./ViewGrid/ViewGrid";
 import { useTaskStore } from "@/app/stores/taskStore";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
-import LogRow from "./LogRow/LogRow";
+import ViewRow from "./ViewRow/ViewRow";
 
 export default function HomePage() {
   const router = useRouter();
@@ -150,7 +150,7 @@ function Content() {
       </AppHeader>
       <main className="flex">
         <Sidebar />
-        {dotLayout === "grid" ? <LogGrid /> : <LogRow />}
+        {dotLayout === "grid" ? <ViewGrid /> : <ViewRow />}
       </main>
     </>
   );

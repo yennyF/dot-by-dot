@@ -4,13 +4,13 @@ import { memo } from "react";
 import { useTaskStore } from "@/app/stores/taskStore";
 import { addDays } from "date-fns";
 import GroupDot from "../../dots/GroupDot";
-import DotRow from "./DotRow";
+import Row from "./Row";
 
 function GroupRowWrapper({ group }: { group: Group }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <DotRow.Root>
+    <Row.Root>
       {totalDate.map(({ year, months }) =>
         months.map(({ month, days }) => (
           <div key={`${year}-${month}`} className="flex min-w-[150px]">
@@ -24,7 +24,7 @@ function GroupRowWrapper({ group }: { group: Group }) {
           </div>
         ))
       )}
-    </DotRow.Root>
+    </Row.Root>
   );
 }
 const GroupRow = memo(GroupRowWrapper);
@@ -42,12 +42,12 @@ function GroupItem({ date, groupId }: { date: Date; groupId: string }) {
   const isNextActive = nextCount > 0;
 
   return (
-    <DotRow.Item
+    <Row.Item
       isActive={isActive}
       isNextActive={isNextActive}
       color="bg-[var(--inverted-5)]"
     >
       <GroupDot date={date} count={count} />
-    </DotRow.Item>
+    </Row.Item>
   );
 }

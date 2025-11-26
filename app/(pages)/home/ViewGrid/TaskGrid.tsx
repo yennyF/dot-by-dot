@@ -3,7 +3,7 @@
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import { Task, toApiDate } from "@/app/types";
 import TaskDot from "../dots/TaskDot";
-import DotGrid from "./DotGrid";
+import Grid from "./Grid";
 import useClickLog from "@/app/hooks/useClickLog";
 
 export default function TaskGrid({ task }: { task: Task }) {
@@ -11,20 +11,20 @@ export default function TaskGrid({ task }: { task: Task }) {
   const handleClick = useClickLog();
 
   return (
-    <DotGrid.Root key={task.id}>
-      <DotGrid.LabelTask>{task.name}</DotGrid.LabelTask>
-      <DotGrid.Content onClick={handleClick}>
+    <Grid.Root key={task.id}>
+      <Grid.LabelTask>{task.name}</Grid.LabelTask>
+      <Grid.Content onClick={handleClick}>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <DotGrid.Item key={date.toDateString()} date={date}>
+              <Grid.Item key={date.toDateString()} date={date}>
                 <TaskItem date={date} taskId={task.id} />
-              </DotGrid.Item>
+              </Grid.Item>
             ))
           )
         )}
-      </DotGrid.Content>
-    </DotGrid.Root>
+      </Grid.Content>
+    </Grid.Root>
   );
 }
 

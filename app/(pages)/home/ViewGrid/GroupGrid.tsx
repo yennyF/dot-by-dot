@@ -3,27 +3,27 @@
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import GroupDot from "../dots/GroupDot";
 import { useTaskStore } from "@/app/stores/taskStore";
-import DotGrid from "./DotGrid";
+import Grid from "./Grid";
 import { Group } from "@/app/types";
 
 export default function GroupGrid({ group }: { group: Group }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <DotGrid.Root>
-      <DotGrid.LabelGroup>{group.name}</DotGrid.LabelGroup>
-      <DotGrid.Content>
+    <Grid.Root>
+      <Grid.LabelGroup>{group.name}</Grid.LabelGroup>
+      <Grid.Content>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <DotGrid.Item key={date.toDateString()} date={date}>
+              <Grid.Item key={date.toDateString()} date={date}>
                 <GroupItem date={date} groupId={group.id} />
-              </DotGrid.Item>
+              </Grid.Item>
             ))
           )
         )}
-      </DotGrid.Content>
-    </DotGrid.Root>
+      </Grid.Content>
+    </Grid.Root>
   );
 }
 

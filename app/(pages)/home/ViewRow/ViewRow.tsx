@@ -7,13 +7,13 @@ import { useScrollStore } from "@/app/stores/scrollStore";
 import DateRow from "./LogHeader/DateRow";
 import LogContent from "./LogContent/LogContent";
 
-export default function LogRow() {
+export default function ViewRow() {
   const taskLogRef = useScrollStore((s) => s.taskLogRef);
 
   return (
     <HorizontalDragScroll
       ref={taskLogRef}
-      className="app-LogRow scrollbar-none relative mx-[35px] mb-[35px] mt-[70px] max-h-[calc(100dvh-70px-35px)] w-[calc(100dvw-70px)] flex-1 overflow-scroll overscroll-none"
+      className="scrollbar-none relative mx-[35px] mb-[35px] mt-[70px] max-h-[calc(100dvh-70px-35px)] w-[calc(100dvw-70px)] flex-1 overflow-scroll overscroll-none"
     >
       <div className="sticky top-0 z-20 w-fit">
         <div className="flex items-stretch">

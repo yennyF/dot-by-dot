@@ -8,7 +8,7 @@ import GroupGrid from "./GroupGrid";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { HomeIcon } from "@radix-ui/react-icons";
 
-export default function LogGrid() {
+export default function ViewGrid() {
   const selectedGroup = useUIStore((s) => s.selectedGroup);
   const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
   const groups = useGroupStore((s) => s.groups);

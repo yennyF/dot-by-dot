@@ -1,5 +1,5 @@
 import { CubeIcon } from "@radix-ui/react-icons";
-import styles from "./DotGrid.module.scss";
+import styles from "./Grid.module.scss";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
@@ -103,11 +103,11 @@ export function Item({
   );
 }
 
-const DotGrid = {
+const Grid = {
   Root,
   LabelGroup,
   LabelTask,
   Content,
   Item,
 };
-export default DotGrid;
+export default Grid;

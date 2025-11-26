@@ -43,8 +43,8 @@ function Item({
   );
 }
 
-const DotRow = {
+const Row = {
   Root,
   Item,
 };
-export default DotRow;
+export default Row;

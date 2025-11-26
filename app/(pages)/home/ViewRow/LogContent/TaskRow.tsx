@@ -3,13 +3,13 @@ import { memo } from "react";
 import { toApiDate } from "@/app/types";
 import { addDays } from "date-fns";
 import TaskDot from "../../dots/TaskDot";
-import DotRow from "./DotRow";
+import Row from "./Row";
 
 function TaskRowWrapper({ taskId }: { taskId: string }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
 
   return (
-    <DotRow.Root>
+    <Row.Root>
       {totalDate.map(({ year, months }) =>
         months.map(({ month, days }) => (
           <div key={`${year}-${month}`} className="flex min-w-[150px]">
@@ -19,7 +19,7 @@ function TaskRowWrapper({ taskId }: { taskId: string }) {
           </div>
         ))
       )}
-    </DotRow.Root>
+    </Row.Root>
   );
 }
 const TaskRow = memo(TaskRowWrapper);
@@ -34,12 +34,12 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
   );
 
   return (
-    <DotRow.Item
+    <Row.Item
       isActive={isActive}
       isNextActive={isNextActive}
       color="bg-[var(--accent-4)]"
     >
       <TaskDot date={date} taskId={taskId} isActive={isActive} />
-    </DotRow.Item>
+    </Row.Item>
   );
 }
