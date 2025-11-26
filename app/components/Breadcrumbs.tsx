@@ -5,7 +5,7 @@ const BreadcrumbsContext = React.createContext(
   {} as { value: string | undefined }
 );
 
-export default function Breadcrumbs({
+function Root({
   children,
   separator = "/",
   value,
@@ -34,12 +34,7 @@ interface BreadcrumbsItemProps extends React.ComponentProps<"button"> {
   value: string;
 }
 
-export function BreadcrumbsItem({
-  children,
-  className,
-  value,
-  ...props
-}: BreadcrumbsItemProps) {
+function Item({ children, className, value, ...props }: BreadcrumbsItemProps) {
   const { value: selectedValue } = React.use(BreadcrumbsContext);
   const isActive = selectedValue === value;
 
@@ -59,3 +54,9 @@ export function BreadcrumbsItem({
     </button>
   );
 }
+
+const Breadcrumbs = {
+  Root,
+  Item,
+};
+export default Breadcrumbs;

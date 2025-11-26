@@ -3,76 +3,65 @@
 import React from "react";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
-import { CubeIcon } from "@radix-ui/react-icons";
-import Breadcrumbs, { BreadcrumbsItem } from "@/app/components/Breadcrumbs";
 import TaskGrid from "./TaskGrid";
 import GroupGrid from "./GroupGrid";
 import { useUIStore } from "@/app/stores/useUIStore";
+import { HomeIcon } from "@radix-ui/react-icons";
 
 export default function LogGrid() {
   const selectedGroup = useUIStore((s) => s.selectedGroup);
   const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
+  const groups = useGroupStore((s) => s.groups);
 
   return (
     <div className="my-[100px] flex-1 px-[50px]">
-      <div className="my-[20px]">
-        <Breadcrumbs value={selectedGroup?.id ?? "-1"}>
-          <BreadcrumbsItem
-            value={"-1"}
+      <div className="sticky top-[100px] z-10 mb-[60px]">
+        <div className="flex flex-wrap gap-[10px]">
+          <button
+            data-state={selectedGroup === undefined ? "active" : undefined}
+            className="button-outline button-sm"
             onClick={() => setSelectedGroup(undefined)}
           >
-            All groups
-          </BreadcrumbsItem>
-          {selectedGroup && (
-            <BreadcrumbsItem
-              value={selectedGroup.id}
-              className="flex items-center gap-[10px]"
+            <HomeIcon />
+          </button>
+          {groups.map((group) => (
+            <button
+              key={group.id}
+              data-state={selectedGroup?.id === group.id ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => setSelectedGroup(group)}
             >
-              <CubeIcon className="size-[20px]" />
-              <span>{selectedGroup.name}</span>
-            </BreadcrumbsItem>
-          )}
-        </Breadcrumbs>
+              {group.name}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <>
-        <TaskList groupId={selectedGroup?.id || null} />
-        {!selectedGroup && <GroupList />}
-      </>
+      <div
+        className="grid justify-center gap-[60px]"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, 250px)",
+        }}
+      >
+        {selectedGroup ? (
+          <TaskList groupId={selectedGroup.id} />
+        ) : (
+          <>
+            <TaskList groupId={null} />
+            <GroupList />
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 function GroupList() {
   const groups = useGroupStore((s) => s.groups);
-
-  if (groups.length === 0) return;
-
-  return (
-    <div
-      className="mt-[80px] grid justify-center gap-[60px]"
-      style={{ gridTemplateColumns: "repeat(auto-fill, 250px)" }}
-    >
-      {groups.map((group) => (
-        <GroupGrid key={group.id} group={group} />
-      ))}
-    </div>
-  );
+  return groups.map((group) => <GroupGrid key={group.id} group={group} />);
 }
 
 function TaskList({ groupId }: { groupId: string | null }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[groupId ?? UNGROUPED_KEY]);
-
-  if (!tasks || tasks.length === 0) return;
-
-  return (
-    <div
-      className="mt-[80px] grid justify-center gap-[60px]"
-      style={{ gridTemplateColumns: "repeat(auto-fill, 250px)" }}
-    >
-      {tasks.map((task) => (
-        <TaskGrid key={task.id} task={task} />
-      ))}
-    </div>
-  );
+  return tasks?.map((task) => <TaskGrid key={task.id} task={task} />);
 }
