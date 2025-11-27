@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useGroupStore } from "./groupStore";
-import { Group } from "../types";
 
-type DotLayoutType = "grid" | "row";
+type HomeViewType = "grid" | "row" | "stats";
 
 type Store = {
   closedGroups: string[];
@@ -15,11 +14,11 @@ type Store = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 
-  dotLayout: DotLayoutType;
-  setDotLayout: (dotLayout: DotLayoutType) => void;
+  homeView: HomeViewType;
+  setHomeView: (homeView: HomeViewType) => void;
 
-  selectedGroup: Group | undefined;
-  setSelectedGroup: (group: Group | undefined) => void;
+  selectedGroup: string | null;
+  setSelectedGroup: (group: string | null) => void;
 };
 
 export const useUIStore = create<Store>()(
@@ -59,15 +58,15 @@ export const useUIStore = create<Store>()(
         });
       },
 
-      dotLayout: "grid",
+      homeView: "grid",
 
-      setDotLayout: (dotLayout: DotLayoutType) => {
-        set({ dotLayout });
+      setHomeView: (homeView: HomeViewType) => {
+        set({ homeView });
       },
 
-      selectedGroup: undefined,
+      selectedGroup: null,
 
-      setSelectedGroup: (selectedGroup: Group | undefined) => {
+      setSelectedGroup: (selectedGroup: Store["selectedGroup"]) => {
         set({ selectedGroup });
       },
     }),

@@ -9,7 +9,7 @@ import useClickLog from "@/app/hooks/useClickLog";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
 
-export default function TaskBody() {
+export default function LogContent() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 

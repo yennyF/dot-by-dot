@@ -5,7 +5,7 @@ const BreadcrumbsContext = React.createContext(
   {} as { value: string | undefined }
 );
 
-export default function Breadcrumbs({
+function Root({
   children,
   separator = "/",
   value,
@@ -18,7 +18,7 @@ export default function Breadcrumbs({
 
   return (
     <BreadcrumbsContext.Provider value={{ value }}>
-      <div className="flex items-center gap-[10px] text-xl">
+      <div className="flex items-center gap-[10px] text-sm">
         {items.map((child, index) => (
           <React.Fragment key={index}>
             {child}
@@ -34,12 +34,7 @@ interface BreadcrumbsItemProps extends React.ComponentProps<"button"> {
   value: string;
 }
 
-export function BreadcrumbsItem({
-  children,
-  className,
-  value,
-  ...props
-}: BreadcrumbsItemProps) {
+function Item({ children, className, value, ...props }: BreadcrumbsItemProps) {
   const { value: selectedValue } = React.use(BreadcrumbsContext);
   const isActive = selectedValue === value;
 
@@ -47,15 +42,15 @@ export function BreadcrumbsItem({
     <button
       {...props}
       data-state={isActive ? "open" : "closed"}
-      className={clsx(
-        className,
-        "text-xl",
-        isActive
-          ? "cursor-default font-bold"
-          : "hover:underline hover:decoration-2 hover:underline-offset-4"
-      )}
+      className={clsx(className, isActive ? "font-bold" : "")}
     >
       {children}
     </button>
   );
 }
+
+const Breadcrumbs = {
+  Root,
+  Item,
+};
+export default Breadcrumbs;

@@ -37,7 +37,7 @@ type State = {
   startDate: Date;
   endDate: Date;
   totalDate: YearType[];
-  paddingDays: boolean[];
+  paddingDays: Date[];
 };
 
 type Action = {
@@ -59,8 +59,12 @@ export const useTaskLogStore = create<State & Action>()(
     const endDate = today;
     const totalDate = getTotalDate(startDate, endDate);
 
-    const ghostCount = totalDate[0].months[0].days[0].getDay();
-    const paddingDays = Array(ghostCount).fill(false);
+    const first = totalDate[0].months[0].days[0];
+    const paddingDays = eachDayOfInterval({
+      start: subDays(first, first.getDay()),
+      end: first,
+    });
+    paddingDays.pop();
 
     return {
       startDate,
