@@ -18,7 +18,7 @@ function Root({
 
   return (
     <BreadcrumbsContext.Provider value={{ value }}>
-      <div className="flex items-center gap-[10px] text-xl">
+      <div className="flex items-center gap-[10px] text-sm">
         {items.map((child, index) => (
           <React.Fragment key={index}>
             {child}
@@ -42,13 +42,7 @@ function Item({ children, className, value, ...props }: BreadcrumbsItemProps) {
     <button
       {...props}
       data-state={isActive ? "open" : "closed"}
-      className={clsx(
-        className,
-        "text-xl",
-        isActive
-          ? "cursor-default font-bold"
-          : "hover:underline hover:decoration-2 hover:underline-offset-4"
-      )}
+      className={clsx(className, isActive ? "font-bold" : "")}
     >
       {children}
     </button>

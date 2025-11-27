@@ -2,6 +2,7 @@ export function ProgressBar({
   value,
   size = 80,
   color = "#10b981",
+  bgColor = "var(--gray-5)",
   thickness = 6,
   start = 0,
   children,
@@ -9,6 +10,7 @@ export function ProgressBar({
   value: number;
   size?: number | string;
   color?: string;
+  bgColor?: string;
   thickness?: number;
   start?: number;
   children?: React.ReactNode;
@@ -17,8 +19,8 @@ export function ProgressBar({
 
   return (
     <div
-      className="relative flex items-center rounded-full bg-[var(--gray-5)]"
-      style={{ width, height: thickness + "px" }}
+      className="relative flex items-center rounded-full"
+      style={{ width, height: thickness + "px", backgroundColor: bgColor }}
     >
       <div
         className="absolute h-full rounded-full"
@@ -29,10 +31,7 @@ export function ProgressBar({
         }}
       />
       {children && (
-        <div
-          className="absolute mx-[10px]"
-          style={{ left: start + value + "%" }}
-        >
+        <div className="absolute" style={{ left: start + value + "%" }}>
           {children}
         </div>
       )}

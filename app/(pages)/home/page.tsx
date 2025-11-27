@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  LightningBoltIcon,
   PieChartIcon,
   PlusIcon,
   TriangleDownIcon,
@@ -27,6 +28,7 @@ import { useTaskStore } from "@/app/stores/taskStore";
 import { useGroupStore } from "@/app/stores/groupStore";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
 import ViewRow from "./ViewRow/ViewRow";
+import ViewStats from "./ViewStats/ViewStats";
 
 export default function HomePage() {
   const router = useRouter();
@@ -63,8 +65,8 @@ export default function HomePage() {
 
 function Content() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
-  const dotLayout = useUIStore((s) => s.dotLayout);
-  const setDotLayout = useUIStore((s) => s.setDotLayout);
+  const homeView = useUIStore((s) => s.homeView);
+  const setHomeView = useUIStore((s) => s.setHomeView);
 
   const fetchGroups = useGroupStore((s) => s.fetchGroups);
   const fetchTasks = useTaskStore((s) => s.fetchTasks);
@@ -100,30 +102,38 @@ function Content() {
                 toggleSidebar();
               }}
             >
-              <PieChartIcon />
-              Stats
+              <LightningBoltIcon />
             </button>
             <button
-              data-state={dotLayout === "grid" ? "active" : undefined}
+              data-state={homeView === "stats" ? "active" : undefined}
               className="button-outline button-sm"
               onClick={() => {
-                setDotLayout("grid");
+                setHomeView("stats");
+              }}
+            >
+              <PieChartIcon />
+            </button>
+            <button
+              data-state={homeView === "grid" ? "active" : undefined}
+              className="button-outline button-sm"
+              onClick={() => {
+                setHomeView("grid");
               }}
             >
               <ViewGridIcon />
             </button>
             <button
-              data-state={dotLayout === "row" ? "active" : undefined}
+              data-state={homeView === "row" ? "active" : undefined}
               className="button-outline button-sm"
               onClick={() => {
-                setDotLayout("row");
+                setHomeView("row");
               }}
             >
               <ViewHorizontalIcon />
             </button>
           </div>
           <div className="flex gap-2">
-            {dotLayout === "row" && (
+            {homeView === "row" && (
               <>
                 <LeftButton />
                 <RightButton />
@@ -150,7 +160,13 @@ function Content() {
       </AppHeader>
       <main className="flex">
         <Sidebar />
-        {dotLayout === "grid" ? <ViewGrid /> : <ViewRow />}
+        {homeView === "grid" ? (
+          <ViewGrid />
+        ) : homeView === "row" ? (
+          <ViewRow />
+        ) : (
+          <ViewStats />
+        )}
       </main>
     </>
   );
