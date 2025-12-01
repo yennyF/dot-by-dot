@@ -16,7 +16,13 @@ export default function TaskGrid({ task }: { task: Task }) {
       <Grid.Content onClick={handleClick}>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
-            days.map((date) => <TaskItem date={date} taskId={task.id} />)
+            days.map((date) => (
+              <TaskItem
+                key={date.toDateString()}
+                date={date}
+                taskId={task.id}
+              />
+            ))
           )
         )}
       </Grid.Content>
@@ -30,7 +36,7 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
   );
 
   return (
-    <Grid.Item key={date.toDateString()} date={date} isActive={isActive}>
+    <Grid.Item date={date} isActive={isActive}>
       <TaskDot date={date} taskId={taskId} isActive={isActive} />
     </Grid.Item>
   );

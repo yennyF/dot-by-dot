@@ -13,7 +13,7 @@ export function ShadowLeft({ className }: ShadowProps) {
 export function ShadowRight({ className }: ShadowProps) {
   return (
     <div
-      className={`shadow-right sticky right-name w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)] ${className}`}
+      className={`shadow-right sticky right-[var(--width-name)] w-[15px] shrink-0 bg-gradient-to-r from-transparent to-[var(--background)] ${className}`}
     />
   );
 }

@@ -30,7 +30,7 @@ export default function LogSidebar() {
     <SortableContainer className="sticky right-0 z-10">
       <div
         ref={taskSidebarRef}
-        className="flex w-name shrink-0 flex-col gap-5 bg-[var(--background)]"
+        className="flex w-[var(--width-name)] shrink-0 flex-col gap-5 bg-[var(--background)]"
       >
         <div className="app-group">
           <DummyTask groupId={null} />
