@@ -65,7 +65,7 @@ export function Content({
             key={index}
             className={clsx(
               "size-[var(--dot-size)] text-center text-[10px] font-bold",
-              name === "S" ? "text-[var(--red)]" : "text-[var(--black)]"
+              name === "S" ? "text-[var(--red)]" : "text-[var(--gray)]"
             )}
           >
             {name}
@@ -73,7 +73,7 @@ export function Content({
         ))}
       </div>
       <div
-        className="grid grid-cols-7 justify-around gap-y-[20px]"
+        className="grid grid-cols-7 place-items-center justify-around gap-y-[20px]"
         onClick={onClick}
       >
         {paddingDays.map((day) => (
@@ -88,21 +88,27 @@ export function Content({
 export function Item({
   children,
   date,
+  isActive,
+  isGroup = false,
 }: {
   children: React.ReactNode;
   date: Date;
+  isActive: boolean;
+  isGroup?: boolean;
 }) {
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="group relative flex w-fit items-center justify-center">
+      {children}
       <span
         className={clsx(
           styles.date,
-          "absolute text-[9px] text-[var(--gray-9)]"
+          "absolute text-xs",
+          !isGroup && "group-hover:hidden",
+          isActive ? "text-white" : "text-[var(--black)]"
         )}
       >
         {date.getDate()}
       </span>
-      {children}
     </div>
   );
 }

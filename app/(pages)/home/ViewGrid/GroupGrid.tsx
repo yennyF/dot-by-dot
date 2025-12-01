@@ -22,9 +22,11 @@ export default function GroupGrid({ group }: { group: Group }) {
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <Grid.Item key={date.toDateString()} date={date}>
-                <GroupItem date={date} groupId={group.id} />
-              </Grid.Item>
+              <GroupItem
+                key={date.toDateString()}
+                date={date}
+                groupId={group.id}
+              />
             ))
           )
         )}
@@ -37,5 +39,9 @@ function GroupItem({ date, groupId }: { date: Date; groupId: string }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[groupId]) || [];
   const count = useTaskLogStore((s) => s.getTasksDone(date, tasks).length);
 
-  return <GroupDot date={date} count={count} />;
+  return (
+    <Grid.Item date={date} isActive={count > 0} isGroup={true}>
+      <GroupDot date={date} count={count} />
+    </Grid.Item>
+  );
 }
