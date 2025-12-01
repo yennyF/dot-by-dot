@@ -5,12 +5,18 @@ import GroupDot from "../dots/GroupDot";
 import { useTaskStore } from "@/app/stores/taskStore";
 import Grid from "./Grid";
 import { Group } from "@/app/types";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 export default function GroupGrid({ group }: { group: Group }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
+  const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
 
   return (
-    <Grid.Root>
+    <Grid.Root
+      onClick={() => {
+        setSelectedGroup(group.id);
+      }}
+    >
       <Grid.LabelGroup>{group.name}</Grid.LabelGroup>
       <Grid.Content>
         {totalDate.map(({ months }) =>

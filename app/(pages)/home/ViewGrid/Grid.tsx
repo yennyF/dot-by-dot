@@ -5,27 +5,31 @@ import { useTaskLogStore } from "@/app/stores/taskLogStore";
 
 const WEEK_DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
-export function Root({ children }: { children: React.ReactNode }) {
-  return <div className="w-[250px]">{children}</div>;
-}
-
-export function LabelGroup({
+export function Root({
   children,
   onClick,
 }: {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }) {
   return (
-    <button
-      className="flex w-full items-center justify-center gap-[10px]"
+    <div
+      className={clsx(styles.root, "w-[250px]", onClick && "cursor-pointer")}
       onClick={onClick}
     >
+      {children}
+    </div>
+  );
+}
+
+export function LabelGroup({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex w-full items-center justify-center gap-[10px]">
       <CubeIcon className="text-[var(--gray-9)]" />
       <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
         {children}
       </span>
-    </button>
+    </div>
   );
 }
 
@@ -93,7 +97,7 @@ export function Item({
       <span
         className={clsx(
           styles.date,
-          "absolute cursor-default text-[9px] text-[var(--gray-9)]"
+          "absolute text-[9px] text-[var(--gray-9)]"
         )}
       >
         {date.getDate()}

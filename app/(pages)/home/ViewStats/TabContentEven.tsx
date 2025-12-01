@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useUIStore } from "@/app/stores/useUIStore";
 import { ProgressBar } from "../../../components/Charts/ProgressBar";
 import { palette } from "../../../components/Charts/colors";
 import clsx from "clsx";
@@ -11,6 +10,7 @@ import {
   ProgressDay,
   TaskLabel,
 } from "./utils";
+import { ViewStatsContext } from "./ViewStatsContext";
 
 export default function TabContentEven({
   data,
@@ -19,7 +19,7 @@ export default function TabContentEven({
   data: BarChartDataExtend[];
   daysDone: number;
 }) {
-  const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
+  const { setSelectedGroup } = React.use(ViewStatsContext);
 
   const daysDonePer = Math.round((daysDone * 100) / 30);
   const total = data.reduce((sum, item) => sum + item.value, 0);

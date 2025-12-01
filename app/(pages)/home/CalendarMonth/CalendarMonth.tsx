@@ -75,13 +75,13 @@ export default function CalendarMonth() {
       </div>
 
       <div
-        className="mt-5 grid grid-cols-7 gap-2 text-neutral-400"
+        className="mt-5 flex justify-around text-neutral-400"
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
         {DAY_LABELS.map((day, index) => (
           <div
             key={index}
-            className="calendar-day calendar-day-header h-8 w-8 text-center text-xs"
+            className="calendar-day calendar-day-header text-center text-xs"
           >
             {day}
           </div>
@@ -89,7 +89,7 @@ export default function CalendarMonth() {
       </div>
 
       <div
-        className="grid grid-cols-7 gap-2 text-neutral-400"
+        className="grid grid-cols-7 text-neutral-400"
         style={{ gridTemplateColumns: "repeat(7, min-content)" }}
       >
         {totalDays.map((date, index) => (

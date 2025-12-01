@@ -44,7 +44,10 @@ export function GroupLabel({
   onClick: () => void;
 }) {
   return (
-    <div className="flex items-center gap-[10px]" onClick={onClick}>
+    <div
+      className="flex cursor-pointer items-center gap-[10px]"
+      onClick={onClick}
+    >
       <CubeIcon className="text-[var(--gray-9)]" />
       <TaskLabel>{children} </TaskLabel>
     </div>
