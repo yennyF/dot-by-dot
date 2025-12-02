@@ -142,9 +142,8 @@ function GroupItemWrapper({ group }: GroupItemProps) {
             </Tooltip.Provider>
           </span>
         </GroupDeleteDialog>
-
-        {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
       </div>
+      {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
     </div>
   );
 }

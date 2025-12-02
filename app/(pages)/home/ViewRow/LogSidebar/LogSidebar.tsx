@@ -78,7 +78,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
 
       <DummyTask groupId={group.id} />
 
-      <Collapsible.Content>
+      <Collapsible.Content className="ml-[22px]">
         <TaskList groupId={group.id} />
       </Collapsible.Content>
     </Collapsible.Root>
@@ -90,12 +90,18 @@ function TaskList({ groupId }: { groupId: string | null }) {
 
   return (
     <>
-      {tasks?.map((task) => (
-        <Fragment key={task.id}>
-          <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
-          <TaskItem task={task} />
-        </Fragment>
-      ))}
+      {tasks && tasks.length ? (
+        tasks.map((task) => (
+          <Fragment key={task.id}>
+            <DropIndicatorTask groupId={groupId ?? null} beforeId={task.id} />
+            <TaskItem task={task} />
+          </Fragment>
+        ))
+      ) : (
+        <div className="h-[var(--height-row-view)] text-[var(--gray-9)]">
+          (No tasks)
+        </div>
+      )}
     </>
   );
 }

@@ -4,7 +4,6 @@ import { useGroupStore } from "@/app/stores/groupStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { Group } from "@/app/types";
-import clsx from "clsx";
 import useClickLog from "@/app/hooks/useClickLog";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
@@ -48,9 +47,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
         <GroupRow group={group} />
       )}
       <DummyTask group={group} />
-      <div className={clsx(isOpen ? "block" : "hidden")}>
-        <TaskList group={group} />
-      </div>
+      {isOpen && <TaskList group={group} />}
     </>
   );
 }
@@ -59,7 +56,13 @@ function TaskList({ group }: { group: Group | null }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[group?.id ?? UNGROUPED_KEY]);
 
   return (
-    <>{tasks?.map((task) => <TaskRow taskId={task.id} key={task.id} />)}</>
+    <>
+      {tasks && tasks.length ? (
+        tasks.map((task) => <TaskRow taskId={task.id} key={task.id} />)
+      ) : (
+        <div className="h-[var(--height-row-view)]"></div>
+      )}
+    </>
   );
 }
 

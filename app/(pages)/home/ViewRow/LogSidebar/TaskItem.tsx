@@ -36,11 +36,10 @@ function TaskItemWrapper({ task }: TaskItemProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="app-TaskItem group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
-        <span className="ml-[22px] overflow-hidden text-ellipsis text-nowrap">
+      <div className="group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
+        <span className="overflow-hidden text-ellipsis text-nowrap">
           {task.name}
         </span>
-
         <div
           className={clsx(
             "gap-1",
