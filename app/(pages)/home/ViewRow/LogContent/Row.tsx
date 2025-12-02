@@ -26,11 +26,11 @@ function Item({
   color: string;
 }) {
   return (
-    <div className="relative flex h-[var(--height-row)] w-[var(--width-col)] items-center justify-center">
+    <div className="relative flex h-[var(--height-row-view)] w-[var(--width-row-view)] items-center justify-center">
       {isActive && isNextActive && (
         <div
           className={clsx(
-            "nimate-fade-in absolute -right-1/2 left-1/2 -z-10 h-[var(--dot-size)]",
+            "nimate-fade-in absolute -right-1/2 left-1/2 -z-10 h-[var(--size-dot)]",
             color
           )}
           // style={{

@@ -96,6 +96,10 @@
   }
 }
 
+.button-icon-accordion {
+  @apply button-base p-1;
+}
+
 [data-state="open"] > .button-icon-sheer {
   @apply bg-[var(--black)] text-[var(--white)];
 }  

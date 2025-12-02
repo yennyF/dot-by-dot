@@ -39,7 +39,7 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
       isNextActive={isNextActive}
       color="bg-[var(--accent-4)]"
     >
-      <TaskDot date={date} taskId={taskId} isActive={isActive} />
+      <TaskDot date={date} taskId={taskId} isActive={isActive} theme={"row"} />
     </Row.Item>
   );
 }

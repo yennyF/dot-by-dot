@@ -4,7 +4,6 @@ import { useGroupStore } from "@/app/stores/groupStore";
 import { UNGROUPED_KEY, useTaskStore } from "@/app/stores/taskStore";
 import { useUIStore } from "@/app/stores/useUIStore";
 import { Group } from "@/app/types";
-import clsx from "clsx";
 import useClickLog from "@/app/hooks/useClickLog";
 import GroupRow from "./GroupRow";
 import TaskRow from "./TaskRow";
@@ -12,6 +11,8 @@ import TaskRow from "./TaskRow";
 export default function LogContent() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
+
+  const openGroups = useUIStore((s) => s.openGroups);
 
   const handleClick = useClickLog();
 
@@ -28,30 +29,23 @@ export default function LogContent() {
         </div>
       )}
 
-      {groups.map((group) => (
-        <div className="app-group" key={group.id} data-name={group.name}>
-          <CollapsibleGroup key={group.id} group={group} />
-        </div>
-      ))}
+      {groups.map((group) => {
+        const isOpen = openGroups.includes(group.id);
+        return (
+          <div className="app-group" key={group.id} data-name={group.name}>
+            <>
+              {isOpen ? (
+                <div className="h-[var(--height-row-view)]" />
+              ) : (
+                <GroupRow group={group} />
+              )}
+              <DummyTask group={group} />
+              {isOpen && <TaskList group={group} />}
+            </>
+          </div>
+        );
+      })}
     </div>
-  );
-}
-
-function CollapsibleGroup({ group }: { group: Group }) {
-  const isOpen = useUIStore((s) => (group ? s.isGroupOpen(group.id) : true));
-
-  return (
-    <>
-      {isOpen ? (
-        <div className="h-[var(--height-row)]" />
-      ) : (
-        <GroupRow group={group} />
-      )}
-      <DummyTask group={group} />
-      <div className={clsx(isOpen ? "block" : "hidden")}>
-        <TaskList group={group} />
-      </div>
-    </>
   );
 }
 
@@ -59,7 +53,13 @@ function TaskList({ group }: { group: Group | null }) {
   const tasks = useTaskStore((s) => s.tasksByGroup[group?.id ?? UNGROUPED_KEY]);
 
   return (
-    <>{tasks?.map((task) => <TaskRow taskId={task.id} key={task.id} />)}</>
+    <>
+      {tasks && tasks.length ? (
+        tasks.map((task) => <TaskRow taskId={task.id} key={task.id} />)
+      ) : (
+        <div className="h-[var(--height-row-view)]"></div>
+      )}
+    </>
   );
 }
 

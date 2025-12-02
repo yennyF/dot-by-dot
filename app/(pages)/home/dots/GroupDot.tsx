@@ -19,16 +19,16 @@ export default function GroupDot({ date, count }: GroupDotProps) {
   return (
     <Tooltip.Provider delayDuration={100}>
       <Tooltip.Root>
-        <Tooltip.Trigger className="flex size-[var(--dot-size)] shrink-0 cursor-default items-center justify-center">
+        <Tooltip.Trigger className="flex size-[var(--size-dot)] shrink-0 cursor-default items-center justify-center">
           <div
             className={clsx(
               "transform rounded-full",
-              isActive ? "size-[var(--dot-size)]" : "size-[6px]",
+              isActive ? "size-[var(--size-dot)]" : "size-[6px]",
               isActive
                 ? "bg-[var(--inverted)]"
                 : isWeekendDate
-                  ? "bg-[var(--gray-5)]"
-                  : "bg-[var(--gray)]"
+                  ? "bg-[var(--color-dot-2)]"
+                  : "bg-[var(--color-dot-1)]"
             )}
             // style={isActive ? { backgroundColor: colorStart } : undefined}
           />

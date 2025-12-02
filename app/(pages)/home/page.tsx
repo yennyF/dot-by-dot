@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  LightningBoltIcon,
   PieChartIcon,
   PlusIcon,
   TriangleDownIcon,
@@ -11,11 +10,8 @@ import {
 } from "@radix-ui/react-icons";
 import AppHeader from "../../components/AppHeader";
 import CreateDropdown from "./Header/CreateDropdown";
-import LeftButton from "./Header/LeftButton";
 import Loading from "../../components/Loading/Loading";
 import { notifyLoadError } from "../../components/Notification";
-import TodayButton from "./Header/TodayButton";
-import RightButton from "./Header/RightButton";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
@@ -65,7 +61,7 @@ export default function HomePage() {
 }
 
 function Content() {
-  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  // const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const homeView = useUIStore((s) => s.homeView);
   const setHomeView = useUIStore((s) => s.setHomeView);
 
@@ -97,14 +93,14 @@ function Content() {
       <AppHeader>
         <div className="flex flex-1 items-center justify-between gap-10">
           <div className="flex gap-2">
-            <button
+            {/* <button
               className="button-outline button-sm"
               onClick={() => {
                 toggleSidebar();
               }}
             >
               <LightningBoltIcon />
-            </button>
+            </button> */}
             <button
               data-state={homeView === "stats" ? "active" : undefined}
               className="button-outline button-sm"
@@ -136,9 +132,9 @@ function Content() {
           <div className="flex gap-2">
             {homeView === "row" && (
               <>
-                <LeftButton />
-                <RightButton />
-                <TodayButton />
+                {/* <LeftButton /> */}
+                {/* <RightButton /> */}
+                {/* <TodayButton /> */}
                 <ExpandAllButton />
                 <CollapseAllButton />
                 <CreateDropdown>

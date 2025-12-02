@@ -23,7 +23,7 @@ export default function DropIndicatorTask({
       ref={ref}
       className={clsx(
         className,
-        "app-DropIndicatorTask drop-indicator sticky z-10 flex h-0 items-center pl-[12px] opacity-0"
+        "app-DropIndicatorTask drop-indicator sticky z-10 flex h-0 items-center opacity-0"
       )}
       data-sort="task"
       data-group-id={groupId}

@@ -38,9 +38,9 @@ export default function ViewGrid() {
       </div>
 
       <div
-        className="grid justify-center gap-[60px]"
+        className="grid justify-center gap-[20px]"
         style={{
-          gridTemplateColumns: "repeat(auto-fill, 250px)",
+          gridTemplateColumns: "repeat(auto-fill, var(--width-grid-view))",
         }}
       >
         {selectedGroup ? (

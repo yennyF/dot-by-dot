@@ -1,6 +1,7 @@
 
 :root {
   --background: #f1efe7;
+  // --background: #F0F2EF;
   --foreground: #0a0a0a;
   --accent: #c07858;
   --accent-4: #E4CBC1;
@@ -17,10 +18,16 @@
   --green-5: rgba(88, 192, 120, 0.2);
   --red: rgb(235, 87, 87);
 
-  --width-name: 300px;
-  --width-col: 45px;
-  --height-row: 40px;
-  --dot-size: 16px;
+  --size-dot: 16px;
+  --color-dot-1: #d9d9d9;
+  --color-dot-2: #e5e6e4;
+  --color-name-weekend: #8a8a89;
+
+  --width-name-row-view: 300px;
+  --width-row-view: 45px;
+  --height-row-view: 40px;
+  --width-grid-view: 320px;
+  --gap-y-grid-view: 25px;
 
   --toastify-color-light: var(--background); 
   --toastify-color-progress-light: var(--accent);
