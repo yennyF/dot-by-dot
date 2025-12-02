@@ -14,7 +14,11 @@ export function Root({
 }) {
   return (
     <div
-      className={clsx(styles.root, "w-[250px]", onClick && "cursor-pointer")}
+      className={clsx(
+        styles.root,
+        "w-var(--width-grid-view))",
+        onClick && "cursor-pointer"
+      )}
       onClick={onClick}
     >
       {children}
@@ -73,7 +77,7 @@ export function Content({
         ))}
       </div>
       <div
-        className="grid grid-cols-7 place-items-center justify-around gap-y-[20px]"
+        className="grid grid-cols-7 place-items-center justify-around gap-y-[var(--gap-y-grid-view)]"
         onClick={onClick}
       >
         {paddingDays.map((day) => (

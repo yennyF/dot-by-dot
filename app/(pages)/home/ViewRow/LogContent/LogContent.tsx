@@ -43,7 +43,7 @@ function CollapsibleGroup({ group }: { group: Group }) {
   return (
     <>
       {isOpen ? (
-        <div className="h-[var(--height-row)]" />
+        <div className="h-[var(--height-row-view)]" />
       ) : (
         <GroupRow group={group} />
       )}

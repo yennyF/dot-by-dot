@@ -30,7 +30,7 @@ export default function DateRowItem({ date }: DayItemProps) {
     <div
       ref={isTodayDate ? todayRef : undefined}
       className={clsx(
-        "day-item flex w-[var(--width-col)] flex-col items-center",
+        "day-item flex w-[var(--width-row-view)] flex-col items-center",
         isTodayDate && "isToday text-[var(--accent)]",
         isWeekend(date) && "text-[var(--inverted)]"
       )}

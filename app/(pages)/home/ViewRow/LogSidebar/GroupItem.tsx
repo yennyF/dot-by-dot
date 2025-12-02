@@ -57,7 +57,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]",
         "draggable active:cursor-grabbing"
       )}
       draggable={true}
@@ -151,7 +151,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
 
 export function GroupItemDummy({ group }: { group: Group }) {
   return (
-    <div className="app-GroupRow group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]">
+    <div className="app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
       <GroupItemName name={group.name} />
       <div>
         <GroupCreatePopover>

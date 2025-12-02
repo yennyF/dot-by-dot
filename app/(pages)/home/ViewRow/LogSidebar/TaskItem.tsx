@@ -36,7 +36,7 @@ function TaskItemWrapper({ task }: TaskItemProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="app-TaskItem group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]">
+      <div className="app-TaskItem group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
         <span className="ml-[22px] overflow-hidden text-ellipsis text-nowrap">
           {task.name}
         </span>
@@ -102,7 +102,7 @@ function TaskItemWrapper({ task }: TaskItemProps) {
 
 export function TaskItemDummy({ task }: { task: Task }) {
   return (
-    <div className="app-TaskItem group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]">
+    <div className="app-TaskItem group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
       <span className="ml-[12px] overflow-hidden text-ellipsis text-nowrap">
         {task.name}
       </span>
