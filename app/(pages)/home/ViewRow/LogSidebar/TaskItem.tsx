@@ -9,6 +9,7 @@ import TaskRenamePopover from "./task/TaskRenamePopover";
 import { Tooltip } from "radix-ui";
 import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { Task } from "@/app/types";
+import TaskName from "../../dots/TaskName";
 
 interface TaskItemProps {
   task: Task;
@@ -37,9 +38,7 @@ function TaskItemWrapper({ task }: TaskItemProps) {
       onDragEnd={handleDragEnd}
     >
       <div className="group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
-        <span className="overflow-hidden text-ellipsis text-nowrap">
-          {task.name}
-        </span>
+        <TaskName>{task.name}</TaskName>
         <div
           className={clsx(
             "gap-1",

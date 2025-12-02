@@ -1,9 +1,4 @@
-import {
-  CubeIcon,
-  Pencil1Icon,
-  PlusIcon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
+import { Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Group } from "@/app/types";
 import { v4 as uuidv4 } from "uuid";
 import { useTaskStore } from "@/app/stores/taskStore";
@@ -14,6 +9,7 @@ import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
 import { Tooltip } from "radix-ui";
 import stylesTooltip from "@/app/styles/tooltip.module.scss";
+import GroupName from "../../dots/GroupName";
 
 interface GroupItemProps {
   group: Group;
@@ -47,7 +43,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] w-full items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] w-full items-center justify-between gap-1",
         "draggable active:cursor-grabbing"
       )}
       draggable={true}
@@ -55,7 +51,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <GroupItemName name={group.name} />
+      <GroupName>{group.name}</GroupName>
       <div
         className={clsx(
           "items-center gap-1",
@@ -140,7 +136,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
 export function GroupItemDummy({ group }: { group: Group }) {
   return (
     <div className="app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]">
-      <GroupItemName name={group.name} />
+      <GroupName>{group.name}</GroupName>
       <div>
         <GroupCreatePopover>
           <button className="button-icon-sheer">
@@ -148,17 +144,6 @@ export function GroupItemDummy({ group }: { group: Group }) {
           </button>
         </GroupCreatePopover>
       </div>
-    </div>
-  );
-}
-
-function GroupItemName({ name }: { name: string }) {
-  return (
-    <div className="flex items-center gap-2 overflow-hidden">
-      <CubeIcon className="size-[12px] shrink-0" />
-      <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
-        {name}
-      </span>
     </div>
   );
 }

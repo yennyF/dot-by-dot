@@ -3,13 +3,10 @@
 import React from "react";
 import { ProgressBar } from "../../../components/Charts/ProgressBar";
 import clsx from "clsx";
-import {
-  BarChartDataExtend,
-  ProgressDay,
-  TaskLabel,
-  GroupLabel,
-} from "./utils";
+import { BarChartDataExtend, ProgressDay } from "./utils";
 import { ViewStatsContext } from "./ViewStatsContext";
+import GroupName from "../dots/GroupName";
+import TaskName from "../dots/TaskName";
 
 export default function TabContentOften({
   data,
@@ -29,15 +26,16 @@ export default function TabContentOften({
           return (
             <div key={item.id} className="flex flex-col gap-[1px]">
               {item.taskId ? (
-                <TaskLabel>{item.name}</TaskLabel>
+                <TaskName>{item.name}</TaskName>
               ) : (
-                <GroupLabel
+                <GroupName
+                  className="cursor-pointer"
                   onClick={() => {
                     setSelectedGroup(item.groupId);
                   }}
                 >
                   {item.name}
-                </GroupLabel>
+                </GroupName>
               )}
               <ProgressBar
                 value={portion}

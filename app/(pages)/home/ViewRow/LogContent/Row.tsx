@@ -30,7 +30,7 @@ function Item({
       {isActive && isNextActive && (
         <div
           className={clsx(
-            "nimate-fade-in absolute -right-1/2 left-1/2 -z-10 h-[var(--dot-size)]",
+            "nimate-fade-in absolute -right-1/2 left-1/2 -z-10 h-[var(--size-dot)]",
             color
           )}
           // style={{

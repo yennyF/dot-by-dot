@@ -69,7 +69,9 @@ function DateRowItem({ date }: { date: Date }) {
       className={clsx(
         "day-item flex w-[var(--width-row-view)] flex-col items-center",
         isTodayDate && "isToday text-[var(--accent)]",
-        isWeekend(date) && "text-[var(--inverted)]"
+        isWeekend(date)
+          ? "text-[var(--color-name-weekend)]"
+          : "text-[var(--black)]"
       )}
     >
       <div className="text-center text-xs">
@@ -77,7 +79,7 @@ function DateRowItem({ date }: { date: Date }) {
       </div>
       <div
         className={clsx(
-          "flex h-[28px] w-[28px] items-center justify-center",
+          "flex h-[28px] w-[28px] items-center justify-center font-bold",
           isTodayDate && "rounded-full bg-[var(--accent)] text-white"
         )}
       >

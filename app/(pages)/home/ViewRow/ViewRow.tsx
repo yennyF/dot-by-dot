@@ -20,7 +20,7 @@ export default function ViewRow() {
           <ShadowLeft />
           <DateRow />
           <ShadowRight />
-          <div className="sticky right-0 z-10 w-[var(--width-name)] bg-[var(--background)]"></div>
+          <div className="sticky right-0 z-10 w-[var(--width-name-row-view)] bg-[var(--background)]"></div>
         </div>
         <ShadowTop />
       </div>

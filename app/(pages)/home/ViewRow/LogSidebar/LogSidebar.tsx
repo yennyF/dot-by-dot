@@ -36,7 +36,7 @@ export default function LogSidebar() {
     <SortableContainer className="sticky right-0 z-10">
       <div
         ref={taskSidebarRef}
-        className="flex w-[var(--width-name)] shrink-0 flex-col gap-5 bg-[var(--background)]"
+        className="flex w-[var(--width-name-row-view)] shrink-0 flex-col gap-5 bg-[var(--background)]"
       >
         <div className="app-group">
           <DummyTask groupId={null} />
@@ -62,7 +62,7 @@ export default function LogSidebar() {
               <Accordion.Item value={group.id}>
                 <Accordion.Header>
                   <Accordion.Trigger asChild>
-                    <div className="group flex w-full items-center justify-between gap-[10px]">
+                    <div className="group flex w-full items-center justify-between gap-[10px] bg-[var(--background)]">
                       <GroupItem group={group} />{" "}
                       <ChevronDownIcon className="button-icon-accordion transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180" />
                     </div>

@@ -5,6 +5,7 @@ import { Task, toApiDate } from "@/app/types";
 import TaskDot from "../dots/TaskDot";
 import Grid from "./Grid";
 import useClickLog from "@/app/hooks/useClickLog";
+import TaskName from "../dots/TaskName";
 
 export default function TaskGrid({ task }: { task: Task }) {
   const totalDate = useTaskLogStore((s) => s.totalDate);
@@ -12,7 +13,7 @@ export default function TaskGrid({ task }: { task: Task }) {
 
   return (
     <Grid.Root key={task.id}>
-      <Grid.LabelTask>{task.name}</Grid.LabelTask>
+      <TaskName className="justify-center">{task.name}</TaskName>
       <Grid.Content onClick={handleClick}>
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
@@ -37,7 +38,7 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
 
   return (
     <Grid.Item date={date} isActive={isActive}>
-      <TaskDot date={date} taskId={taskId} isActive={isActive} />
+      <TaskDot date={date} taskId={taskId} isActive={isActive} theme={"grid"} />
     </Grid.Item>
   );
 }

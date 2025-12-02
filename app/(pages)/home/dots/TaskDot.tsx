@@ -8,9 +8,15 @@ interface TaskDotProps {
   date: Date;
   taskId: string;
   isActive: boolean;
+  theme: "row" | "grid";
 }
 
-export default function TaskDot({ date, taskId, isActive }: TaskDotProps) {
+export default function TaskDot({
+  date,
+  taskId,
+  isActive,
+  theme,
+}: TaskDotProps) {
   const isTodayDate = isToday(date);
   const isWeekendDate = isWeekend(date);
 
@@ -20,7 +26,7 @@ export default function TaskDot({ date, taskId, isActive }: TaskDotProps) {
       data-date={date}
       data-active={isActive}
       className={clsx(
-        "group box-border flex size-[var(--dot-size)] shrink-0 items-center justify-center rounded-full transition-transform duration-100",
+        "group box-border flex size-[var(--size-dot)] shrink-0 items-center justify-center rounded-full transition-transform duration-100",
         "hover:scale-110 hover:border-[1px] hover:border-black",
         "active:scale-90",
         !isActive && "hover:bg-[var(--accent-5)]",
@@ -29,14 +35,16 @@ export default function TaskDot({ date, taskId, isActive }: TaskDotProps) {
           : isTodayDate
             ? "bg-[var(--background)]"
             : isWeekendDate
-              ? "bg-[var(--gray-5)]"
-              : "bg-[var(--gray)]",
+              ? theme === "row"
+                ? "bg-[var(--color-dot-2)]"
+                : "bg-[var(--color-dot-1)]"
+              : "bg-[var(--color-dot-1)]",
         isTodayDate && "border-[1px] border-black"
       )}
     >
       <CheckIcon
         className={clsx(
-          "size-3 text-black opacity-0",
+          "size-4 text-black opacity-0",
           "group-hover:opacity-100",
           isTodayDate && isActive && "opacity-100"
         )}

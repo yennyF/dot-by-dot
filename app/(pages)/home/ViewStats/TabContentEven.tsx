@@ -4,13 +4,10 @@ import React from "react";
 import { ProgressBar } from "../../../components/Charts/ProgressBar";
 import { palette } from "../../../components/Charts/colors";
 import clsx from "clsx";
-import {
-  BarChartDataExtend,
-  GroupLabel,
-  ProgressDay,
-  TaskLabel,
-} from "./utils";
+import { BarChartDataExtend, ProgressDay } from "./utils";
 import { ViewStatsContext } from "./ViewStatsContext";
+import GroupName from "../dots/GroupName";
+import TaskName from "../dots/TaskName";
 
 export default function TabContentEven({
   data,
@@ -43,15 +40,16 @@ export default function TabContentEven({
           return (
             <div key={item.id} className="flex flex-col gap-[1px]">
               {item.taskId ? (
-                <TaskLabel>{item.name}</TaskLabel>
+                <TaskName>{item.name}</TaskName>
               ) : (
-                <GroupLabel
+                <GroupName
+                  className="cursor-pointer"
                   onClick={() => {
                     setSelectedGroup(item.groupId);
                   }}
                 >
                   {item.name}
-                </GroupLabel>
+                </GroupName>
               )}
 
               <ProgressBar

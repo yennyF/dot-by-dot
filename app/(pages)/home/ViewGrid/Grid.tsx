@@ -1,4 +1,3 @@
-import { CubeIcon } from "@radix-ui/react-icons";
 import styles from "./Grid.module.scss";
 import clsx from "clsx";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
@@ -16,33 +15,12 @@ export function Root({
     <div
       className={clsx(
         styles.root,
-        "w-var(--width-grid-view))",
+        "w-[var(--width-grid-view))] p-[20px]",
         onClick && "cursor-pointer"
       )}
       onClick={onClick}
     >
       {children}
-    </div>
-  );
-}
-
-export function LabelGroup({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex w-full items-center justify-center gap-[10px]">
-      <CubeIcon className="text-[var(--gray-9)]" />
-      <span className="overflow-hidden text-ellipsis text-nowrap font-bold">
-        {children}
-      </span>
-    </div>
-  );
-}
-
-export function LabelTask({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex w-full items-center justify-center">
-      <span className="overflow-hidden text-ellipsis text-nowrap">
-        {children}
-      </span>
     </div>
   );
 }
@@ -58,18 +36,15 @@ export function Content({
 
   return (
     <div className={styles.content}>
-      <div
-        className={clsx(
-          styles.week,
-          "my-[15px] flex items-center justify-around"
-        )}
-      >
+      <div className="my-[20px] flex items-center justify-around">
         {WEEK_DAYS.map((name, index) => (
           <span
             key={index}
             className={clsx(
-              "size-[var(--dot-size)] text-center text-[10px] font-bold",
-              name === "S" ? "text-[var(--red)]" : "text-[var(--gray)]"
+              "size-[var(--size-dot)] text-center text-xs font-bold",
+              name === "S"
+                ? "text-[var(--color-name-weekend)]"
+                : "text-[var(--black)]"
             )}
           >
             {name}
@@ -77,11 +52,11 @@ export function Content({
         ))}
       </div>
       <div
-        className="grid grid-cols-7 place-items-center justify-around gap-y-[var(--gap-y-grid-view)]"
+        className="mt-[10px] grid grid-cols-7 place-items-center justify-around gap-y-[var(--gap-y-grid-view)]"
         onClick={onClick}
       >
         {paddingDays.map((day) => (
-          <div key={day.toDateString()} className="size-[var(--dot-size)]" />
+          <div key={day.toDateString()} className="size-[var(--size-dot)]" />
         ))}
         {children}
       </div>
@@ -119,8 +94,6 @@ export function Item({
 
 const Grid = {
   Root,
-  LabelGroup,
-  LabelTask,
   Content,
   Item,
 };
