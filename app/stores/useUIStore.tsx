@@ -5,9 +5,9 @@ import { useGroupStore } from "./groupStore";
 type HomeViewType = "grid" | "row" | "stats";
 
 type Store = {
-  closedGroups: string[];
-  isGroupOpen: (groupId: string) => boolean;
-  toggleGroup: (groupId: string) => void;
+  openGroups: string[];
+  setOpenGroups: (openGroups: string[]) => void;
+  openGroup: (group: string) => void;
   closeAllGroups: () => void;
   openAllGroups: () => void;
 
@@ -24,30 +24,25 @@ type Store = {
 export const useUIStore = create<Store>()(
   persist(
     (set, get) => ({
-      closedGroups: [],
+      openGroups: [],
 
-      isGroupOpen: (groupId: string) => {
-        return !get().closedGroups.includes(groupId);
+      setOpenGroups: (openGroups: string[]) => {
+        set({ openGroups });
       },
 
-      toggleGroup: (groupId: string) => {
-        set((s) => {
-          const isCollapsed = s.closedGroups.includes(groupId);
-          return {
-            closedGroups: isCollapsed
-              ? s.closedGroups.filter((id) => id !== groupId)
-              : [...s.closedGroups, groupId],
-          };
-        });
+      openGroup: (group: string) => {
+        const { openGroups } = get();
+        if (openGroups.includes(group)) return;
+        set({ openGroups: [...openGroups, group] });
       },
 
       closeAllGroups: () => {
         const groups = useGroupStore.getState().groups;
-        set({ closedGroups: groups.map((g) => g.id) });
+        set({ openGroups: groups.map((g) => g.id) });
       },
 
       openAllGroups: () => {
-        set({ closedGroups: [] });
+        set({ openGroups: [] });
       },
 
       isSidebarOpen: false,

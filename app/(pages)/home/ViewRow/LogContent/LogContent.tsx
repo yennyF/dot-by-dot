@@ -12,6 +12,8 @@ export default function LogContent() {
   const dummyGroup = useGroupStore((s) => s.dummyGroup);
   const groups = useGroupStore((s) => s.groups);
 
+  const openGroups = useUIStore((s) => s.openGroups);
+
   const handleClick = useClickLog();
 
   return (
@@ -27,28 +29,23 @@ export default function LogContent() {
         </div>
       )}
 
-      {groups.map((group) => (
-        <div className="app-group" key={group.id} data-name={group.name}>
-          <CollapsibleGroup key={group.id} group={group} />
-        </div>
-      ))}
+      {groups.map((group) => {
+        const isOpen = openGroups.includes(group.id);
+        return (
+          <div className="app-group" key={group.id} data-name={group.name}>
+            <>
+              {isOpen ? (
+                <div className="h-[var(--height-row-view)]" />
+              ) : (
+                <GroupRow group={group} />
+              )}
+              <DummyTask group={group} />
+              {isOpen && <TaskList group={group} />}
+            </>
+          </div>
+        );
+      })}
     </div>
-  );
-}
-
-function CollapsibleGroup({ group }: { group: Group }) {
-  const isOpen = useUIStore((s) => (group ? s.isGroupOpen(group.id) : true));
-
-  return (
-    <>
-      {isOpen ? (
-        <div className="h-[var(--height-row-view)]" />
-      ) : (
-        <GroupRow group={group} />
-      )}
-      <DummyTask group={group} />
-      {isOpen && <TaskList group={group} />}
-    </>
   );
 }
 

@@ -1,6 +1,4 @@
 import {
-  ChevronDownIcon,
-  ChevronUpIcon,
   CubeIcon,
   Pencil1Icon,
   PlusIcon,
@@ -16,7 +14,6 @@ import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
 import { Tooltip } from "radix-ui";
 import stylesTooltip from "@/app/styles/tooltip.module.scss";
-import { useUIStore } from "@/app/stores/useUIStore";
 
 interface GroupItemProps {
   group: Group;
@@ -27,15 +24,8 @@ function GroupItemWrapper({ group }: GroupItemProps) {
 
   const setDummyTask = useTaskStore((s) => s.setDummyTask);
 
-  const isOpen = useUIStore((s) => s.isGroupOpen(group.id));
-  const toggleGroup = useUIStore((s) => s.toggleGroup);
-
   const handleClickNew = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-
-    if (!isOpen) {
-      toggleGroup(group.id);
-    }
 
     setDummyTask({
       id: uuidv4(),
@@ -57,7 +47,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row-view)] w-full items-center justify-between gap-1 bg-[var(--background)]",
         "draggable active:cursor-grabbing"
       )}
       draggable={true}
@@ -143,7 +133,6 @@ function GroupItemWrapper({ group }: GroupItemProps) {
           </span>
         </GroupDeleteDialog>
       </div>
-      {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
     </div>
   );
 }
