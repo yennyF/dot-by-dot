@@ -1,4 +1,5 @@
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { BarChartData } from "@/app/components/Charts/Bar";
 import { CubeIcon } from "@radix-ui/react-icons";
 import { subDays } from "date-fns";
@@ -23,14 +24,24 @@ export function ProgressDay({ children }: { children: React.ReactNode }) {
         <span className="text-[var(--black)]"> {children} </span> of the{" "}
       </span>
       <span>
-        <AppTooltip.Root>
-          <AppTooltip.Trigger className="cursor-default">
-            last 30 days
-          </AppTooltip.Trigger>
-          <AppTooltip.Content side="top">
-            From {formattedFromDate} up today
-          </AppTooltip.Content>
-        </AppTooltip.Root>
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger className="cursor-default">
+              last 30 days
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content
+                className={stylesTooltip.content}
+                align="center"
+                side="top"
+                sideOffset={5}
+              >
+                From {formattedFromDate} up today
+                <Tooltip.Arrow className={stylesTooltip.arrow} />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        </Tooltip.Provider>
       </span>
     </div>
   );

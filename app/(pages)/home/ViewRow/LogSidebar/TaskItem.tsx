@@ -6,7 +6,8 @@ import clsx from "clsx";
 import TaskCreatePopover from "./task/TaskCreatePopover";
 import TaskDeleteDialog from "./task/TaskDeleteDialog";
 import TaskRenamePopover from "./task/TaskRenamePopover";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { Task } from "@/app/types";
 
 interface TaskItemProps {
@@ -48,27 +49,49 @@ function TaskItemWrapper({ task }: TaskItemProps) {
         >
           <TaskRenamePopover task={task} onOpenChange={setForceShow}>
             <span>
-              <AppTooltip.Root>
-                <AppTooltip.Trigger asChild>
-                  <button className="button-icon-sheer">
-                    <Pencil1Icon />
-                  </button>
-                </AppTooltip.Trigger>
-                <AppTooltip.Content>Rename</AppTooltip.Content>
-              </AppTooltip.Root>
+              <Tooltip.Provider>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button className="button-icon-sheer">
+                      <Pencil1Icon />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      className={stylesTooltip.content}
+                      align="center"
+                      side="bottom"
+                      sideOffset={5}
+                    >
+                      Rename
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </Tooltip.Provider>
             </span>
           </TaskRenamePopover>
 
           <TaskDeleteDialog task={task} onOpenChange={setForceShow}>
             <span>
-              <AppTooltip.Root>
-                <AppTooltip.Trigger asChild>
-                  <button className="button-icon-sheer">
-                    <TrashIcon />
-                  </button>
-                </AppTooltip.Trigger>
-                <AppTooltip.Content>Delete</AppTooltip.Content>
-              </AppTooltip.Root>
+              <Tooltip.Provider>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button className="button-icon-sheer">
+                      <TrashIcon />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content
+                      className={stylesTooltip.content}
+                      align="center"
+                      side="bottom"
+                      sideOffset={5}
+                    >
+                      Delete
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </Tooltip.Provider>
             </span>
           </TaskDeleteDialog>
         </div>

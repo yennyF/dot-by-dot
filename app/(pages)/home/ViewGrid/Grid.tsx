@@ -102,7 +102,7 @@ export function Item({
       <span
         className={clsx(
           styles.date,
-          "absolute text-xs",
+          "pointer-events-none absolute text-xs",
           !isGroup && "group-hover:hidden",
           isActive ? "text-white" : "text-[var(--black)]"
         )}

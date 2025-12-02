@@ -1,7 +1,8 @@
 "use client";
 
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useScrollStore } from "@/app/stores/scrollStore";
 import { useRef } from "react";
 import { useTaskLogStore } from "@/app/stores/taskLogStore";
@@ -20,14 +21,25 @@ function LeftButtonContent() {
   };
 
   return (
-    <AppTooltip.Root>
-      <AppTooltip.Trigger asChild>
-        <button className="button-outline button-sm" onClick={handleClick}>
-          <ChevronLeftIcon />
-        </button>
-      </AppTooltip.Trigger>
-      <AppTooltip.Content>Go previous</AppTooltip.Content>
-    </AppTooltip.Root>
+    <Tooltip.Provider>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <button className="button-outline button-sm" onClick={handleClick}>
+            <ChevronLeftIcon />
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            className={stylesTooltip.content}
+            align="center"
+            side="bottom"
+            sideOffset={5}
+          >
+            Go previous <Tooltip.Arrow className={stylesTooltip.arrow} />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 }
 
@@ -58,14 +70,26 @@ function LoadMoreButton() {
   };
 
   return (
-    <AppTooltip.Root>
-      <AppTooltip.Trigger asChild>
-        <button className="button-outline button-sm" onClick={handleClick}>
-          <ChevronLeftIcon />
-          More
-        </button>
-      </AppTooltip.Trigger>
-      <AppTooltip.Content align="center">Load more</AppTooltip.Content>
-    </AppTooltip.Root>
+    <Tooltip.Provider>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <button className="button-outline button-sm" onClick={handleClick}>
+            <ChevronLeftIcon />
+            More
+          </button>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            className={stylesTooltip.content}
+            align="center"
+            side="bottom"
+            sideOffset={5}
+          >
+            Load more
+            <Tooltip.Arrow className={stylesTooltip.arrow} />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 }
