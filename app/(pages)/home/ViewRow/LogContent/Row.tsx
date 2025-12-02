@@ -26,7 +26,7 @@ function Item({
   color: string;
 }) {
   return (
-    <div className="relative flex h-row w-day items-center justify-center">
+    <div className="relative flex h-[var(--height-row)] w-[var(--width-col)] items-center justify-center">
       {isActive && isNextActive && (
         <div
           className={clsx(

@@ -42,7 +42,11 @@ function CollapsibleGroup({ group }: { group: Group }) {
 
   return (
     <>
-      {isOpen ? <div className="h-row" /> : <GroupRow group={group} />}
+      {isOpen ? (
+        <div className="h-[var(--height-row)]" />
+      ) : (
+        <GroupRow group={group} />
+      )}
       <DummyTask group={group} />
       <div className={clsx(isOpen ? "block" : "hidden")}>
         <TaskList group={group} />

@@ -17,7 +17,8 @@ import Loading from "../../components/Loading/Loading";
 import GoBackButton from "../../components/GoBackButton";
 import { useAppStore } from "../../stores/appStore";
 import clsx from "clsx";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useUserStore } from "../../stores/userStore";
 import { supabase } from "@/app/supabase/server";
 
@@ -191,30 +192,39 @@ function Content() {
           <span>Let&apos;s begin </span>
           <ArrowRightIcon />
         </button>
-        <AppTooltip.Root>
-          <AppTooltip.Trigger asChild>
-            <button
-              className={clsx(
-                "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
-                isLoading &&
-                  "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
-              )}
-              disabled={isLoading}
-              onClick={handleClickTest}
-            >
-              Only here for testing
-            </button>
-          </AppTooltip.Trigger>
-          <AppTooltip.Content className="p-2" side="right" sideOffset={10}>
-            <h2 className="text-sm font-bold">Want a quick preview?</h2>
-
-            <p className="mt-[10px] leading-relaxed">
-              Fill with sample data to explore the app.
-              <br />
-              You can reset the data anytime from Settings.
-            </p>
-          </AppTooltip.Content>
-        </AppTooltip.Root>
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <button
+                className={clsx(
+                  "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
+                  isLoading &&
+                    "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
+                )}
+                disabled={isLoading}
+                onClick={handleClickTest}
+              >
+                Only here for testing
+              </button>
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content
+                className={clsx(stylesTooltip.content, "p-2")}
+                align="center"
+                side="right"
+                sideOffset={10}
+              >
+                <h2 className="text-sm font-bold">Want a quick preview?</h2>
+                <p className="mt-[10px] leading-relaxed">
+                  Fill with sample data to explore the app.
+                  <br />
+                  You can reset the data anytime from Settings.
+                </p>
+                <Tooltip.Arrow className={stylesTooltip.arrow} />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        </Tooltip.Provider>
       </main>
     </>
   );

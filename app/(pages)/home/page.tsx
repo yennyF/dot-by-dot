@@ -20,7 +20,8 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "../../stores/userStore";
 import { CollapseAllButton, ExpandAllButton } from "./Header/CollapseAllButton";
 import { supabase } from "@/app/supabase/server";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useUIStore } from "@/app/stores/useUIStore";
 import Sidebar from "@/app/(pages)/home/Sidebar/Sidebar";
 import ViewGrid from "./ViewGrid/ViewGrid";
@@ -142,15 +143,27 @@ function Content() {
                 <CollapseAllButton />
                 <CreateDropdown>
                   <span>
-                    <AppTooltip.Root>
-                      <AppTooltip.Trigger asChild>
-                        <button className="button-accent button-sm">
-                          <PlusIcon />
-                          <TriangleDownIcon />
-                        </button>
-                      </AppTooltip.Trigger>
-                      <AppTooltip.Content>Create new...</AppTooltip.Content>
-                    </AppTooltip.Root>
+                    <Tooltip.Provider>
+                      <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                          <button className="button-accent button-sm">
+                            <PlusIcon />
+                            <TriangleDownIcon />
+                          </button>
+                        </Tooltip.Trigger>
+                        <Tooltip.Portal>
+                          <Tooltip.Content
+                            className={stylesTooltip.content}
+                            align="center"
+                            side="bottom"
+                            sideOffset={5}
+                          >
+                            Create new...
+                            <Tooltip.Arrow className={stylesTooltip.arrow} />
+                          </Tooltip.Content>
+                        </Tooltip.Portal>
+                      </Tooltip.Root>
+                    </Tooltip.Provider>
                   </span>
                 </CreateDropdown>
               </>

@@ -1,4 +1,5 @@
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import React, { createContext, useEffect, useState } from "react";
 import { palette } from "./colors";
 
@@ -49,33 +50,42 @@ export function BarChart({
     <BarChartContext.Provider value={{ height, data, total, percentages }}>
       <div className="flex gap-[2px]">
         {data.map((item, index) => (
-          <AppTooltip.Root key={item.id} delayDuration={100}>
-            <AppTooltip.Trigger asChild>
+          <Tooltip.Root key={item.id} delayDuration={100}>
+            <Tooltip.Trigger asChild>
               <BarChartItem
                 width={percentages[index]}
                 color={colors[index]}
                 height={height}
               />
-            </AppTooltip.Trigger>
-            <AppTooltip.Content side="top" align="center" sideOffset={5}>
-              <div className="flex flex-col items-end gap-[10px]">
-                <div className="font-bold">{item.name}</div>
-                <div>
-                  <span>{item.value} </span>
-                  <span className="text-xs text-[var(--gray-9)]">
-                    {`${item.value > 1 ? "days" : "day"}`}
-                  </span>
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content
+                side="top"
+                align="end"
+                sideOffset={5}
+                className={stylesTooltip.content}
+                asChild
+              >
+                <div className="flex flex-col items-end gap-[10px]">
+                  <div className="font-bold">{item.name}</div>
+                  <div>
+                    <span>{item.value} </span>
+                    <span className="text-xs text-[var(--gray-9)]">
+                      {`${item.value > 1 ? "days" : "day"}`}
+                    </span>
+                  </div>
+                  <div>
+                    <span>{percentages[index]}%</span>
+                    <span className="text-xs text-[var(--gray-9)]">
+                      {" "}
+                      of total
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span>{percentages[index]}%</span>
-                  <span className="text-xs text-[var(--gray-9)]">
-                    {" "}
-                    of total
-                  </span>
-                </div>
-              </div>
-            </AppTooltip.Content>
-          </AppTooltip.Root>
+                <Tooltip.Arrow className={stylesTooltip.arrow} />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
         ))}
       </div>
     </BarChartContext.Provider>
@@ -96,24 +106,26 @@ export function BarChartTooltipItem({
   const width = Math.round((item.value * 100) / total);
 
   return (
-    <AppTooltip.Root key={item.id} delayDuration={100}>
-      <AppTooltip.Trigger asChild>
+    <Tooltip.Root key={item.id} delayDuration={100}>
+      <Tooltip.Trigger asChild>
         <BarChartItem
           width={width}
           color={palette.one[index]}
           height={height}
         />
-      </AppTooltip.Trigger>
-      <AppTooltip.Content side="top" align="center" sideOffset={5}>
-        <div className="flex flex-col items-end gap-[10px]">
-          <div>{item.name}</div>
-          <div>
-            <span>{item.value} </span>
-            <span className="text-[var(--gray-9)]">dots</span>
+      </Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Content side="top" align="center" sideOffset={5}>
+          <div className="flex flex-col items-end gap-[10px]">
+            <div>{item.name}</div>
+            <div>
+              <span>{item.value} </span>
+              <span className="text-[var(--gray-9)]">dots</span>
+            </div>
           </div>
-        </div>
-      </AppTooltip.Content>
-    </AppTooltip.Root>
+        </Tooltip.Content>
+      </Tooltip.Portal>
+    </Tooltip.Root>
   );
 }
 

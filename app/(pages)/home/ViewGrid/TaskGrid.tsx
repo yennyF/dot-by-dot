@@ -17,9 +17,11 @@ export default function TaskGrid({ task }: { task: Task }) {
         {totalDate.map(({ months }) =>
           months.map(({ days }) =>
             days.map((date) => (
-              <Grid.Item key={date.toDateString()} date={date}>
-                <TaskItem date={date} taskId={task.id} />
-              </Grid.Item>
+              <TaskItem
+                key={date.toDateString()}
+                date={date}
+                taskId={task.id}
+              />
             ))
           )
         )}
@@ -33,5 +35,9 @@ function TaskItem({ date, taskId }: { date: Date; taskId: string }) {
     (s) => s.tasksByDate[toApiDate(date)]?.has(taskId) ?? false
   );
 
-  return <TaskDot date={date} taskId={taskId} isActive={isActive} />;
+  return (
+    <Grid.Item date={date} isActive={isActive}>
+      <TaskDot date={date} taskId={taskId} isActive={isActive} />
+    </Grid.Item>
+  );
 }

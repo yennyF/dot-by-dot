@@ -75,23 +75,6 @@ body {
   }
 }
 
-.tooltip-content {
-  @apply 
-  select-none 
-  rounded 
-  bg-[var(--gray)] 
-  px-[10px] py-2
-  text-xs 
-  text-black
-  leading-none 
-  // shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] 
-  will-change-[transform,opacity];
-}
-
-.tooltip-arrow {
-  @apply fill-[var(--gray)] 
-}
-
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

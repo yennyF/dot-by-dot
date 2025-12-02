@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useUIStore } from "@/app/stores/useUIStore";
 import { ProgressBar } from "../../../components/Charts/ProgressBar";
 import clsx from "clsx";
 import {
@@ -10,6 +9,7 @@ import {
   TaskLabel,
   GroupLabel,
 } from "./utils";
+import { ViewStatsContext } from "./ViewStatsContext";
 
 export default function TabContentOften({
   data,
@@ -18,7 +18,7 @@ export default function TabContentOften({
   data: BarChartDataExtend[];
   daysDone: number;
 }) {
-  const setSelectedGroup = useUIStore((s) => s.setSelectedGroup);
+  const { setSelectedGroup } = React.use(ViewStatsContext);
 
   return (
     <>

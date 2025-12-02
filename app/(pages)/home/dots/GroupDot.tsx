@@ -2,7 +2,8 @@
 
 import { isWeekend } from "date-fns";
 import clsx from "clsx";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 
 interface GroupDotProps {
   date: Date;
@@ -16,25 +17,35 @@ export default function GroupDot({ date, count }: GroupDotProps) {
   // const colorStart = getColor(getPercentage(currentSize, taskIds.length));
 
   return (
-    <AppTooltip.Root delayDuration={100}>
-      <AppTooltip.Trigger className="flex size-[var(--dot-size)] shrink-0 cursor-default items-center justify-center">
-        <div
-          className={clsx(
-            "transform rounded-full",
-            isActive ? "size-[var(--dot-size)]" : "size-[6px]",
-            isActive
-              ? "bg-[var(--inverted)]"
-              : isWeekendDate
-                ? "bg-[var(--gray-5)]"
-                : "bg-[var(--gray)]"
-          )}
-          // style={isActive ? { backgroundColor: colorStart } : undefined}
-        />
-      </AppTooltip.Trigger>
-      <AppTooltip.Content side="top" align="center" sideOffset={10}>
-        {count} {count === 1 ? "dot" : "dots"}
-      </AppTooltip.Content>
-    </AppTooltip.Root>
+    <Tooltip.Provider delayDuration={100}>
+      <Tooltip.Root>
+        <Tooltip.Trigger className="flex size-[var(--dot-size)] shrink-0 cursor-default items-center justify-center">
+          <div
+            className={clsx(
+              "transform rounded-full",
+              isActive ? "size-[var(--dot-size)]" : "size-[6px]",
+              isActive
+                ? "bg-[var(--inverted)]"
+                : isWeekendDate
+                  ? "bg-[var(--gray-5)]"
+                  : "bg-[var(--gray)]"
+            )}
+            // style={isActive ? { backgroundColor: colorStart } : undefined}
+          />
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content
+            className={stylesTooltip.content}
+            side="top"
+            align="center"
+            sideOffset={10}
+          >
+            {count} {count === 1 ? "dot" : "dots"}
+            <Tooltip.Arrow className={stylesTooltip.arrow} />
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 }
 

@@ -14,7 +14,8 @@ import clsx from "clsx";
 import GroupCreatePopover from "./group/GroupCreatePopover";
 import GroupDeleteDialog from "./group/GroupDeleteDialog";
 import GroupRenamePopover from "./group/GroupRenamePopover";
-import AppTooltip from "@/app/components/AppTooltip";
+import { Tooltip } from "radix-ui";
+import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useUIStore } from "@/app/stores/useUIStore";
 
 interface GroupItemProps {
@@ -56,7 +57,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
   return (
     <div
       className={clsx(
-        "app-GroupRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]",
+        "app-GroupRow group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]",
         "draggable active:cursor-grabbing"
       )}
       draggable={true}
@@ -71,38 +72,74 @@ function GroupItemWrapper({ group }: GroupItemProps) {
           forceShow ? "flex" : "hidden group-hover/name:flex"
         )}
       >
-        <AppTooltip.Root>
-          <AppTooltip.Trigger asChild>
-            <button className="button-icon-sheer" onClick={handleClickNew}>
-              <PlusIcon />
-            </button>
-          </AppTooltip.Trigger>
-          <AppTooltip.Content>New task</AppTooltip.Content>
-        </AppTooltip.Root>
+        <Tooltip.Provider>
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <button className="button-icon-sheer" onClick={handleClickNew}>
+                <PlusIcon />
+              </button>
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content
+                className={stylesTooltip.content}
+                align="center"
+                side="bottom"
+                sideOffset={5}
+              >
+                New task
+                <Tooltip.Arrow className={stylesTooltip.arrow} />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        </Tooltip.Provider>
 
         <GroupRenamePopover group={group} onOpenChange={setForceShow}>
           <span onClick={(e) => e.stopPropagation()}>
-            <AppTooltip.Root>
-              <AppTooltip.Trigger asChild>
-                <button className="button-icon-sheer">
-                  <Pencil1Icon />
-                </button>
-              </AppTooltip.Trigger>
-              <AppTooltip.Content>Rename</AppTooltip.Content>
-            </AppTooltip.Root>
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button className="button-icon-sheer">
+                    <Pencil1Icon />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    className={stylesTooltip.content}
+                    align="center"
+                    side="bottom"
+                    sideOffset={5}
+                  >
+                    Rename
+                    <Tooltip.Arrow className={stylesTooltip.arrow} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </span>
         </GroupRenamePopover>
 
         <GroupDeleteDialog group={group} onOpenChange={setForceShow}>
           <span onClick={(e) => e.stopPropagation()}>
-            <AppTooltip.Root>
-              <AppTooltip.Trigger asChild>
-                <button className="button-icon-sheer">
-                  <TrashIcon />
-                </button>
-              </AppTooltip.Trigger>
-              <AppTooltip.Content>Delete</AppTooltip.Content>
-            </AppTooltip.Root>
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button className="button-icon-sheer">
+                    <TrashIcon />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    className={stylesTooltip.content}
+                    align="center"
+                    side="bottom"
+                    sideOffset={5}
+                  >
+                    Delete
+                    <Tooltip.Arrow className={stylesTooltip.arrow} />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </span>
         </GroupDeleteDialog>
 
@@ -114,7 +151,7 @@ function GroupItemWrapper({ group }: GroupItemProps) {
 
 export function GroupItemDummy({ group }: { group: Group }) {
   return (
-    <div className="app-GroupRow group/name sticky left-0 flex h-row items-center justify-between gap-1 bg-[var(--background)]">
+    <div className="app-GroupRow group/name sticky left-0 flex h-[var(--height-row)] items-center justify-between gap-1 bg-[var(--background)]">
       <GroupItemName name={group.name} />
       <div>
         <GroupCreatePopover>
