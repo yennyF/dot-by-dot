@@ -1,9 +1,9 @@
-import { Slide, toast, ToastOptions } from "react-toastify";
+import { Id, Slide, toast, ToastOptions } from "react-toastify";
 import LoadingIcon from "./Loading/LoadingIcon";
 
 const baseOptions: ToastOptions = {
   autoClose: 2000,
-  position: "bottom-center",
+  position: "bottom-right",
   closeButton: false,
   // pauseOnHover: false,
   pauseOnFocusLoss: false,
@@ -41,3 +41,9 @@ export const notifyLoading = () =>
     </div>,
     { ...baseOptions, autoClose: false }
   );
+
+export const dismissToastSmoothly = (id: Id) => {
+  setTimeout(() => {
+    toast.dismiss(id);
+  }, 2000);
+};
