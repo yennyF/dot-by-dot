@@ -1,5 +1,6 @@
 import { Id, Slide, toast, ToastOptions } from "react-toastify";
 import LoadingIcon from "./Loading/LoadingIcon";
+import { debounce } from "lodash";
 
 const baseOptions: ToastOptions = {
   autoClose: 2000,
@@ -10,6 +11,7 @@ const baseOptions: ToastOptions = {
   draggable: false,
   delay: 0,
   transition: Slide,
+  hideProgressBar: true,
 };
 
 export const notifyUnexpectedError = () =>
@@ -33,17 +35,17 @@ export const notifyDeleteError = () =>
 export const notifySuccessful = (message: string) =>
   toast(<div>{message}</div>, baseOptions);
 
-export const notifyLoading = () =>
+export const notifyLoading = (toastId?: Id | undefined) =>
   toast(
     <div className="flex items-center">
       <LoadingIcon className="-ml-1 mr-3 size-5 text-[var(--black)]" />
       <span>Loading…</span>
     </div>,
-    { ...baseOptions, autoClose: false }
+    { ...baseOptions, autoClose: false, toastId }
   );
 
-export const dismissToastSmoothly = (id: Id) => {
-  setTimeout(() => {
-    toast.dismiss(id);
-  }, 2000);
+export const debounceNotifyLoading = (toastId?: Id | undefined) => {
+  const debounced = debounce(() => notifyLoading(toastId), 2000);
+  debounced();
+  return debounced;
 };

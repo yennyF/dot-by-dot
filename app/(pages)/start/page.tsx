@@ -2,7 +2,7 @@
 
 import { ArrowRightIcon, CheckIcon } from "@radix-ui/react-icons";
 import { generateGroupedTasks, generateTasks } from "../../utils/generateData";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Group,
   mapGroupRequestArray,
@@ -11,9 +11,9 @@ import {
 } from "../../types";
 import { Checkbox } from "radix-ui";
 import {
-  dismissToastSmoothly,
+  debounceNotifyLoading,
   notifyLoadError,
-  notifyLoading,
+  notifySuccessful,
 } from "../../components/Notification";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,8 @@ import Loading from "../../components/Loading/Loading";
 import { useUserStore } from "../../stores/userStore";
 import { supabase } from "@/app/supabase/server";
 import GroupName from "../home/dots/GroupName";
+
+const toastId = "toast-start-loading";
 
 export default function StartPage() {
   const router = useRouter();
@@ -81,8 +83,7 @@ function Content() {
 
   const handleClickStart = async () => {
     setIsLoading(true);
-
-    const toastId = notifyLoading();
+    const debouncedNotification = debounceNotifyLoading(toastId);
 
     try {
       const groupsSelected = new Set<Group>();
@@ -109,15 +110,17 @@ function Content() {
         .insert(mapTaskRequestArray(tasks));
       if (errorTasks) throw errorTasks;
 
+      debouncedNotification.cancel();
+      toast.dismiss(toastId);
+      notifySuccessful("It's ready. Have fun!");
       setIsLoading(false);
-      dismissToastSmoothly(toastId);
 
       router.replace("/home");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.dismiss(toastId);
-      setIsLoading(false);
       notifyLoadError();
+      setIsLoading(false);
     }
   };
 
