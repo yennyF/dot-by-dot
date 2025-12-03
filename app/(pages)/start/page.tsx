@@ -14,11 +14,7 @@ import { Id, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AppHeader from "../../components/AppHeader";
 import Loading from "../../components/Loading/Loading";
-import GoBackButton from "../../components/GoBackButton";
 import { useAppStore } from "../../stores/appStore";
-import clsx from "clsx";
-import { Tooltip } from "radix-ui";
-import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useUserStore } from "../../stores/userStore";
 import { supabase } from "@/app/supabase/server";
 
@@ -62,7 +58,6 @@ function Content() {
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
   const start = useAppStore((s) => s.start);
-  const startMock = useAppStore((s) => s.startMock);
 
   const [isLoading, setIsLoading] = useState(false);
   const toastId = useRef<Id>(null);
@@ -119,32 +114,10 @@ function Content() {
     setIsLoading(false);
   };
 
-  async function handleClickTest() {
-    if (isLoading) return;
-    setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
-
-    try {
-      await startMock();
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
-    } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId.current);
-      notifyLoadError();
-    }
-
-    setIsLoading(false);
-  }
-
   return (
     <>
       <AppHeader />
       <main className="page-main flex flex-col gap-[50px]">
-        <GoBackButton path="/product" />
-
         <section>
           <h1 className="page-title-1">Getting started</h1>
           <p>
@@ -192,39 +165,6 @@ function Content() {
           <span>Let&apos;s begin </span>
           <ArrowRightIcon />
         </button>
-        <Tooltip.Provider>
-          <Tooltip.Root>
-            <Tooltip.Trigger asChild>
-              <button
-                className={clsx(
-                  "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
-                  isLoading &&
-                    "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
-                )}
-                disabled={isLoading}
-                onClick={handleClickTest}
-              >
-                Only here for testing
-              </button>
-            </Tooltip.Trigger>
-            <Tooltip.Portal>
-              <Tooltip.Content
-                className={clsx(stylesTooltip.content, "p-2")}
-                align="center"
-                side="right"
-                sideOffset={10}
-              >
-                <h2 className="text-sm font-bold">Want a quick preview?</h2>
-                <p className="mt-[10px] leading-relaxed">
-                  Fill with sample data to explore the app.
-                  <br />
-                  You can reset the data anytime from Settings.
-                </p>
-                <Tooltip.Arrow className={stylesTooltip.arrow} />
-              </Tooltip.Content>
-            </Tooltip.Portal>
-          </Tooltip.Root>
-        </Tooltip.Provider>
       </main>
     </>
   );

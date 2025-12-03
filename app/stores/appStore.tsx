@@ -12,11 +12,6 @@ import { notifyDeleteError } from "../components/Notification";
 import { useTaskStore } from "./taskStore";
 import { useGroupStore } from "./groupStore";
 import { useTaskLogStore } from "./taskLogStore";
-import {
-  generateGroupedTasks,
-  generateTaskLogs,
-  generateTasks,
-} from "../utils/generateData";
 import { v4 as uuidv4 } from "uuid";
 
 type Action = {
@@ -26,10 +21,9 @@ type Action = {
     tasks: Task[],
     taskLogs?: TaskLog[]
   ) => Promise<void>;
-  startMock: () => Promise<void>;
 };
 
-export const useAppStore = create<Action>((set, get) => {
+export const useAppStore = create<Action>(() => {
   return {
     reset: async () => {
       try {
@@ -69,23 +63,6 @@ export const useAppStore = create<Action>((set, get) => {
         console.error(error);
         throw error;
       }
-    },
-
-    startMock: async () => {
-      const groups: Group[] = [];
-      const tasks: Task[] = generateTasks();
-      generateGroupedTasks().forEach(([group, _tasks]) => {
-        groups.push(group);
-        tasks.push(..._tasks);
-      });
-
-      const taskLogs = generateTaskLogs(
-        useTaskLogStore.getState().startDate,
-        useTaskLogStore.getState().endDate,
-        tasks
-      );
-
-      get().start(groups, tasks, taskLogs);
     },
   };
 });
