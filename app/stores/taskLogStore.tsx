@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import {
+  debounceNotifyLoading,
   notifyCreateError,
   notifyDeleteError,
   notifyLoadError,
-  notifyLoading,
 } from "../components/Notification";
 import {
   eachDayOfInterval,
@@ -120,7 +120,9 @@ export const useTaskLogStore = create<State & Action>()(
         const endDate = get().endDate;
         // const totalDate = getTotalDate(startDate, endDate);
         const tasksByDate = { ...get().tasksByDate };
-        const tastId = notifyLoading();
+
+        const tastId = "toast-more-loading";
+        const debouncedNotification = debounceNotifyLoading(tastId);
 
         try {
           const { data, error } = await supabase
@@ -140,6 +142,7 @@ export const useTaskLogStore = create<State & Action>()(
 
           set(() => ({ tasksByDate, startDate }));
 
+          debouncedNotification.cancel();
           toast.dismiss(tastId);
         } catch (error) {
           console.error(error);

@@ -1,16 +1,21 @@
 "use client";
 
 import { Checkbox, Dialog } from "radix-ui";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { Id, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
-  notifyLoading,
-  notifyLoadError,
   notifySuccessful,
+  notifyDeleteError,
+  debounceNotifyLoading,
 } from "../../components/Notification";
-import { useAppStore } from "../../stores/appStore";
-import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/app/supabase/server";
+import { useTaskLogStore } from "@/app/stores/taskLogStore";
+import { useGroupStore } from "@/app/stores/groupStore";
+import { useTaskStore } from "@/app/stores/taskStore";
+
+const toastId = "toast-reset-loading";
 
 interface ResetDialogProps {
   children: React.ReactNode;
@@ -38,25 +43,35 @@ export default function ResetDialog({ children }: ResetDialogProps) {
 function Content() {
   const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
-  const toastId = useRef<Id>(null);
+  const destroyTaskLogs = useTaskLogStore((s) => s.destroyTaskLogs);
+  const destroyTasks = useTaskStore((s) => s.destroyTasks);
+  const destroyGroups = useGroupStore((s) => s.destroyGroups);
 
-  const reset = useAppStore((s) => s.reset);
-
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleClick() {
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
+    setIsLoading(true);
+    const debouncedNotification = debounceNotifyLoading(toastId);
 
     try {
-      await reset();
-      toast.dismiss(toastId.current);
+      await Promise.all([
+        supabase.from("task_logs").delete().neq("task_id", uuidv4()),
+        supabase.from("tasks").delete().neq("id", uuidv4()),
+        supabase.from("groups").delete().neq("id", uuidv4()),
+        destroyTaskLogs(),
+        destroyTasks(),
+        destroyGroups(),
+      ]);
+
+      debouncedNotification.cancel();
+      toast.dismiss(toastId);
       notifySuccessful("Reset successful");
-      router.replace("/product");
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
-      toast.dismiss(toastId.current);
-      notifyLoadError();
+      toast.dismiss(toastId);
+      notifyDeleteError();
+      setIsLoading(false);
     }
   }
 
@@ -101,7 +116,7 @@ function Content() {
           <button
             className="button-accept"
             onClick={handleClick}
-            disabled={checked === false}
+            disabled={checked === false || isLoading}
           >
             Reset
           </button>

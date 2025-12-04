@@ -49,9 +49,8 @@ export default function HomePage() {
           router.replace("/start");
           return;
         }
+        setLoading(false);
       })();
-
-      setLoading(false);
     } catch {
       notifyLoadError();
     }

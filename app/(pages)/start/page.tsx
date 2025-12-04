@@ -1,26 +1,29 @@
 "use client";
 
-import { ArrowRightIcon, CheckIcon, CubeIcon } from "@radix-ui/react-icons";
+import { ArrowRightIcon, CheckIcon } from "@radix-ui/react-icons";
 import { generateGroupedTasks, generateTasks } from "../../utils/generateData";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { Group, Task } from "../../types";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Group,
+  mapGroupRequestArray,
+  mapTaskRequestArray,
+  Task,
+} from "../../types";
 import { Checkbox } from "radix-ui";
 import {
+  debounceNotifyLoading,
   notifyLoadError,
-  notifyLoading,
   notifySuccessful,
 } from "../../components/Notification";
-import { Id, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import AppHeader from "../../components/AppHeader";
 import Loading from "../../components/Loading/Loading";
-import GoBackButton from "../../components/GoBackButton";
-import { useAppStore } from "../../stores/appStore";
-import clsx from "clsx";
-import { Tooltip } from "radix-ui";
-import stylesTooltip from "@/app/styles/tooltip.module.scss";
 import { useUserStore } from "../../stores/userStore";
 import { supabase } from "@/app/supabase/server";
+import GroupName from "../home/dots/GroupName";
+
+const toastId = "toast-start-loading";
 
 export default function StartPage() {
   const router = useRouter();
@@ -57,20 +60,14 @@ export default function StartPage() {
 function Content() {
   const router = useRouter();
 
-  const [ungroupedTasks, setUngroupedTasks] = useState<Task[]>([]);
-  const [groupedTasks, setGroupedTasks] = useState<[Group, Task[]][]>([]);
+  const ungroupedTasks: Task[] = useMemo(() => generateTasks(), []);
+  const groupedTasks: [Group, Task[]][] = useMemo(
+    () => generateGroupedTasks(),
+    []
+  );
   const [tasksSelected, setTasksSelected] = useState<Set<Task>>(new Set());
 
-  const start = useAppStore((s) => s.start);
-  const startMock = useAppStore((s) => s.startMock);
-
   const [isLoading, setIsLoading] = useState(false);
-  const toastId = useRef<Id>(null);
-
-  useEffect(() => {
-    setUngroupedTasks(generateTasks());
-    setGroupedTasks(generateGroupedTasks());
-  }, []);
 
   const handleCheckedChange = (task: Task) => {
     setTasksSelected((prev) => {
@@ -85,11 +82,8 @@ function Content() {
   };
 
   const handleClickStart = async () => {
-    if (isLoading) return;
     setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
+    const debouncedNotification = debounceNotifyLoading(toastId);
 
     try {
       const groupsSelected = new Set<Group>();
@@ -103,48 +97,37 @@ function Content() {
           if (group) groupsSelected.add(group);
         }
       });
-
       const tasks = Array.from(tasksSelected);
       const groups = Array.from(groupsSelected);
 
-      await start(groups, tasks);
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
+      const { error: errorGroup } = await supabase
+        .from("groups")
+        .insert(mapGroupRequestArray(groups));
+      if (errorGroup) throw errorGroup;
+
+      const { error: errorTasks } = await supabase
+        .from("tasks")
+        .insert(mapTaskRequestArray(tasks));
+      if (errorTasks) throw errorTasks;
+
+      debouncedNotification.cancel();
+      toast.dismiss(toastId);
+      notifySuccessful("It's ready. Have fun!");
+      setIsLoading(false);
+
       router.replace("/home");
-    } catch {
-      toast.dismiss(toastId.current);
-      notifyLoadError();
-    }
-
-    setIsLoading(false);
-  };
-
-  async function handleClickTest() {
-    if (isLoading) return;
-    setIsLoading(true);
-
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
-
-    try {
-      await startMock();
-      toast.dismiss(toastId.current);
-      notifySuccessful("Ready to start");
     } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId.current);
+      console.error(error);
+      toast.dismiss(toastId);
       notifyLoadError();
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-  }
+  };
 
   return (
     <>
       <AppHeader />
       <main className="page-main flex flex-col gap-[50px]">
-        <GoBackButton path="/product" />
-
         <section>
           <h1 className="page-title-1">Getting started</h1>
           <p>
@@ -168,7 +151,8 @@ function Content() {
           <p>You can create groups — like folders for your habits.</p>
           <div className="mt-[30px] flex flex-wrap gap-10">
             {groupedTasks.map(([group, tasks]) => (
-              <GroupItem key={group.id} group={group}>
+              <div key={group.id} className="w-[350px]">
+                <GroupName className="mb-2">{group.name}</GroupName>
                 <ul className="flex flex-col items-start gap-2">
                   {tasks.map((task) => (
                     <TaskItem
@@ -179,66 +163,21 @@ function Content() {
                     />
                   ))}
                 </ul>
-              </GroupItem>
+              </div>
             ))}
           </div>
         </section>
 
         <button
           className="button-accent m-auto"
-          disabled={tasksSelected.size === 0}
+          disabled={tasksSelected.size === 0 || isLoading}
           onClick={handleClickStart}
         >
           <span>Let&apos;s begin </span>
           <ArrowRightIcon />
         </button>
-        <Tooltip.Provider>
-          <Tooltip.Root>
-            <Tooltip.Trigger asChild>
-              <button
-                className={clsx(
-                  "cursor-pointer text-nowrap text-xs hover:text-[var(--inverted)] hover:underline",
-                  isLoading &&
-                    "text-[var(--gray)] hover:cursor-default hover:text-[var(--gray)] hover:no-underline"
-                )}
-                disabled={isLoading}
-                onClick={handleClickTest}
-              >
-                Only here for testing
-              </button>
-            </Tooltip.Trigger>
-            <Tooltip.Portal>
-              <Tooltip.Content
-                className={clsx(stylesTooltip.content, "p-2")}
-                align="center"
-                side="right"
-                sideOffset={10}
-              >
-                <h2 className="text-sm font-bold">Want a quick preview?</h2>
-                <p className="mt-[10px] leading-relaxed">
-                  Fill with sample data to explore the app.
-                  <br />
-                  You can reset the data anytime from Settings.
-                </p>
-                <Tooltip.Arrow className={stylesTooltip.arrow} />
-              </Tooltip.Content>
-            </Tooltip.Portal>
-          </Tooltip.Root>
-        </Tooltip.Provider>
       </main>
     </>
-  );
-}
-
-function GroupItem({ group, children }: { group: Group; children: ReactNode }) {
-  return (
-    <div className="w-[350px]">
-      <div className="mb-2 flex items-center gap-2">
-        <CubeIcon className="h-[12px] w-[12px] shrink-0" />
-        <h3 className="text-sm font-bold">{group.name}</h3>
-      </div>
-      {children}
-    </div>
   );
 }
 

@@ -1,15 +1,17 @@
 "use client";
 
 import { Checkbox, Dialog } from "radix-ui";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
-import { Id, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
-  notifyLoading,
   notifySuccessful,
   notifyDeleteError,
+  debounceNotifyLoading,
 } from "../../components/Notification";
 import { useTaskLogStore } from "../../stores/taskLogStore";
+
+const toastId = "toast-clear-loading";
 
 interface ClearHistoryDialogProps {
   children: React.ReactNode;
@@ -39,22 +41,25 @@ export default function ClearHistoryDialog({
 function Content() {
   const [checked, setChecked] = useState<boolean | "indeterminate">(false);
 
-  const toastId = useRef<Id>(null);
-
   const deleteAllTaskLog = useTaskLogStore((s) => s.deleteAllTaskLog);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function handleClick() {
-    if (toastId.current) toast.dismiss(toastId.current);
-    toastId.current = notifyLoading();
+    setIsLoading(true);
+    const debouncedNotification = debounceNotifyLoading(toastId);
 
     try {
       await deleteAllTaskLog();
-      toast.dismiss(toastId.current);
+      debouncedNotification.cancel();
+      toast.dismiss(toastId);
       notifySuccessful("Clear history successful");
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
-      toast.dismiss(toastId.current);
+      toast.dismiss(toastId);
       notifyDeleteError();
+      setIsLoading(false);
     }
   }
 
@@ -99,7 +104,7 @@ function Content() {
           <button
             className="button-accept"
             onClick={handleClick}
-            disabled={checked === false}
+            disabled={checked === false || isLoading}
           >
             Clear
           </button>

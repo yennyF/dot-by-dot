@@ -36,12 +36,12 @@ export const useUIStore = create<Store>()(
         set({ openGroups: [...openGroups, group] });
       },
 
-      closeAllGroups: () => {
+      openAllGroups: () => {
         const groups = useGroupStore.getState().groups;
         set({ openGroups: groups.map((g) => g.id) });
       },
 
-      openAllGroups: () => {
+      closeAllGroups: () => {
         set({ openGroups: [] });
       },
 
