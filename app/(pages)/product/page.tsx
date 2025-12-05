@@ -4,12 +4,19 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import AppHeader from "../../components/AppHeader";
 import { useUserStore } from "../../stores/userStore";
+import ImageGallery from "./ImageGallery";
+import { ViewGridIcon, ViewHorizontalIcon } from "@radix-ui/react-icons";
 
 const basePath = process.env.NODE_ENV === "production" ? "/dot-by-dot" : "";
 
 export default function ProductPage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
+
+  const images = [
+    `${basePath}/preview-row.png`,
+    `${basePath}/preview-grid.png`,
+  ];
 
   return (
     <>
@@ -41,28 +48,57 @@ export default function ProductPage() {
           </div>
         </section>
 
-        <div
-          className="relative m-auto w-full max-w-[1000px]"
-          style={{ aspectRatio: "16 / 9" }}
-        >
-          <Image
-            src={`${basePath}/preview.png`}
-            alt="App preview"
-            priority={true}
-            fill
-            className="object-cover"
-          />
-        </div>
+        <ImageGallery.Root>
+          <div className="mt-[50px]">
+            <div className="my-[20px] flex justify-center gap-[15px]">
+              <ImageGallery.Button value={0}>
+                <ViewHorizontalIcon />
+              </ImageGallery.Button>
+              <ImageGallery.Button value={1}>
+                <ViewGridIcon />
+              </ImageGallery.Button>
+            </div>
+            <ImageGallery.Content>
+              {images.map((src, index) => (
+                <ImageGallery.Item key={index} value={index}>
+                  <Image
+                    src={src}
+                    alt="App preview"
+                    priority={true}
+                    fill
+                    className="object-contain object-top"
+                  />
+                  {/* <video
+                  width="max-w-[1200px]"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controlsList="nodownload"
+                >
+                  <source
+                    src={`${basePath}/preview-row.mp4`}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video> */}
+                </ImageGallery.Item>
+              ))}
+            </ImageGallery.Content>
+          </div>
+        </ImageGallery.Root>
 
-        {/* <section className="m-auto max-w-[600px] py-[100px] text-center">
-          <h2 className="mb-[10px] text-xl font-bold">
-            Progress is made of small repeats
-          </h2>
-          <p className="text-base text-[var(--gray-9)]">
-            Track your effort, notice where your time goes, and keep a better
-            balance across your habits {":)"}
-          </p>
-        </section> */}
+        <section className="m-auto max-w-[1000px] py-[120px]">
+          <div className="m-auto max-w-[500px] text-center">
+            <h2 className="mb-[10px] text-xl font-bold">
+              Progress is made of small repeats
+            </h2>
+            <p className="text-base text-[var(--gray-9)]">
+              Track your effort, notice where your time goes, and keep a better
+              balance across your habits {":)"}
+            </p>
+          </div>
+        </section>
       </main>
     </>
   );

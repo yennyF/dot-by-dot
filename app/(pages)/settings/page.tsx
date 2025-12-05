@@ -5,7 +5,6 @@ import AppHeader from "../../components/AppHeader";
 import ClearHistoryDialog from "./ClearHistoryDialog";
 import ResetDialog from "./ResetDialog";
 import { useRouter } from "next/navigation";
-import GoBackButton from "../../components/GoBackButton";
 import { useUserStore } from "../../stores/userStore";
 import Loading from "../../components/Loading/Loading";
 
@@ -26,8 +25,6 @@ function Content() {
     <>
       <AppHeader />
       <main className="page-main flex flex-col gap-[50px]">
-        <GoBackButton />
-
         <section>
           <h1 className="page-title-1">Settings</h1>
 

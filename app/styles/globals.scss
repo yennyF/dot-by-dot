@@ -10,6 +10,10 @@
 
 * {
   box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+  }
 }
 
 html, body {
@@ -21,6 +25,13 @@ body {
   background: var(--background);
   font-size: 14px;
   @apply font-mono tracking-wide leading-relaxed;
+}
+
+video {
+  clip-path: inset(1px 1px);
+  &:focus { 
+    outline: none; 
+  }
 }
 
 .page-main {
